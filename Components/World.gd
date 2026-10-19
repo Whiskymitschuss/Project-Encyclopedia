@@ -34,6 +34,7 @@ var ghost_plate: MeshInstance3D
 var placement_point = Vector3.ZERO
 var placement_rotation = 0
 var right_drag = false
+var placement_check_clock = 0.0
 
 func _ready() -> void:
  RenderingServer.set_default_clear_color(Color("53bbd3"))
@@ -311,6 +312,9 @@ func make_weather() -> void:
 
 func _process(delta: float) -> void:
  time += delta
+ if not placement.is_empty():
+  placement_check_clock+=delta
+  if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
  sync_actors()
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
  sun.light_energy = 0.22+daylight*0.65
@@ -412,6 +416,7 @@ func camera_action(action: String) -> void:
  set_camera()
 
 func _unhandled_input(event: InputEvent) -> void:
+ if event is InputEventMouse and event.device==-1: return
  if event is InputEventMouseButton:
   if event.button_index == MOUSE_BUTTON_WHEEL_UP: camera_action("+")
   elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN: camera_action("−")
@@ -530,6 +535,13 @@ func update_ghost() -> void:
  var city=bool(placement.get("city",false))
  var index=int(placement.get("index",-1))
  var reason=Game.placement_reason(placement_point,placement_rotation,-1 if city else index,index if city else -1)
+ if reason.is_empty() and index<0:
+  var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[placement.kind]
+  var price=float(definition.cost)*Game.difficulty() if city else Game.cost_for(placement.kind)
+  if float(Game.state.coins)<price: reason="Es fehlen %s Münzen" % Catalog.number(price-float(Game.state.coins))
+  elif city:
+   for key in definition.materials:
+    if float(Game.state.resources[key])<float(definition.materials[key]): reason="Es fehlt: %s" % Catalog.RESOURCES[key]; break
  ghost_plate.material_override=Models.material(Color("43e69a") if reason.is_empty() else Color("f16c5d"))
  hud.update_placement(reason)
 

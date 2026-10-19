@@ -109,7 +109,9 @@ func _ready() -> void:
  supply.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  supply.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  supply.custom_minimum_size.y = 35
- sawdust_button = button(supply_row,"SPÄNEBOX",func(): open_menu("sawdust"))
+ sawdust_button = button(supply_row,"SPÄNEBOX",func():
+  if float(Game.state.resources.sawdust)>0: Game.sell("sawdust"); Game.save(true)
+  else: open_menu("sawdust"))
  sawdust_button.size_flags_horizontal=Control.SIZE_SHRINK_END
  sawdust_button.custom_minimum_size=Vector2(108,54)
  sawdust_button.add_theme_font_size_override("font_size",14)
@@ -144,7 +146,7 @@ func _ready() -> void:
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
  update_stats()
  if not Game.offline_report.is_empty(): show_notice(Game.offline_report)
- else: show_notice("Willkommen zurück im Wald. Fälle Holz, baue dein Imperium.")
+ else: show_notice("Willkommen! Dein Waldimperium wartet." if int(Game.state.tutorial)==0 else "Willkommen zurück. Dein Imperium wartet.")
  if int(Game.state.tutorial)==0: call_deferred("open_menu","welcome")
 
 func build_overlay() -> void:
@@ -259,6 +261,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
   get_viewport().set_input_as_handled()
 
 func open_menu(tab: String) -> void:
+ if placement_panel!=null and placement_panel.visible: placement_action.emit("cancel")
  current = tab
  scroll.scroll_vertical = 0
  overlay.show()

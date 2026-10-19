@@ -23,6 +23,12 @@ output = args.output.resolve()
 def run(command, **kwargs):
     return subprocess.check_output([str(x) for x in command], text=True, stderr=subprocess.STDOUT, **kwargs)
 
+source_commit = None
+if not args.verify_only:
+    source_commit = run(['git','rev-parse','HEAD'],cwd=ROOT).strip()
+elif output.with_suffix('.apk.json').exists():
+    source_commit = json.loads(output.with_suffix('.apk.json').read_text()).get('source_commit')
+
 if not args.verify_only:
     subprocess.run([sys.executable, ROOT / 'scripts/setup_android.py'], check=True)
     java = Path(os.environ.get('JAVA_HOME', Path(shutil.which('java')).resolve().parents[1]))
@@ -77,6 +83,7 @@ report = {'file':output.name,'bytes':output.stat().st_size,
     'version':'0.8.0-test','package':'com.whiskymitschuss.timberloot',
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
     'debug_signed':True,'zipalign_16k':True,'permissions':[],
+    'source_commit':source_commit,
     'device_install_or_launch_tested':False}
 output.with_suffix('.apk.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))
