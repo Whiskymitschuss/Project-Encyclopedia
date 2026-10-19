@@ -1,0 +1,30 @@
+[
+  {
+    "file": "Timber-Loot-Tycoon-v0.12-test.apk",
+    "bytes": 58114729,
+    "http_status": 200,
+    "sha256": "d52e3c4f4d9a50a20bf843d2d2ae721fc2ade62f3292c571ed899ad4763cc9a0",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/releases/Timber-Loot-Tycoon-v0.12-test.apk"
+  },
+  {
+    "file": "Timber-Loot-Tycoon-v0.12-source.zip",
+    "bytes": 3148768,
+    "http_status": 200,
+    "sha256": "ef04674ddaa0e75e21ff65cc291c04e1f045d0ff730116108e46dbbe3211f30c",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/releases/Timber-Loot-Tycoon-v0.12-source.zip"
+  },
+  {
+    "file": "preview-pause.png",
+    "bytes": 258514,
+    "http_status": 200,
+    "sha256": "1d89d234f99f2f4ac8dad11f88d8eb198cc83834df66828ebd9682b973929653",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/docs/preview-pause.png"
+  },
+  {
+    "file": "preview-opening.png",
+    "bytes": 319010,
+    "http_status": 200,
+    "sha256": "47b064e2bca74f3ab5aa02da0078572a070e5c1fe7f37c9ba6147cc2dc5e1f0b",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/docs/preview-opening.png"
+  }
+]

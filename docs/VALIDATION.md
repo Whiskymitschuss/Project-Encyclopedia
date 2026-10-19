@@ -13,7 +13,7 @@
 - APK: 58.114.729 Bytes, SHA256 `d52e3c4f4d9a50a20bf843d2d2ae721fc2ade62f3292c571ed899ad4763cc9a0`.
 - Quell-ZIP: 91 Dateien, 3.148.768 Bytes, SHA256 `ef04674ddaa0e75e21ff65cc291c04e1f045d0ff730116108e46dbbe3211f30c`. Alle enthaltenen Dateien stimmen mit den Git-Blobs des APK-Quellstands überein.
 - Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, unverändert zu 0.11. Versionscode 1200, Speicherformat 1, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft; GL Compatibility, keine Berechtigungen.
-- Neue unabhängige GitHub-Kopie: `/workspace/timber-restore-12`. Vollständige Headless-Suite nach Erstimport sowie anschließende OpenGL-Prüfung dort erneut bestanden. Externer Downloadvergleich wird nach dem Push im Downloadbericht ergänzt.
+- Neue unabhängige GitHub-Kopie: `/workspace/timber-restore-12`. Vollständige Headless-Suite nach Erstimport sowie anschließende OpenGL-Prüfung dort erneut bestanden. APK, passende Quell-ZIP und beide Vorschauen vom festen Tag `v0.12.0-cozy` vollständig per HTTPS mit HTTP 200 zurückgeladen. Alle SHA256 stimmen mit Originaldateien und GitHub-Wiederherstellung überein. Bericht: `download-verification-12.json`.
 
 ## Historischer Prüfbericht 0.11
 
