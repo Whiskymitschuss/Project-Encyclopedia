@@ -44,15 +44,18 @@ func _ready() -> void:
  env.background_mode = Environment.BG_COLOR
  env.background_color = Color("53bbd3")
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
- env.ambient_light_color = Color("c2d9cf")
+ env.ambient_light_color = Color("e5efff")
  env.ambient_light_energy = 0.65
  env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
  environment_node.environment = env
  add_child(environment_node)
  sun = DirectionalLight3D.new()
  sun.rotation_degrees = Vector3(-48,-25,0)
- sun.light_color = Color("ffe3b4")
- sun.shadow_enabled = false
+ sun.light_color = Color("fff2df")
+ sun.shadow_enabled = Game.state.quality>0
+ sun.directional_shadow_mode=DirectionalLight3D.SHADOW_ORTHOGONAL
+ sun.directional_shadow_max_distance=160
+ sun.shadow_bias=0.04
  add_child(sun)
  camera = Camera3D.new()
  camera.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -331,9 +334,10 @@ func _process(delta: float) -> void:
   placement_check_clock+=delta
   if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
  sync_actors()
+ sun.shadow_enabled=Game.state.quality>0
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- sun.light_energy = 0.22+daylight*0.65
- environment_resource.ambient_light_energy = 0.28+daylight*0.37
+ sun.light_energy = 0.22+daylight*0.55
+ environment_resource.ambient_light_energy = 0.22+daylight*0.26
  environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
  environment_resource.fog_enabled = int(Game.state.weather)==3 and Game.state.quality>0
  environment_resource.fog_light_color = Color("c6d4c1")

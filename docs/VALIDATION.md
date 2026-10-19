@@ -1,3 +1,14 @@
+# Prüfung 0.10 — Sculpted World
+
+- 220 Regel-, 4.135 Szenen-/Geometrie- und 56 Platzierungsprüfungen. Der frische Spielverlauf erreicht das erste Haus weiterhin nach 1.682 simulierten Sekunden ohne zusätzliche Ressourcen.
+- 42 Werkstattprüfungen einschließlich Schatten an/aus durch Standard-/Akkumodus. Zusammen 4.453 Headless-Prüfungen plus Progressionslauf und abschließender Hauptszenenstart.
+- Separate echte OpenGL-Prüfung: sieben gerenderte 3D-Symbole jeweils auf sichtbare Silhouette, transparente Ränder und farbige beleuchtete Details geprüft. Die 3D-Szene der Symbole ist von der Welt getrennt. Druckzustand ändert das Flächenbild und Inhaltsabstand. Nach Anwendungsfortsetzung wird neu gerendert. 19 Prüfungen.
+- OpenGL-Aufnahmen von Einstieg, offener Werkstatt, Baukatalog, Bauvorschau, Einführung und aufgebauter Stadt. Der fortgeschrittene Stand ist eine explizite Capture-Demonstration; kein Benutzerspielstand wird dafür verändert.
+- Kein Größenlimit von 55 MB: Symbole, Oberflächen und Modelle werden ressourcenschonend aus eigener Geometrie und Vektoren erzeugt. Die Paketgröße allein ist kein Maß für Grafikqualität.
+- Schattenleistung, Temperatur, Safe Area und Wiederaufnahme auf realen Android-Geräten sind weiterhin separat zu prüfen. Der Akkumodus stellt einen Ausweichmodus ohne neue Weltschatten bereit. Die Prüfungen hier sind keine Messung auf einem Telefon.
+
+## Historischer Prüfbericht 0.9
+
 # Prüfung 0.9 — Open Workshop
 
 - Bestehende 220 Regel-, 4.135 Szenen-/Geometrie- und 56 Platzierungs-/Einführungsprüfungen unverändert im Umfang bestanden. Der frische Verlauf erreicht das erste Haus weiter nach 1.682 simulierten Sekunden ohne Zusatzressourcen.

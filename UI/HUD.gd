@@ -11,7 +11,10 @@ const GOLD = Color("ffd05b")
 const CREAM = Color("fff5da")
 const MUTED = Color("a6dcd7")
 const PAPER = Color("fff3d9")
+const Surface = preload("res://UI/SculptedSurface.gd")
 var money: Label
+var diamonds: Label
+var loot_counter: Label
 var subtitle: Label
 var supply: Label
 var toast: Label
@@ -31,19 +34,10 @@ var placement_title: Label
 var placement_hint: Label
 var placement_confirm: Button
 var build_category = "Produktion"
+var spatial_icons: SubViewport
 
-func style(color: Color, radius: int = 18) -> StyleBoxFlat:
- var s = StyleBoxFlat.new()
- s.bg_color = color
- s.corner_radius_top_left = radius
- s.corner_radius_top_right = radius
- s.corner_radius_bottom_left = radius
- s.corner_radius_bottom_right = radius
- s.content_margin_left = 15
- s.content_margin_right = 15
- s.content_margin_top = 12
- s.content_margin_bottom = 12
- return s
+func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxTexture:
+ return Surface.create(color,radius,pressed)
 
 func _ready() -> void:
  set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -55,17 +49,19 @@ func _ready() -> void:
  design.set_color("font_disabled_color","Button",Color("8ba4a3"))
  design.set_stylebox("normal","Button",style(PANEL,13))
  design.set_stylebox("hover","Button",style(PANEL.lightened(0.10),13))
- design.set_stylebox("pressed","Button",style(INK,13))
+ design.set_stylebox("pressed","Button",style(PANEL,13,true))
  design.set_stylebox("disabled","Button",style(Color("385457"),13))
  design.set_stylebox("focus","Button",style(PANEL.lightened(0.15),13))
  theme = design
+ spatial_icons=load("res://UI/SpatialIcons.gd").new()
+ add_child(spatial_icons)
  var header = PanelContainer.new()
  add_child(header)
  header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  header.offset_left = 14
  header.offset_right = -14
  header.offset_top = 14
- header.offset_bottom = 108
+ header.offset_bottom = 114
  header.add_theme_stylebox_override("panel",style(INK,24))
  var top = VBoxContainer.new()
  header.add_child(top)
@@ -73,16 +69,20 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"WORKSHOP / 09",11,GOLD)
+ var edition = text(brand,"SCULPT / 10",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
- money = text(top,"",21,GOLD)
+ var counters=row(top)
+ money=resource_counter(counters,"coin",19)
+ money.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ diamonds=resource_counter(counters,"gem",17)
+ loot_counter=resource_counter(counters,"more",17)
  subtitle = text(top,"",12,MUTED)
  mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<5 else "missions"))
  mission_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  mission_button.offset_left = 14
  mission_button.offset_right = -14
- mission_button.offset_top = 116
- mission_button.offset_bottom = 156
+ mission_button.offset_top = 122
+ mission_button.offset_bottom = 162
  mission_button.custom_minimum_size.y=40
  mission_button.add_theme_font_size_override("font_size",14)
  compact_style(mission_button,PANEL)
@@ -140,23 +140,23 @@ func _ready() -> void:
  for entry in [["Bauen","catalog","factory"],["Team","team","team"],["Aufträge","contracts","orders"],["Welt","world","world"],["Mehr","more","more"]]:
   var tab = str(entry[1])
   var nav_button = button(navigation,str(entry[0]),func(): open_menu(tab))
-  nav_button.text="\n"+str(entry[0])
-  nav_button.custom_minimum_size.y=60
+  nav_button.text="\n\n"+str(entry[0])
+  nav_button.custom_minimum_size.y=68
   nav_button.add_theme_font_size_override("font_size",12)
   nav_button.add_theme_color_override("font_color",INK)
   compact_style(nav_button,PAPER)
   var icon=TextureRect.new()
-  icon.texture=load("res://UI/Icons.gd").get_icon(str(entry[2]))
+  icon.texture=spatial_icons.texture_for(str(entry[2]))
   icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
   icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
   icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
   nav_button.add_child(icon)
   icon.anchor_left=0.5
   icon.anchor_right=0.5
-  icon.offset_left=-13
-  icon.offset_right=13
-  icon.offset_top=5
-  icon.offset_bottom=31
+  icon.offset_left=-23
+  icon.offset_right=23
+  icon.offset_top=0
+  icon.offset_bottom=46
  toast = text(self,"",15,CREAM)
  toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
  toast.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
@@ -220,12 +220,24 @@ func text(parent: Node, value: String, font_size: int = 17, color: Color = CREAM
 
 func compact_style(control: Button, color: Color) -> void:
  for entry in [["normal",color],["hover",color.lightened(0.08)],["pressed",color.darkened(0.10)]]:
-  var box=style(entry[1],12)
+  var box=style(entry[1],12,entry[0]=="pressed")
   box.content_margin_top=5
   box.content_margin_bottom=5
   box.content_margin_left=8
   box.content_margin_right=8
   control.add_theme_stylebox_override(entry[0],box)
+
+func resource_counter(parent: Control, key: String, font_size: int) -> Label:
+ var icon=TextureRect.new()
+ icon.texture=spatial_icons.texture_for(key)
+ icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+ icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ icon.custom_minimum_size=Vector2(28,28)
+ icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ parent.add_child(icon)
+ var value=text(parent,"",font_size,GOLD)
+ value.autowrap_mode=TextServer.AUTOWRAP_OFF
+ return value
 
 func row(parent: Node) -> HBoxContainer:
  var node = HBoxContainer.new()
@@ -266,7 +278,9 @@ func show_notice(message: String) -> void:
  toast_left = 5.0
 
 func update_stats() -> void:
- money.text = "%s MÜNZEN    ◆ %s    ▣ %s" % [Catalog.number(Game.state.coins),int(Game.state.diamonds),int(Game.state.tickets)]
+ money.text = "%s Münzen" % Catalog.number(Game.state.coins)
+ diamonds.text=Catalog.number(Game.state.diamonds)
+ loot_counter.text=Catalog.number(Game.state.tickets)
  subtitle.text = "%s · Rucksack %s/%s · Team %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers)]
  supply.text = "HOLZ %s → BRETTER %s → TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks),int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
  var fill = float(Game.state.resources.sawdust)/Game.capacity()
@@ -643,7 +657,7 @@ func settings_menu() -> void:
  button(box,"JETZT SPEICHERN",func(): Game.save())
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.9.0 · Open Workshop\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.10.0 · Sculpted World\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()

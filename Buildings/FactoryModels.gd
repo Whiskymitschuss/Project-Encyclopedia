@@ -7,6 +7,15 @@ const BLUE=Color("169bc2")
 const RED=Color("ec6248")
 
 static func create(kind: String, level: int) -> Node3D:
+ # Shared factory finishes: lacquer, brushed metal, and unpolished timber.
+ for color in [BLUE,RED,Color("27b6a7"),Color("b876c2")]:
+  var paint=Models.material(color)
+  paint.roughness=0.38
+  paint.metallic=0.12
+ var metal=Models.material(STEEL)
+ metal.roughness=0.3
+ metal.metallic=0.45
+ Models.material(WOOD).roughness=0.9
  var root=Node3D.new()
  root.set_meta("open_factory",true)
  root.set_meta("kind",kind)

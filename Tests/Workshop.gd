@@ -66,6 +66,12 @@ func run() -> void:
   var footer=scene.hud.sawdust_button.get_parent().get_parent().get_parent()
   check(footer.get_global_rect().end.y<=scene.hud.size.y,"Footer stays fully on screen at %s" % size)
   check(scene.hud.mission_button.get_global_rect().end.y<footer.global_position.y,"World remains visible between HUD controls at %s" % size)
+ game.state.quality=0
+ scene._process(0)
+ check(not scene.sun.shadow_enabled,"Battery mode disables realtime shadows")
+ game.state.quality=1
+ scene._process(0)
+ check(scene.sun.shadow_enabled,"Standard quality restores realtime shadows")
  game.restore(original)
  scene.queue_free()
  await process_frame
