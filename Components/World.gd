@@ -24,11 +24,14 @@ var machines: Array = []
 var chip_pool: Array = []
 var chip_index = 0
 var cranes: Array = []
+var environment_resource: Environment
+var auto_tree_clock = 0.0
 
 func _ready() -> void:
  RenderingServer.set_default_clear_color(Color("71b6bf"))
  var environment_node = WorldEnvironment.new()
  var env = Environment.new()
+ environment_resource = env
  env.background_mode = Environment.BG_COLOR
  env.background_color = Color("71b6bf")
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
@@ -99,6 +102,7 @@ func build_landscape() -> void:
    Models.cylinder(scenery,0.15,5,Vector3(x,3,z),Color("7c8d80"))
    var lamp = Models.box(scenery,Vector3(1.2,0.4,1.2),Vector3(x,5.6,z),Color("eddda5"))
    lamp.material_override = Models.material(Color("f5d797"),true)
+ Models.bake(scenery)
 
 func road(at: Vector3, size: Vector3, vertical: bool) -> void:
  Models.box(scenery,size+Vector3(1.8,-0.05,1.8),at-Vector3(0,0.1,0),Color("c8cfb4"))
@@ -175,12 +179,12 @@ func rebuild() -> void:
   model.position = Catalog.industry_position(int(b.get("slot",i)))
   world_buildings.add_child(model)
   var saw = model.get_node_or_null("Saw")
-  if saw != null: machines.append({"node":saw,"kind":b.kind})
+  if saw != null: machines.append({"node":saw,"index":i})
   Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,b.level],Vector3(0,10,0),24)
   if Catalog.RECIPES.has(b.kind):
    for j in 3:
     var good = Models.box(world_buildings,Vector3(2.2,0.55,1),model.position+Vector3(5,2.1,6+j*2),Color("e4b77a"))
-    moving_goods.append({"mesh":good,"origin":model.position,"phase":j/3.0,"kind":b.kind})
+    moving_goods.append({"mesh":good,"origin":model.position,"phase":j/3.0,"index":i})
  for h in Game.state.homes:
   var model = Models.building(h.kind,int(h.level),true)
   model.position = Catalog.home_position(int(h.plot))
@@ -261,16 +265,25 @@ func _process(delta: float) -> void:
  sync_actors()
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
  sun.light_energy = 0.22+daylight*0.65
+ environment_resource.ambient_light_energy = 0.28+daylight*0.37
+ environment_resource.background_color = Color("294654").lerp(Color("71b6bf"),daylight)
+ environment_resource.fog_enabled = int(Game.state.weather)==3 and Game.state.quality>0
+ environment_resource.fog_light_color = Color("c6d4c1")
+ environment_resource.fog_density = 0.004
  sun.rotation_degrees.x = -25-daylight*40
  weather.position = focus+Vector3(0,36,0)
  weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0
  for machine in machines:
-  if float(Game.flow.get(machine.kind,0))>0: machine.node.rotate_y(delta*8)
+  if float(Game.flow.get("building:%s" % machine.index,0))>0: machine.node.rotate_y(delta*8)
  for crane in cranes: crane.rotation.y = sin(time*0.45)*0.2
  for item in moving_goods:
-  if float(Game.flow.get(item.kind,0)) > 0:
+  if float(Game.flow.get("building:%s" % item.index,0)) > 0:
    item.phase = fmod(float(item.phase)+delta*0.18,1.0)
   item.mesh.position = item.origin+Vector3(5,2.1,4+item.phase*8)
+ auto_tree_clock += delta
+ if auto_tree_clock>=maxf(0.6,6.0/maxi(1,int(Game.state.workers))) and float(Game.flow.get("harvest",0))>0:
+  auto_tree_clock = 0
+  on_harvested(int(Game.state.biome),0)
  for biome in trees.size():
   for index in trees[biome].size():
    var tree = trees[biome][index]

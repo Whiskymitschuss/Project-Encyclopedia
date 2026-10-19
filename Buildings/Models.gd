@@ -2,6 +2,7 @@ class_name Models
 extends RefCounted
 
 static var materials: Dictionary = {}
+static var grain: ImageTexture
 
 static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
  var key = str(color)+str(glow)
@@ -9,6 +10,16 @@ static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
  var result = StandardMaterial3D.new()
  result.albedo_color = color
  result.roughness = 0.88
+ if grain == null:
+  var image = Image.create(32,32,false,Image.FORMAT_RGB8)
+  for y in 32:
+   for x in 32:
+    var value = 0.92+float((x*13+y*7)%9)*0.01
+    if y%8==0: value = 0.83
+    image.set_pixel(x,y,Color(value,value,value))
+  image.generate_mipmaps()
+  grain = ImageTexture.create_from_image(image)
+ if not glow: result.albedo_texture = grain
  if glow:
   result.emission_enabled = true
   result.emission = color
@@ -89,6 +100,7 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
    cylinder(root,0.4,3,Vector3(x,1.8,-4),Color("b18a5f"))
    cylinder(root,2.4,4,Vector3(x,4.3,-4),Color("5d9c64"),0.5)
    box(root,Vector3(3.0,0.5,1),Vector3(x,1.1,4),Color("b18758"))
+  bake(root)
   return root
  box(root,Vector3(width,0.7,depth),Vector3(0,0.65,0),Color("91a59c"))
  box(root,Vector3(width,height,depth),Vector3(0,height/2+0.9,0),Color("f0dfb7") if city else tone.lightened(0.23))
@@ -134,7 +146,29 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   if kind == "clinic":
    box(root,Vector3(2.8,0.6,0.2),Vector3(0,height+0.1,5.8),Color("e37e73"))
    box(root,Vector3(0.6,2.8,0.2),Vector3(0,height+0.1,5.9),Color("e37e73"))
+ bake(root)
  return root
+
+static func bake(root: Node3D) -> void:
+ var batches = {}
+ var old = []
+ for child in root.get_children():
+  if not child is MeshInstance3D or child.name in ["Saw","Crane"]: continue
+  var key = child.material_override
+  if not batches.has(key):
+   var surface = SurfaceTool.new()
+   surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+   surface.set_material(key)
+   batches[key] = surface
+  batches[key].append_from(child.mesh,0,child.transform)
+  old.append(child)
+ for key in batches:
+  var combined = MeshInstance3D.new()
+  combined.mesh = batches[key].commit()
+  root.add_child(combined)
+ for child in old:
+  root.remove_child(child)
+  child.free()
 
 static func construction(progress: float) -> Node3D:
  var root = Node3D.new()
@@ -150,4 +184,5 @@ static func construction(progress: float) -> Node3D:
  arm.name = "Crane"
  box(root,Vector3(0.1,7,0.1),Vector3(-3,9.5,-5),Color("485d61"))
  log_pile(root,Vector3(-6,0.4,7),5)
+ bake(root)
  return root

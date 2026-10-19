@@ -15,6 +15,8 @@ with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as out:
     for relative in files:
         if not relative:
             continue
+        if Path(relative).parts[0] == 'releases':
+            continue  # Source ZIP omits APKs; the Git bundle retains every tracked file.
         path = root / relative
         if path.name == '.export_credentials.cfg' or path.suffix in {'.keystore', '.jks'}:
             raise RuntimeError('Refusing to package a signing credential')

@@ -151,15 +151,16 @@ func step(delta: float) -> void:
  var accepted = minf(harvest,capacity()-float(state.resources.wood))
  add_resource("wood",accepted)
  state.gathered += accepted
- flow = {}
+ flow = {"harvest":accepted/maxf(delta,0.001)}
  var proposals = []
  var demand = {}
  var output_demand = {}
- for b in state.buildings:
+ for building_index in state.buildings.size():
+  var b = state.buildings[building_index]
   if b.get("paused",false) or not Catalog.RECIPES.has(b.kind): continue
   var recipe = Catalog.RECIPES[b.kind]
   var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")*delta
-  proposals.append({"kind":b.kind,"recipe":recipe,"cycles":cycles})
+  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles})
   for key in recipe["in"]:
    demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out:
@@ -179,6 +180,7 @@ func step(delta: float) -> void:
   for key in recipe["in"]: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out: produced[key] = float(produced.get(key,0))+float(recipe.out[key])*cycles
   flow[proposal.kind] = float(flow.get(proposal.kind,0))+cycles/maxf(delta,0.001)
+  flow["building:%s" % proposal.index] = cycles/maxf(delta,0.001)
  for key in consumed: state.resources[key] = maxf(0,float(state.resources[key])-float(consumed[key]))
  for key in produced: add_resource(key,float(produced[key]))
  if state.auto_export:

@@ -327,7 +327,7 @@ func building_menu() -> void:
  var d = Catalog.BUILDINGS[b.kind]
  modal_title.text = d.name.to_upper()
  var box = card("Stufe %s / %s" % [b.level,d.max],d.desc)
- dynamic_text(box,func(): return "Produktion: %.2f Zyklen/s" % float(Game.flow.get(b.kind,0)))
+ dynamic_text(box,func(): return "Dieser Betrieb: %.2f Zyklen/s" % float(Game.flow.get("building:%s" % index,0)))
  text(box,"Ausbau: %s Münzen" % Catalog.number(Game.cost_for(b.kind,int(b.level)+1)),17,GOLD)
  button(box,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
  if Catalog.RECIPES.has(b.kind):
