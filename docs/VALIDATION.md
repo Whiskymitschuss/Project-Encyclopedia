@@ -12,7 +12,7 @@
 - APK: 58.102.026 Bytes, SHA256 `3588bc86c9f0364438e171aaed11e3dd8b9223bfe90c8d1add7a954c11b2997a`.
 - Quell-ZIP: 82 Dateien, 2.580.510 Bytes, SHA256 `6f6e72f015b2900f377f049195421f1ac2a615530569beab3f786112a9039d0d`. Dateiinhalte einzeln gegen ihre Git-Blobs des APK-Quellstands geprüft.
 - Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, identisch zur bisherigen APK. Versionscode 1100, Schema 1, unveränderte Paketkennung und Speicherdatei, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft.
-- Neue unabhängige GitHub-Kopie unter `/workspace/timber-restore-11`. Erstimport, vollständige Headless-Suite und anschließend separate OpenGL-Prüfung. Wiederherstellungs- und Downloadabschluss wird im externen Prüfbericht festgehalten.
+- Neue unabhängige GitHub-Kopie unter `/workspace/timber-restore-11`. Erstimport, vollständige Headless-Suite und anschließend separate OpenGL-Prüfung. Alle 4.476 Headless-Prüfungen, der erste-Haus-Verlauf, Hauptszenenstart und die 23 OpenGL-Prüfungen bestehen auch dort. APK, Quell-ZIP und Benno-Vorschau vom unveränderlichen Tag `v0.11.0-benno` vollständig per HTTPS mit HTTP 200 zurückgeladen; alle SHA256 stimmen mit den Originaldateien sowie den Dateien aus der GitHub-Wiederherstellung überein. Bericht: `download-verification-11.json`.
 
 ## Historischer Prüfbericht 0.10
 

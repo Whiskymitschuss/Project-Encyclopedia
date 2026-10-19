@@ -1,0 +1,23 @@
+[
+  {
+    "file": "Timber-Loot-Tycoon-v0.11-test.apk",
+    "bytes": 58102026,
+    "http_status": 200,
+    "sha256": "3588bc86c9f0364438e171aaed11e3dd8b9223bfe90c8d1add7a954c11b2997a",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.11.0-benno/releases/Timber-Loot-Tycoon-v0.11-test.apk"
+  },
+  {
+    "file": "Timber-Loot-Tycoon-v0.11-source.zip",
+    "bytes": 2580510,
+    "http_status": 200,
+    "sha256": "6f6e72f015b2900f377f049195421f1ac2a615530569beab3f786112a9039d0d",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.11.0-benno/releases/Timber-Loot-Tycoon-v0.11-source.zip"
+  },
+  {
+    "file": "preview-benno.png",
+    "bytes": 381927,
+    "http_status": 200,
+    "sha256": "7a6844dd9fcc96dad3660006d05846f7e54e8c60b1d849d5e1c0639a71c7ed3e",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.11.0-benno/docs/preview-benno.png"
+  }
+]
