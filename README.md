@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Die erste Kleinstadt 0.13
+# Timber Loot Tycoon — Ein lebendiges Waldtal 0.14
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.13-test.apk](releases/Timber-Loot-Tycoon-v0.13-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.14-test.apk](releases/Timber-Loot-Tycoon-v0.14-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -19,7 +19,20 @@ python3 scripts/backup.py
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
 
-## Neu in 0.13 — Vom Holzlager zur Kleinstadt
+## Neu in 0.14 — Ein lebendiges Waldtal
+
+- Das flache rechteckige Landschaftsbrett und die harten Biomplatten sind durch zusammenhängendes Gelände mit weichen Farbwechseln, unregelmäßigem Waldrand, Hügeln und flachen Ufern ersetzt. Ein geschwungener Bach, ein kleiner See, eine Holz-Fußgängerbrücke, ein Picknickplatz und ein Aussichtsturm geben dem Tal eigene Orte. Die weiterhin bebaubaren Flächen bleiben eben; gespeicherte Häuser und Straßen werden nicht versetzt.
+- Zusätzlich bis zu 2.500 rein dekorative Bäume, Büsche, Steine und Blumengruppen. Sechs gemeinsame instanzierte Geometrien halten die Zahl der Zeichenaufrufe klein; Stämme haben ihre eigene Holzfarbe. Die 1.000 wirtschaftlich nutzbaren, nachwachsenden Bäume bleiben erhalten und bekommen unregelmäßige Waldformen und unterschiedliche Baumkronen.
+- Vegetation verschwindet automatisch aus Gebäuden, Baustellen, Straßen, Haltestellen und Förderstrecken. Ein Haus in einer Wiese zu platzieren kostet dafür nichts zusätzlich. Deko erhöht weder Holzvorräte noch Arbeiterleistung und verändert keine Baukosten.
+- Straßenränder erhalten kleine Pflanzungen. Wenig genutzte feste Zufahrten erscheinen als Schotterwege, belebte Straßen als Asphalt; Linien- und Lieferstrecken bleiben befahrbar. Die bestehenden Straßengraphen und eigenen Strecken sind unverändert. Leere Grundstücke tragen keine großen dauerhaften Farbplatten mehr.
+- Kamerafehler beim starken Herauszoomen behoben: Die Kamera bewegt sich mit dem Zoom ausreichend zurück, sodass sie den Vordergrund nicht abschneidet. Die Übersicht bleibt näher am Ort; volle Welt und freie Zoomstufen bleiben erreichbar. Dünnere Nebelschicht, lesbareres Abendlicht und ruhigere Bodenfarben.
+- Akkumodus zeichnet nur 45 % der zusätzlichen Landschaftsdekoration. Platzierung, Wirtschaft, alte Spielstände und Schema 1 bleiben erhalten. Android-Versionscode 1400 und derselbe Testschlüssel wie zuvor.
+
+![Überarbeitete Landschaft; aufgebauter Demonstrationsstand](docs/preview-valley-overview.png)
+
+![Bach und Fußgängerbrücke im Tal; aufgebauter Demonstrationsstand](docs/preview-valley-river.png)
+
+## Weiterhin aus 0.13 — Vom Holzlager zur Kleinstadt
 
 - Zusammenhängendes Land von 640 × 560 Einheiten. Nach den drei bisherigen Regionen und 20 Bewohnern erschließt du Ost- und Westviertel: jeweils zwölf zusätzliche Hausgrundstücke, acht weitere Industriebetriebe und eine Zufahrt. Insgesamt bis zu 36 Stadtgrundstücke und 40 Betriebe; bisherige Positionen bleiben erhalten.
 - Eigene Asphaltstraßen und Fußwege: Start und Ziel auf der Karte wählen, rechtwinklige Kurve wechseln, Kosten prüfen und bestätigen. Straßen schließen am vorhandenen Netz an; Gebäude, Baustellen, nicht erschlossene Viertel und Wasser werden geprüft. Abbrechen ist kostenlos. Strecken bleiben im Spielstand und lassen sich ohne Erstattung entfernen; aktive Busverbindungen sind geschützt.
@@ -83,7 +96,7 @@ Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifi
 
 ## Spielumfang
 
-- Zusammenhängende Landschaft von 640 × 560 Einheiten, zehn Biome, 1.000 instanzierte Bäume, zehn sichtbare Bossbäume. Straßen und Projektzufahrten bleiben auf Land. Bäume wachsen nach; Holzfäller sind in begrenzter Anzahl sichtbar.
+- Zusammenhängendes natürliches Gelände um die unveränderten Bauflächen von 640 × 560 Einheiten, zehn Biome, 1.000 instanzierte Bäume, zehn sichtbare Bossbäume. Straßen und Projektzufahrten bleiben auf Land. Bäume wachsen nach; Holzfäller sind in begrenzter Anzahl sichtbar.
 - Bis zu 40 frei platzierbare Industriebetriebe, mehrere Betriebe desselben Typs und unabhängige Upgrades. Sammelstation, Lager, Hütten, Sägewerke, Trocknung, Möbelfabrik, Garage, Forschung, Fertighauswerk, Tischlerei, Pellet-, Papier- und Designmöbel-Produktion.
 - Echte Ressourcenbilanzen, faire gemeinsame Materialzuteilung, sichtbare laufende Fördergüter und Sägen, Bauzeit, Gerüste und Kräne. Bestehende Betriebe produzieren während Upgrades weiter.
 - Bis zu 36 Stadtgrundstücke in drei Regionen und zwei zusätzlichen Vierteln. Zwölf Gebäudetypen: Holzhaus, Landhaus, Laden, Wohnhaus, Villa, Hotel, Büros, Nachtclub, Park, Schule, Klinik, Feuerwehr. Bis Stufe zehn, Miete, Bewohner und öffentliche Boni.
@@ -108,9 +121,9 @@ Die automatisierte Progressionsprüfung erreicht das erste Haus aus einem frisch
 
 ## Prüfung und Grenzen
 
-`bash scripts/test.sh` verwendet temporäre Spielstände: 220 Regelprüfungen, ein frischer Verlauf bis zum ersten Haus, 4.139 Szenen-/Geometrieprüfungen, 56 Platzierungs-/Tutorialprüfungen und 42 Prüfungen der offenen Produktion, Schattenumschaltung und Bildschirmaufteilung sowie 23 Begleiter- und 30 Alltagsszenenprüfungen sowie 216 Stadt-/Straßen-/Busprüfungen und ein abschließender Headless-Start. Eine zusätzliche OpenGL-Prüfung testet die sieben wirklich gerenderten 3D-Symbole, Transparenz, Beleuchtung, getrennte Szenen, Druckzustand und erneutes Zeichnen nach Rückkehr aus dem Hintergrund (23 Prüfungen einschließlich 3D-Biber und sichtbarer Winkeanimation). [Prüfbericht](docs/VALIDATION.md). Die Bilder unter `docs/` stammen aus dem Spiel; die Stadtansicht verwendet ausdrücklich einen nur für das Bild aufgebauten Demonstrationsstand.
+`bash scripts/test.sh` verwendet temporäre Spielstände: 220 Regelprüfungen, ein frischer Verlauf bis zum ersten Haus, 4.092 Szenen-/Geometrieprüfungen, 56 Platzierungs-/Tutorialprüfungen und 42 Prüfungen der offenen Produktion, Schattenumschaltung und Bildschirmaufteilung sowie 23 Begleiter- und 30 Alltagsszenenprüfungen sowie 216 Stadt-/Straßen-/Busprüfungen, 177 Landschaftsprüfungen und ein abschließender Headless-Start. Eine zusätzliche OpenGL-Prüfung testet die sieben wirklich gerenderten 3D-Symbole, Transparenz, Beleuchtung, getrennte Szenen, Druckzustand und erneutes Zeichnen nach Rückkehr aus dem Hintergrund (23 Prüfungen einschließlich 3D-Biber und sichtbarer Winkeanimation). Neun zusätzliche OpenGL-Prüfungen prüfen tatsächliche Landschaftsfarben, sichtbares Wasser, den gerenderten Pflanzenpuffer nach Verschieben eines Gebäudes und den Vordergrund bei weitem Zoom. [Prüfbericht](docs/VALIDATION.md). Die Bilder unter `docs/` stammen aus dem Spiel; die Stadtansicht verwendet ausdrücklich einen nur für das Bild aufgebauten Demonstrationsstand.
 
-Noch offen: reale Android-Gerätetests für Touch, Safe Area, Hintergrund, Temperatur und Akku; 50-Stunden-Balancing, Barrierefreiheit, Release-Signierung, iOS und Store-Abnahme. Immobilienverkauf/Umbau, frei formbares Wasser/Gelände, Autobahnen, vollständige Bahn-/Schifffahrt und eigene Musik pro Biom sind noch nicht enthalten. Busse fahren berechnete Routen mit vereinfachter Einwohnernachfrage, ohne vollständige Kollisions-/Stausimulation. Die sichtbaren Transportstufen fahren den bisherigen gemeinsamen Export-Rundkurs; sie routen noch keine individuellen Warenaufträge. Förderbänder nutzen weiterhin gemeinsame Ressourcenpuffer. Geldscheine und einige seltene Baupläne haben noch keinen eigenen Ausgabepfad. Großprojekte verwenden Standortmodelle; es gibt noch keinen echten Hafenverkehr. Keine Werbung, In-App-Käufe oder Cloud-Spielstandsynchronisierung.
+Noch offen: reale Android-Gerätetests für Touch, Safe Area, Hintergrund, Temperatur und Akku; 50-Stunden-Balancing, Barrierefreiheit, Release-Signierung, iOS und Store-Abnahme. Immobilienverkauf/Umbau, frei vom Spieler formbares Wasser/Gelände, Autobahnen, vollständige Bahn-/Schifffahrt und eigene Musik pro Biom sind noch nicht enthalten. Busse fahren berechnete Routen mit vereinfachter Einwohnernachfrage, ohne vollständige Kollisions-/Stausimulation. Die sichtbaren Transportstufen fahren den bisherigen gemeinsamen Export-Rundkurs; sie routen noch keine individuellen Warenaufträge. Förderbänder nutzen weiterhin gemeinsame Ressourcenpuffer. Geldscheine und einige seltene Baupläne haben noch keinen eigenen Ausgabepfad. Großprojekte verwenden Standortmodelle; es gibt noch keinen echten Hafenverkehr. Keine Werbung, In-App-Käufe oder Cloud-Spielstandsynchronisierung.
 
 ## Sicherung
 

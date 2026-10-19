@@ -40,6 +40,10 @@ var town_layer: TownWorld
 var road_anchor: Variant = null
 var road_endpoint: Variant = null
 var road_horizontal = true
+var landscape: ValleyLandscape
+var base_streets: Node3D
+var biome_labels: Array = []
+var boss_labels: Array = []
 
 func _ready() -> void:
  RenderingServer.set_default_clear_color(Color("53bbd3"))
@@ -64,7 +68,7 @@ func _ready() -> void:
  add_child(sun)
  camera = Camera3D.new()
  camera.projection = Camera3D.PROJECTION_ORTHOGONAL
- camera.far = 1000
+ camera.far = 2400
  add_child(camera)
  set_camera()
  scenery = Node3D.new()
@@ -100,47 +104,80 @@ func _ready() -> void:
  add_child(life)
 
 func build_landscape() -> void:
- Models.box(scenery,Vector3(1100,1,1100),Vector3(0,-5,0),Color("38b4cf"))
- Models.box(scenery,Vector3(640,5,560),Vector3(0,-2.5,5),Color("b3a06d"))
- Models.box(scenery,Vector3(636,0.7,556),Vector3(0,0,5),Color("64d078"))
+ landscape=ValleyLandscape.new()
+ landscape.world=self
+ scenery.add_child(landscape)
+ landscape.build()
  for i in 10:
-  var p = Catalog.biome_position(i)
-  Models.box(scenery,Vector3(84,0.35,76),p+Vector3(0,0.5,0),Color(Catalog.BIOMES[i].ground))
-  Models.label(scenery,Catalog.BIOMES[i].name,p+Vector3(0,2,-32),30)
-  var rock = Models.cylinder(scenery,3,4,p+Vector3(25,1.5,24),Color("b4b7a2"),1.3)
-  rock.rotation.z = 0.2
- # Distant groves frame the larger landscape without adding per-tree processing.
- for side in [-1,1]:
-  for row in 4:
-   for col in 8:
-    var p=Vector3(side*(210+col*11),0,200+row*13)
-    Models.cylinder(scenery,0.55,3.2,p+Vector3(0,1.8,0),Color("a97e4c"))
-    Models.cylinder(scenery,3.4,8,p+Vector3(0,6,0),Color("3baf75"),0.2)
- # The entire connected road network stays at least 15 units inside land.
- for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
- for z in [-160,-60,-28,4,36,68,100,132,164]: road(Vector3(0,0.72,z),Vector3(164,0.25,7),false)
- for project in Catalog.PROJECTS:
-  var side = signf(project.position.x)
-  road(Vector3(side*132,0.72,Catalog.project_road_z(project)),Vector3(104,0.25,7),false)
- for z in [-160,164]:
-  for x in [-80,80]:
-   Models.box(scenery,Vector3(1,1,1),Vector3(x,1.2,z),Color("d6d8bc"))
- for i in 12:
-  var p = Catalog.home_position(i)
-  Models.box(scenery,Vector3(19,0.12,23),p+Vector3(0,0.5,0),Color("8cd784"))
+  var p=Catalog.biome_position(i)
+  var label=Models.label(scenery,Catalog.BIOMES[i].name,p+Vector3(0,2,-32),30)
+  biome_labels.append(label)
  for x in [-76,76]:
   for z in range(-145,165,24):
    Models.cylinder(scenery,0.15,5,Vector3(x,3,z),Color("7c8d80"))
-   var lamp = Models.box(scenery,Vector3(1.2,0.4,1.2),Vector3(x,5.6,z),Color("eddda5"))
-   lamp.material_override = Models.material(Color("f5d797"),true)
+   var lamp=Models.box(scenery,Vector3(1.2,0.4,1.2),Vector3(x,5.6,z),Color("eddda5"))
+   lamp.material_override=Models.material(Color("f5d797"),true)
  Models.bake(scenery)
+ base_streets=Node3D.new()
+ add_child(base_streets)
 
-func road(at: Vector3, size: Vector3, vertical: bool) -> void:
- Models.box(scenery,size+Vector3(1.8,-0.05,1.8),at-Vector3(0,0.1,0),Color("c8cfb4"))
- Models.box(scenery,size,at,Color("7e9992"))
+func rebuild_streets() -> void:
+ clear_children(base_streets)
+ for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
+ for z in Placement.ROADS:
+  var paved=z in [-28,68,164]
+  for i in Game.state.buildings.size():
+   if absf(Game.building_position(i).z-z)<20: paved=true
+  for i in Game.state.homes.size():
+   if absf(Game.home_position(i).z-z)<20: paved=true
+  for line in Game.state.town.lines:
+   var plan=Game.transit_plan(line.stops)
+   if plan.is_empty(): continue
+   for leg in plan.legs:
+    for point in leg.points:
+     if absf(point.y-z)<1: paved=true; break
+  road(Vector3(0,0.72,z),Vector3(164,0.25,7),false,paved)
+ for project in Catalog.PROJECTS:
+  var side=signf(project.position.x)
+  road(Vector3(side*132,0.72,Catalog.project_road_z(project)),Vector3(104,0.25,7),false,int(Game.state.projects.get(str(Catalog.PROJECTS.find(project)),0))>0)
+  Models.cylinder(base_streets,4.7,0.22,Vector3(side*184,0.73,Catalog.project_road_z(project)),Color("b9af8b"))
+ for x in [-80,0,80]:
+  for z in [-172,180]:
+   Models.cylinder(base_streets,4.6,0.24,Vector3(x,0.72,z),Color("697f80"))
+   for side in [-1,1]:
+    Models.box(base_streets,Vector3(0.3,1.0,0.3),Vector3(x+side*3.7,1.3,z),Color("d9c397"))
+ # Small planted verges and benches soften the working street grid.
+ for x in [-73,73]:
+  for z in [-136,-104,-72,-40,-8,24,56,88,120,152]:
+   var point=Vector2(x,z)
+   var clear=true
+   for i in Game.state.buildings.size():
+    if Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))).grow(2.5).has_point(point): clear=false
+   for i in Game.state.homes.size():
+    if Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).grow(2.5).has_point(point): clear=false
+   for job in Game.state.jobs:
+    if job.type not in ["building","home"]: continue
+    var fallback=Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.get("slot",0)))
+    if Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(2.5).has_point(point): clear=false
+   for record in Game.state.town.roads:
+    for c in record.cells:
+     if Vector2(TownRules.cell(c)).distance_to(point)<6: clear=false
+   for stop in Game.state.town.stops:
+    if Vector2(TownRules.cell(stop.cell)).distance_to(point)<9: clear=false
+   if not clear: continue
+   Models.box(base_streets,Vector3(2.3,0.25,3.5),Vector3(x,0.55,z),Color("c5c9a2"))
+   Models.cylinder(base_streets,0.18,2.5,Vector3(x,1.9,z),Color("a48152"))
+   var crown=Models.cylinder(base_streets,1.35,3.2,Vector3(x,4,z),Color("78aa5a"),0.45)
+   crown.mesh.radial_segments=8
+ Models.bake(base_streets)
+
+func road(at: Vector3, size: Vector3, vertical: bool, paved: bool = true) -> void:
+ Models.box(base_streets,size+Vector3(1.5,-0.05,1.5),at-Vector3(0,0.1,0),Color("bdc1a0") if paved else Color("a9b88a"))
+ Models.box(base_streets,size,at,Color("697f80") if paved else Color("b9af8b"))
+ if not paved: return
  var length = size.z if vertical else size.x
  for i in range(-int(length/2)+3,int(length/2)-2,9):
-  Models.box(scenery,Vector3(0.25,0.03,3) if vertical else Vector3(3,0.03,0.25),at+Vector3(0,0.15,i) if vertical else at+Vector3(i,0.15,0),Color("e9dfb3"))
+  Models.box(base_streets,Vector3(0.22,0.03,2.7) if vertical else Vector3(2.7,0.03,0.22),at+Vector3(0,0.15,i) if vertical else at+Vector3(i,0.15,0),Color("f2e4b5"))
 
 func build_forest() -> void:
  var random = RandomNumberGenerator.new()
@@ -150,12 +187,22 @@ func build_forest() -> void:
   var records = []
   var batch_nodes = []
   for part in 3:
-   var mesh = CylinderMesh.new()
-   mesh.radial_segments = 6
-   mesh.rings = 1
-   mesh.bottom_radius = 0.45 if part == 0 else (2.3 if part == 1 else 1.8)
-   mesh.top_radius = 0.32 if part == 0 else 0.1
-   mesh.height = 3.0 if part == 0 else 4.5
+   var mesh: Mesh
+   if part>0 and biome in [1,4,6,8]:
+    var crown=SphereMesh.new()
+    crown.radial_segments=7
+    crown.rings=3
+    crown.radius=2.7 if part==1 else 2.0
+    crown.height=4.6
+    mesh=crown
+   else:
+    var pine=CylinderMesh.new()
+    pine.radial_segments=7
+    pine.rings=1
+    pine.bottom_radius=0.45 if part==0 else (2.5 if part==1 else 1.9)
+    pine.top_radius=0.32 if part==0 else 0.12
+    pine.height=3.0 if part==0 else 4.5
+    mesh=pine
    var mm = MultiMesh.new()
    mm.transform_format = MultiMesh.TRANSFORM_3D
    mm.use_colors = true
@@ -169,7 +216,10 @@ func build_forest() -> void:
    add_child(node)
    batch_nodes.append(node)
   for i in 100:
-   var point = center+Vector3(random.randf_range(-35,35),0,random.randf_range(-29,29))
+   var angle=random.randf_range(0,TAU)
+   var radius=sqrt(random.randf())
+   var fringe=0.92+sin(angle*3.0+biome)*0.08
+   var point=center+Vector3(cos(angle)*37*radius*fringe,0,sin(angle)*32*radius*fringe)
    # Keep the north road and the center boulevards clear.
    if absf(point.x-80)<8: point.x = 90
    if absf(point.x+80)<8: point.x = -90
@@ -191,7 +241,7 @@ func build_forest() -> void:
   add_child(boss)
   Models.cylinder(boss,1.5,7,Vector3(0,3.5,0),Color("99714b"))
   Models.cylinder(boss,6,11,Vector3(0,10,0),Color(Catalog.BIOMES[biome].tree).lightened(0.18),0.3)
-  Models.label(boss,"BOSS",Vector3(0,17,0),35)
+  boss_labels.append(Models.label(boss,"BOSS",Vector3(0,17,0),35))
 
 func clear_children(parent: Node) -> void:
  for child in parent.get_children():
@@ -200,6 +250,7 @@ func clear_children(parent: Node) -> void:
 
 func rebuild() -> void:
  if world_buildings == null: return
+ rebuild_streets()
  clear_children(world_buildings)
  moving_goods.clear()
  machines.clear()
@@ -264,6 +315,7 @@ func rebuild() -> void:
  network = ConveyorNetwork.new()
  add_child(network)
  network.build()
+ if landscape!=null: landscape.refresh()
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation)
@@ -371,6 +423,7 @@ func sync_actors() -> void:
   resident.pace = 0.55
   actors.add_child(resident)
  refresh_forest_clearance()
+ if landscape!=null: landscape.refresh()
 
 func make_weather() -> void:
  weather = GPUParticles3D.new()
@@ -400,13 +453,17 @@ func _process(delta: float) -> void:
   if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
  sync_actors()
  sun.shadow_enabled=Game.state.quality>0
+ sun.directional_shadow_max_distance=maxf(180,zoom*1.8)
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- sun.light_energy = 0.22+daylight*0.55
- environment_resource.ambient_light_energy = 0.22+daylight*0.26
+ sun.light_energy = 0.24+daylight*0.58
+ sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
+ environment_resource.ambient_light_energy = 0.34+daylight*0.12
+ for label in biome_labels: label.visible=zoom<300
+ for label in boss_labels: label.visible=zoom<180
  environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
  environment_resource.fog_enabled = int(Game.state.weather)==3 and Game.state.quality>0
- environment_resource.fog_light_color = Color("c6d4c1")
- environment_resource.fog_density = 0.0007
+ environment_resource.fog_light_color = Color("9ebdb5")
+ environment_resource.fog_density = 0.0002
  sun.rotation_degrees.x = -25-daylight*40
  weather.position = focus+Vector3(0,36,0)
  weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0
@@ -483,7 +540,7 @@ func set_camera() -> void:
  focus.x = clampf(focus.x,-300,300)
  focus.z = clampf(focus.z,-245,245)
  camera.size = zoom
- camera.position = focus+Vector3(90,120,130)
+ camera.position = focus+Vector3(90,120,130).normalized()*maxf(198.5,zoom*1.4)
  camera.look_at(focus)
 
 func focus_at(point: Vector3) -> void:
@@ -496,7 +553,7 @@ func camera_action(action: String) -> void:
   "+": zoom = maxf(40,zoom*0.82)
   "−": zoom = minf(650,zoom*1.22)
   "home": focus = Game.building_position(mini(1,Game.state.buildings.size()-1)); zoom = 96
-  "world": focus = Vector3.ZERO; zoom = 590
+  "world": focus = Vector3(0,0,20); zoom = 390
  set_camera()
 
 func _unhandled_input(event: InputEvent) -> void:

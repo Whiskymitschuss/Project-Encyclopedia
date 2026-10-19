@@ -17,8 +17,7 @@ func rebuild() -> void:
   draw_strip(roads,Vector3(side*188,0.74,-160),Vector3(216,0.22,6),"asphalt")
   draw_strip(roads,Vector3(side*200,0.74,-6),Vector3(6,0.22,308),"asphalt")
   Models.label(self,"Ostviertel" if i==0 else "Westviertel",Vector3(side*248,2,-148),36)
-  for plot in range(12+i*12,24+i*12):
-   Models.box(roads,Vector3(19,0.12,23),Catalog.home_position(plot)+Vector3(0,0.5,0),Color("8ed982"))
+
  for record in Game.state.town.roads:
   var cells=record.cells
   var start=TownRules.point(TownRules.cell(cells[0]))

@@ -2,7 +2,7 @@ class_name TownRules
 extends RefCounted
 
 const STEP = 4
-const TYPES = {"asphalt":{"name":"Straße","width":6.0,"price":7.0,"color":"718e91"},"path":{"name":"Fußweg","width":2.4,"price":2.0,"color":"d9bd88"}}
+const TYPES = {"asphalt":{"name":"Straße","width":6.0,"price":7.0,"color":"697f80"},"path":{"name":"Fußweg","width":2.4,"price":2.0,"color":"d9bd88"}}
 
 static func initial() -> Dictionary:
  return {"districts":0,"roads":[],"stops":[],"lines":[],"next_stop":1,"next_line":1,"rent_auto":false,"rent_manager":false,"rent_collected":0.0,"trips_total":0}

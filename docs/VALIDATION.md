@@ -1,3 +1,14 @@
+# Prüfung 0.14 — Ein lebendiges Waldtal
+
+- 220 Regel-, 4.092 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter-, 30 Alltagsszenen-, 216 Stadt- und 177 Landschaftsprüfungen: 4.856 Headless-Prüfungen. Weiterhin frischer erster-Haus-Verlauf nach 1.682 simulierten Sekunden und abschließender Hauptszenenstart. Die Szenenanzahl berücksichtigt die Positionen der neu verteilten 1.000 Bäume; die bisherigen Bedingungen wurden nicht entfernt.
+- Neue Landschaftsprüfung: tatsächlich gerendertes Gelände/Wasser, unveränderte Wirtschaft, flache alte und neue Bauflächen, Hügel, ausgesparter Bach und See, kontinuierliche Biomfarben, begrenzter fester Dekorationspool, freier Standort in einer Wiese, Vegetationsräumung beim echten Verschieben und Straßenbau, unveränderte Gebäudepositionen und eigener Akkumodus. Dekoration ersetzt keine nutzbaren Bäume.
+- 23 bestehende OpenGL-Prüfungen plus neun neue Grafikprüfungen: Farbverarbeitung, ein separat gerenderter echter instanzierter Laubbaum mit grüner statt schwarzer Krone, tatsächlicher Instanzpuffer vor/nach Verschieben, sichtbare Wasserpixel im Bach sowie gültiger Vordergrund bei weitem Zoom.
+- Der Kamerafehler wird bei 650 Einheiten Zoom mit 540×960 und 540×1170 geprüft: Auch die untere sichtbare Spielfläche liegt vor der Kamera und trifft den Boden. Das frühere flache Leerfeld unter der abgeschnittenen Landschaft wird damit gezielt abgedeckt.
+- OpenGL-Aufnahmen aus ausdrücklich aufgebautem Demonstrationsprofil: frischer Einstieg, Gesamtansicht, Industrie, Bach/Brücke und 19-Uhr-Nebel bei der alten weiten Zoomstufe. Spielstände des Nutzers werden nicht für Aufnahmen verwendet.
+- Wirtschaft, gespeicherte Gebäude und eigenes Straßennetz bleiben erhalten; feste Schotterzufahrten sind befahrbar. Bach, Picknickplatz und Aussichtsturm sind Landschaftselemente ohne neue Erträge oder Fahrlinien. Reale Android-Installation/Touch, Akku, Temperatur und Leistung dieser Version bleiben auf Hardware zu prüfen.
+
+## Historischer Prüfbericht 0.13
+
 # Prüfung 0.13 — Die erste Kleinstadt
 
 - 220 Regel-, 4.139 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter-, 30 Alltagsszenen- und 216 neue Stadtprüfungen: 4.726 Headless-Prüfungen. Dazu frischer erster-Haus-Verlauf nach 1.682 simulierten Sekunden und Hauptszenenstart.
