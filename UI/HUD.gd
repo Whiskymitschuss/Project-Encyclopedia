@@ -64,7 +64,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",26)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"REBUILD / 07",12,GOLD)
+ var edition = text(brand,"REBUILD / 07.1",12,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  money = text(top,"",23,GOLD)
  subtitle = text(top,"",13,MUTED)
@@ -205,8 +205,8 @@ func show_notice(message: String) -> void:
  toast_left = 5.0
 
 func update_stats() -> void:
- money.text = "%s MÜNZEN    ◆ %s    ▣ %s" % [Catalog.number(Game.state.coins),Game.state.diamonds,Game.state.tickets]
- subtitle.text = "%s · Rucksack %s/%s · Team %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),Game.state.workers]
+ money.text = "%s MÜNZEN    ◆ %s    ▣ %s" % [Catalog.number(Game.state.coins),int(Game.state.diamonds),int(Game.state.tickets)]
+ subtitle.text = "%s · Rucksack %s/%s · Team %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers)]
  supply.text = "HOLZ %s  →  BRETTER %s  →  TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),Game.state.trucks,int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
  mission_button.text = "MISSIONEN · Dein nächster Meilenstein"
  for m in Game.mission_definitions():
@@ -327,7 +327,8 @@ func building_menu() -> void:
  var d = Catalog.BUILDINGS[b.kind]
  modal_title.text = d.name.to_upper()
  var box = card("Stufe %s / %s" % [b.level,d.max],d.desc)
- dynamic_text(box,func(): return "Dieser Betrieb: %.2f Zyklen/s" % float(Game.flow.get("building:%s" % index,0)))
+ dynamic_text(box,func(): return Game.production_status(index))
+ if b.kind == "sawmill": text(box,"Sägespäne bleiben für Pellets und Papier im Lager. Ist der Puffer voll, werden nur neue überschüssige Sägespäne automatisch verkauft; die Bretterproduktion läuft weiter.",15,MUTED)
  text(box,"Ausbau: %s Münzen" % Catalog.number(Game.cost_for(b.kind,int(b.level)+1)),17,GOLD)
  button(box,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
  if Catalog.RECIPES.has(b.kind):
@@ -521,7 +522,7 @@ func confirm_prestige_menu() -> void:
 
 func market_menu() -> void:
  modal_title.text = "LAGER & VERKAUF"
- var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Automatische Verarbeitung hält bei aktivierter Baureserve kleine Materialbestände zurück.")
+ var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Automatische Verarbeitung hält bei aktivierter Baureserve kleine Materialbestände zurück. Überschüssige neue Sägespäne werden automatisch verkauft, damit das Sägewerk weiterarbeitet.")
  button(box,"Baureserve: AN" if Game.state.reserve else "Baureserve: AUS",func(): action(func(): Game.state.reserve = not Game.state.reserve))
  button(box,"Auto-Export: AN" if Game.state.auto_export else "Auto-Export: AUS",func(): action(func(): Game.state.auto_export = not Game.state.auto_export))
  for key in Catalog.RESOURCES:
@@ -538,4 +539,4 @@ func settings_menu() -> void:
  button(box,"JETZT SPEICHERN",func(): Game.save())
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.7.0 · Wiederaufbau\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.7.1 · Produktionskorrektur\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)

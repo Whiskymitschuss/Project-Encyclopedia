@@ -71,6 +71,55 @@ func run() -> void:
  check(close(Game.state.resources.sawdust,0.9),"Sawmill recovers sawdust")
  fresh()
  Game.state.workers = 0
+ Game.state.resources.wood = 20.0
+ Game.state.resources.sawdust = Game.capacity()
+ Game.step(1)
+ check(close(Game.state.resources.boards,0.9),"Full sawdust buffer does not stop board production")
+ check(close(Game.state.resources.wood,18.2),"Overflow production consumes real wood")
+ check(close(Game.state.resources.sawdust,Game.capacity()),"Existing sawdust is preserved within capacity")
+ check(close(Game.state.coins,350.45),"Only newly overflowing sawdust is sold")
+ Game.state.resources.boards = Game.capacity()
+ var stopped_wood = Game.state.resources.wood
+ var stopped_coins = Game.state.coins
+ Game.step(1)
+ check(close(Game.state.resources.wood,stopped_wood) and close(Game.state.coins,stopped_coins),"Full main-product buffer still prevents waste and free overflow income")
+ check("Lager voll" in Game.production_status(1),"Blocked main output has a visible explanation")
+ fresh()
+ Game.state.workers = 0
+ Game.state.resources.wood = 20.0
+ Game.state.resources.sawdust = Game.capacity()-0.2
+ Game.step(1)
+ check(close(Game.state.coins,350.35),"Partially full buffer sells exactly the overflow")
+ fresh()
+ Game.state.workers = 0
+ Game.state.resources.wood = 20.0
+ Game.state.resources.sawdust = Game.capacity()
+ Game.state.buildings.append({"kind":"pellet","level":1,"paused":false})
+ Game.step(1)
+ check(close(Game.state.resources.sawdust,Game.capacity()-0.6),"Pellet consumption makes space before overflow is sold")
+ check(close(Game.state.coins,350.0),"No overflow sale when downstream processing creates enough space")
+ fresh()
+ Game.state.coins = 329.0
+ Game.state.tool = 5
+ Game.state.workers = 8
+ Game.state.trucks = 3
+ Game.state.buildings[1].level = 6
+ Game.state.buildings[2].level = 4
+ for kind in ["kiln","furniture"]: Game.state.buildings.append({"kind":kind,"level":2,"paused":false})
+ Game.state.resources.wood = Game.capacity()
+ Game.state.resources.sawdust = Game.capacity()
+ var legacy = JSON.parse_string(JSON.stringify(Game.snapshot()))
+ Game.restore(legacy)
+ check(Game.state.resources.sawdust==2500,"Legacy full warehouse loads without resetting the player")
+ Game.simulate(180)
+ check(Game.state.exported>0 and Game.state.coins>329,"Legacy stalled company resumes complete wood-to-export chain")
+ check(Game.state.tool==5 and Game.state.workers==8 and Game.state.trucks==3,"Progress and equipment survive the production fix")
+ var recovered = Game.snapshot()
+ Game.restore(legacy)
+ for i in 180: Game.step(1)
+ check(Game.state.resources==recovered.resources and close(Game.state.coins,recovered.coins),"Overflow recovery works identically online and offline")
+ fresh()
+ Game.state.workers = 0
  Game.state.reserve = false
  Game.state.buildings.append({"kind":"kiln","level":1,"paused":false})
  Game.state.buildings.append({"kind":"furniture","level":1,"paused":false})

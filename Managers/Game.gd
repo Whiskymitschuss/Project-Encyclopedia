@@ -47,7 +47,8 @@ func _ready() -> void:
 func restore(saved: Dictionary) -> void:
  state = initial_state()
  for key in state:
-  if saved.has(key): state[key] = saved[key]
+  if saved.has(key):
+   state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
  for key in Catalog.RESOURCES:
   if not state.resources.has(key): state.resources[key] = 0.0
 
@@ -140,6 +141,21 @@ func reserve_for(key: String) -> float:
  if not state.reserve: return 0.0
  return {"boards":10.0,"dry":5.0,"furniture":4.0,"walls":2.0,"roofs":2.0,"parts":2.0,"paper":2.0}.get(key,0.0)
 
+func production_status(index: int) -> String:
+ if index < 0 or index >= state.buildings.size(): return ""
+ var building = state.buildings[index]
+ if not Catalog.RECIPES.has(building.kind): return "Betriebsbereit"
+ if building.get("paused",false): return "Pausiert · Produktion fortsetzen"
+ var recipe = Catalog.RECIPES[building.kind]
+ for key in recipe.out:
+  if key not in recipe.get("overflow_sell",[]) and float(state.resources[key]) >= capacity()-0.0001:
+   return "%s-Lager voll · verkaufen oder weiterverarbeiten" % Catalog.RESOURCES[key]
+ for key in recipe["in"]:
+  if float(state.resources[key]) <= reserve_for(key)+0.0001:
+   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," (Baureserve geschützt)" if reserve_for(key)>0 else ""]
+ if float(flow.get("building:%s" % index,0))>0: return "Läuft · %.2f Zyklen/s" % float(flow["building:%s" % index])
+ return "Bereit · startet mit dem nächsten Produktionstakt"
+
 func step(delta: float) -> void:
  state.elapsed += delta
  state.time = fmod(float(state.time) + delta / 60.0,24.0)
@@ -175,6 +191,7 @@ func step(delta: float) -> void:
   for key in recipe["in"]:
    fraction = minf(fraction,maxf(0.0,float(state.resources[key])-reserve_for(key))/maxf(float(demand[key]),0.0001))
   for key in recipe.out:
+   if key in recipe.get("overflow_sell",[]): continue
    fraction = minf(fraction,(capacity()-float(state.resources[key]))/maxf(float(output_demand[key]),0.0001))
   var cycles = float(proposal.cycles)*maxf(0,fraction)
   for key in recipe["in"]: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
@@ -182,7 +199,15 @@ func step(delta: float) -> void:
   flow[proposal.kind] = float(flow.get(proposal.kind,0))+cycles/maxf(delta,0.001)
   flow["building:%s" % proposal.index] = cycles/maxf(delta,0.001)
  for key in consumed: state.resources[key] = maxf(0,float(state.resources[key])-float(consumed[key]))
- for key in produced: add_resource(key,float(produced[key]))
+ for key in produced:
+  var amount = float(produced[key])
+  var excess = maxf(0.0,amount-maxf(0.0,capacity()-float(state.resources[key])))
+  add_resource(key,amount)
+  # Sawdust is a recoverable by-product, never a reason to stop sawing.
+  # Sell only overflow; keep all existing stock for pellets and paper.
+  if key == "sawdust" and excess > 0:
+   earn(excess*float(Catalog.PRICES.sawdust)*multiplier()*boost("money"))
+   flow["sawdust_sold"] = excess/maxf(delta,0.001)
  if state.auto_export:
   var export_reserve = reserve_for("furniture")+(4.0 if level("design")>0 else 0.0)
   var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),int(state.trucks)*level("market")*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)

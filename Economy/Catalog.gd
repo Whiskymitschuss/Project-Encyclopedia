@@ -19,7 +19,7 @@ const BUILDINGS = {
  "paper":{"name":"Papierfabrik","cost":6000,"max":25,"color":"76b7bc","desc":"3 Holz + 3 Sägespäne → 2 Papier"},
  "design":{"name":"Design-Manufaktur","cost":12000,"max":25,"color":"ac92d2","desc":"2 Möbel + 2 Papier + 1 Bauelement → Designmöbel"}}
 const RECIPES = {
- "sawmill":{"in":{"wood":2.0},"out":{"boards":1.0,"sawdust":1.0},"speed":0.9},
+ "sawmill":{"in":{"wood":2.0},"out":{"boards":1.0,"sawdust":1.0},"speed":0.9,"overflow_sell":["sawdust"]},
  "kiln":{"in":{"boards":2.0},"out":{"dry":1.0},"speed":0.42},
  "furniture":{"in":{"dry":2.0,"boards":1.0},"out":{"furniture":1.0},"speed":0.2},
  "prefab":{"in":{"dry":4.0,"boards":2.0},"out":{"walls":1.0,"roofs":1.0},"speed":0.06},
