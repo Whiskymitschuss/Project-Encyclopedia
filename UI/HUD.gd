@@ -65,44 +65,53 @@ func _ready() -> void:
  header.offset_left = 14
  header.offset_right = -14
  header.offset_top = 14
- header.offset_bottom = 138
+ header.offset_bottom = 108
  header.add_theme_stylebox_override("panel",style(INK,24))
  var top = VBoxContainer.new()
  header.add_child(top)
  var brand = row(top)
- var title = text(brand,"TIMBER LOOT",26)
+ var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"LIVING / 08",12,GOLD)
+ var edition = text(brand,"WORKSHOP / 09",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
- money = text(top,"",23,GOLD)
- subtitle = text(top,"",13,MUTED)
+ money = text(top,"",21,GOLD)
+ subtitle = text(top,"",12,MUTED)
  mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<5 else "missions"))
  mission_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  mission_button.offset_left = 14
  mission_button.offset_right = -14
- mission_button.offset_top = 146
- mission_button.offset_bottom = 192
+ mission_button.offset_top = 116
+ mission_button.offset_bottom = 156
+ mission_button.custom_minimum_size.y=40
+ mission_button.add_theme_font_size_override("font_size",14)
+ compact_style(mission_button,PANEL)
  var right = VBoxContainer.new()
  add_child(right)
  right.anchor_left = 1
  right.anchor_right = 1
  right.offset_left = -66
  right.offset_right = -14
- right.offset_top = 220
+ right.offset_top = 184
  for entry in [["+","+"],["−","−"],["⌂","home"],["▦","world"]]:
   var action = str(entry[1])
-  button(right,str(entry[0]),func(): camera_action.emit(action)).custom_minimum_size = Vector2(48,48)
+  var quick=button(right,str(entry[0]),func(): camera_action.emit(action))
+  quick.custom_minimum_size = Vector2(48,44)
+  compact_style(quick,PAPER)
+  quick.add_theme_color_override("font_color",INK)
  var bottom = VBoxContainer.new()
  add_child(bottom)
  bottom.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  bottom.offset_left = 14
  bottom.offset_right = -14
- bottom.offset_top = -220
- bottom.offset_bottom = -18
- bottom.add_theme_constant_override("separation",8)
+ bottom.offset_top = -184
+ bottom.offset_bottom = -12
+ bottom.add_theme_constant_override("separation",6)
  var strip = PanelContainer.new()
- strip.add_theme_stylebox_override("panel",style(INK,17))
+ var strip_style=style(INK,14)
+ strip_style.content_margin_top=6
+ strip_style.content_margin_bottom=6
+ strip.add_theme_stylebox_override("panel",strip_style)
  bottom.add_child(strip)
  var supply_row = row(strip)
  supply = text(supply_row,"",13,CREAM)
@@ -113,8 +122,9 @@ func _ready() -> void:
   if float(Game.state.resources.sawdust)>0: Game.sell("sawdust"); Game.save(true)
   else: open_menu("sawdust"))
  sawdust_button.size_flags_horizontal=Control.SIZE_SHRINK_END
- sawdust_button.custom_minimum_size=Vector2(108,54)
- sawdust_button.add_theme_font_size_override("font_size",14)
+ sawdust_button.custom_minimum_size=Vector2(100,40)
+ sawdust_button.add_theme_font_size_override("font_size",12)
+ compact_style(sawdust_button,PANEL)
  var actions = row(bottom)
  var chop = button(actions,"FÄLLEN",func():
   if Game.state.bag < Game.bag_capacity(): focus_requested.emit(Catalog.biome_position(int(Game.state.biome)))
@@ -123,18 +133,37 @@ func _ready() -> void:
  chop.add_theme_color_override("font_color",INK)
  button(actions,"Abliefern",func(): Game.deposit(); camera_action.emit("home"))
  button(actions,"Verkaufen",func(): open_menu("market"))
+ for control in actions.get_children():
+  control.custom_minimum_size.y=40
+  compact_style(control,GOLD if control==chop else PANEL)
  var navigation = row(bottom)
- for entry in [["Bauen","catalog"],["Team","team"],["Aufträge","contracts"],["Welt","world"],["Mehr","more"]]:
+ for entry in [["Bauen","catalog","factory"],["Team","team","team"],["Aufträge","contracts","orders"],["Welt","world","world"],["Mehr","more","more"]]:
   var tab = str(entry[1])
   var nav_button = button(navigation,str(entry[0]),func(): open_menu(tab))
-  nav_button.add_theme_font_size_override("font_size",14)
+  nav_button.text="\n"+str(entry[0])
+  nav_button.custom_minimum_size.y=60
+  nav_button.add_theme_font_size_override("font_size",12)
+  nav_button.add_theme_color_override("font_color",INK)
+  compact_style(nav_button,PAPER)
+  var icon=TextureRect.new()
+  icon.texture=load("res://UI/Icons.gd").get_icon(str(entry[2]))
+  icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+  icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+  icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
+  nav_button.add_child(icon)
+  icon.anchor_left=0.5
+  icon.anchor_right=0.5
+  icon.offset_left=-13
+  icon.offset_right=13
+  icon.offset_top=5
+  icon.offset_bottom=31
  toast = text(self,"",15,CREAM)
  toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
  toast.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  toast.offset_left = 20
  toast.offset_right = -20
- toast.offset_top = -272
- toast.offset_bottom = -224
+ toast.offset_top = -232
+ toast.offset_bottom = -188
  toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  toast.add_theme_color_override("font_shadow_color",INK)
  toast.add_theme_constant_override("shadow_offset_x",1)
@@ -155,8 +184,8 @@ func build_overlay() -> void:
  overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  overlay.offset_left = 14
  overlay.offset_right = -14
- overlay.offset_top = 204
- overlay.offset_bottom = -228
+ overlay.offset_top = 168
+ overlay.offset_bottom = -192
  overlay.add_theme_stylebox_override("panel",style(Color("125263"),22))
  var container = VBoxContainer.new()
  container.add_theme_constant_override("separation",12)
@@ -188,6 +217,15 @@ func text(parent: Node, value: String, font_size: int = 17, color: Color = CREAM
  label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  parent.add_child(label)
  return label
+
+func compact_style(control: Button, color: Color) -> void:
+ for entry in [["normal",color],["hover",color.lightened(0.08)],["pressed",color.darkened(0.10)]]:
+  var box=style(entry[1],12)
+  box.content_margin_top=5
+  box.content_margin_bottom=5
+  box.content_margin_left=8
+  box.content_margin_right=8
+  control.add_theme_stylebox_override(entry[0],box)
 
 func row(parent: Node) -> HBoxContainer:
  var node = HBoxContainer.new()
@@ -233,7 +271,7 @@ func update_stats() -> void:
  supply.text = "HOLZ %s → BRETTER %s → TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks),int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
  var fill = float(Game.state.resources.sawdust)/Game.capacity()
  sawdust_button.text="SPÄNEBOX\n%s %% · LEEREN" % int(fill*100)
- sawdust_button.add_theme_stylebox_override("normal",style(Color("e78a45") if fill>=0.8 else Color("258f8d"),13))
+ compact_style(sawdust_button,Color("e78a45") if fill>=0.8 else Color("258f8d"))
  mission_button.text = "MISSIONEN · Dein nächster Meilenstein"
  for m in Game.mission_definitions():
   if not Game.state.missions_claimed.has(m.id):
@@ -265,7 +303,7 @@ func open_menu(tab: String) -> void:
  current = tab
  scroll.scroll_vertical = 0
  overlay.show()
- overlay.offset_top=maxf(204,size.y-610) if tab=="building" else 204.0
+ overlay.offset_top=maxf(168,size.y-574) if tab=="building" else 168.0
  render_menu()
 
 func close_menu() -> void:
@@ -605,7 +643,7 @@ func settings_menu() -> void:
  button(box,"JETZT SPEICHERN",func(): Game.save())
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.8.0 · Living Industry\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.9.0 · Open Workshop\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -613,8 +651,8 @@ func build_placement_bar() -> void:
  placement_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  placement_panel.offset_left=14
  placement_panel.offset_right=-14
- placement_panel.offset_top=-388
- placement_panel.offset_bottom=-238
+ placement_panel.offset_top=-352
+ placement_panel.offset_bottom=-202
  placement_panel.add_theme_stylebox_override("panel",style(INK,20))
  var box=VBoxContainer.new()
  placement_panel.add_child(box)

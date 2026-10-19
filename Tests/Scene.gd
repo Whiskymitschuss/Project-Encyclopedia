@@ -31,7 +31,7 @@ func run() -> void:
    for project in Catalog.PROJECTS:
     if signf(point.x)==signf(project.position.x) and absf(point.x)>80:
      check(absf(point.z-project.position.z-13)>=7,"Forest leaves project approach clear")
- check(scene.world_buildings.get_child_count()>5,"Visible starter buildings and conveyor goods")
+ check(scene.world_buildings.get_child_count()>5,"Visible starter buildings and access paths")
  var hud = scene.hud
  for menu in ["industry","catalog","team","garage","city","contracts","world","more","missions","loot","research","boosters","prestige","market","settings","confirm_prestige","empire","planner"]:
   hud.open_menu(menu)
@@ -71,7 +71,7 @@ func run() -> void:
  scene.camera_action("world")
  check(scene.zoom>300,"World overview camera")
  scene.camera_action("home")
- check(scene.zoom==170,"Camera returns to industry")
+ check(scene.zoom==96,"Camera returns to industry")
  root.size = Vector2i(360,640)
  hud.open_menu("industry")
  await process_frame

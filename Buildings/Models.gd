@@ -81,6 +81,8 @@ static func log_pile(parent: Node3D, at: Vector3, count: int = 4) -> void:
   end.rotation.x = PI/2
 
 static func building(kind: String, level: int, city: bool = false) -> Node3D:
+ if not city and (Catalog.RECIPES.has(kind) or kind in ["station","warehouse"]):
+  return load("res://Buildings/FactoryModels.gd").create(kind,level)
  var root = Node3D.new()
  var definition = Catalog.HOMES[kind] if city else Catalog.BUILDINGS[kind]
  var tone = Color(definition.color)

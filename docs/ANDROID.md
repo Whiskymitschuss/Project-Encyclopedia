@@ -1,21 +1,21 @@
-# Android-Test 0.8.0
+# Android-Test 0.9.0
 
-Die Test-App heißt **Timber Loot**, Paket `com.whiskymitschuss.timberloot`. Sie benötigt Android 7.0 oder neuer und ein ARM64-/ARMv7-Gerät mit OpenGL ES 3.0. Die Version ist `0.8.0-test`, Versionscode 800. Keine Android-Berechtigungen, keine Werbung, keine Kontenpflicht.
+Die Test-App heißt **Timber Loot**, Paket `com.whiskymitschuss.timberloot`. Sie benötigt Android 7.0 oder neuer und ein ARM64-/ARMv7-Gerät mit OpenGL ES 3.0. Die Version ist `0.9.0-test`, Versionscode 900. Keine Android-Berechtigungen, keine Werbung, keine Kontenpflicht.
 
-## Update von 0.7
+## Update von 0.7 oder 0.8
 
-Die Paketkennung, der lokale Testsignaturschlüssel und der Speicherpfad bleiben gleich. Die neue APK als Update über die vorhandene App installieren; nicht deinstallieren und keine App-Daten löschen. Schema-1-Spielstände bleiben kompatibel. Vor Auslieferung wird die Signatur mit der bisherigen 0.7-APK verglichen. Ein echter Update-Installationsversuch auf einem Telefon bleibt offen.
+Die Paketkennung, der lokale Testsignaturschlüssel und der Speicherpfad bleiben gleich. Die neue APK als Update über die vorhandene App installieren; nicht deinstallieren und keine App-Daten löschen. Schema-1-Spielstände bleiben kompatibel. Vor Auslieferung wird die Signatur mit der bisherigen 0.8-APK verglichen. Ein echter Update-Installationsversuch auf einem Telefon bleibt offen.
 
 ## Installation nur mit dem Handy
 
-1. Auf GitHub `releases/Timber-Loot-Tycoon-v0.8-test.apk` öffnen. Bei einem privaten Repository mit dem berechtigten GitHub-Konto anmelden.
+1. Auf GitHub `releases/Timber-Loot-Tycoon-v0.9-test.apk` öffnen. Bei einem privaten Repository mit dem berechtigten GitHub-Konto anmelden.
 2. **Download raw file** bzw. das Download-Symbol wählen. Die APK vollständig herunterladen.
 3. Im Handy-Dateimanager **Downloads** öffnen und die APK antippen.
 4. Falls Android nachfragt, dem Browser/Dateimanager **Installation aus dieser Quelle** erlauben; danach **Installieren → Öffnen**.
 
 Eine GitHub-Seite ohne heruntergeladene APK lässt sich nicht installieren. Die älteren kaputten Chat-Dateilinks werden hierfür nicht benötigt. Handy-Einstellungen oder eine Neuinstallation von ChatGPT beheben den früheren Übertragungsfehler nicht.
 
-Die App beginnt mit einem neuen lokalen Profil. Der Wiederaufbau hat einen eigenen Spielstand und übernimmt keine verlorenen Cloud-/Browser-Spielstände.
+Eine erstmalige Installation beginnt mit einem neuen lokalen Profil; ein Update der vorhandenen 0.7/0.8-App erhält deren Spielstand. Verlorene ursprüngliche Cloud-/Browser-Spielstände können nicht übernommen werden.
 
 ## Build und Prüfung
 

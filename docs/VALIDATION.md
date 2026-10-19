@@ -1,3 +1,13 @@
+# Prüfung 0.9 — Open Workshop
+
+- Bestehende 220 Regel-, 4.135 Szenen-/Geometrie- und 56 Platzierungs-/Einführungsprüfungen unverändert im Umfang bestanden. Der frische Verlauf erreicht das erste Haus weiter nach 1.682 simulierten Sekunden ohne Zusatzressourcen.
+- 40 zusätzliche Werkstattprüfungen: tatsächlich leere Maschine steht; echte Umwandlung treibt das Sägeblatt an; sofortige Pause friert Werkzeug und Werkstück ein; Materialmangel stoppt; ein Bediener arbeitet passend zur Maschine; alle acht Produktionsarten werden auf Stufen 1/10/100 instanziiert, ohne Ressourcen zu ändern; HUD bleibt bei drei Bildschirmgrößen innerhalb der Zeichenfläche.
+- OpenGL-Bildausgabe unter Mesa/Xvfb: neuer Einstieg, offene Säge, Stadtansicht, Baukatalog, Platzierung und Willkommen aufgenommen. Die ausgebaute Welt und Materialvorräte sind ausschließlich ein Demonstrationsprofil des Capture-Skripts; kein bestehender Nutzerspielstand wird dafür geändert.
+- Schema 1, Speicherdatei und Paketkennung unverändert. Die Signaturprüfung der Update-APK und die externe Wiederherstellung werden im Auslieferungsbericht ergänzt. Reale Geräteinstallation, Touch und mobile Leistung dieser Version sind noch nicht geprüft.
+- Die Referenzbilder dienen als Richtung für offene Produktionsflächen und übersichtliche Bedienung. Modelle und Symbole sind eigene Geometrie/Vektoren. Es werden keine Screenshots oder Spielressourcen fremder Spiele in die App eingebunden.
+
+## Historischer Prüfbericht 0.8
+
 # Prüfung 0.8 — Living Industry
 
 - 220 Regelprüfungen: zusätzlich volles Sägespäne-Lager, korrekte Überlaufmenge, optionaler Verkauf, Weiterverarbeitung und Wiederanlauf einer gespeicherten Firma mit 2.500 Holz/Sägespänen. Restore kopiert Daten unabhängig, ohne den geladenen Ausgangsstand zu verändern.

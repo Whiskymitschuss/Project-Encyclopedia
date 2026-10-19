@@ -2,8 +2,8 @@ extends Node3D
 
 var camera: Camera3D
 var sun: DirectionalLight3D
-var focus = Vector3(0,0,-43)
-var zoom = 170.0
+var focus = Vector3(-21,0,-43)
+var zoom = 96.0
 var world_buildings: Node3D
 var actors: Node3D
 var tree_batches: Array = []
@@ -192,13 +192,15 @@ func rebuild() -> void:
   world_buildings.add_child(model)
   var saw = model.get_node_or_null("Saw")
   if saw != null: machines.append({"node":saw,"index":i})
+  var processing = model.get_node_or_null("Processing")
+  if processing != null: processing.building_index = i
   Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
   add_approach(model.position,int(b.get("rotation",0)))
   var fill = model.get_node_or_null("SawdustFill")
   if fill!=null:
    var label = Models.label(model,"Spänebox",Vector3(7.5,5.2,-3),28)
    bins.append({"fill":fill,"label":label})
-  if Catalog.RECIPES.has(b.kind):
+  if Catalog.RECIPES.has(b.kind) and not model.get_meta("open_factory",false):
    for j in 3:
     var good = Models.box(world_buildings,Vector3(2.2,0.55,1),model.position+Vector3(5,2.1,6+j*2),Color("e4b77a"))
     moving_goods.append({"mesh":good,"origin":model.position,"rotation":model.rotation,"phase":j/3.0,"index":i})
@@ -267,7 +269,19 @@ func sync_actors() -> void:
  if signature == actor_signature: return
  actor_signature = signature
  clear_children(actors)
- for i in mini(int(Game.state.workers),8 if Game.state.quality == 0 else 16):
+ var staff = mini(int(Game.state.workers),8 if Game.state.quality == 0 else 16)
+ var factories = []
+ for i in Game.state.buildings.size():
+  if Catalog.RECIPES.has(Game.state.buildings[i].kind): factories.append(i)
+ var operators = mini(mini(staff/3,factories.size()),2 if Game.state.quality==0 else 6)
+ for i in operators:
+  var worker = TimberWorker.new()
+  worker.role = "operator"
+  worker.production_index = factories[i]
+  worker.origin_point = Game.building_position(factories[i])+Basis.from_euler(Vector3(0,deg_to_rad(Game.state.buildings[factories[i]].get("rotation",0)),0))*Vector3(-3.5,0,2.7)
+  worker.facing = deg_to_rad(Game.state.buildings[factories[i]].get("rotation",0))+PI/2
+  actors.add_child(worker)
+ for i in staff-operators:
   var worker = TimberWorker.new()
   worker.origin_point = Catalog.biome_position(int(Game.state.biome))+Vector3((i%4)*5-10,0,18)
   worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
@@ -283,6 +297,7 @@ func sync_actors() -> void:
   truck.position = truck.path[truck.segment]
  for i in mini(Game.residents(),6):
   var resident = TimberWorker.new()
+  resident.role = "resident"
   resident.origin_point = Vector3(-60+i*8,0,72)
   resident.destination = Vector3(-60+i*8,0,155)
   resident.phase = i*2.1
@@ -411,7 +426,7 @@ func camera_action(action: String) -> void:
  match action:
   "+": zoom = maxf(40,zoom*0.82)
   "−": zoom = minf(390,zoom*1.22)
-  "home": focus = Vector3(0,0,-43); zoom = 170
+  "home": focus = Game.building_position(mini(1,Game.state.buildings.size()-1)); zoom = 96
   "world": focus = Vector3.ZERO; zoom = 370
  set_camera()
 

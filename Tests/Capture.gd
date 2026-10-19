@@ -29,6 +29,17 @@ func run() -> void:
  for i in 10: await process_frame
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("/workspace/timber-city.png")
+ # Explicit demonstration materials: these are never saved into a player's profile.
+ for key in game.state.resources: game.state.resources[key]=150
+ game.simulate(1)
+ scene.hud.update_stats()
+ scene.hud.toast_left=0
+ scene.focus_at(game.building_position(1)+Vector3(0,0,4))
+ scene.zoom=56
+ scene.set_camera()
+ for i in 15: await process_frame
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/timber-workshop.png")
  scene.hud.open_menu("industry")
  for i in 4: await process_frame
  await RenderingServer.frame_post_draw
