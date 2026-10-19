@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.12 — Waldleben
+
+**[Android-Update 0.12 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/releases/Timber-Loot-Tycoon-v0.12-test.apk)**
+
+**[Passendes Quellprojekt 0.12 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/releases/Timber-Loot-Tycoon-v0.12-source.zip)**
+
+Neu: Hütten mit Pausenplatz, Bank, Tisch, Blumen, Laterne und Sonnenschirm; Mitarbeiter mit Kaffeepause; gegenseitiges Winken; Bewohner im eigenen Vorgarten. Echte Fertigstellungen bekommen einen kurzen Eröffnungsjubel mit Konfetti und sanftem Klang. Alle Szenen bleiben rein optisch und verändern Produktion oder Preise nicht.
+
+Neue Alltagsszenen lassen sich unter Mehr → Einstellungen abschalten. Akkumodus reduziert die Effekte. Benno bleibt unabhängig einstellbar. Keine Pflichtdialoge und keine zusätzlichen Aufgaben für die Pausenplätze.
+
+Als Update über die vorhandene App installieren. Nicht deinstallieren und keine App-Daten löschen. Unverändertes Paket, Testschlüssel und Speicherformat; Versionscode 1200. Danach steht oben rechts **WALDLEBEN / 12**. Android 7.0+, ARM64/ARMv7 und OpenGL ES 3.0, rund 58 MB; keine Android-Berechtigungen.
+
+4.506 Headless-Prüfungen plus erster-Haus-Verlauf und 23 OpenGL-Prüfungen bestanden, auch nach Wiederherstellung aus GitHub. Die vorherige Version 0.11 läuft laut Nutzer auf seinem Handy; ein echter Gerätetest der neuen 0.12 steht aus.
+
+APK-Quellstand: `6f083f473916141bcd5ae917641e463284a62c43`. 91 Quelldateien im passenden Archiv einzeln gegen Git geprüft. Prüfsummen: `SHA256SUMS.txt`, Paketdaten: `.apk.json`. Entpacken und mit Godot 4.6.3 öffnen.
+
+## Historischer Stand 0.11
+
 # Timber Loot Tycoon 0.11 — Benno im Wald
 
 **[Android-Update 0.11 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.11.0-benno/releases/Timber-Loot-Tycoon-v0.11-test.apk)**
