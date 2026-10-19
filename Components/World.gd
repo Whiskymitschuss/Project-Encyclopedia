@@ -41,6 +41,7 @@ var road_anchor: Variant = null
 var road_endpoint: Variant = null
 var road_horizontal = true
 var landscape: ValleyLandscape
+var delivery_world: Node3D
 var base_streets: Node3D
 var biome_labels: Array = []
 var boss_labels: Array = []
@@ -91,6 +92,9 @@ func _ready() -> void:
  hud.focus_requested.connect(focus_at)
  hud.placement_requested.connect(begin_placement)
  hud.placement_action.connect(placement_action)
+ delivery_world=load("res://Components/DeliveryWorld.gd").new()
+ delivery_world.world=self
+ add_child(delivery_world)
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
  make_weather()
@@ -266,7 +270,7 @@ func rebuild() -> void:
   if saw != null: machines.append({"node":saw,"index":i})
   var processing = model.get_node_or_null("Processing")
   if processing != null: processing.building_index = i
-  Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
+  if not Game.delivery_owns(i): Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
   add_approach(model.position,int(b.get("rotation",0)))
   var fill = model.get_node_or_null("SawdustFill")
   if fill!=null:
@@ -286,7 +290,8 @@ func rebuild() -> void:
   add_approach(model.position,int(h.get("rotation",0)))
  for job in Game.state.jobs:
   if job.type in ["building","home","upgrade","home_upgrade","project"]:
-   var model = Models.construction(1.0-float(job.left)/float(job.total))
+   var model = load("res://Buildings/ConstructionSite.gd").new() if job.has("phases") else Models.construction(1.0-float(job.left)/float(job.total))
+   if job.has("phases"): model.job_id=int(job.id)
    if job.type=="home": model.position = Placement.position_of(job,Catalog.home_position(int(job.plot)))
    elif job.type=="home_upgrade": model.position = Game.home_position(int(job.index))
    elif job.type == "upgrade":
@@ -296,7 +301,7 @@ func rebuild() -> void:
    else: model.position = Placement.position_of(job,Catalog.industry_position(int(job.slot)))
    model.rotation_degrees.y = int(job.get("rotation",0))
    world_buildings.add_child(model)
-   cranes.append(model.get_node("Crane"))
+   cranes.append({"node":model.get_node("Crane"),"job":job})
  for i in Catalog.PROJECTS.size():
   var project = Catalog.PROJECTS[i]
   var stage = int(Game.state.projects.get(str(i),0))
@@ -316,6 +321,7 @@ func rebuild() -> void:
  add_child(network)
  network.build()
  if landscape!=null: landscape.refresh()
+ if delivery_world!=null: delivery_world.rebuild()
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation)
@@ -354,7 +360,7 @@ func refresh_forest_clearance() -> void:
    set_tree_visible(biome,i,not tree.blocked and tree.regrow<=0)
 
 func sync_actors() -> void:
- var signature = "%s/%s/%s/%s/%s/%s" % [Game.state.workers,Game.state.trucks,Game.state.biome,Game.state.quality,Game.state.tool,Game.state.vehicle]
+ var signature = "%s/%s/%s/%s/%s/%s" % [Game.state.workers,Game.state.trucks,Game.state.biome,Game.state.quality,Game.state.tool,str(Game.state.vehicle)+str(Game.state.delivery.active)+str(not Game.state.construction_shipments.is_empty())]
  if signature == actor_signature: return
  actor_signature = signature
  clear_children(actors)
@@ -400,7 +406,7 @@ func sync_actors() -> void:
    worker.pace=0.85
    worker.phase=0
   actors.add_child(worker)
- for i in mini(int(Game.state.trucks),3 if Game.state.quality == 0 else 8):
+ for i in mini(maxi(0,int(Game.state.trucks)-(mini(2,int(Game.state.trucks)) if Game.state.delivery.active else 0)-Game.state.construction_shipments.size()),3 if Game.state.quality == 0 else 8):
   var truck = TimberTruck.new()
   truck.tier=int(Game.state.vehicle)
   truck.path.assign([Vector3(-78,1,-26),Vector3(2,1,-26),Vector3(2,1,70),Vector3(78,1,70),Vector3(78,1,162),Vector3(-78,1,162)])
@@ -469,7 +475,10 @@ func _process(delta: float) -> void:
  weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0
  for machine in machines:
   if float(Game.flow.get("building:%s" % machine.index,0))>0: machine.node.rotate_y(delta*8)
- for crane in cranes: crane.rotation.y = sin(time*0.45)*0.2
+ for crane in cranes:
+  var job=crane.job
+  if not job.has("phases") or (not job.paused and int(job.workers)>0 and ConstructionRules.phase_ready(job)):
+   crane.node.rotation.y = sin(time*0.45)*0.2
  for item in moving_goods:
   if float(Game.flow.get("building:%s" % item.index,0)) > 0:
    item.phase = fmod(float(item.phase)+delta*0.18,1.0)
@@ -625,6 +634,10 @@ func tap_world(screen: Vector2) -> void:
    if point.distance_to(bin_position)<3.5: hud.open_menu("sawdust"); return
   if Placement.bounds(Game.building_position(i),int(b.get("rotation",0))).has_point(Vector2(point.x,point.z)):
    hud.show_building(i)
+   return
+ for job in Game.state.jobs:
+  if Placement.bounds(job_position(job),int(job.get("rotation",0))).has_point(Vector2(point.x,point.z)):
+   hud.open_menu("construction")
    return
  for i in Game.state.homes.size():
   if Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).has_point(Vector2(point.x,point.z)):
@@ -785,3 +798,11 @@ func network_action(action: String) -> void:
  if success:
   cancel_placement()
   hud.open_menu("networks")
+
+
+func job_position(job: Dictionary) -> Vector3:
+ if job.type=="home": return Placement.position_of(job,Catalog.home_position(int(job.plot)))
+ if job.type=="home_upgrade": return Game.home_position(int(job.index))
+ if job.type=="upgrade": return Game.building_position(int(job.index))
+ if job.type=="project": return Catalog.PROJECTS[int(job.index)].position
+ return Placement.position_of(job,Catalog.industry_position(int(job.get("slot",0))))

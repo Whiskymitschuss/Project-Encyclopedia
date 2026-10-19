@@ -1,0 +1,37 @@
+# Industrie, Bauketten und Logistik 2.0 — tatsächlicher Stand
+
+Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
+
+## In 0.15 umgesetzt
+
+- Unternehmens-XP und daraus berechnete Level 1–20. Bäume liefern 2 XP, fertige Betriebe 15, Häuser 25, Upgrades 8. Die ersten Schwellen sind 20, 60 und 120 XP. Bis Level 3 kosten neue Industriebetriebe und ihre Upgrades nur Münzen. Ab Level 4 besitzen sie Materialbaustellen. Vorhandene Firmen mit Möbelproduktion bekommen mindestens Level 4; bereits bezahlte alte Baustellen brauchen keine nachträglichen Materialien.
+- Einstellbare kleine Lieferlinie aus vier tatsächlich vorhandenen Gebäuden: Sammelstation → Sägewerk → Möbelfabrik → Laden. Die erste betriebsbereite Station jeder Art wird zugewiesen. Die Linie wird unter Aufträge → Lieferkette eröffnet und kann ohne Verlust von Vorräten aufgelöst werden, sofern das gemeinsame Lager Platz bietet.
+- Eigene Ein-/Ausgangspuffer der zugewiesenen Gebäude. Sägen benötigt 2 Holz und erzeugt 1 Brett sowie 1 Sägespäne; einfache Möbel benötigen 2 Bretter. Weitere nicht zugewiesene Fabriken behalten die vorhandene komplexere Trockenholz-/Stadtwirtschaft. Diese einfache Möbellinie bleibt als kompatibler früher Holz-Spielweg erreichbar; die angekündigte neue Produktfreischaltung auf Level 8 ist noch nicht eingeführt.
+- Simulierte Bandladungen mit tatsächlichen Mengen und Fahrzeit, begrenzte reservierte Zielkapazität. Ladenlieferungen und Baustellen verwenden dieselbe Zahl gekaufter Transportfahrzeuge. Ein Fahrzeug ist beim Beladen, Fahren, Entladen und der leeren Rückfahrt belegt. Güter werden erst nach Ankunft und Entladung eingebucht. Baustellen erhalten freie Fahrzeuge vor neuen Ladenfahrten; bestehende Fahrten werden zu Ende gefahren.
+- Tatsächliche Straßenrouten über den vorhandenen AStar-Graphen. Gespeicherte Wege und Ladungen laufen auch ohne sichtbare Szene und während bis zu acht Offline-Stunden weiter. Lieferfahrzeuge zeigen Holz, Möbel oder Materialkisten und fahren leer zurück. Aktive Liefergebäude werden vor dem Verschieben aufgelöst; laufende Baustellenlieferungen und Gebäude-Upgrades schützen ihre Standorte.
+- Ladenaufträge mit Frist, Teilmengen und Fortschritt. Pünktlicher Abschluss gibt einen Münzbonus und ein Ticket. Nach Fristablauf bleibt derselbe Auftrag lieferbar, seine restlichen Möbel erzielen 70 % des Preises. Keine Schulden, kein Game Over und keine Käufe mit echtem Geld. Pause stoppt die ganze Linie einschließlich der Frist.
+- Materialdepot mit Muttern und Schrauben gegen Münzen. Sammelkäufe besorgen nur die wirklich fehlende Hardware. Holz und Bretter stammen aus der vorhandenen Produktion. Kauf-/Verkaufsboni können Hardware nicht in eine Geldquelle verwandeln.
+- Sieben Material-Bauphasen: Vorbereitung, Fundament, Tragwerk, Wände, Dach, Einrichtung und Abnahme. Jede Phase wartet auf ihren tatsächlichen Bedarf; die Summe der Phasen entspricht der angezeigten gesamten Materialrechnung. Noch nicht eingeführte Stein-/Stahl-/Betonketten werden in dieser frühen Holzbauversion nicht vorausgesetzt.
+- Bauarbeiter mit begrenztem gemeinsamem Personalbestand: zwei Start-Bauarbeiter ab Freischaltung, maximal acht einstellbar, bis fünf pro Baustelle zuweisbar. Zuweisungen verändern die tatsächliche Baugeschwindigkeit. Sichtbare Figuren warten bei Materialmangel, tragen Material und arbeiten mit Werkzeug am zugeordneten Bauplatz. Die Animation liest die Simulation; sie ist keine eigenständige Produktionsquelle.
+- Sichtbare Absperrung, Lieferfläche, Materialstapel, Bauphasen-Geometrie, Schild, Kran und Abschlussfeier. Pause hält Bauarbeit und Kran an. Höhere Betriebsmodelle erscheinen erst nach dem tatsächlichen Abschluss. Stadt-Neubauten und Haus-Upgrades ab Level 4 verwenden dieselben Materialphasen; alte bereits bezahlte Hausaufträge bleiben unverändert.
+- Reale Bedienung für Lieferung, Materialkauf, Personalzuweisung, Pause, Priorität, Baukamera und Abbruch. Abbruch bucht vor Ort und in Fahrzeugen vorhandenes Material ins Lager zurück, sobald Platz dafür besteht; bezahlte Münzkosten werden nicht erstattet. Dadurch bleiben keine verwaisten Bau-Ladungen zurück.
+- Ab Level 10 lässt sich die globale automatische Baustellenbelieferung einschalten. Davor bestellt der Spieler Lieferungen für einzelne Projekte. Standort-, Material- und Personalbedarf bleiben sichtbar.
+- Antippbare Materialsymbole über den vier Liefergebäuden und Materialbaustellen. Leer rot, teilweise gefüllt gelb, produktionsbereit oder voller Ausgang grün. Sie öffnen die tatsächlichen Gebäudedetails beziehungsweise die Baustellenverwaltung. Anzeigen werden am Bildschirmrand ausgeblendet und überdecken weder den festen HUD noch einander.
+- Erweiterung des bestehenden Schema-1-Speichers mit XP, Baustellen, Phasen, Quittungen, Crew und Ladungen. Volle Fließkommagenauigkeit beim Schreiben. Material-Dispatch besitzt eine feste Reihenfolge unabhängig von der sortierten JSON-Schlüsselreihenfolge. Kleine Ladungsmodelle verwenden einen begrenzten Wiederverwendungspool.
+
+## Weitere Master-Phasen — noch nicht umgesetzt
+
+| Bereich | Nächster zusammenhängender Abschnitt |
+| --- | --- |
+| Rohstoffe und neue Quellen | Steinbruch, Sandgrube, Erzmine, Kohle, begrenzte oder regenerierende Vorkommen; vollständige Material-Metadaten einschließlich Gewicht und Verwendung |
+| Bagger und Abbau | Wirtschaftlich wirksame Schaufelzyklen, Oberwagen, Arm und Schaufel; Übergabe an Muldenkipper |
+| Neue Produktionsketten | Steinwerk/Brecher, Stahlwerk, Schraubenfabrik, Zementversorgung und Betonwerk mit lokalen Puffern und echten Lieferungen |
+| Produktrezepte | Konfigurierbare Auswahl von Balken, Platten, Stahlträgern/-wänden, Schrauben, Tischen, Stühlen, Regalen und Betonfundamenten; zusätzliche produktabhängige Gebäudegeometrie |
+| Level 5–9 und 11–20 | Die im Master-Prompt aufgeführten zusätzlichen Industrie-Freischaltungen, Standorte und Hochleistungsmaschinen; aktuelle vorhandene Holz-/Stadtfreischaltungen bleiben bis dahin gültig |
+| Fuhrpark | Spezifischer Muldenkipper, geschlossener Kasten-LKW, Betonmischer, funktionierender Gabelstapler und Mobilkran; Lager-Ladebuchten mit Warteschlangen, Fahrzeugauswahl und durchgehende Fahrzeug-Identitäten statt einer Darstellung je Fahrt |
+| Personal und Logistik | Vollständige acht Arbeiteranimationen, individuelle Trage-/Lauf-/Werkzeug-Upgrades, erweiterte Automatikmodi Fabriken zuerst / Lager füllen / Überschuss verkaufen und Expressangebote |
+| Gesamtsimulation | Umstellung der übrigen bisherigen gemeinsamen Holz-/Stadtpuffer auf lokale End-to-End-Logistik; die alten automatischen Exportfahrten sind bisher keine individuellen Ladungsaufträge |
+| Mobile Bedienung | Optionaler Figuren-Joystick, erweiterte Fahrzeugauswahl; derzeit bleibt die bestehende Touch-Kamera und direkte Gebäude-/Baustellenauswahl erhalten |
+| Hardware und Balance | Android-Updateinstallation, Touch/Safe Area, Ton, echte Framerate, Temperatur/Akku und längeres Wirtschaftsbalancing auf Geräten |
+
+Es werden keine Buttons für diese offenen Systeme als fertiggestellt angeboten. Die bestehende Holzindustrie bleibt die Grundlage für die weiteren Erweiterungen.

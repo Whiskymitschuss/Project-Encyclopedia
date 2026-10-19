@@ -1,3 +1,15 @@
+# Prüfung 0.15 — Lieferwerk, erster Abschnitt des Industrie-Masterplans
+
+- Lokaler vollständiger Lauf von `bash scripts/test.sh`: 225 Regel-, 4.092 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter-, 30 Alltagsszenen-, 216 Stadt-, 177 Landschafts-, 3.457 Lieferketten- und 56 Baustellenprüfungen: **8.374 Headless-Prüfungen** ohne Fehler. Zusätzlich erster-Haus-Verlauf ohne Geld-/Materialgeschenke nach 1.682 simulierten Sekunden und Hauptszenenstart.
+- Lieferkette: lokale Ein-/Ausgangspuffer, reale Fahrzeiten, Holzäquivalent-Erhaltung über 260 Takte, ankommende Kapazitätsreservierung, produktionsabhängige Bandladungen, Möbelverkauf erst nach Ankunft, pünktlicher Bonus, 70-%-Spätpreis, Pause und Rückgabe der Vorräte beim Auflösen. Laufende Zuordnungen schützen Gebäude vor Standortänderungen.
+- Baustellen: Geld-Upgrades vor Level 4, Migration vorhandener Firmen, sieben Phasen mit exakt aufgeteiltem Gesamtbedarf, Warten auf Material, reale Teilladungen und Straßenpunkte, begrenzter gemeinsam verwendeter Fuhrpark, fehlende spätere Hardware, exakte Depotkäufe, Pausieren, gemeinsame Crew-Zuweisung, Priority-Dispatch, zwei parallele Projekte, unerreichbarer Zielpunkt, sicherer Abbruch einschließlich Ladung und Ablehnung bei vollem Rückgabelager.
+- Echter atomarer Save-/Load-Weg während einer Baustellenfahrt und Fortsetzung aller Arbeits-/Transportdaten. JSON-Zahlen werden als Zahlen verglichen; Fließkommatoleranz 1e-8, alle Struktur-/Mengenbedingungen bleiben erhalten. Ein dabei entdeckter Fehler durch JSON-Schlüsselreihenfolge wurde durch eine feste Dispatch-Reihenfolge beseitigt. Schreibende JSON-Ausgabe verwendet volle Fließkommagenauigkeit.
+- Neue Szene prüft tatsächliche Materialanzeigen, deren Antippen, lokale Maschinen, Möbel-LKW-Ladung und sieben Bauteile. Bauarbeiter warten ohne Phantommaterial, tragen erst nach gültiger Lieferung und wechseln zum Werkzeugzustand. Frühe und alte Baustellen bleiben mit der bisherigen Fertigstellung kompatibel.
+- Desktop OpenGL: 23 UI-, 9 Landschafts- und 22 Liefer-/Baustellenprüfungen, insgesamt **54** ohne Fehler. Enthalten sind tatsächlich gerenderte Materialicons, freie HUD-Bereiche, Ladung auf Hin-/Rückfahrt, reale teilweise belieferte Baustelle und kleine Portraitfenster mit skalierter UI.
+- Vier Vorschauen aus einem ausdrücklich aufgebauten Demonstrationsprofil; keine Nutzerprofile werden dafür verwendet. Sie zeigen Lieferwelt, Materialbaustelle und deren Menüs. Kein echter Android-Geräte- oder Leistungsnachweis. Offene Master-Phasen: [Industrie-Masterplan](INDUSTRY-ROADMAP.md).
+
+## Historischer Prüfbericht 0.14
+
 # Prüfung 0.14 — Ein lebendiges Waldtal
 
 - 220 Regel-, 4.092 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter-, 30 Alltagsszenen-, 216 Stadt- und 177 Landschaftsprüfungen: 4.856 Headless-Prüfungen. Weiterhin frischer erster-Haus-Verlauf nach 1.682 simulierten Sekunden und abschließender Hauptszenenstart. Die Szenenanzahl berücksichtigt die Positionen der neu verteilten 1.000 Bäume; die bisherigen Bedingungen wurden nicht entfernt.

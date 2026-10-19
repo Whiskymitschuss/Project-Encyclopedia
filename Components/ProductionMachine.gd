@@ -11,6 +11,9 @@ var stock_clock=0.0
 
 func _process(delta: float) -> void:
  if building_index<0 or building_index>=Game.state.buildings.size(): return
+ var local_line=Game.delivery_owns(building_index)
+ var stock=Game.state.delivery.buffers[kind] if local_line else Game.state.resources
+ var actual_input="boards" if local_line and kind=="furniture" else input_key
  var rate=float(Game.flow.get("building:%s" % building_index,0))
  active=rate>0 and not Game.state.buildings[building_index].get("paused",false)
  if active:
@@ -18,7 +21,7 @@ func _process(delta: float) -> void:
   phase=fmod(phase+delta*clampf(rate*0.65,0.15,1.5),1.0)
  var feed=get_node_or_null("Feed")
  if feed!=null:
-  feed.visible=phase<0.56 and (active or float(Game.state.resources[input_key])>0)
+  feed.visible=phase<0.56 and (active or float(stock[actual_input])>0)
   feed.position=Vector3(0,2.6 if kind=="sawmill" else 2.0,lerpf(-6,-0.3,minf(phase/0.56,1)))
  var product=get_node_or_null("Product")
  if product!=null:
@@ -39,6 +42,6 @@ func _process(delta: float) -> void:
   for entry in [["InputStock",input_key],["OutputStock",output_key]]:
    var pile=root.get_node_or_null(entry[0])
    if pile!=null:
-    var amount=float(Game.state.resources[entry[1]])
+    var amount=float(stock[actual_input if entry[0]=="InputStock" else entry[1]])
     pile.visible=amount>=0.5
     pile.scale.y=0.55+0.45*clampf(amount/50.0,0,1)

@@ -72,7 +72,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"WALDTAL / 14",11,GOLD)
+ var edition = text(brand,"LIEFERWERK / 15",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -285,8 +285,11 @@ func update_stats() -> void:
  money.text = "%s Münzen" % Catalog.number(Game.state.coins)
  diamonds.text=Catalog.number(Game.state.diamonds)
  loot_counter.text=Catalog.number(Game.state.tickets)
- subtitle.text = "%s · Rucksack %s/%s · Team %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers)]
+ subtitle.text = "%s · Rucksack %s/%s · Team %s · Lv. %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers),Game.company_level()]
  supply.text = "HOLZ %s → BRETTER %s → TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks),int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
+ if Game.state.delivery.active:
+  var order = Game.state.delivery.order
+  supply.text = "HOLZ → BRETTER → MÖBEL\nLADEN %s/%s · %s" % [int(order.delivered),int(order.amount),"SPÄT · 70 %" if order.late else "%02d:%02d" % [int(float(order.left)/60),int(order.left)%60]]
  var fill = float(Game.state.resources.sawdust)/Game.capacity()
  sawdust_button.text="SPÄNEBOX\n%s %% · LEEREN" % int(fill*100)
  compact_style(sawdust_button,Color("e78a45") if fill>=0.8 else Color("258f8d"))
@@ -301,6 +304,10 @@ func update_stats() -> void:
 func _process(delta: float) -> void:
  toast_left -= delta
  toast.modulate.a = clampf(toast_left,0,1)
+ if Game.company_level()>=4 and not Game.state.construction_intro and not overlay.visible and not placement_panel.visible:
+  Game.state.construction_intro=true
+  Game.save(true)
+  open_menu("construction")
  refresh_clock += delta
  if refresh_clock >= 1.0:
   refresh_clock = 0
@@ -338,6 +345,7 @@ func show_plot(index: int) -> void:
 
 func dynamic_text(parent: Node, callback: Callable) -> void:
  var label = text(parent,callback.call(),15,MUTED)
+ label.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  live_labels.append({"label":label,"callback":callback})
 
 func materials_text(materials: Dictionary) -> String:
@@ -353,6 +361,8 @@ func render_menu() -> void:
   child.queue_free()
  live_labels.clear()
  match current:
+  "delivery": delivery_menu()
+  "construction": construction_menu()
   "industry": industry_menu()
   "building": building_menu()
   "catalog": catalog_menu()
@@ -383,6 +393,7 @@ func render_menu() -> void:
 func industry_menu() -> void:
  modal_title.text = "DEINE INDUSTRIE"
  var help = card("Vom Wald zum Imperium","Fälle Holz und liefere es ab. Helfer füllen das Lager automatisch. Baue zuerst Trockenkammer und Möbelfabrik; danach das Fertighauswerk für deine Stadt.")
+ button(help,"LIEFERKETTE · HOLZ → BRETTER → MÖBEL",func(): open_menu("delivery"))
  button(help,"NEUEN BETRIEB BAUEN",func(): open_menu("catalog"))
  var links = row(contents)
  button(links,"Personal",func(): open_menu("team"))
@@ -399,12 +410,44 @@ func jobs_cards() -> void:
  for job in Game.state.jobs:
   var title = Catalog.PROJECTS[int(job.index)].name if job.type=="project" else Catalog.HOMES[job.kind].name if job.type in ["home","home_upgrade"] else Catalog.BUILDINGS[job.kind].name
   var box = card("Baustelle · %s" % title)
-  dynamic_text(box,func():
-   var progress = 1-float(job.left)/float(job.total)
-   return "%s · %s Sekunden" % [["Anlieferung","Fundament","Rohbau","Dach","Innenausbau"][mini(int(progress*5),4)],ceili(job.left)])
+  dynamic_text(box,func(): return ConstructionRules.status(job))
+  if not job.get("materials",{}).is_empty():
+   for resource_key in job.materials:
+    var material_key=str(resource_key)
+    var material_row=row(box)
+    material_row.set_meta("light_card",true)
+    var icon=TextureRect.new()
+    icon.custom_minimum_size=Vector2(30,30)
+    icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+    icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    var icon_path="res://Assets/Resources/%s.svg" % material_key
+    icon.texture=load(icon_path if ResourceLoader.exists(icon_path) else "res://Assets/Resources/boards.svg")
+    material_row.add_child(icon)
+    dynamic_text(material_row,func(): return "%s  %s / %s" % [Catalog.RESOURCES[material_key],Catalog.number(float(job.get("delivered",{}).get(material_key,0))),Catalog.number(float(job.materials[material_key]))])
+   var id = int(job.get("id",-1))
+   button(box,"LIEFERUNG AUS DEM LAGER ANFORDERN",func(): action(func(): Game.deliver_job(id)),not ConstructionRules.ready(job))
+   var hardware_cost=Game.job_hardware_cost(id)
+   if hardware_cost>0: button(box,"FEHLENDE TEILE KAUFEN · %s MÜNZEN" % Catalog.number(hardware_cost),func(): action(func(): Game.buy_job_hardware(id)))
+   if job.has("phases"):
+    dynamic_text(box,func():
+     var underway=0
+     for s in Game.state.construction_shipments:
+      if int(s.job)==id and not s.arrived: underway+=1
+     return "Bauarbeiter: %s/5 · Lieferfahrzeuge: %s\nRestarbeit: %s s + fehlende Lieferzeit" % [job.workers,underway,ceili(float(job.left)/maxf(1,int(job.workers)*(1+Game.research_level("construction")*0.12+minf(Game.public_level("fire")*0.05,0.5))*Game.boost("workers")))])
+    var crew=row(box)
+    button(crew,"− Arbeiter",func(): action(func(): Game.assign_builders(id,int(job.workers)-1)))
+    button(crew,"+ Arbeiter",func(): action(func(): Game.assign_builders(id,int(job.workers)+1)))
+    var controls=row(box)
+    button(controls,"Fortsetzen" if job.paused else "Pausieren",func(): action(func(): job.paused=not job.paused))
+    button(controls,"Priorität: AN" if job.priority else "Priorisieren",func(): action(func(): job.priority=not job.priority))
+    button(box,"BAUKAMERA",func(): focus_requested.emit(ConstructionRules.job_position(Game.state,job)); close_menu())
+    button(box,"ABBRECHEN · MATERIAL ZURÜCK",func(): action(func(): Game.cancel_construction(id)))
+    text(box,"Bei Abbruch kommen Material und Ladung ins Lager zurück. Die Baukosten werden nicht erstattet.",13,MUTED)
+   button(box,"MATERIALDEPOT ÖFFNEN",func(): open_menu("construction"))
 
 func catalog_menu() -> void:
  modal_title.text = "BAUWERK AUSWÄHLEN"
+ button(contents,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
  text(contents,"Auswählen → in der Welt platzieren → drehen → bestätigen. Bezahlt wird erst beim Bestätigen. Straßen bleiben frei; Waldflächen werden geräumt.",15,MUTED)
  var tabs=row(contents)
  for name_value in ["Produktion","Wohnen","Versorgung"]:
@@ -445,15 +488,21 @@ func building_menu() -> void:
  var b = Game.state.buildings[index]
  var d = Catalog.BUILDINGS[b.kind]
  modal_title.text = d.name.to_upper()
- var box = card("Stufe %s / %s" % [b.level,d.max],d.desc)
+ var description = "Lieferbetrieb: 2 Bretter → 1 Möbel. Fertige Möbel werden zum Laden gefahren." if Game.delivery_owns(index) and b.kind=="furniture" else d.desc
+ var box = card("Stufe %s / %s" % [b.level,d.max],description)
  dynamic_text(box,func(): return Game.production_status(index))
  if b.kind == "sawmill":
   text(box,"Leere die sichtbare Spänebox regelmäßig. Ein voller Behälter stoppt die Bretterproduktion nicht; neuer Überlauf wird kompostiert oder auf Wunsch verkauft.",15,MUTED)
   button(box,"SPÄNEBOX LEEREN",func(): open_menu("sawdust"))
+ if Game.company_level()>=4: text(box,"Material für Stufe %s: %s" % [int(b.level)+1,materials_text(ConstructionRules.materials(b.kind,int(b.level)+1))],15,MUTED)
+ else: text(box,"Bis Level 3: Ausbau nur mit Münzen. Ab Level 4 kommen Baustoffe und Lieferfahrzeuge dazu.",15,MUTED)
+ if Game.delivery_owns(index):
+  text(box,"Zum Verschieben zuerst die Lieferlinie auflösen. Ihre Vorräte und Ladungen kommen vollständig ins Lager zurück.",14,MUTED)
+  button(box,"LIEFERKETTE & LOKALEN VORRAT ANSEHEN",func(): open_menu("delivery"))
  text(box,"Ausbau: %s Münzen" % Catalog.number(Game.cost_for(b.kind,int(b.level)+1)),17,GOLD)
  var management=row(box)
  button(management,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
- button(management,"VERSCHIEBEN",func(): request_placement({"kind":b.kind,"city":false,"index":index}))
+ button(management,"VERSCHIEBEN",func(): request_placement({"kind":b.kind,"city":false,"index":index}),not Game.delivery_owns(index) and not Game.job_for("upgrade",index))
  if Catalog.RECIPES.has(b.kind):
   button(box,"Produktion fortsetzen" if b.paused else "Produktion pausieren",func(): action(func(): b.paused = not b.paused))
  if b.kind=="cabin": button(box,"PERSONAL EINSTELLEN",func(): open_menu("team"))
@@ -476,7 +525,8 @@ func team_menu() -> void:
 func garage_menu() -> void:
  text(contents,"Transportstufen verändern deine Straßenfahrzeuge vom Handwagen bis zum schweren Forsttransporter. Maschinen im Wald schaltest du unter Team mit den Werkzeugstufen frei.",15,MUTED)
  modal_title.text = "VEHICLE GARAGE"
- var box = card("%s LKW unterwegs" % Game.state.trucks,"Export wird automatisch aus dem Möbelbestand bezahlt. Ein LKW transportiert je Marktstufe 15 Möbel pro Minute. Garage schafft weitere Stellplätze.")
+ var box = card("%s Transportfahrzeuge" % Game.state.trucks,"Der Lieferbetrieb reserviert bis zu zwei vorhandene Fahrzeuge für Ladenlieferungen mit echtem Bestand und Rückfahrt. Weitere Fahrzeuge beliefern zusätzliche Verkaufsstellen im bisherigen Exportbetrieb. Die Garage schafft Stellplätze.")
+ button(box,"LIEFERKETTE & ZUTEILUNG",func(): open_menu("delivery"))
  button(box,"LKW KAUFEN · %s" % Catalog.number(Game.truck_cost()),func(): action(func(): Game.buy_truck()))
  var vehicle = card(Catalog.VEHICLES[int(Game.state.vehicle)],"Fahrzeugverbesserungen erhöhen Rucksack, Exportkapazität und sichtbare Fahrgeschwindigkeit.")
  if Game.state.vehicle < 9:
@@ -544,7 +594,11 @@ func plot_menu() -> void:
   button(box,"ALS BAUZIEL VORMERKEN",func(): Game.set_plan(key,plot); open_menu("planner"))
 
 func contracts_menu() -> void:
- modal_title.text = "GROSSKUNDEN"
+ modal_title.text = "AUFTRÄGE & LIEFERUNGEN"
+ var line = card("Dein Laden · echte Lieferkette","Holz → Bretter → Möbel. Förderbänder bringen Material zwischen den Betrieben; bis zu zwei deiner Fahrzeuge liefern die Möbel an den Laden. Pünktliche Aufträge bringen einen Bonus.")
+ if Game.state.delivery.active: dynamic_text(line,func(): return delivery_order_text())
+ button(line,"LIEFERKETTE ÖFFNEN",func(): open_menu("delivery"))
+ button(contents,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
  var c = Game.contract()
  var box = card("Lieferauftrag %s" % (int(Game.state.contracts)+1),"Ohne Zeitlimit. Materialien werden einmalig geliefert; die Aufträge wachsen mit deinem Unternehmen.")
  dynamic_text(box,func(): return "%s %s benötigt · %s im Lager" % [c.amount,Catalog.RESOURCES[c.key],Catalog.number(Game.state.resources[c.key])])
@@ -570,7 +624,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -668,6 +722,7 @@ func market_menu() -> void:
  button(box,"Baureserve: AN" if Game.state.reserve else "Baureserve: AUS",func(): action(func(): Game.state.reserve = not Game.state.reserve))
  button(box,"Auto-Export: AN" if Game.state.auto_export else "Auto-Export: AUS",func(): action(func(): Game.state.auto_export = not Game.state.auto_export))
  for key in Catalog.RESOURCES:
+  if ConstructionRules.HARDWARE.has(key): continue
   var id = str(key)
   var resource_box = card(Catalog.RESOURCES[key])
   dynamic_text(resource_box,func(): return "%s im Lager · %.1f Münzen/Stück" % [Catalog.number(Game.state.resources[id]),float(Catalog.PRICES[id])*Game.multiplier()*Game.boost("money")])
@@ -683,7 +738,7 @@ func settings_menu() -> void:
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.12.0 · Waldleben\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.15.0 · Lieferwerk\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -753,7 +808,7 @@ func welcome_menu() -> void:
  illustration.mouse_filter=Control.MOUSE_FILTER_IGNORE
  contents.add_child(illustration)
  var box=card("Dein erstes Holz. Dein eigenes Imperium.","Aus einer kleinen Forststation wird deine lebendige Industriestadt. Du bestimmst, wo neue Gebäude stehen und wie dein Betrieb wächst.")
- text(box,"1  Bäume fällen und Holz abliefern\n2  Bretter, Trockenholz und Möbel herstellen\n3  Gebäude selbst platzieren und verbessern\n4  Häuser bauen und neue Regionen erschließen",18,CREAM)
+ text(box,"1  Bäume fällen und Holz abliefern\n2  Bretter und Möbel herstellen und liefern\n3  Gebäude platzieren, Baumaterial liefern und ausbauen\n4  Häuser bauen und neue Regionen erschließen",18,CREAM)
  button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.state.tutorial=1; Game.save(true); update_stats(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
  button(box,"Ich kenne mich aus · überspringen",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
 
@@ -765,6 +820,8 @@ func guide_menu() -> void:
  button(box,"WEITER SPIELEN",func(): close_menu())
  var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. LKWs verkaufen Möbel automatisch. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. Förderbrücken lassen die Straßen frei.")
  text(help,"Spänebox: regelmäßig leeren und verkaufen. Bei Störungen zeigt das Betriebsfenster den konkreten Grund. Mit einem Finger die Welt bewegen, mit zwei Fingern zoomen. Im Baumodus bewegt ein Finger das Bauwerk; zwei Finger bewegen die Kamera.",15,MUTED)
+ button(help,"LIEFERKETTE & LADENAUFTRÄGE",func(): open_menu("delivery"))
+ button(help,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
  button(help,"BAUKATALOG ÖFFNEN",func(): open_menu("catalog"))
  if int(Game.state.tutorial)<5: button(help,"ANLEITUNG ÜBERSPRINGEN",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
 
@@ -829,3 +886,64 @@ Ertrag nach Betriebskosten: %s Münzen je Runde" % [ceili(planned.duration),Cata
    focus_requested.emit(TownRules.bus_sample(plan,float(line.phase)).position)
    close_menu())
   button(box,"LINIE EINSTELLEN · keine Erstattung",func(): action(func(): Game.remove_bus_line(index)))
+
+
+func delivery_order_text() -> String:
+ var data = Game.state.delivery
+ if not data.active: return "Noch kein Lieferbetrieb eröffnet"
+ var order = data.order
+ var seconds = ceili(order.left)
+ return "Laden: %s/%s Möbel · %s\n%s" % [int(order.delivered),int(order.amount),"Verspätet · 70 % Verkaufspreis" if order.late else "%02d:%02d bis Bonusende" % [int(seconds/60.0),seconds%60],"Lieferbetrieb pausiert" if data.paused else data.last_receipt]
+
+func delivery_menu() -> void:
+ modal_title.text = "DEIN LIEFERBETRIEB"
+ var help = card("Aus deinem Holz werden Möbel","Kleine Lieferkette: Sammelstation → Sägewerk (2 Holz → 1 Brett) → Möbelfabrik (2 Bretter → 1 Möbel) → Verkaufsstelle. Material auf dem Band und im Fahrzeug gehört noch nicht zum Zielgebäude.")
+ var data = Game.state.delivery
+ if not data.active:
+  text(help,"Der erste betriebsbereite Betrieb jeder Art wird dieser Linie zugeordnet. Die beiden Fabriken arbeiten dann mit eigenen Puffern; weitere Betriebe behalten ihre bisherigen Rezepte. Für diese einfache Möbellinie ist keine Trockenkammer nötig.",15,MUTED)
+  for kind in DeliveryChain.KINDS:
+   text(help,"%s · %s" % [Catalog.BUILDINGS[kind].name,"vorhanden" if Game.count(kind)>0 else "noch bauen"],16,CREAM)
+  button(help,"LIEFERBETRIEB ERÖFFNEN",func(): action(func(): Game.start_delivery()),Game.count("furniture")>0)
+  button(help,"MÖBELFABRIK BAUEN",func(): request_placement({"kind":"furniture","city":false,"index":-1,"plot":-1}))
+  button(help,"BAUMATERIAL BESORGEN",func(): open_menu("construction"))
+  return
+ var demand = card("Ladenauftrag %s" % (int(data.orders)+1),"Innerhalb der Frist: voller Verkaufspreis, Abschlussbonus und ein Loot-Ticket. Nach Ablauf wird derselbe Auftrag zu 70 % des Verkaufspreises weiter beliefert. Kein Geldverlust und kein Game Over.")
+ dynamic_text(demand,func(): return delivery_order_text())
+ text(demand,"%s pünktlich · %s verspätet · %s Möbel verkauft" % [data.on_time,data.late_orders,data.sold],15,MUTED)
+ button(demand,"FORTSETZEN" if data.paused else "LIEFERBETRIEB PAUSIEREN",func(): action(func(): data.paused = not data.paused))
+ var routes = Game.delivery_routes()
+ for kind in DeliveryChain.KINDS:
+  var key = str(kind)
+  var index = int(data.nodes[kind])
+  var building = Game.state.buildings[index]
+  var box = card(Catalog.BUILDINGS[kind].name+" · Stufe %s" % building.level)
+  dynamic_text(box,func():
+   var buf = Game.state.delivery.buffers[key]
+   return "Lokaler Vorrat: Holz %s · Bretter %s · Möbel %s\nPuffer je Ware: %s" % [Catalog.number(buf.wood),Catalog.number(buf.boards),Catalog.number(buf.furniture),int(DeliveryChain.capacity(Game.state,key))])
+  if kind!="station" and routes.get(kind,[]).size()<2: text(box,"Keine freie Verbindung · Betrieb näher ans Straßennetz setzen",15,Color("b33f32"))
+  var actions = row(box)
+  button(actions,"ANSEHEN / AUSBAUEN",func(): show_building(index))
+  button(actions,"INS LAGER HOLEN",func(): action(func(): Game.unload_delivery(key)))
+ var freight = card("Unterwegs · bis zu %s Fahrzeuge" % mini(2,int(Game.state.trucks)),"Lieferfahrzeuge bleiben während der leeren Rückfahrt belegt. Voller Zielpuffer reserviert Platz für ankommende Ware und verhindert Überladung.")
+ dynamic_text(freight,func(): return "%s aktive Lieferungen" % Game.state.delivery.shipments.size())
+ button(freight,"GARAGE",func(): open_menu("garage"))
+ button(contents,"LINIE AUFLÖSEN & VORRÄTE ZURÜCKHOLEN",func(): action(func(): Game.stop_delivery()))
+
+func construction_menu() -> void:
+ modal_title.text = "BAUSTELLEN & MATERIAL"
+ var help = card("Erst Material. Dann Richtfest.","Neue Fabriken und Ausbaustufen brauchen Holz, Bretter und Bauteile. Jede Bauphase startet erst mit ihren angelieferten Materialien.")
+ button(help,"AUTO-LOGISTIK AB LEVEL 10" if Game.company_level()<10 else "Automatisch anliefern: AN" if Game.state.construction_auto else "Automatisch anliefern: AUS",func(): action(func(): Game.state.construction_auto = not Game.state.construction_auto),Game.company_level()>=10)
+ if Game.state.jobs.is_empty(): card("Keine offenen Baustellen","Im Baukatalog ein Gebäude platzieren oder auf einen Betrieb tippen und Ausbauen wählen.")
+ else: jobs_cards()
+ var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Ab Unternehmenslevel 4 arbeiten bis zu fünf zugewiesene Bauarbeiter pro Baustelle. Weitere Kollegen kosten Spielmünzen.")
+ button(crew,"BAUARBEITER EINSTELLEN · %s" % Catalog.number(150*pow(1.6,int(Game.state.builders)-2)*Game.difficulty()),func(): action(func(): Game.hire_builder()),Game.company_level()>=4 and int(Game.state.builders)<8)
+ if Game.company_level()<4: text(crew,"Dein Level: %s/4 · Neue Betriebe und Upgrades benötigen bis dahin nur Geld." % Game.company_level(),15,MUTED)
+ var depot = card("Materialdepot · nur Spielmünzen","Muttern und Schrauben werden hier mit erspielten Münzen gekauft. Holz und Bretter liefert deine Produktion.")
+ for key in ConstructionRules.HARDWARE:
+  var id = str(key)
+  dynamic_text(depot,func(): return "%s: %s im Lager · %s Münzen/Stück" % [Catalog.RESOURCES[id],Catalog.number(Game.state.resources[id]),Catalog.number(float(ConstructionRules.HARDWARE[id])*Game.difficulty())])
+  var choices = row(depot)
+  button(choices,"1 KAUFEN",func(): action(func(): Game.buy_hardware(id,1)))
+  button(choices,"10 KAUFEN",func(): action(func(): Game.buy_hardware(id,10)))
+ card("So wird geliefert","Der Bauauftrag wird beim Platzieren bezahlt. Ein Transportfahrzeug nimmt tatsächlichen Vorrat am Lager auf, fährt über Straßen zur Baustelle, entlädt und kehrt leer zurück. Belegte Fahrzeuge fehlen an der Möbellinie. Automatik kauft keine Teile. Material bleibt für den Bau geschützt. Laufende alte Baustellen bleiben gültig.")
+ button(contents,"BAUKATALOG",func(): open_menu("catalog"))

@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Ein lebendiges Waldtal 0.14
+# Timber Loot Tycoon — Lieferwerk 0.15
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.14-test.apk](releases/Timber-Loot-Tycoon-v0.14-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.15-test.apk](releases/Timber-Loot-Tycoon-v0.15-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -18,6 +18,19 @@ python3 scripts/backup.py
 ```
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
+
+## Neu in 0.15 — Material wird wirklich geliefert
+
+- Kleine spielbare Linie **Holz → Bretter → Möbel → Laden** unter **Aufträge → Lieferkette** eröffnen. Sie verwendet vorhandene Gebäude, eigene Puffer, echte Bandladungen und bis zu zwei der gekauften Transportfahrzeuge. Antippbare Materialzähler zeigen Leerstand, Teilmengen und volle Ausgänge direkt über den Gebäuden.
+- Ladenaufträge mit Frist und Bonus. Verspätete Möbel verdienen 70 % des Verkaufspreises; der Auftrag bleibt erfüllbar. Kein echtes Geld und kein Game Over.
+- Unternehmenslevel: einfache Geld-Upgrades auf Level 1–3; ab Level 4 Materialbaustellen mit sieben Bauphasen. Holz, Bretter, Muttern und Schrauben müssen tatsächlich am Bauplatz ankommen. Hardware gibt es gegen Spielmünzen im Materialdepot.
+- Liefer-LKWs nehmen Ware am Lager auf, fahren über Straßen zur Baustelle, entladen und kehren leer zurück. Baustellen und Laden teilen sich den gekauften Fuhrpark. Pause, Priorität, Materialkauf, Baukamera, sichere Bauabbrüche und ein begrenztes zuweisbares Bauteam sind spielbar. Ab Level 10 kann die globale Baustellen-Automatik übernehmen.
+- Sichtbare Baustellenschilder, Lieferflächen, wachsende Baugeometrie, arbeitende beziehungsweise wartende Bauarbeiter, Kran und Eröffnungsfeier. Ladungen und Bauphasen sind gespeichert und laufen unabhängig von der Darstellung weiter.
+- Alte Spielstände und schon bezahlte Baustellen bleiben erhalten. Zusätzliche Fabriken behalten die bisherige fortgeschrittene Holz-/Stadtwirtschaft. Das ist der erste spielbare Abschnitt des großen Master-Plans; Stein-, Stahl- und Betonketten sowie die neuen Bergbaumaschinen stehen noch aus. Der genaue Stand und die weiteren Phasen stehen in [Industrie-Masterplan](docs/INDUSTRY-ROADMAP.md).
+
+![Echte Holzlieferkette mit lokalen Materialanzeigen; aufgebauter Demonstrationsstand](docs/preview-delivery-world.png)
+
+![Materialbaustelle mit zugewiesenem Bauteam; aufgebauter Demonstrationsstand](docs/preview-delivery-construction.png)
 
 ## Neu in 0.14 — Ein lebendiges Waldtal
 

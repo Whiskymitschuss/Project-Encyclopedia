@@ -58,6 +58,7 @@ func run() -> void:
  var old_level = Game.level("sawmill")
  check(Game.upgrade(1),"Building upgrade starts")
  check(not Game.upgrade(1),"Duplicate upgrade rejected")
+ check(Game.buy_hardware("nuts",1) and Game.buy_hardware("screws",2),"Upgrade hardware is purchased with earned coins")
  check(Game.level("sawmill")==old_level,"Upgrade takes real time")
  Game.simulate(50)
  check(Game.level("sawmill")==old_level+1,"Building upgrade completes")

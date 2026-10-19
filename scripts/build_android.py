@@ -15,7 +15,7 @@ RUNTIME = Path(os.environ.get('TIMBER_RUNTIME', '/workspace/.timber-runtime'))
 SDK = RUNTIME / 'android-sdk'
 TOOLS = SDK / 'build-tools/36.0.0'
 parser = argparse.ArgumentParser()
-parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.14-test.apk')
+parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.15-test.apk')
 parser.add_argument('--verify-only', action='store_true')
 args = parser.parse_args()
 output = args.output.resolve()
@@ -67,7 +67,7 @@ run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.14.0-test'", "versionCode='1400'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
+for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.15.0-test'", "versionCode='1500'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
     assert required in manifest, required
 assert 'uses-permission:' not in permissions
 assert 'gl_compatibility' in xml and 'android.hardware.vulkan' not in xml
@@ -80,7 +80,7 @@ with zipfile.ZipFile(output) as apk:
     assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'version':'0.14.0-test','package':'com.whiskymitschuss.timberloot',
+    'version':'0.15.0-test','package':'com.whiskymitschuss.timberloot',
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
     'debug_signed':True,'zipalign_16k':True,'permissions':[],
     'source_commit':source_commit,

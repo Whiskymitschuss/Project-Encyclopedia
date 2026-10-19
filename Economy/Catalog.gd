@@ -1,8 +1,8 @@
 class_name Catalog
 extends RefCounted
 
-const RESOURCES = {"wood":"Holz", "boards":"Bretter", "dry":"Trockenholz", "furniture":"Möbel", "sawdust":"Sägespäne", "walls":"Wandmodule", "roofs":"Dachmodule", "parts":"Bauelemente", "pellets":"Pellets", "paper":"Papier", "design":"Designmöbel"}
-const PRICES = {"wood":2.0,"boards":6.0,"dry":15.0,"furniture":65.0,"sawdust":0.5,"walls":160.0,"roofs":220.0,"parts":110.0,"pellets":14.0,"paper":26.0,"design":480.0}
+const RESOURCES = {"nuts":"Muttern", "screws":"Schrauben", "wood":"Holz", "boards":"Bretter", "dry":"Trockenholz", "furniture":"Möbel", "sawdust":"Sägespäne", "walls":"Wandmodule", "roofs":"Dachmodule", "parts":"Bauelemente", "pellets":"Pellets", "paper":"Papier", "design":"Designmöbel"}
+const PRICES = {"nuts":8.0,"screws":6.0,"wood":2.0,"boards":6.0,"dry":15.0,"furniture":65.0,"sawdust":0.5,"walls":160.0,"roofs":220.0,"parts":110.0,"pellets":14.0,"paper":26.0,"design":480.0}
 const BUILDINGS = {
  "station":{"name":"Sammelstation","cost":150,"max":50,"color":"dbb579","desc":"Liefert das Holz der Helfer an die Betriebe."},
  "sawmill":{"name":"Sägewerk","cost":250,"max":100,"color":"278fa9","desc":"2 Holz → 1 Brett + 1 Sägespäne"},
@@ -41,7 +41,7 @@ const HOMES = {
  "nightclub":{"name":"Nachtclub","cost":16000,"materials":{"walls":12.0,"roofs":5.0,"parts":8.0,"design":3.0},"rent":22.0,"people":8,"color":"9c80c9"},
  "fire":{"name":"Feuerwehr","cost":11000,"materials":{"walls":10.0,"roofs":6.0,"parts":8.0},"rent":0.0,"people":0,"color":"c96e5a"}}
 const BIOMES = [
- {"name":"Starter-Wald","cost":0,"wood":"Holz","ground":"70d675","tree":"289f62"},
+ {"name":"Starter-Wald","cost":0,"nuts":"Muttern", "screws":"Schrauben", "wood":"Holz","ground":"70d675","tree":"289f62"},
  {"name":"Eichenwald","cost":1500,"wood":"Eichenholz","ground":"c8ce68","tree":"6eae41"},
  {"name":"Bergwald","cost":6000,"wood":"Hartholz","ground":"7fcfa0","tree":"249877"},
  {"name":"Winterwald","cost":22000,"wood":"Frostholz","ground":"d3e7df","tree":"7eb8b0"},

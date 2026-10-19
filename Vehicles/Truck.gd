@@ -1,6 +1,9 @@
 class_name TimberTruck
 extends Node3D
 
+var cargo_boxes = false
+var cargo_furniture = false
+var cargo: Node3D
 var path: Array[Vector3] = []
 var segment = 0
 var speed = 10.0
@@ -33,7 +36,7 @@ func _ready() -> void:
   Models.box(self,Vector3(2.8,0.9,5.7),Vector3(0,1.25,0),Color("ea8558"))
   Models.box(self,Vector3(2.6,1.8,2.2),Vector3(0,2.3,0.9),Color("e9b95e"))
   Models.box(self,Vector3(2.4,1,0.14),Vector3(0,2.7,2.05),Color("8bd2d7"))
-  Models.log_pile(self,Vector3(-0.8,1.7,-1.7),3)
+  make_cargo(Vector3(-0.8,1.7,-1.7),3)
   for x in [-1.5,1.5]:
    for z in [-1.9,1.9]: wheel(Vector3(x,0.8,z),0.75)
  else:
@@ -44,7 +47,7 @@ func _ready() -> void:
   Models.box(self,Vector3(3.2,2.7,2.4),Vector3(0,2.3,length/2-1.2),color)
   Models.box(self,Vector3(2.9,1.2,0.15),Vector3(0,2.9,length/2+0.05),Color("9ed2d4"))
   for x in [-1.1,1.1]: Models.box(self,Vector3(0.65,0.45,0.2),Vector3(x,1.6,length/2+0.1),Color("fff1b2"))
-  Models.log_pile(self,Vector3(-0.8,1.6,-1.2),9 if tier==4 else 6)
+  make_cargo(Vector3(-0.8,1.6,-1.2),9 if tier==4 else 6)
   for x in [-1.8,1.8]:
    for z in [-length*0.34,0,length*0.34]:
     if z==0 and tier==3: continue
@@ -82,3 +85,18 @@ func _process(delta: float) -> void:
  if direction.length_squared()>0.01: rotation.y=atan2(direction.x,direction.z)
  for node in wheels: node.rotate_object_local(Vector3.UP,delta*speed)
  if lift!=null: lift.rotation.y=sin(clock*0.4)*0.1
+
+
+func make_cargo(at: Vector3, count_value: int) -> void:
+ cargo = Node3D.new()
+ cargo.set_meta("animated",true)
+ add_child(cargo)
+ if cargo_boxes:
+  for z in [-1,0]: Models.box(cargo,Vector3(2,1.4,1.3),Vector3(0,2,z),Color("b7a16e"))
+  Models.bake(cargo)
+  return
+ if not cargo_furniture: Models.log_pile(cargo,at,count_value); return
+ for z in [-1,0]:
+  Models.box(cargo,Vector3(1.8,1.5,1.1),Vector3(0,2.2,z),Color("e8bf79"))
+  Models.box(cargo,Vector3(1.6,1.2,0.2),Vector3(0,3,z+0.5),Color("5fb4bd"))
+ Models.bake(cargo)

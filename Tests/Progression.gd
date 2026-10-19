@@ -17,6 +17,11 @@ func run() -> void:
  var house_started = false
  for second in 7200:
   game.step(1)
+  for job in game.state.jobs:
+   for key in ConstructionRules.HARDWARE:
+    var missing=ceili(ConstructionRules.remaining(job,key)-float(game.state.resources[key]))
+    if missing>0 and game.state.coins>=float(ConstructionRules.HARDWARE[key])*missing:
+     game.buy_hardware(key,missing)
   for kind in ["kiln","furniture","prefab"]:
    if game.available(kind) and not ordered.has(kind) and game.state.coins>=game.cost_for(kind):
     if game.order_building(kind): ordered[kind]=true

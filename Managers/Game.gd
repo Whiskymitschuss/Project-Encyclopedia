@@ -5,6 +5,8 @@ signal notice(message: String)
 signal harvested(biome: int, amount: float)
 signal rebuild_world
 signal loot_found(rarity: int)
+signal construction_phase_completed(job_id: int, phase: int)
+signal company_level_unlocked(level: int)
 signal construction_finished(point: Vector3, job_type: String)
 
 var state: Dictionary
@@ -15,6 +17,8 @@ var rng = RandomNumberGenerator.new()
 var offline_report = ""
 var last_save_ok = true
 var town_route_cache: Dictionary = {}
+var delivery_route_cache: Dictionary = {}
+var delivery_route_signature = 0
 
 func initial_state() -> Dictionary:
  var resources = {}
@@ -27,6 +31,8 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
+  "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "delivery":DeliveryChain.initial(), "construction_auto":false, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
@@ -54,6 +60,10 @@ func restore(saved: Dictionary) -> void:
  for key in Catalog.RESOURCES:
   if not state.resources.has(key): state.resources[key] = 0.0
  if not saved.has("tutorial"): state.tutorial = 5
+ if not saved.has("company_xp"):
+  state.company_xp = int(state.trees)*2+maxi(0,state.buildings.size()-5)*15+state.homes.size()*25
+  for b in state.buildings: state.company_xp += maxi(0,int(b.level)-1)*8
+  if count("furniture")>0: state.company_xp = maxi(120,int(state.company_xp))
  var town_defaults = TownRules.initial()
  for key in town_defaults:
   if not state.town.has(key): state.town[key] = town_defaults[key]
@@ -61,6 +71,10 @@ func restore(saved: Dictionary) -> void:
   state.town.rent_auto = true
   state.town.rent_manager = true
  town_route_cache.clear()
+ delivery_route_cache.clear()
+ delivery_route_signature = 0
+ for key in DeliveryChain.initial():
+  if not state.delivery.has(key): state.delivery[key] = DeliveryChain.initial()[key]
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -146,6 +160,9 @@ func earn(amount: float) -> void:
  state.earned += amount
 
 func reserve_for(key: String) -> float:
+ var building_need = 0.0
+ for job in state.jobs: building_need += ConstructionRules.remaining(job,key)
+ if building_need>0: return maxf(building_need,float(plan_materials().get(key,0)))
  var planned = float(plan_materials().get(key,0))
  if not state.plan.is_empty(): return maxf(planned,10.0 if key == "boards" else 5.0 if key == "dry" else 0.0)
  if not state.reserve: return 0.0
@@ -154,6 +171,9 @@ func reserve_for(key: String) -> float:
 func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
  var building = state.buildings[index]
+ if delivery_owns(index):
+  var info = DeliveryChain.status(state,building.kind)
+  return "Lieferbetrieb · %s %s/%s · %s" % [Catalog.RESOURCES[info.key],Catalog.number(info.amount),info.need,info.text]
  if not Catalog.RECIPES.has(building.kind): return "Betriebsbereit"
  if building.get("paused",false): return "Pausiert · Produktion fortsetzen"
  var recipe = Catalog.RECIPES[building.kind]
@@ -167,6 +187,7 @@ func production_status(index: int) -> String:
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
 func step(delta: float) -> void:
+ ConstructionRules.transport_tick(state,delta)
  state.elapsed += delta
  state.time = fmod(float(state.time) + delta / 60.0,24.0)
  state.weather = int(float(state.elapsed)/180.0) % 4
@@ -183,7 +204,7 @@ func step(delta: float) -> void:
  var output_demand = {}
  for building_index in state.buildings.size():
   var b = state.buildings[building_index]
-  if b.get("paused",false) or not Catalog.RECIPES.has(b.kind): continue
+  if b.get("paused",false) or delivery_owns(building_index) or not Catalog.RECIPES.has(b.kind): continue
   var recipe = Catalog.RECIPES[b.kind]
   var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")*delta
   proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles})
@@ -222,11 +243,13 @@ func step(delta: float) -> void:
    else: flow["sawdust_composted"] = excess/maxf(delta,0.001)
  if state.auto_export:
   var export_reserve = reserve_for("furniture")+(4.0 if level("design")>0 else 0.0)
-  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),int(state.trucks)*level("market")*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
+  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),maxi(0,int(state.trucks)-(mini(2,int(state.trucks)) if state.delivery.active else 0)-state.construction_shipments.size())*maxi(0,level("market")-(int(state.buildings[int(state.delivery.nodes.market)].level) if state.delivery.active else 0))*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
   state.resources.furniture -= exported
   state.exported += exported
   flow["export"] = exported/maxf(delta,0.001)
   earn(exported*float(Catalog.PRICES.furniture)*multiplier()*boost("money"))
+ step_delivery(delta)
+ ConstructionRules.dispatch(state)
  var public_bonus = 1.0
  for h in state.homes:
   if h.kind in ["park","clinic"]: public_bonus += 0.04*int(h.level)
@@ -240,6 +263,15 @@ func step(delta: float) -> void:
    earn(float(Catalog.PROJECTS[project_index].income)*delta*multiplier()*boost("money"))
  var completed = []
  for j in state.jobs:
+  if j.has("phases"):
+   var old_phase = int(j.phase)
+   var work = delta*(1+research_level("construction")*0.12+minf(public_level("fire")*0.05,0.5))*boost("workers")*maxi(0,int(j.workers))
+   if ConstructionRules.advance(j,work): completed.append(j)
+   if int(j.phase)!=old_phase: construction_phase_completed.emit(int(j.id),int(j.phase))
+   continue
+  if not ConstructionRules.ready(j):
+   if state.construction_auto: ConstructionRules.deliver(state,j,4.0*delta)
+   if not ConstructionRules.ready(j): continue
   j.left = maxf(0,float(j.left)-delta*(1+research_level("construction")*0.12+minf(public_level("fire")*0.05,0.5)))
   if j.left <= 0: completed.append(j)
  for j in completed:
@@ -261,6 +293,7 @@ func chop() -> void:
  state.bag += amount
  state.gathered += amount
  state.trees += 1
+ add_company_xp(2)
  if state.tutorial == 1 and state.trees >= 5: state.tutorial = 2
  harvested.emit(int(state.biome),amount)
  if rng.randf() < 0.12*(1+research_level("loot")*0.08+int(state.permanent_loot)*0.1)*boost("loot")*multiplier():
@@ -280,7 +313,7 @@ func sell(key: String, fraction: float = 1.0) -> void:
  if not Catalog.PRICES.has(key): return
  var amount = float(state.resources[key])*clampf(fraction,0,1)
  state.resources[key] -= amount
- earn(amount*float(Catalog.PRICES[key])*multiplier()*boost("money"))
+ earn(amount*float(Catalog.PRICES[key])*0.5 if ConstructionRules.HARDWARE.has(key) else amount*float(Catalog.PRICES[key])*multiplier()*boost("money"))
  if state.tutorial == 3 and amount > 0: state.tutorial = 4
  if key == "furniture": state.exported += amount
  notice.emit("%s %s verkauft" % [Catalog.number(amount),Catalog.RESOURCES[key]])
@@ -364,6 +397,12 @@ func next_city_plot() -> int:
  return -1
 
 func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = false) -> bool:
+ if not city and (delivery_owns(index) or job_for("upgrade",index)):
+  notice.emit("Vor dem Verschieben die Lieferlinie auflösen oder den laufenden Ausbau abschließen")
+  return false
+ if not state.construction_shipments.is_empty():
+  notice.emit("Laufende Baustellenlieferungen zuerst beenden lassen")
+  return false
  var records = state.homes if city else state.buildings
  if index<0 or index>=records.size(): return false
  point = Placement.snap(point)
@@ -389,7 +428,9 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0) -> b
  if not reason.is_empty(): notice.emit(reason); return false
  if not pay(cost_for(kind)): return false
  var duration = 12.0+state.buildings.size()*2.0
- state.jobs.append({"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending,"position":[position_value.x,position_value.z],"rotation":rotation})
+ state.jobs.append({"id":state.next_job,"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending,"position":[position_value.x,position_value.z],"rotation":rotation,"materials":ConstructionRules.materials(kind) if company_level()>=4 else {},"delivered":{}})
+ if company_level()>=4: ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
+ state.next_job += 1
  if state.tutorial == 4: state.tutorial = 5
  rebuild_world.emit()
  changed.emit()
@@ -406,7 +447,9 @@ func upgrade(index: int) -> bool:
  var b = state.buildings[index]
  if b.level >= Catalog.BUILDINGS[b.kind].max: return false
  if not pay(cost_for(b.kind,int(b.level)+1)): return false
- state.jobs.append({"type":"upgrade","index":index,"kind":b.kind,"left":10.0+int(b.level)*2.0,"total":10.0+int(b.level)*2.0})
+ state.jobs.append({"id":state.next_job,"type":"upgrade","index":index,"kind":b.kind,"left":10.0+int(b.level)*2.0,"total":10.0+int(b.level)*2.0,"materials":ConstructionRules.materials(b.kind,int(b.level)+1) if company_level()>=4 else {},"delivered":{}})
+ if company_level()>=4: ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
+ state.next_job += 1
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -422,8 +465,12 @@ func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 
  var reason = placement_reason(position_value,rotation)
  if not reason.is_empty(): notice.emit(reason); return false
  var definition = Catalog.HOMES[kind]
- if not pay(float(definition.cost)*difficulty(),definition.materials): return false
+ if not pay(float(definition.cost)*difficulty(),{} if company_level()>=4 else definition.materials): return false
  state.jobs.append({"type":"home","kind":kind,"plot":plot,"left":60.0,"total":60.0,"position":[position_value.x,position_value.z],"rotation":rotation})
+ if company_level()>=4:
+  state.jobs.back().merge({"id":state.next_job,"materials":definition.materials.duplicate(true),"delivered":{}})
+  ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
+  state.next_job+=1
  if not state.plan.is_empty() and int(state.plan.plot)==plot: state.plan = {}
  rebuild_world.emit()
  changed.emit()
@@ -437,14 +484,19 @@ func upgrade_home(index: int) -> bool:
  var definition = Catalog.HOMES[h.kind]
  var materials = {}
  for key in definition.materials: materials[key] = ceilf(float(definition.materials[key])*0.5*int(h.level))
- if not pay(float(definition.cost)*pow(1.4,int(h.level))*difficulty(),materials): return false
+ if not pay(float(definition.cost)*pow(1.4,int(h.level))*difficulty(),{} if company_level()>=4 else materials): return false
  state.jobs.append({"type":"home_upgrade","kind":h.kind,"index":index,"plot":h.plot,"left":45.0,"total":45.0})
+ if company_level()>=4:
+  state.jobs.back().merge({"id":state.next_job,"materials":materials.duplicate(true),"delivered":{}})
+  ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
+  state.next_job+=1
  rebuild_world.emit()
  changed.emit()
  save(true)
  return true
 
 func finish_job(job: Dictionary) -> void:
+ add_company_xp(25 if job.type=="home" else 15 if job.type=="building" else 8)
  match job.type:
   "building": state.buildings.append({"kind":job.kind,"level":1,"paused":false,"slot":job.slot})
   "upgrade": state.buildings[int(job.index)].level += 1
@@ -707,6 +759,8 @@ func prestige() -> bool:
  var old = state.duplicate(true)
  state = initial_state()
  town_route_cache.clear()
+ delivery_route_cache.clear()
+ delivery_route_signature = 0
  for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled"]: state[key] = old[key]
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
@@ -731,6 +785,8 @@ func expand_district() -> bool:
  if not pay(district_cost()): return false
  state.town.districts += 1
  town_route_cache.clear()
+ delivery_route_cache.clear()
+ delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -821,6 +877,8 @@ func build_road(kind: String, cells: Array) -> bool:
  for c in cells: saved_cells.append([c.x,c.y])
  state.town.roads.append({"kind":kind,"cells":saved_cells})
  town_route_cache.clear()
+ delivery_route_cache.clear()
+ delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -839,6 +897,8 @@ func remove_road(index: int) -> bool:
    return false
  state.town.roads.remove_at(index)
  town_route_cache.clear()
+ delivery_route_cache.clear()
+ delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -871,6 +931,8 @@ func build_stop(point: Vector3) -> bool:
  state.town.stops.append({"id":id,"name":"Haltestelle %s" % id,"cell":[c.x,c.y]})
  state.town.next_stop = id+1
  town_route_cache.clear()
+ delivery_route_cache.clear()
+ delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -883,6 +945,8 @@ func remove_stop(id: int) -> bool:
   if int(state.town.stops[i].id)!=id: continue
   state.town.stops.remove_at(i)
   town_route_cache.clear()
+  delivery_route_cache.clear()
+  delivery_route_signature = 0
   rebuild_world.emit()
   changed.emit()
   save(true)
@@ -944,3 +1008,187 @@ func plot_position(plot: int) -> Vector3:
  for i in state.homes.size():
   if int(state.homes[i].plot)==plot: return home_position(i)
  return Catalog.home_position(plot)
+
+
+func delivery_owns(index: int) -> bool:
+ return DeliveryChain.owns(state,index)
+
+func delivery_routes() -> Dictionary:
+ if not state.delivery.active: return {}
+ var footprints = []
+ for job in state.jobs:
+  if job.type in ["building","home"]: footprints.append([job.get("position",[]),job.get("rotation",0)])
+ var signature = hash([state.buildings,state.homes,state.town.roads,state.town.districts,state.delivery.nodes,footprints])
+ if signature==delivery_route_signature and not delivery_route_cache.is_empty(): return delivery_route_cache
+ delivery_route_signature = signature
+ delivery_route_cache = {}
+ for link in LogisticsRoutes.belts(state):
+  for kind in ["sawmill","furniture"]:
+   if int(link.target)==int(state.delivery.nodes[kind]): delivery_route_cache[kind] = LogisticsRoutes.encode(link.points)
+ delivery_route_cache.market = LogisticsRoutes.road_route(state,int(state.delivery.nodes.furniture),int(state.delivery.nodes.market))
+ return delivery_route_cache
+
+func start_delivery() -> bool:
+ if not DeliveryChain.start(state):
+  notice.emit("Benötigt: Sammelstation, Sägewerk, Möbelfabrik und Verkaufsstelle ohne Pause")
+  return false
+ delivery_route_cache.clear()
+ notice.emit("Lieferbetrieb eröffnet · Holz → Bretter → Möbel → Laden")
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func step_delivery(delta: float) -> void:
+ if not state.delivery.active: return
+ var report = DeliveryChain.tick(state,delta,delivery_routes(),(1+research_level("production")*0.12)*multiplier()*boost("processing"))
+ earn(float(report.coins)*multiplier()*boost("money"))
+ state.exported += int(report.sold)
+ state.tickets += int(report.tickets)
+ if float(report.sawdust)>0:
+  var excess = maxf(0,float(report.sawdust)-(capacity()-float(state.resources.sawdust)))
+  add_resource("sawdust",float(report.sawdust))
+  if excess>0 and state.auto_sawdust: earn(excess*float(Catalog.PRICES.sawdust)*multiplier()*boost("money"))
+ if state.construction_auto:
+  for key in ["wood","boards","furniture"]:
+   var need = 0.0
+   for job in state.jobs: need += ConstructionRules.remaining(job,key)
+   need = maxf(0,need-float(state.resources[key]))
+   for kind in DeliveryChain.KINDS:
+    var amount = minf(need,minf(float(state.delivery.buffers[kind][key]),capacity()-float(state.resources[key])))
+    state.delivery.buffers[kind][key] -= amount
+    state.resources[key] += amount
+    need -= amount
+ flow.merge(report.flow,true)
+
+func unload_delivery(kind: String) -> float:
+ if not state.delivery.active or not state.delivery.buffers.has(kind): return 0.0
+ var total = 0.0
+ for key in state.delivery.buffers[kind]:
+  var amount = minf(float(state.delivery.buffers[kind][key]),capacity()-float(state.resources[key]))
+  state.delivery.buffers[kind][key] -= amount
+  state.resources[key] += amount
+  total += amount
+ changed.emit()
+ return total
+
+func buy_hardware(key: String, amount: int) -> bool:
+ if not ConstructionRules.HARDWARE.has(key) or amount<=0 or amount>1000: return false
+ if float(state.resources[key])+amount>capacity(): return false
+ if not pay(float(ConstructionRules.HARDWARE[key])*amount*difficulty()): return false
+ state.resources[key] += amount
+ changed.emit()
+ return true
+
+func deliver_job(id: int) -> float:
+ for job in state.jobs:
+  if int(job.get("id",-1))==id:
+   if job.has("phases"):
+    job.requested = true
+    var amount = ConstructionRules.dispatch(state,id)
+    changed.emit()
+    return amount
+   var amount = ConstructionRules.deliver(state,job,INF)
+   changed.emit()
+   return amount
+ return 0.0
+
+
+func stop_delivery() -> bool:
+ if not state.delivery.active: return false
+ var returned = {}
+ for kind in state.delivery.buffers:
+  for key in state.delivery.buffers[kind]: returned[key] = float(returned.get(key,0))+float(state.delivery.buffers[kind][key])
+ for shipment in state.delivery.shipments:
+  if not shipment.arrived: returned[shipment.key] = float(returned.get(shipment.key,0))+float(shipment.amount)
+ for key in returned:
+  if float(state.resources[key])+float(returned[key])>capacity():
+   notice.emit("Im Lager Platz schaffen, bevor die Linie aufgelöst wird")
+   return false
+ for key in returned: state.resources[key] += float(returned[key])
+ state.delivery = DeliveryChain.initial()
+ delivery_route_cache.clear()
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+
+func job_hardware_cost(id: int) -> float:
+ for job in state.jobs:
+  if int(job.get("id",-1))!=id: continue
+  var cost = 0.0
+  for key in ConstructionRules.HARDWARE:
+   var missing = ceili(maxf(0,ConstructionRules.remaining(job,key)-float(state.resources[key])))
+   cost += missing*float(ConstructionRules.HARDWARE[key])*difficulty()
+  return cost
+ return 0.0
+
+func buy_job_hardware(id: int) -> bool:
+ for job in state.jobs:
+  if int(job.get("id",-1))!=id: continue
+  var needed = {}
+  for key in ConstructionRules.HARDWARE:
+   needed[key] = ceili(maxf(0,ConstructionRules.remaining(job,key)-float(state.resources[key])))
+   if float(state.resources[key])+int(needed[key])>capacity(): return false
+  var cost = job_hardware_cost(id)
+  if cost<=0 or not pay(cost): return false
+  for key in needed: state.resources[key] += int(needed[key])
+  changed.emit()
+  return true
+ return false
+
+
+func company_level() -> int:
+ var xp = int(state.company_xp)
+ var thresholds = [0,20,60,120,220,360,550,800,1150,1600,2200,3000,4000,5200,6700,8500,10600,13000,15800,19000]
+ var result = 1
+ for i in thresholds.size():
+  if xp>=thresholds[i]: result=i+1
+ return result
+
+func add_company_xp(amount: int) -> void:
+ var before = company_level()
+ state.company_xp += maxi(0,amount)
+ if company_level()>before:
+  company_level_unlocked.emit(company_level())
+  notice.emit("Unternehmenslevel %s%s" % [company_level()," · Materialbaustellen freigeschaltet" if before<4 and company_level()>=4 else ""])
+
+func free_builders() -> int:
+ var assigned = 0
+ for job in state.jobs: assigned += int(job.get("workers",0))
+ return maxi(0,int(state.builders)-assigned)
+
+func assign_builders(id: int, amount: int) -> bool:
+ for job in state.jobs:
+  if int(job.get("id",-1))!=id or not job.has("phases"): continue
+  var wanted = clampi(amount,0,5)
+  if wanted>int(job.workers)+free_builders(): return false
+  job.workers=wanted
+  rebuild_world.emit()
+  changed.emit()
+  return true
+ return false
+
+func hire_builder() -> bool:
+ if company_level()<4 or int(state.builders)>=8 or not pay(150*pow(1.6,int(state.builders)-2)*difficulty()): return false
+ state.builders += 1
+ changed.emit()
+ return true
+
+func cancel_construction(id: int) -> bool:
+ for job in state.jobs:
+  if int(job.get("id",-1))!=id or not job.has("phases"): continue
+  # Cancellation requires room for ALL receipts and loads. Nothing is discarded.
+  var returned = job.delivered.duplicate(true)
+  for s in state.construction_shipments:
+   if int(s.job)==id and not s.arrived: returned[s.key]=float(returned.get(s.key,0))+float(s.amount)
+  for key in returned:
+   if float(state.resources[key])+float(returned[key])>capacity(): notice.emit("Zuerst Platz im Lager schaffen"); return false
+  for key in returned: state.resources[key]+=float(returned[key])
+  state.construction_shipments=state.construction_shipments.filter(func(s): return int(s.job)!=id)
+  state.jobs.erase(job)
+  rebuild_world.emit()
+  changed.emit()
+  return true
+ return false

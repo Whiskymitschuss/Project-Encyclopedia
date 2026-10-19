@@ -26,7 +26,7 @@ func save_game(data: Dictionary) -> bool:
  if file == null:
   last_error = "Spielstand konnte nicht geschrieben werden."
   return false
- file.store_string(JSON.stringify(data))
+ file.store_string(JSON.stringify(data,"",true,true))
  file.flush()
  file.close()
  if read_file(tmp).is_empty():
