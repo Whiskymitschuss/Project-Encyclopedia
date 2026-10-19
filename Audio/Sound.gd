@@ -22,3 +22,21 @@ func play_tone(frequency: float, duration: float) -> void:
  stream.data = bytes
  player.stream = stream
  player.play()
+
+func play_chime() -> void:
+ if Game.state.muted or DisplayServer.get_name()=="headless": return
+ var stream=AudioStreamWAV.new()
+ stream.mix_rate=22050
+ stream.format=AudioStreamWAV.FORMAT_16_BITS
+ var length=int(0.15*22050)
+ var frequencies=[523.25,659.25,783.99]
+ var data=PackedByteArray()
+ data.resize(length*frequencies.size()*2)
+ for note in frequencies.size():
+  for i in length:
+   var envelope=pow(1.0-float(i)/length,2)
+   var value=sin(float(i)*frequencies[note]*TAU/22050)*envelope*0.5
+   data.encode_s16((note*length+i)*2,int(value*32767))
+ stream.data=data
+ player.stream=stream
+ player.play()

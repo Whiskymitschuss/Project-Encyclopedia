@@ -20,6 +20,7 @@ var pinch_distance = 0.0
 var hud: Control
 var weather: GPUParticles3D
 var audio: Node
+var life: Node3D
 var machines: Array = []
 var chip_pool: Array = []
 var chip_index = 0
@@ -87,6 +88,9 @@ func _ready() -> void:
  add_child(audio)
  Game.harvested.connect(func(_b,_a): audio.play_tone(190,0.07))
  Game.loot_found.connect(func(_r): audio.play_tone(780,0.22))
+ life=load("res://Components/WorldLife.gd").new()
+ life.world=self
+ add_child(life)
 
 func build_landscape() -> void:
  Models.box(scenery,Vector3(1100,1,1100),Vector3(0,-5,0),Color("38b4cf"))
@@ -277,6 +281,9 @@ func sync_actors() -> void:
  for i in Game.state.buildings.size():
   if Catalog.RECIPES.has(Game.state.buildings[i].kind): factories.append(i)
  var operators = mini(mini(staff/3,factories.size()),2 if Game.state.quality==0 else 6)
+ var cabin_index=-1
+ for i in Game.state.buildings.size():
+  if Game.state.buildings[i].kind=="cabin": cabin_index=i; break
  for i in operators:
   var worker = TimberWorker.new()
   worker.role = "operator"
@@ -290,6 +297,17 @@ func sync_actors() -> void:
   worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1
+  if i==staff-operators-1 and staff>=4 and cabin_index>=0:
+   worker.role="neighbor"
+   var base=Game.building_position(cabin_index)
+   var angle=deg_to_rad(Game.state.buildings[cabin_index].get("rotation",0))
+   var turn=Basis.from_euler(Vector3(0,angle,0))
+   worker.origin_point=base+turn*Vector3(0,0,6.8)
+   worker.rest_via=base+turn*Vector3(1.8,0,9.7)
+   worker.destination=base+turn*Vector3(4.2,0,9.7)
+   worker.facing=angle+PI
+   worker.pace=0.85
+   worker.phase=0
   actors.add_child(worker)
  for i in mini(int(Game.state.trucks),3 if Game.state.quality == 0 else 8):
   var truck = TimberTruck.new()
@@ -301,8 +319,11 @@ func sync_actors() -> void:
  for i in mini(Game.residents(),6):
   var resident = TimberWorker.new()
   resident.role = "resident"
-  resident.origin_point = Vector3(-60+i*8,0,72)
-  resident.destination = Vector3(-60+i*8,0,155)
+  var home_index=i%Game.state.homes.size()
+  var turn=Basis.from_euler(Vector3(0,deg_to_rad(Game.state.homes[home_index].get("rotation",0)),0))
+  var point=Game.home_position(home_index)
+  resident.origin_point = point+turn*Vector3(-4.5,0,9)
+  resident.destination = point+turn*Vector3(4.5,0,9)
   resident.phase = i*2.1
   resident.pace = 0.55
   actors.add_child(resident)

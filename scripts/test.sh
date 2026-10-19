@@ -18,4 +18,5 @@ check --script res://Tests/Scene.gd
 check --script res://Tests/Placement.gd
 check --script res://Tests/Workshop.gd
 check --script res://Tests/Companion.gd
+check --script res://Tests/WorldLife.gd
 check --quit-after 90

@@ -5,6 +5,7 @@ signal notice(message: String)
 signal harvested(biome: int, amount: float)
 signal rebuild_world
 signal loot_found(rarity: int)
+signal construction_finished(point: Vector3, job_type: String)
 
 var state: Dictionary
 var flow: Dictionary = {}
@@ -29,7 +30,7 @@ func initial_state() -> Dictionary:
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
   "boss_hp":100.0, "bosses":0, "time":9.0, "elapsed":0.0, "weather":0,
-  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false, "companion_enabled":true,
+  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false, "companion_enabled":true, "ambient_enabled":true,
   "last_seen":Time.get_unix_time_from_system()}
 
 func _ready() -> void:
@@ -438,6 +439,14 @@ func finish_job(job: Dictionary) -> void:
   record.rotation = int(job.get("rotation",0))
  rebuild_world.emit()
  notice.emit("Bau abgeschlossen · %s" % job.kind)
+ var point=Vector3.ZERO
+ match job.type:
+  "building": point=building_position(state.buildings.size()-1)
+  "home": point=home_position(state.homes.size()-1)
+  "upgrade": point=building_position(int(job.index))
+  "home_upgrade": point=home_position(int(job.index))
+  "project": point=Catalog.PROJECTS[int(job.index)].position
+ construction_finished.emit(point,str(job.type))
 
 func hire_cost() -> float:
  return ceilf(90.0*pow(1.33,int(state.workers))*difficulty())
@@ -675,7 +684,7 @@ func prestige() -> bool:
   return false
  var old = state.duplicate(true)
  state = initial_state()
- for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled"]: state[key] = old[key]
+ for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled"]: state[key] = old[key]
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
  state.coins = 350.0*(1+int(state.prestige)*0.25)

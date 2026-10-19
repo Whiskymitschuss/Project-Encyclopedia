@@ -103,7 +103,8 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   for x in [-5,5]:
    cylinder(root,0.4,3,Vector3(x,1.8,-4),Color("b18a5f"))
    cylinder(root,2.4,4,Vector3(x,4.3,-4),Color("5d9c64"),0.5)
-   box(root,Vector3(3.0,0.5,1),Vector3(x,1.1,4),Color("b18758"))
+   load("res://Buildings/CozyProps.gd").bench(root,Vector3(x,0,4))
+   load("res://Buildings/CozyProps.gd").planter(root,Vector3(x,0,7.5))
   bake(root)
   return root
  box(root,Vector3(width,0.7,depth),Vector3(0,0.65,0),Color("91a59c"))
@@ -121,7 +122,7 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
  roof(root,width,depth,height+2.0,tone.darkened(0.10))
  box(root,Vector3(1.1,2.8,1.2),Vector3(-3,height+2.8,-2),Color("87978f"))
  if not city:
-  log_pile(root,Vector3(-6,0.6,8),5)
+  if kind!="cabin": log_pile(root,Vector3(-6,0.6,8),5)
   if kind=="sawmill":
    for side in [-1,1]: box(root,Vector3(0.22,3.8,3.2),Vector3(7.5+side*1.6,2.1,-3),Color("eabf57"))
    box(root,Vector3(3.4,3.8,0.22),Vector3(7.5,2.1,-4.6),Color("eabf57"))
@@ -133,7 +134,8 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
    for x in [-4,-2,0,2,4]:
     var awning=box(root,Vector3(2,0.3,3.2),Vector3(x,4.3,6.5),Color("fff0cf") if x in [-2,2] else tone)
     awning.rotation.x=0.15
-   for x in [-5,5]:
+   if kind=="cabin": load("res://Buildings/CozyProps.gd").rest_area(root)
+   for x in ([] if kind=="cabin" else [-5,5]):
     box(root,Vector3(2.5,0.65,1),Vector3(x,0.9,7.5),Color("a2774a"))
     for offset in [-0.7,0,0.7]: cylinder(root,0.28,0.5,Vector3(x+offset,1.5,7.5),Color("ed785a"),0.12)
   if Catalog.RECIPES.has(kind):

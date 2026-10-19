@@ -1,3 +1,14 @@
+# Prüfung 0.12 — Waldleben
+
+- 220 Regel-, 4.135 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter- und 30 neue Alltagsszenenprüfungen: 4.506 Headless-Prüfungen plus frischer erster-Haus-Verlauf und abschließender Start. Die unveränderte Wirtschaft erreicht das erste Haus weiterhin nach 1.682 simulierten Sekunden.
+- Neue Prüfungen: kompatible alte Profile; keine Feier für Bestandsgebäude oder bloße Bauaufträge; Pausengast ohne zusätzliches Personal; Sitzpose/Tasse und Rückkehr; vollständiger Laufweg innerhalb des ursprünglichen und verschobenen/gedrehten Grundstücks; gegenseitige Begrüßung mit Abklingzeit; Schalter/Restore/Prestige; echte bezahlte Fertigstellung am gewählten Standort; begrenzte Zuschauer und fester Partikelpool; unveränderte Ressourcenrechnung; Akkumodus; Vorgartenspaziergang am tatsächlichen gedrehten Haus.
+- Die bisherigen 23 echten OpenGL-Prüfungen für UI und Benno bestehen weiterhin. Bildausgabe von Hüttenvorplatz mit Pausengast und einer tatsächlich im Capture-Profil fertig gebauten Hütte geprüft. Beschriftung höher gesetzt, um Gebäudenamen nicht zu überdecken.
+- Alle Capture-Bilder verwenden einen ausdrücklich aufgebauten Demonstrationsstand. Das Einfrieren des Pausengasts für das Foto verändert keine Nutzerdaten. Die Eröffnungsaufnahme verwendet einen bezahlten Bauauftrag und dessen echte Fertigstellung im Demonstrationsprofil.
+- Der Nutzer hat Version 0.11 als auf seinem Handy funktionierend bestätigt. Für 0.12 sind reale Geräte-, Sound-, Temperatur- und längere Häufigkeitstests noch offen. Klang wird im Grafiktest mit Dummy-Audiotreiber erzeugt; hier wurden keine Lautsprecher geprüft.
+- Straßennetze, Baukosten und Wirtschaft bleiben unverändert. Alltagsszenen sind kosmetisch, keine neue Schicht für Arbeitszeiten oder Fußgänger-Kollisionen. Park-/Hüttenausstattung ist Teil ihrer bestehenden Grundstücksfläche.
+
+## Historischer Prüfbericht 0.11
+
 # Prüfung 0.11 — Benno im Wald
 
 - 220 Regel-, 4.135 Szenen-, 56 Platzierungs-, 42 Werkstatt- und 23 neue Begleiterprüfungen: zusammen 4.476 Headless-Prüfungen. Weiterhin frischer erster-Haus-Verlauf nach 1.682 simulierten Sekunden sowie abschließender Szenenstart.

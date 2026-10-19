@@ -44,6 +44,30 @@ func run() -> void:
  for i in 6: await process_frame
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("/workspace/timber-benno.png")
+ scene.hud.companion.dismiss()
+ scene.sync_actors()
+ for worker in scene.actors.get_children():
+  if worker.get("role")=="neighbor":
+   worker.set_process(false)
+   worker.phase=12
+   worker.social_left=0
+   worker._process(0)
+ scene.focus_at(game.building_position(3)+Vector3(3,0,6))
+ scene.zoom=48
+ scene.set_camera()
+ for i in 6: await process_frame
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("/workspace/timber-pause.png")
+ var construction_point=game.free_position(Vector3(21,0,53))
+ if construction_point!=null and game.order_building("cabin",construction_point):
+  game.simulate(120)
+  scene.focus_at(construction_point)
+  scene.zoom=65
+  scene.set_camera()
+  scene.hud.update_stats()
+  for i in 5: await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("/workspace/timber-opening.png")
  scene.hud.open_menu("industry")
  for i in 4: await process_frame
  await RenderingServer.frame_post_draw
