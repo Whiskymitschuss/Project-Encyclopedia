@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.13 — Die erste Kleinstadt
+
+**[Android-Update 0.13 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.13.0-town/releases/Timber-Loot-Tycoon-v0.13-test.apk)**
+
+**[Passendes Quellprojekt 0.13 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.13.0-town/releases/Timber-Loot-Tycoon-v0.13-source.zip)**
+
+Neu: größere zusammenhängende Landschaft, Ost-/Westviertel mit bis zu 36 Hausgrundstücken und 40 Betrieben, frei gezeichnete Asphaltstraßen und Fußwege, zwölf eigene Stadtgebäude inklusive Landhaus und Nachtclub, Mietkonten zum Antippen und optionaler Hausverwalter, Haltestellen und konfigurierbare Buslinien mit sichtbaren Fahrzeugen, Fahrplan und Offline-Einnahmen. Gekaufte Forstmaschinen und Transportstufen sind jetzt sichtbar. Neue Meilensteine begleiten den Aufbau.
+
+Unter Bauen → Straßen & Wege Strecken zeichnen. Im Busmenü mindestens zwei Haltestellen an Straßen setzen, in Fahrreihenfolge wählen und einen Bus kaufen. Ab vier Bewohnern fährt die Linie. Stadt → Regionen & Projekte erschließt nach drei Regionen und 20 Bewohnern weitere Viertel.
+
+Als Update über die vorhandene App installieren. **Nicht deinstallieren und keine App-Daten löschen.** Gleiches Paket, Testschlüssel und Schema-1-Spielstand; Versionscode 1300. Oben rechts steht danach **KLEINSTADT / 13**. Alte Profile behalten automatische Miete kostenlos. Bei neuen Profilen Miete am Haus oder gesammelt in der Stadt abholen; die Hausverwaltung automatisiert das später.
+
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, rund 58 MB, keine Android-Berechtigungen. 4.726 Headless-Prüfungen, erster-Haus-Verlauf und 23 OpenGL-Prüfungen bestanden, auch in einer frischen GitHub-Wiederherstellung. Echte Handy-Installation, Touch und Leistung der neuen 0.13 bleiben zu testen. Busse verwenden ein berechnetes Straßennetz mit vereinfachter Nachfrage, keine vollständige Kollisionssimulation.
+
+APK-Quellstand: `7bc708e2e5d2e37865570c3d6007bf8c883831a4`. Passendes Archiv mit 112 einzeln gegen Git geprüften Quelldateien. Mit Godot 4.6.3 öffnen. Prüfsummen stehen in `SHA256SUMS.txt`, Paketdaten in `.apk.json`.
+
+## Historischer Stand 0.12
+
 # Timber Loot Tycoon 0.12 — Waldleben
 
 **[Android-Update 0.12 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.12.0-cozy/releases/Timber-Loot-Tycoon-v0.12-test.apk)**

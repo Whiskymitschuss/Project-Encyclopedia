@@ -8,6 +8,14 @@
 - Zusätzliche 23 echte OpenGL-Prüfungen für 3D-Menüs, Portrait, Transparenz, Beleuchtung und Resume. Stadt, Maschinen, neue Bauflächen, Straßen-Vorschau und Busmenü werden aus einem ausdrücklich aufgebauten Demonstrationsprofil gerendert. Nutzerprofile werden dafür nicht verwendet.
 - Begrenzungen: vereinfachte Nachfrage je Linie und gemeinsame Produktionspuffer; keine vollständige Kollisions-/Stausimulation und keine individuellen Exportfahrten. Echte Android-Updateinstallation, Touch/Safe Area, Ton, Temperatur und Akku bleiben für 0.13 auf Hardware zu prüfen. Der Nutzer hat zuvor 0.11 auf seinem Telefon als funktionierend bestätigt.
 
+## Auslieferung 0.13
+
+- APK-Quellstand: `7bc708e2e5d2e37865570c3d6007bf8c883831a4`.
+- APK: 58.164.761 Bytes, SHA256 `8d293e89aa975fe5b49e8313a8a57b0210edc0a49aa3f77e8df90b5399be3225`.
+- Quell-ZIP: 112 Dateien, 4.697.731 Bytes, SHA256 `8933dc51e059bd43120dcabec36e2b1ff5ecfd660c37cbf6ffcffc0d278f428d`. Jede Datei stimmt mit ihrem Git-Blob des APK-Quellstands überein.
+- Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, unverändert zu 0.12. Versionscode 1300, Speicherformat 1, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft; GL Compatibility, keine Berechtigungen. Neue Stadt-, Straßen-, Bus- und Forstmaschinen-Skripte sind im Paket enthalten; Tests und Release-Dateien sind ausgeschlossen.
+- Frische unabhängige GitHub-Kopie: `/workspace/timber-restore-13`. Erstimport, vollständige Headless-Suite, erster-Haus-Verlauf und Hauptszenenstart dort erneut bestanden. Anschließend auch die 23 OpenGL-Prüfungen in dieser Kopie bestanden.
+
 ## Historischer Prüfbericht 0.12
 
 # Prüfung 0.12 — Waldleben
