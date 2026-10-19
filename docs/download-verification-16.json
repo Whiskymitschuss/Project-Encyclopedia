@@ -50,5 +50,6 @@
       "sha256": "b7a4e88db823b8af209445d5f1827930b93b1e2c4764976a59f825105c272779",
       "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.16.0-traffic/docs/preview-traffic-build.png"
     }
-  ]
+  ],
+  "touch_gestures_simulated_on_desktop": true
 }
