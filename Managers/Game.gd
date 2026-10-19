@@ -163,8 +163,8 @@ func step(delta: float) -> void:
   j.left = maxf(0,float(j.left)-delta*(1+research_level("construction")*0.12))
   if j.left <= 0: completed.append(j)
  for j in completed:
-  finish_job(j)
   state.jobs.erase(j)
+  finish_job(j)
 
 func chop() -> void:
  if state.bag >= bag_capacity():

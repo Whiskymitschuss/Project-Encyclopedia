@@ -7,7 +7,9 @@ func read_file(path: String) -> Dictionary:
  if not FileAccess.file_exists(path): return {}
  var file = FileAccess.open(path, FileAccess.READ)
  if file == null: return {}
- var parsed = JSON.parse_string(file.get_as_text())
+ var parser = JSON.new()
+ if parser.parse(file.get_as_text()) != OK: return {}
+ var parsed = parser.data
  if parsed is Dictionary and int(parsed.get("schema",0)) == 1:
   return parsed
  return {}
