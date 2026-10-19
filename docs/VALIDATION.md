@@ -7,6 +7,15 @@
 - Kein Größenlimit von 55 MB: Symbole, Oberflächen und Modelle werden ressourcenschonend aus eigener Geometrie und Vektoren erzeugt. Die Paketgröße allein ist kein Maß für Grafikqualität.
 - Schattenleistung, Temperatur, Safe Area und Wiederaufnahme auf realen Android-Geräten sind weiterhin separat zu prüfen. Der Akkumodus stellt einen Ausweichmodus ohne neue Weltschatten bereit. Die Prüfungen hier sind keine Messung auf einem Telefon.
 
+## Auslieferung 0.10
+
+- APK-Quellstand: `54a6e86abaea53ac6a829e7a6c6598129320bc71`.
+- APK: 56.585.744 Bytes, SHA256 `b44b4a8bfbd83339407d06e3a2c4b9cf246f069bf6fea96a678a6adb91150e2d`.
+- Quell-ZIP: 69 Dateien, 1.947.082 Bytes, SHA256 `305f51e32f7f83226989e1c3d8466752a9c2b87b53f5d0aa99fb764d94aec796`. Jede enthaltene Datei stimmt mit ihrem Git-Blob am APK-Quellstand überein.
+- Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, unverändert zu 0.9. Versionscode 1000, Spielstandschema 1, GL Compatibility, keine Berechtigungen.
+- Wiederherstellung: neue unabhängige Kopie von GitHub unter `/workspace/timber-restore-10`. Zuerst Import mit `bash scripts/godot.sh --headless --editor --import --quit`, dann `bash scripts/test.sh`. Die gesonderte OpenGL-Prüfung ist `Tests/VisualUI.gd` und benötigt einen verfügbaren X11-/OpenGL-Bildschirm. Grafikprüfung nach dem Import ausführen; ein direkter Skriptstart vor dem Erstimport hat noch keinen globalen GDScript-Klassenindex.
+- Probedownload und endgültige Wiederherstellungsbestätigung werden nach dem Push im Downloadbericht dokumentiert.
+
 ## Historischer Prüfbericht 0.9
 
 # Prüfung 0.9 — Open Workshop

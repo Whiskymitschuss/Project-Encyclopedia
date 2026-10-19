@@ -1,3 +1,19 @@
+# Timber Loot Tycoon 0.10 — Sculpted World
+
+**[Android-Update 0.10 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.10.0-sculpt/releases/Timber-Loot-Tycoon-v0.10-test.apk)**
+
+**[Passendes Quellprojekt 0.10 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.10.0-sculpt/releases/Timber-Loot-Tycoon-v0.10-source.zip)**
+
+Als Update über die vorhandene App installieren. Nicht deinstallieren und keine App-Daten löschen. Gleiches Paket, gleicher Testsignaturschlüssel und gleicher Spielstand; Versionscode 1000. Oben rechts steht nach dem Update **SCULPT / 10**.
+
+Neu: plastische Tasten und Baukarten mit Lichtkanten und Druckzustand, sieben echte 3D-Symbole, räumliche Weltschatten im Standardmodus, lackierte Maschinen und Metall-/Holzoberflächen. Der Akkumodus schaltet Weltschatten ab. Es gibt kein künstliches APK-Größenlimit.
+
+4.453 Headless-Prüfungen plus erster-Haus-Spielverlauf und 19 OpenGL-Prüfungen. Android-Paket, Signaturgleichheit mit 0.9 und 16-KB-ZIP-Ausrichtung geprüft. Reale Android-Leistung und Update-Installation stehen weiterhin aus.
+
+APK-Quellstand: `54a6e86abaea53ac6a829e7a6c6598129320bc71`. Das Quellarchiv wurde dateiweise gegen diesen Git-Stand geprüft. Öffnen mit Godot 4.6.3. Prüfsummen in `SHA256SUMS.txt`, Paketbericht neben der APK. Android 7.0+, ARM64/ARMv7 und OpenGL ES 3.0 erforderlich. Keine Android-Berechtigungen.
+
+## Historischer Stand 0.9
+
 # Timber Loot Tycoon 0.9 — Open Workshop
 
 **[Android-Update 0.9 direkt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.9.0-workshop/releases/Timber-Loot-Tycoon-v0.9-test.apk)**
