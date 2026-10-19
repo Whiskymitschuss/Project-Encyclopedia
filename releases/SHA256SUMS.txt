@@ -12,3 +12,5 @@ d52e3c4f4d9a50a20bf843d2d2ae721fc2ade62f3292c571ed899ad4763cc9a0  Timber-Loot-Ty
 ef04674ddaa0e75e21ff65cc291c04e1f045d0ff730116108e46dbbe3211f30c  Timber-Loot-Tycoon-v0.12-source.zip
 8d293e89aa975fe5b49e8313a8a57b0210edc0a49aa3f77e8df90b5399be3225  Timber-Loot-Tycoon-v0.13-test.apk
 8933dc51e059bd43120dcabec36e2b1ff5ecfd660c37cbf6ffcffc0d278f428d  Timber-Loot-Tycoon-v0.13-source.zip
+0634691f9fe0357572a417a5031dcfbeee2b87585eb252f0040fc43976f4fbb7  Timber-Loot-Tycoon-v0.14-test.apk
+77fbc20fe249a91c4f7c0246baad6067d86a6ad3f8c1d5d51008ad5b8bbe7256  Timber-Loot-Tycoon-v0.14-source.zip

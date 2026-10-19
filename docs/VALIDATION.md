@@ -7,6 +7,14 @@
 - OpenGL-Aufnahmen aus ausdrücklich aufgebautem Demonstrationsprofil: frischer Einstieg, Gesamtansicht, Industrie, Bach/Brücke und 19-Uhr-Nebel bei der alten weiten Zoomstufe. Spielstände des Nutzers werden nicht für Aufnahmen verwendet.
 - Wirtschaft, gespeicherte Gebäude und eigenes Straßennetz bleiben erhalten; feste Schotterzufahrten sind befahrbar. Bach, Picknickplatz und Aussichtsturm sind Landschaftselemente ohne neue Erträge oder Fahrlinien. Reale Android-Installation/Touch, Akku, Temperatur und Leistung dieser Version bleiben auf Hardware zu prüfen.
 
+## Auslieferung 0.14
+
+- APK-Quellstand: `8fdd1a6bd54cbfffe312b018c1785aa12293ddda`.
+- APK: 58.181.415 Bytes, SHA256 `0634691f9fe0357572a417a5031dcfbeee2b87585eb252f0040fc43976f4fbb7`.
+- Quell-ZIP: 126 Dateien, 6.847.459 Bytes, SHA256 `77fbc20fe249a91c4f7c0246baad6067d86a6ad3f8c1d5d51008ad5b8bbe7256`. Jede Datei einzeln gegen den Git-Blob des APK-Quellstands geprüft.
+- Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, identisch zu 0.13. Versionscode 1400, Speicherformat 1, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft; GL Compatibility, keine Berechtigungen. `ValleyLandscape` im APK enthalten; Tests und Release-Dateien ausgeschlossen.
+- Frische unabhängige GitHub-Kopie: `/workspace/timber-restore-14`. Erstimport, 4.856 Headless-Prüfungen, erster-Haus-Verlauf und Hauptszenenstart dort erneut bestanden. Anschließend auch alle 32 OpenGL-Prüfungen in dieser Kopie bestanden.
+
 ## Historischer Prüfbericht 0.13
 
 # Prüfung 0.13 — Die erste Kleinstadt

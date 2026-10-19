@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.14 — Ein lebendiges Waldtal
+
+**[Android-Update 0.14 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/releases/Timber-Loot-Tycoon-v0.14-test.apk)**
+
+**[Passendes Quellprojekt 0.14 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/releases/Timber-Loot-Tycoon-v0.14-source.zip)**
+
+Neu: zusammenhängendes Gelände mit weichen Biomfarben, unregelmäßigen Waldgruppen, zusätzlichen Bäumen und Wiesen, Hügeln, einem Bach, See, Holzbrücke, Picknickplatz und Aussichtsturm. Straßenränder sind bepflanzt; unbebaute Flächen tragen keine großen Farbplatten mehr. Ein Kamerafehler, der beim Herauszoomen den Vordergrund abschnitt, ist behoben. Abendlicht und Nebel lassen den Ort besser erkennen.
+
+Gebäude, Spielstand, eigene Straßen, Buslinien und Wirtschaft bleiben erhalten. Dekoration weicht automatisch vor Bauplätzen, Straßen und Förderstrecken zurück. Akkumodus reduziert die neue Vegetation. Naturkulisse und Fußgängerbrücke sind keine zusätzlichen Produktions- oder Verkehrssysteme.
+
+Als Update installieren: **nicht vorher deinstallieren und keine App-Daten löschen.** Paket, Testschlüssel und Schema-1-Speicherdatei bleiben gleich; Versionscode 1400. Oben rechts steht danach **WALDTAL / 14**. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, rund 58 MB, keine Berechtigungen.
+
+4.856 Headless-Prüfungen und erster-Haus-Verlauf bestanden, auch in einer frischen GitHub-Kopie. Auch die 32 OpenGL-Prüfungen für UI und Landschaft bestehen in der frischen Kopie. Die 0.13 wurde vom Nutzer als Screenshot der laufenden App gezeigt; echte Installation, Touch und Leistung der neuen 0.14 bleiben zu testen.
+
+APK-Quellstand: `8fdd1a6bd54cbfffe312b018c1785aa12293ddda`. Passendes Archiv mit 126 einzeln gegen Git geprüften Quelldateien. Mit Godot 4.6.3 öffnen. Prüfsummen in `SHA256SUMS.txt`, Paketdaten in `.apk.json`.
+
+## Historischer Stand 0.13
+
 # Timber Loot Tycoon 0.13 — Die erste Kleinstadt
 
 **[Android-Update 0.13 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.13.0-town/releases/Timber-Loot-Tycoon-v0.13-test.apk)**
