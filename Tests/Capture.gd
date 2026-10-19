@@ -9,6 +9,7 @@ func run() -> void:
  game.set_process(false)
  var original = game.state.duplicate(true)
  game.state = game.initial_state()
+ game.state.tutorial=5
  var scene = load("res://Scenes/Main.tscn").instantiate()
  root.add_child(scene)
  for i in 10: await process_frame

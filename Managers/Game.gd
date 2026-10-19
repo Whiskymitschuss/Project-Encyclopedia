@@ -29,7 +29,7 @@ func initial_state() -> Dictionary:
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
   "boss_hp":100.0, "bosses":0, "time":9.0, "elapsed":0.0, "weather":0,
-  "quality":1, "reserve":true, "auto_export":true, "muted":false,
+  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false,
   "last_seen":Time.get_unix_time_from_system()}
 
 func _ready() -> void:
@@ -51,6 +51,7 @@ func restore(saved: Dictionary) -> void:
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
  for key in Catalog.RESOURCES:
   if not state.resources.has(key): state.resources[key] = 0.0
+ if not saved.has("tutorial"): state.tutorial = 5
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -206,13 +207,16 @@ func step(delta: float) -> void:
   # Sawdust is a recoverable by-product, never a reason to stop sawing.
   # Sell only overflow; keep all existing stock for pellets and paper.
   if key == "sawdust" and excess > 0:
-   earn(excess*float(Catalog.PRICES.sawdust)*multiplier()*boost("money"))
-   flow["sawdust_sold"] = excess/maxf(delta,0.001)
+   if state.auto_sawdust:
+    earn(excess*float(Catalog.PRICES.sawdust)*multiplier()*boost("money"))
+    flow["sawdust_sold"] = excess/maxf(delta,0.001)
+   else: flow["sawdust_composted"] = excess/maxf(delta,0.001)
  if state.auto_export:
   var export_reserve = reserve_for("furniture")+(4.0 if level("design")>0 else 0.0)
   var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),int(state.trucks)*level("market")*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
   state.resources.furniture -= exported
   state.exported += exported
+  flow["export"] = exported/maxf(delta,0.001)
   earn(exported*float(Catalog.PRICES.furniture)*multiplier()*boost("money"))
  var rent = 0.0
  var public_bonus = 1.0
@@ -247,6 +251,7 @@ func chop() -> void:
  state.bag += amount
  state.gathered += amount
  state.trees += 1
+ if state.tutorial == 1 and state.trees >= 5: state.tutorial = 2
  harvested.emit(int(state.biome),amount)
  if rng.randf() < 0.12*(1+research_level("loot")*0.08+int(state.permanent_loot)*0.1)*boost("loot")*multiplier():
   state.tickets += 1
@@ -257,6 +262,7 @@ func deposit() -> void:
  var amount = minf(float(state.bag),capacity()-float(state.resources.wood))
  add_resource("wood",amount)
  state.bag -= amount
+ if state.tutorial == 2 and amount > 0: state.tutorial = 3
  notice.emit("%s Holz abgeliefert" % Catalog.number(amount))
  changed.emit()
 
@@ -265,6 +271,7 @@ func sell(key: String, fraction: float = 1.0) -> void:
  var amount = float(state.resources[key])*clampf(fraction,0,1)
  state.resources[key] -= amount
  earn(amount*float(Catalog.PRICES[key])*multiplier()*boost("money"))
+ if state.tutorial == 3 and amount > 0: state.tutorial = 4
  if key == "furniture": state.exported += amount
  notice.emit("%s %s verkauft" % [Catalog.number(amount),Catalog.RESOURCES[key]])
  changed.emit()
@@ -290,17 +297,81 @@ func available(kind: String) -> bool:
  if kind == "design": return count("paper") > 0 and count("joinery") > 0
  return true
 
-func order_building(kind: String) -> bool:
+func building_position(index: int) -> Vector3:
+ var b = state.buildings[index]
+ return Placement.position_of(b,Catalog.industry_position(int(b.get("slot",index))))
+
+func home_position(index: int) -> Vector3:
+ var h = state.homes[index]
+ return Placement.position_of(h,Catalog.home_position(int(h.plot)))
+
+func placement_reason(point: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1) -> String:
+ var reason = Placement.terrain_reason(point,rotation)
+ if not reason.is_empty(): return reason
+ var rectangle = Placement.bounds(point,rotation).grow(0.6)
+ for i in state.buildings.size():
+  if i == ignore_building: continue
+  if rectangle.intersects(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0)))): return "Abstand zu anderen Gebäuden halten"
+ for i in state.homes.size():
+  if i == ignore_home: continue
+  if rectangle.intersects(Placement.bounds(home_position(i),int(state.homes[i].get("rotation",0)))): return "Dieses Grundstück ist bereits bebaut"
+ for job in state.jobs:
+  if job.type not in ["building","home"]: continue
+  var fallback = Catalog.industry_position(int(job.get("slot",0))) if job.type=="building" else Catalog.home_position(int(job.plot))
+  if rectangle.intersects(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)))): return "Hier wird bereits gebaut"
+ return ""
+
+func free_position(preferred: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1) -> Vector3:
+ var point = Placement.snap(preferred)
+ if placement_reason(point,rotation,ignore_building,ignore_home).is_empty(): return point
+ var best = Vector3(INF,0,INF)
+ var distance = INF
+ for z in [-144,-112,-80,-44,-12,20,52,84,116,148]:
+  for x in [-60,-40,-20,20,40,60]:
+   var candidate = Vector3(x,0,z)
+   if placement_reason(candidate,rotation,ignore_building,ignore_home).is_empty() and candidate.distance_squared_to(preferred)<distance:
+    best = candidate
+    distance = candidate.distance_squared_to(preferred)
+ return best
+
+func next_city_plot() -> int:
+ for plot in 4*(int(state.region)+1):
+  var occupied = false
+  for home in state.homes:
+   if int(home.plot)==plot: occupied = true
+  for job in state.jobs:
+   if job.type=="home" and int(job.plot)==plot: occupied = true
+  if not occupied: return plot
+ return -1
+
+func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = false) -> bool:
+ var records = state.homes if city else state.buildings
+ if index<0 or index>=records.size(): return false
+ point = Placement.snap(point)
+ var reason = placement_reason(point,rotation,-1 if city else index,index if city else -1)
+ if not reason.is_empty(): notice.emit(reason); return false
+ records[index].position = [point.x,point.z]
+ records[index].rotation = posmod(rotation,360)
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func order_building(kind: String, point: Variant = null, rotation: int = 0) -> bool:
  if not Catalog.BUILDINGS.has(kind) or not available(kind): return false
  var pending = 0
  for j in state.jobs:
   if j.type == "building": pending += 1
- if state.buildings.size()+pending >= 16:
+ if state.buildings.size()+pending >= 24:
   notice.emit("Industriegebiet voll · vorhandene Betriebe ausbauen")
   return false
+ var position_value = free_position(Catalog.industry_position((state.buildings.size()+pending)%16),rotation) if point==null else Placement.snap(point)
+ var reason = placement_reason(position_value,rotation)
+ if not reason.is_empty(): notice.emit(reason); return false
  if not pay(cost_for(kind)): return false
  var duration = 12.0+state.buildings.size()*2.0
- state.jobs.append({"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending})
+ state.jobs.append({"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending,"position":[position_value.x,position_value.z],"rotation":rotation})
+ if state.tutorial == 4: state.tutorial = 5
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -322,15 +393,18 @@ func upgrade(index: int) -> bool:
  save(true)
  return true
 
-func order_home(kind: String, plot: int) -> bool:
+func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 0) -> bool:
  if not Catalog.HOMES.has(kind) or plot < 0 or plot >= 4*(int(state.region)+1) or level("prefab") < 1: return false
  for h in state.homes:
   if int(h.plot) == plot: return false
  for j in state.jobs:
   if j.type == "home" and int(j.plot) == plot: return false
+ var position_value = free_position(Catalog.home_position(plot),rotation) if point==null else Placement.snap(point)
+ var reason = placement_reason(position_value,rotation)
+ if not reason.is_empty(): notice.emit(reason); return false
  var definition = Catalog.HOMES[kind]
  if not pay(float(definition.cost)*difficulty(),definition.materials): return false
- state.jobs.append({"type":"home","kind":kind,"plot":plot,"left":60.0,"total":60.0})
+ state.jobs.append({"type":"home","kind":kind,"plot":plot,"left":60.0,"total":60.0,"position":[position_value.x,position_value.z],"rotation":rotation})
  if not state.plan.is_empty() and int(state.plan.plot)==plot: state.plan = {}
  rebuild_world.emit()
  changed.emit()
@@ -358,6 +432,10 @@ func finish_job(job: Dictionary) -> void:
   "home": state.homes.append({"kind":job.kind,"level":1,"plot":job.plot})
   "home_upgrade": state.homes[int(job.index)].level += 1
   "project": state.projects[str(int(job.index))] = int(state.projects.get(str(int(job.index)),0))+1
+ if job.type in ["building","home"]:
+  var record = state.buildings.back() if job.type=="building" else state.homes.back()
+  if job.has("position"): record.position = job.position.duplicate()
+  record.rotation = int(job.get("rotation",0))
  rebuild_world.emit()
  notice.emit("Bau abgeschlossen · %s" % job.kind)
 

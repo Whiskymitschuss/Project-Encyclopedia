@@ -73,6 +73,7 @@ func run() -> void:
  Game.state.workers = 0
  Game.state.resources.wood = 20.0
  Game.state.resources.sawdust = Game.capacity()
+ Game.state.auto_sawdust = true
  Game.step(1)
  check(close(Game.state.resources.boards,0.9),"Full sawdust buffer does not stop board production")
  check(close(Game.state.resources.wood,18.2),"Overflow production consumes real wood")
@@ -88,6 +89,7 @@ func run() -> void:
  Game.state.workers = 0
  Game.state.resources.wood = 20.0
  Game.state.resources.sawdust = Game.capacity()-0.2
+ Game.state.auto_sawdust = true
  Game.step(1)
  check(close(Game.state.coins,350.35),"Partially full buffer sells exactly the overflow")
  fresh()

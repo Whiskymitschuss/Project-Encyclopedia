@@ -26,14 +26,22 @@ var chip_index = 0
 var cranes: Array = []
 var environment_resource: Environment
 var auto_tree_clock = 0.0
+var network: ConveyorNetwork
+var bins: Array = []
+var placement: Dictionary = {}
+var ghost: Node3D
+var ghost_plate: MeshInstance3D
+var placement_point = Vector3.ZERO
+var placement_rotation = 0
+var right_drag = false
 
 func _ready() -> void:
- RenderingServer.set_default_clear_color(Color("71b6bf"))
+ RenderingServer.set_default_clear_color(Color("53bbd3"))
  var environment_node = WorldEnvironment.new()
  var env = Environment.new()
  environment_resource = env
  env.background_mode = Environment.BG_COLOR
- env.background_color = Color("71b6bf")
+ env.background_color = Color("53bbd3")
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
  env.ambient_light_color = Color("c2d9cf")
  env.ambient_light_energy = 0.65
@@ -65,6 +73,8 @@ func _ready() -> void:
  layer.add_child(hud)
  hud.camera_action.connect(camera_action)
  hud.focus_requested.connect(focus_at)
+ hud.placement_requested.connect(begin_placement)
+ hud.placement_action.connect(placement_action)
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
  make_weather()
@@ -75,9 +85,9 @@ func _ready() -> void:
  Game.loot_found.connect(func(_r): audio.play_tone(780,0.22))
 
 func build_landscape() -> void:
- Models.box(scenery,Vector3(1100,1,1100),Vector3(0,-5,0),Color("65adb8"))
+ Models.box(scenery,Vector3(1100,1,1100),Vector3(0,-5,0),Color("38b4cf"))
  Models.box(scenery,Vector3(400,5,390),Vector3(0,-2.5,5),Color("b3a06d"))
- Models.box(scenery,Vector3(396,0.7,386),Vector3(0,0,5),Color("a0cb7e"))
+ Models.box(scenery,Vector3(396,0.7,386),Vector3(0,0,5),Color("64d078"))
  for i in 10:
   var p = Catalog.biome_position(i)
   Models.box(scenery,Vector3(84,0.35,76),p+Vector3(0,0.5,0),Color(Catalog.BIOMES[i].ground))
@@ -95,8 +105,7 @@ func build_landscape() -> void:
    Models.box(scenery,Vector3(1,1,1),Vector3(x,1.2,z),Color("d6d8bc"))
  for i in 12:
   var p = Catalog.home_position(i)
-  Models.box(scenery,Vector3(19,0.2,23),p+Vector3(0,0.5,0),Color("b1bd88"))
-  Models.label(scenery,"Grundstück %s" % (i+1),p+Vector3(0,1.5,0),22)
+  Models.box(scenery,Vector3(19,0.12,23),p+Vector3(0,0.5,0),Color("8cd784"))
  for x in [-76,76]:
   for z in range(-145,165,24):
    Models.cylinder(scenery,0.15,5,Vector3(x,3,z),Color("7c8d80"))
@@ -147,7 +156,7 @@ func build_forest() -> void:
      point.z -= 14
     if point.distance_to(project.position)<18: point.x -= signf(point.x)*16
    var scale_value = random.randf_range(0.75,1.25)
-   records.append({"point":point,"scale":scale_value,"regrow":0.0})
+   records.append({"point":point,"scale":scale_value,"regrow":0.0,"blocked":false})
    for part in 3:
     var y = [1.8,4.7,7.1][part]*scale_value
     var transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*scale_value),point+Vector3(0,y,0))
@@ -173,32 +182,44 @@ func rebuild() -> void:
  moving_goods.clear()
  machines.clear()
  cranes.clear()
+ bins.clear()
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
   var model = Models.building(b.kind,int(b.level))
-  model.position = Catalog.industry_position(int(b.get("slot",i)))
+  model.position = Game.building_position(i)
+  model.rotation_degrees.y = int(b.get("rotation",0))
   world_buildings.add_child(model)
   var saw = model.get_node_or_null("Saw")
   if saw != null: machines.append({"node":saw,"index":i})
-  Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,b.level],Vector3(0,10,0),24)
+  Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
+  add_approach(model.position,int(b.get("rotation",0)))
+  var fill = model.get_node_or_null("SawdustFill")
+  if fill!=null:
+   var label = Models.label(model,"Spänebox",Vector3(7.5,5.2,-3),28)
+   bins.append({"fill":fill,"label":label})
   if Catalog.RECIPES.has(b.kind):
    for j in 3:
     var good = Models.box(world_buildings,Vector3(2.2,0.55,1),model.position+Vector3(5,2.1,6+j*2),Color("e4b77a"))
-    moving_goods.append({"mesh":good,"origin":model.position,"phase":j/3.0,"index":i})
- for h in Game.state.homes:
+    moving_goods.append({"mesh":good,"origin":model.position,"rotation":model.rotation,"phase":j/3.0,"index":i})
+ for home_index in Game.state.homes.size():
+  var h = Game.state.homes[home_index]
   var model = Models.building(h.kind,int(h.level),true)
-  model.position = Catalog.home_position(int(h.plot))
+  model.position = Game.home_position(home_index)
+  model.rotation_degrees.y = int(h.get("rotation",0))
   world_buildings.add_child(model)
-  Models.label(model,"%s · %s" % [Catalog.HOMES[h.kind].name,h.level],Vector3(0,14,0),24)
+  Models.label(model,"%s · %s" % [Catalog.HOMES[h.kind].name,int(h.level)],Vector3(0,14,0),24)
+  add_approach(model.position,int(h.get("rotation",0)))
  for job in Game.state.jobs:
   if job.type in ["building","home","upgrade","home_upgrade","project"]:
    var model = Models.construction(1.0-float(job.left)/float(job.total))
-   if job.type in ["home","home_upgrade"]: model.position = Catalog.home_position(int(job.plot))
+   if job.type=="home": model.position = Placement.position_of(job,Catalog.home_position(int(job.plot)))
+   elif job.type=="home_upgrade": model.position = Game.home_position(int(job.index))
    elif job.type == "upgrade":
     var b = Game.state.buildings[int(job.index)]
-    model.position = Catalog.industry_position(int(b.get("slot",job.index)))
+    model.position = Game.building_position(int(job.index))
    elif job.type == "project": model.position = Catalog.PROJECTS[int(job.index)].position
-   else: model.position = Catalog.industry_position(int(job.slot))
+   else: model.position = Placement.position_of(job,Catalog.industry_position(int(job.slot)))
+   model.rotation_degrees.y = int(job.get("rotation",0))
    world_buildings.add_child(model)
    cranes.append(model.get_node("Crane"))
  for i in Catalog.PROJECTS.size():
@@ -211,6 +232,34 @@ func rebuild() -> void:
    Models.label(model,project.name,Vector3(0,19,0),30)
   else: Models.label(world_buildings,project.name,project.position+Vector3(0,2,0),26)
  actor_signature = ""
+ refresh_forest_clearance()
+ if network!=null:
+  remove_child(network)
+  network.queue_free()
+ network = ConveyorNetwork.new()
+ add_child(network)
+ network.build()
+
+func add_approach(point: Vector3, rotation: int) -> void:
+ var path = Placement.approach(point,rotation)
+ var length = path[0].distance_to(path[1])
+ if length>0.1: Models.box(world_buildings,Vector3(3.0,0.12,length),(path[0]+path[1])/2,Color("efe2ae"))
+
+func refresh_forest_clearance() -> void:
+ var rectangles = []
+ for i in Game.state.buildings.size(): rectangles.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))).grow(3))
+ for i in Game.state.homes.size(): rectangles.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).grow(3))
+ for job in Game.state.jobs:
+  if job.type in ["home","building"]:
+   var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
+   rectangles.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(3))
+ for biome in trees.size():
+  for i in trees[biome].size():
+   var tree = trees[biome][i]
+   tree.blocked = false
+   for rectangle in rectangles:
+    if rectangle.has_point(Vector2(tree.point.x,tree.point.z)): tree.blocked = true; break
+   set_tree_visible(biome,i,not tree.blocked and tree.regrow<=0)
 
 func sync_actors() -> void:
  var signature = "%s/%s/%s/%s" % [Game.state.workers,Game.state.trucks,Game.state.biome,Game.state.quality]
@@ -220,7 +269,7 @@ func sync_actors() -> void:
  for i in mini(int(Game.state.workers),8 if Game.state.quality == 0 else 16):
   var worker = TimberWorker.new()
   worker.origin_point = Catalog.biome_position(int(Game.state.biome))+Vector3((i%4)*5-10,0,18)
-  worker.destination = Vector3(-45+(i%3)*2,0,-34)
+  worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1
   actors.add_child(worker)
@@ -266,10 +315,10 @@ func _process(delta: float) -> void:
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
  sun.light_energy = 0.22+daylight*0.65
  environment_resource.ambient_light_energy = 0.28+daylight*0.37
- environment_resource.background_color = Color("294654").lerp(Color("71b6bf"),daylight)
+ environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
  environment_resource.fog_enabled = int(Game.state.weather)==3 and Game.state.quality>0
  environment_resource.fog_light_color = Color("c6d4c1")
- environment_resource.fog_density = 0.004
+ environment_resource.fog_density = 0.0007
  sun.rotation_degrees.x = -25-daylight*40
  weather.position = focus+Vector3(0,36,0)
  weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0
@@ -279,7 +328,12 @@ func _process(delta: float) -> void:
  for item in moving_goods:
   if float(Game.flow.get("building:%s" % item.index,0)) > 0:
    item.phase = fmod(float(item.phase)+delta*0.18,1.0)
-  item.mesh.position = item.origin+Vector3(5,2.1,4+item.phase*8)
+  item.mesh.position = item.origin+Basis.from_euler(item.rotation)*Vector3(5,2.1,4+item.phase*8)
+ for bin in bins:
+  var fraction = clampf(float(Game.state.resources.sawdust)/Game.capacity(),0,1)
+  bin.fill.scale.y = maxf(fraction,0.03)
+  bin.fill.position.y = 0.7+1.35*fraction
+  bin.label.text = "SPÄNE · %s %%" % int(fraction*100)
  auto_tree_clock += delta
  if auto_tree_clock>=maxf(0.6,6.0/maxi(1,int(Game.state.workers))) and float(Game.flow.get("harvest",0))>0:
   auto_tree_clock = 0
@@ -289,7 +343,7 @@ func _process(delta: float) -> void:
    var tree = trees[biome][index]
    if tree.regrow > 0:
     tree.regrow -= delta
-    if tree.regrow <= 0: set_tree_visible(biome,index,true)
+    if tree.regrow <= 0: set_tree_visible(biome,index,not tree.blocked)
 
 func set_tree_visible(biome: int, index: int, visible_tree: bool) -> void:
  var tree = trees[biome][index]
@@ -304,7 +358,7 @@ func on_harvested(biome: int, _amount: float) -> void:
  for i in trees[biome].size():
   var t = trees[biome][i]
   var d = t.point.distance_squared_to(focus)
-  if t.regrow <= 0 and d < distance:
+  if not t.blocked and t.regrow <= 0 and d < distance:
    closest = i
    distance = d
  if closest >= 0:
@@ -361,14 +415,16 @@ func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventMouseButton:
   if event.button_index == MOUSE_BUTTON_WHEEL_UP: camera_action("+")
   elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN: camera_action("−")
+  elif event.button_index == MOUSE_BUTTON_RIGHT: right_drag=event.pressed
   elif event.button_index == MOUSE_BUTTON_LEFT:
    dragging = event.pressed
    if event.pressed:
     drag_distance = 0
     last_pointer = event.position
    elif drag_distance < 12: tap_world(event.position)
- elif event is InputEventMouseMotion and dragging:
-  pan(event.relative)
+ elif event is InputEventMouseMotion and (dragging or right_drag):
+  if not placement.is_empty() and not right_drag: place_at_screen(event.position)
+  else: pan(event.relative)
  elif event is InputEventScreenTouch:
   if event.pressed:
    touches[event.index] = event.position
@@ -383,10 +439,13 @@ func _unhandled_input(event: InputEvent) -> void:
    var values = touches.values()
    var distance = values[0].distance_to(values[1])
    if pinch_distance > 0: zoom = clampf(zoom*pinch_distance/maxf(distance,1),40,390)
+   if not placement.is_empty(): pan(event.relative*0.5)
    pinch_distance = distance
    drag_distance = 100
    set_camera()
-  else: pan(event.relative)
+  else:
+   if placement.is_empty(): pan(event.relative)
+   else: place_at_screen(event.position)
 
 func pan(relative: Vector2) -> void:
  drag_distance += relative.length()
@@ -401,10 +460,21 @@ func tap_world(screen: Vector2) -> void:
  var plane = Plane(Vector3.UP,0)
  var point = plane.intersects_ray(camera.project_ray_origin(screen),camera.project_ray_normal(screen))
  if point == null: return
+ if not placement.is_empty():
+  placement_point = Placement.snap(point)
+  update_ghost()
+  return
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
-  if point.distance_to(Catalog.industry_position(int(b.get("slot",i)))) < 12:
+  if b.kind=="sawmill":
+   var bin_position = Game.building_position(i)+Basis(Vector3.UP,deg_to_rad(int(b.get("rotation",0))))*Vector3(7.5,0,-3)
+   if point.distance_to(bin_position)<3.5: hud.open_menu("sawdust"); return
+  if Placement.bounds(Game.building_position(i),int(b.get("rotation",0))).has_point(Vector2(point.x,point.z)):
    hud.show_building(i)
+   return
+ for i in Game.state.homes.size():
+  if Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).has_point(Vector2(point.x,point.z)):
+   hud.show_plot(int(Game.state.homes[i].plot))
    return
  for i in 10:
   if point.distance_to(Catalog.biome_position(i)) < 46:
@@ -414,6 +484,72 @@ func tap_world(screen: Vector2) -> void:
    else: Game.notice.emit("Dieses Biom zuerst im Welt-Menü freischalten")
    return
  for i in 12:
-  if point.distance_to(Catalog.home_position(i)) < 12:
+  if point.distance_to(Catalog.home_position(i))<12:
    hud.show_plot(i)
    return
+
+func begin_placement(request: Dictionary) -> void:
+ cancel_placement()
+ placement = request.duplicate(true)
+ var city = bool(placement.get("city",false))
+ var index = int(placement.get("index",-1))
+ if city and index<0 and int(placement.get("plot",-1))<0: placement.plot = Game.next_city_plot()
+ if city and index<0 and int(placement.get("plot",-1))<0:
+  Game.notice.emit("Keine freien Stadtgrundstücke · Region erweitern")
+  placement = {}
+  return
+ var preferred = focus
+ placement_rotation = 0
+ if index>=0:
+  preferred = Game.home_position(index) if city else Game.building_position(index)
+  placement_rotation = int((Game.state.homes if city else Game.state.buildings)[index].get("rotation",0))
+ placement_point = Game.free_position(preferred,placement_rotation,-1 if city else index,index if city else -1)
+ if not is_finite(placement_point.x): placement_point=Placement.snap(focus)
+ ghost = Node3D.new()
+ add_child(ghost)
+ var model = Models.building(placement.kind,1,city)
+ ghost.add_child(model)
+ var mat = Models.material(Color(1,1,1,0.45)).duplicate()
+ mat.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
+ for child in model.get_children():
+  if child is MeshInstance3D: child.material_override=mat
+ ghost_plate = Models.box(ghost,Vector3(19,0.2,23),Vector3(0,0.9,0),Color("5bfba0"))
+ hud.show_placement(placement)
+ update_ghost()
+
+func place_at_screen(screen: Vector2) -> void:
+ var point = Plane(Vector3.UP,0).intersects_ray(camera.project_ray_origin(screen),camera.project_ray_normal(screen))
+ if point!=null:
+  placement_point=Placement.snap(point)
+  update_ghost()
+
+func update_ghost() -> void:
+ if ghost==null: return
+ ghost.position=placement_point
+ ghost.rotation_degrees.y=placement_rotation
+ var city=bool(placement.get("city",false))
+ var index=int(placement.get("index",-1))
+ var reason=Game.placement_reason(placement_point,placement_rotation,-1 if city else index,index if city else -1)
+ ghost_plate.material_override=Models.material(Color("43e69a") if reason.is_empty() else Color("f16c5d"))
+ hud.update_placement(reason)
+
+func placement_action(action: String) -> void:
+ if placement.is_empty(): return
+ if action=="cancel": cancel_placement(); return
+ if action=="rotate": placement_rotation=posmod(placement_rotation+90,360); update_ghost(); return
+ if action!="confirm": return
+ var city=bool(placement.get("city",false))
+ var index=int(placement.get("index",-1))
+ var success=false
+ if index>=0: success=Game.move_building(index,placement_point,placement_rotation,city)
+ elif city: success=Game.order_home(placement.kind,int(placement.plot),placement_point,placement_rotation)
+ else: success=Game.order_building(placement.kind,placement_point,placement_rotation)
+ if success: cancel_placement()
+
+func cancel_placement() -> void:
+ placement={}
+ if ghost!=null:
+  remove_child(ghost)
+  ghost.queue_free()
+  ghost=null
+ if hud!=null: hud.hide_placement()

@@ -9,13 +9,13 @@ static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
  if materials.has(key): return materials[key]
  var result = StandardMaterial3D.new()
  result.albedo_color = color
- result.roughness = 0.88
+ result.roughness = 0.76
  if grain == null:
   var image = Image.create(32,32,false,Image.FORMAT_RGB8)
   for y in 32:
    for x in 32:
-    var value = 0.92+float((x*13+y*7)%9)*0.01
-    if y%8==0: value = 0.83
+    var value = 0.96+float((x*13+y*7)%5)*0.01
+    if y%8==0: value = 0.91
     image.set_pixel(x,y,Color(value,value,value))
   image.generate_mipmaps()
   grain = ImageTexture.create_from_image(image)
@@ -86,11 +86,13 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
  var tone = Color(definition.color)
  if Game.state.skin == "Modern": tone = tone.lerp(Color("82b2c3"),0.6)
  var floors = mini(1+int((level-1)/4.0),4)
+ if not city and kind!="cabin": floors = 1
  if city and kind in ["apartments","office","hotel"]: floors += 1
  var width = 12.0
  var depth = 11.0
  var height = 3.6*floors
- box(root,Vector3(19,0.35,23),Vector3(0,0.15,0),Color("d2cdb0"))
+ box(root,Vector3(19,0.35,23),Vector3(0,0.15,0),Color("dbcba2"))
+ for x in [-9,9]: box(root,Vector3(0.25,0.2,22.6),Vector3(x,0.4,0),Color("fff2c9"))
  if city and kind == "park":
   box(root,Vector3(17,0.2,20),Vector3(0,0.4,0),Color("82b76d"))
   box(root,Vector3(3,0.1,20),Vector3(0,0.55,0),Color("e3d5ab"))
@@ -118,6 +120,20 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
  box(root,Vector3(1.1,2.8,1.2),Vector3(-3,height+2.8,-2),Color("87978f"))
  if not city:
   log_pile(root,Vector3(-6,0.6,8),5)
+  if kind=="sawmill":
+   for side in [-1,1]: box(root,Vector3(0.22,3.8,3.2),Vector3(7.5+side*1.6,2.1,-3),Color("eabf57"))
+   box(root,Vector3(3.4,3.8,0.22),Vector3(7.5,2.1,-4.6),Color("eabf57"))
+   box(root,Vector3(3.4,1.3,0.22),Vector3(7.5,0.9,-1.4),Color("eabf57"))
+   box(root,Vector3(3.2,0.3,3.2),Vector3(7.5,0.55,-3),Color("737f86"))
+   var fill = box(root,Vector3(3.0,2.7,3.0),Vector3(7.5,1.7,-3),Color("e9c18a"))
+   fill.name="SawdustFill"
+  if kind in ["market","cabin"]:
+   for x in [-4,-2,0,2,4]:
+    var awning=box(root,Vector3(2,0.3,3.2),Vector3(x,4.3,6.5),Color("fff0cf") if x in [-2,2] else tone)
+    awning.rotation.x=0.15
+   for x in [-5,5]:
+    box(root,Vector3(2.5,0.65,1),Vector3(x,0.9,7.5),Color("a2774a"))
+    for offset in [-0.7,0,0.7]: cylinder(root,0.28,0.5,Vector3(x+offset,1.5,7.5),Color("ed785a"),0.12)
   if Catalog.RECIPES.has(kind):
    box(root,Vector3(4.8,0.7,8.8),Vector3(5,1.1,8),Color("3f5e64"))
    box(root,Vector3(3.5,0.25,9),Vector3(5,1.65,8),Color("6e7f7b"))
@@ -131,11 +147,28 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   if kind == "kiln":
    box(root,Vector3(7,2.7,4),Vector3(0,2,7),Color("a0674f"))
    for x in [-2,0,2]: box(root,Vector3(1.2,1.7,0.2),Vector3(x,2,9.1),Color("e8b365"))
+   for x in [-3,3]:
+    cylinder(root,0.5,6.4,Vector3(x,5.1,-2),Color("a2b7c2"))
+    cylinder(root,0.75,0.3,Vector3(x,8.4,-2),Color("e8d8ac"))
+  if kind=="furniture":
+   for x in [-4,-1,2]:
+    box(root,Vector3(2.2,1.6,1.8),Vector3(x,1.2,8),Color("da9953"))
+    box(root,Vector3(2.3,0.2,2.0),Vector3(x,2.1,8),Color("f1cc8c"))
   if kind in ["garage","warehouse","station"]:
    box(root,Vector3(7,3.4,0.2),Vector3(0,2.6,5.7),Color("607d82"))
    for y in [1.5,2.3,3.1]: box(root,Vector3(7,0.1,0.2),Vector3(0,y,5.9),Color("a7b4a5"))
   if kind == "research":
    cylinder(root,1.7,0.4,Vector3(0,height+4,0),Color("bad9d5"),0.3)
+   for x in [-4,0,4]: box(root,Vector3(2.8,2.7,0.3),Vector3(x,2.8,5.7),Color("63cde0"))
+   cylinder(root,0.12,4,Vector3(0,height+4,0),Color("ebd389"))
+  if kind=="garage":
+   for x in [-3,2]:
+    box(root,Vector3(2.7,1.0,4),Vector3(x,1,8),Color("f4c75f"))
+    box(root,Vector3(2.5,1.7,1.5),Vector3(x,2,9),Color("62becb"))
+    for side in [-1,1]:
+     for z in [7,9]:
+      var wheel=cylinder(root,0.5,0.3,Vector3(x+side*1.4,0.8,z),Color("355466"))
+      wheel.rotation.z=PI/2
   if level >= 5:
    for x in [-4,0,4]: box(root,Vector3(3,0.2,3),Vector3(x,height+2.7,0),Color("436b8c"))
   if level >= 10:
@@ -153,7 +186,7 @@ static func bake(root: Node3D) -> void:
  var batches = {}
  var old = []
  for child in root.get_children():
-  if not child is MeshInstance3D or child.name in ["Saw","Crane"]: continue
+  if not child is MeshInstance3D or child.name in ["Saw","Crane","SawdustFill"]: continue
   var key = child.material_override
   if not batches.has(key):
    var surface = SurfaceTool.new()

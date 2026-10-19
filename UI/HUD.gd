@@ -2,12 +2,15 @@ extends Control
 
 signal camera_action(action: String)
 signal focus_requested(point: Vector3)
+signal placement_requested(request: Dictionary)
+signal placement_action(action: String)
 
-const INK = Color("193e45")
-const PANEL = Color("244b52")
-const GOLD = Color("f4cd79")
+const INK = Color("123e50")
+const PANEL = Color("197b87")
+const GOLD = Color("ffd05b")
 const CREAM = Color("fff5da")
-const MUTED = Color("b5d2cb")
+const MUTED = Color("a6dcd7")
+const PAPER = Color("fff3d9")
 var money: Label
 var subtitle: Label
 var supply: Label
@@ -22,6 +25,12 @@ var current_index = -1
 var refresh_clock = 0.0
 var toast_left = 0.0
 var live_labels: Array = []
+var sawdust_button: Button
+var placement_panel: PanelContainer
+var placement_title: Label
+var placement_hint: Label
+var placement_confirm: Button
+var build_category = "Produktion"
 
 func style(color: Color, radius: int = 18) -> StyleBoxFlat:
  var s = StyleBoxFlat.new()
@@ -64,11 +73,11 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",26)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"REBUILD / 07.1",12,GOLD)
+ var edition = text(brand,"LIVING / 08",12,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  money = text(top,"",23,GOLD)
  subtitle = text(top,"",13,MUTED)
- mission_button = button(self,"",func(): open_menu("missions"))
+ mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<5 else "missions"))
  mission_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  mission_button.offset_left = 14
  mission_button.offset_right = -14
@@ -95,9 +104,15 @@ func _ready() -> void:
  var strip = PanelContainer.new()
  strip.add_theme_stylebox_override("panel",style(INK,17))
  bottom.add_child(strip)
- supply = text(strip,"",14,CREAM)
+ var supply_row = row(strip)
+ supply = text(supply_row,"",13,CREAM)
+ supply.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  supply.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  supply.custom_minimum_size.y = 35
+ sawdust_button = button(supply_row,"SPÄNEBOX",func(): open_menu("sawdust"))
+ sawdust_button.size_flags_horizontal=Control.SIZE_SHRINK_END
+ sawdust_button.custom_minimum_size=Vector2(108,54)
+ sawdust_button.add_theme_font_size_override("font_size",14)
  var actions = row(bottom)
  var chop = button(actions,"FÄLLEN",func():
   if Game.state.bag < Game.bag_capacity(): focus_requested.emit(Catalog.biome_position(int(Game.state.biome)))
@@ -107,7 +122,7 @@ func _ready() -> void:
  button(actions,"Abliefern",func(): Game.deposit(); camera_action.emit("home"))
  button(actions,"Verkaufen",func(): open_menu("market"))
  var navigation = row(bottom)
- for entry in [["Industrie","industry"],["Stadt","city"],["Aufträge","contracts"],["Welt","world"],["Mehr","more"]]:
+ for entry in [["Bauen","catalog"],["Team","team"],["Aufträge","contracts"],["Welt","world"],["Mehr","more"]]:
   var tab = str(entry[1])
   var nav_button = button(navigation,str(entry[0]),func(): open_menu(tab))
   nav_button.add_theme_font_size_override("font_size",14)
@@ -123,12 +138,14 @@ func _ready() -> void:
  toast.add_theme_constant_override("shadow_offset_x",1)
  toast.add_theme_constant_override("shadow_offset_y",2)
  build_overlay()
+ build_placement_bar()
  Game.changed.connect(update_stats)
  Game.notice.connect(show_notice)
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
  update_stats()
  if not Game.offline_report.is_empty(): show_notice(Game.offline_report)
  else: show_notice("Willkommen zurück im Wald. Fälle Holz, baue dein Imperium.")
+ if int(Game.state.tutorial)==0: call_deferred("open_menu","welcome")
 
 func build_overlay() -> void:
  overlay = PanelContainer.new()
@@ -138,7 +155,7 @@ func build_overlay() -> void:
  overlay.offset_right = -14
  overlay.offset_top = 204
  overlay.offset_bottom = -228
- overlay.add_theme_stylebox_override("panel",style(INK,22))
+ overlay.add_theme_stylebox_override("panel",style(Color("125263"),22))
  var container = VBoxContainer.new()
  container.add_theme_constant_override("separation",12)
  overlay.add_child(container)
@@ -162,7 +179,10 @@ func text(parent: Node, value: String, font_size: int = 17, color: Color = CREAM
  var label = Label.new()
  label.text = value
  label.add_theme_font_size_override("font_size",font_size)
- label.add_theme_color_override("font_color",color)
+ var ink = color
+ if parent.has_meta("light_card"):
+  ink = INK if color==CREAM else Color("ad6508") if color==GOLD else Color("52767a") if color==MUTED else color
+ label.add_theme_color_override("font_color",ink)
  label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  parent.add_child(label)
  return label
@@ -185,10 +205,11 @@ func button(parent: Node, title: String, callback: Callable, enabled: bool = tru
 
 func card(title: String, detail: String = "") -> VBoxContainer:
  var panel = PanelContainer.new()
- panel.add_theme_stylebox_override("panel",style(PANEL,16))
+ panel.add_theme_stylebox_override("panel",style(PAPER,16))
  contents.add_child(panel)
  var box = VBoxContainer.new()
  box.add_theme_constant_override("separation",8)
+ box.set_meta("light_card",true)
  panel.add_child(box)
  text(box,title,19,CREAM)
  if not detail.is_empty(): text(box,detail,15,MUTED)
@@ -207,12 +228,17 @@ func show_notice(message: String) -> void:
 func update_stats() -> void:
  money.text = "%s MÜNZEN    ◆ %s    ▣ %s" % [Catalog.number(Game.state.coins),int(Game.state.diamonds),int(Game.state.tickets)]
  subtitle.text = "%s · Rucksack %s/%s · Team %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers)]
- supply.text = "HOLZ %s  →  BRETTER %s  →  TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),Game.state.trucks,int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
+ supply.text = "HOLZ %s → BRETTER %s → TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks),int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
+ var fill = float(Game.state.resources.sawdust)/Game.capacity()
+ sawdust_button.text="SPÄNEBOX\n%s %% · LEEREN" % int(fill*100)
+ sawdust_button.add_theme_stylebox_override("normal",style(Color("e78a45") if fill>=0.8 else Color("258f8d"),13))
  mission_button.text = "MISSIONEN · Dein nächster Meilenstein"
  for m in Game.mission_definitions():
   if not Game.state.missions_claimed.has(m.id):
    mission_button.text = "%s · %s/%s %s" % [m.name,Catalog.number(m.value),Catalog.number(m.target),"ABHOLEN" if m.value >= m.target else "›"]
    break
+ if int(Game.state.tutorial)<5:
+  mission_button.text = ["WILLKOMMEN · Dein Waldimperium wartet","ANLEITUNG 1/4 · Fälle fünf Bäume","ANLEITUNG 2/4 · Holz abliefern","ANLEITUNG 3/4 · Erste Rohstoffe verkaufen","ANLEITUNG 4/4 · Erstes Gebäude platzieren"][int(Game.state.tutorial)]
 
 func _process(delta: float) -> void:
  toast_left -= delta
@@ -224,6 +250,10 @@ func _process(delta: float) -> void:
    if is_instance_valid(item.label): item.label.text = item.callback.call()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+ if event.is_action_pressed("ui_cancel") and placement_panel.visible:
+  placement_action.emit("cancel")
+  get_viewport().set_input_as_handled()
+  return
  if event.is_action_pressed("ui_cancel") and overlay.visible:
   close_menu()
   get_viewport().set_input_as_handled()
@@ -232,6 +262,7 @@ func open_menu(tab: String) -> void:
  current = tab
  scroll.scroll_vertical = 0
  overlay.show()
+ overlay.offset_top=maxf(204,size.y-610) if tab=="building" else 204.0
  render_menu()
 
 func close_menu() -> void:
@@ -282,6 +313,9 @@ func render_menu() -> void:
   "settings": settings_menu()
   "empire": empire_menu()
   "planner": planner_menu()
+  "sawdust": sawdust_menu()
+  "welcome": welcome_menu()
+  "guide": guide_menu()
   "confirm_prestige": confirm_prestige_menu()
  scroll.set_deferred("scroll_vertical",old_scroll)
 
@@ -309,16 +343,37 @@ func jobs_cards() -> void:
    return "%s · %s Sekunden" % [["Anlieferung","Fundament","Rohbau","Dach","Innenausbau"][mini(int(progress*5),4)],ceili(job.left)])
 
 func catalog_menu() -> void:
- modal_title.text = "BAUEN & ERWEITERN"
- text(contents,"16 Industrieflächen. Mehrere Betriebe derselben Art arbeiten gemeinsam und lassen sich einzeln verbessern.",15,MUTED)
- for kind in Catalog.BUILDINGS:
-  var key = str(kind)
-  var d = Catalog.BUILDINGS[kind]
-  var unlocked = Game.available(kind)
-  var box = card(d.name,d.desc)
-  text(box,"Kosten: %s Münzen · %s vorhanden" % [Catalog.number(Game.cost_for(kind)),Game.count(kind)],15,GOLD)
-  if not unlocked: text(box,"Benötigt die vorherige Produktionsstufe.",14,MUTED)
-  button(box,"BAU BEAUFTRAGEN",func(): action(func(): Game.order_building(key)),unlocked)
+ modal_title.text = "BAUWERK AUSWÄHLEN"
+ text(contents,"Auswählen → in der Welt platzieren → drehen → bestätigen. Bezahlt wird erst beim Bestätigen. Straßen bleiben frei; Waldflächen werden geräumt.",15,MUTED)
+ var tabs=row(contents)
+ for name_value in ["Produktion","Wohnen","Versorgung"]:
+  var category=str(name_value)
+  var tab=button(tabs,category,func(): build_category=category; render_menu())
+  tab.add_theme_font_size_override("font_size",14)
+  if category==build_category: tab.add_theme_stylebox_override("normal",style(Color("d99432"),13))
+ var grid=GridContainer.new()
+ grid.columns=2
+ grid.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ grid.add_theme_constant_override("h_separation",10)
+ grid.add_theme_constant_override("v_separation",10)
+ contents.add_child(grid)
+ var city=build_category=="Wohnen"
+ var definitions=Catalog.HOMES if city else Catalog.BUILDINGS
+ for kind in definitions:
+  if not city and ((build_category=="Versorgung")!=(kind in ["station","cabin","warehouse","market","research","garage"])): continue
+  var key=str(kind)
+  var d=definitions[kind]
+  var enabled=(Game.level("prefab")>0 and Game.next_city_plot()>=0) if city else Game.available(kind)
+  var price=float(d.cost)*Game.difficulty() if city else Game.cost_for(kind)
+  var caption="%s\n%s Münzen\n%s" % [d.name,Catalog.number(price),"PLATZIEREN" if enabled else "GESPERRT"]
+  var tile=button(grid,caption,func(): request_placement({"kind":key,"city":city,"index":-1,"plot":-1}),enabled)
+  tile.custom_minimum_size.y=100
+  tile.add_theme_font_size_override("font_size",15)
+  var background=Color(d.color).lerp(Color("0b6472"),0.2)
+  tile.add_theme_stylebox_override("normal",style(background,16))
+ var links=row(contents)
+ button(links,"Betriebe verwalten",func(): open_menu("industry"))
+ button(links,"Stadt & Regionen",func(): open_menu("city"))
 
 func building_menu() -> void:
  if current_index < 0 or current_index >= Game.state.buildings.size(): return
@@ -328,12 +383,19 @@ func building_menu() -> void:
  modal_title.text = d.name.to_upper()
  var box = card("Stufe %s / %s" % [b.level,d.max],d.desc)
  dynamic_text(box,func(): return Game.production_status(index))
- if b.kind == "sawmill": text(box,"Sägespäne bleiben für Pellets und Papier im Lager. Ist der Puffer voll, werden nur neue überschüssige Sägespäne automatisch verkauft; die Bretterproduktion läuft weiter.",15,MUTED)
+ if b.kind == "sawmill":
+  text(box,"Leere die sichtbare Spänebox regelmäßig. Ein voller Behälter stoppt die Bretterproduktion nicht; neuer Überlauf wird kompostiert oder auf Wunsch verkauft.",15,MUTED)
+  button(box,"SPÄNEBOX LEEREN",func(): open_menu("sawdust"))
  text(box,"Ausbau: %s Münzen" % Catalog.number(Game.cost_for(b.kind,int(b.level)+1)),17,GOLD)
- button(box,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
+ var management=row(box)
+ button(management,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
+ button(management,"VERSCHIEBEN",func(): request_placement({"kind":b.kind,"city":false,"index":index}))
  if Catalog.RECIPES.has(b.kind):
   button(box,"Produktion fortsetzen" if b.paused else "Produktion pausieren",func(): action(func(): b.paused = not b.paused))
- button(box,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Catalog.industry_position(int(b.get("slot",index)))); close_menu())
+ if b.kind=="cabin": button(box,"PERSONAL EINSTELLEN",func(): open_menu("team"))
+ if b.kind=="garage": button(box,"FAHRZEUGE VERWALTEN",func(): open_menu("garage"))
+ if b.kind=="research": button(box,"FORSCHUNG",func(): open_menu("research"))
+ button(box,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Game.building_position(index)); close_menu())
  jobs_cards()
 
 func team_menu() -> void:
@@ -388,6 +450,7 @@ func plot_menu() -> void:
    for key in d.materials: materials[key] = ceilf(float(d.materials[key])*0.5*int(h.level))
    text(box,"Ausbau: %s Münzen\n%s" % [Catalog.number(float(d.cost)*pow(1.4,int(h.level))*Game.difficulty()),materials_text(materials)],15,GOLD)
    button(box,"GEBÄUDE AUSBAUEN",func(): action(func(): Game.upgrade_home(index)),not Game.job_for("home_upgrade",index) and h.level < 10)
+   button(box,"GEBÄUDE VERSCHIEBEN",func(): request_placement({"kind":h.kind,"city":true,"index":index,"plot":plot}))
    return
  for j in Game.state.jobs:
   if j.type == "home" and int(j.plot) == plot:
@@ -402,7 +465,7 @@ func plot_menu() -> void:
   var public_effect = {"park":"Unternehmensweit +4 % Miete pro Stufe (zusammen maximal +100 %)","school":"+4 % Produktionsleistung pro Stufe (maximal +50 %)","clinic":"Unternehmensweit +4 % Miete pro Stufe (zusammen maximal +100 %)","fire":"+5 % Baugeschwindigkeit pro Stufe (maximal +50 %)"}.get(kind,"")
   var box = card(d.name,public_effect if not public_effect.is_empty() else "Miete %s/s · %s Bewohner" % [d.rent,d.people])
   text(box,"%s Münzen\n%s" % [Catalog.number(float(d.cost)*Game.difficulty()),materials_text(d.materials)],15,GOLD)
-  button(box,"BAU BEAUFTRAGEN",func(): action(func(): Game.order_home(key,plot)))
+  button(box,"STANDORT AUSWÄHLEN",func(): request_placement({"kind":key,"city":true,"index":-1,"plot":plot}))
   button(box,"ALS BAUZIEL VORMERKEN",func(): Game.set_plan(key,plot); open_menu("planner"))
 
 func contracts_menu() -> void:
@@ -432,7 +495,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -522,7 +585,7 @@ func confirm_prestige_menu() -> void:
 
 func market_menu() -> void:
  modal_title.text = "LAGER & VERKAUF"
- var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Automatische Verarbeitung hält bei aktivierter Baureserve kleine Materialbestände zurück. Überschüssige neue Sägespäne werden automatisch verkauft, damit das Sägewerk weiterarbeitet.")
+ var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Die Baureserve schützt Material für neue Häuser. Die Spänebox lässt sich direkt unten oder am Sägewerk öffnen; ihr voller Behälter stoppt nie die Bretterproduktion.")
  button(box,"Baureserve: AN" if Game.state.reserve else "Baureserve: AUS",func(): action(func(): Game.state.reserve = not Game.state.reserve))
  button(box,"Auto-Export: AN" if Game.state.auto_export else "Auto-Export: AUS",func(): action(func(): Game.state.auto_export = not Game.state.auto_export))
  for key in Catalog.RESOURCES:
@@ -539,4 +602,71 @@ func settings_menu() -> void:
  button(box,"JETZT SPEICHERN",func(): Game.save())
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.7.1 · Produktionskorrektur\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.8.0 · Living Industry\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+
+func build_placement_bar() -> void:
+ placement_panel=PanelContainer.new()
+ add_child(placement_panel)
+ placement_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+ placement_panel.offset_left=14
+ placement_panel.offset_right=-14
+ placement_panel.offset_top=-388
+ placement_panel.offset_bottom=-238
+ placement_panel.add_theme_stylebox_override("panel",style(INK,20))
+ var box=VBoxContainer.new()
+ placement_panel.add_child(box)
+ placement_title=text(box,"",20,GOLD)
+ placement_hint=text(box,"",14,CREAM)
+ var choices=row(box)
+ button(choices,"Abbrechen",func(): placement_action.emit("cancel"))
+ button(choices,"Drehen 90°",func(): placement_action.emit("rotate"))
+ placement_confirm=button(choices,"BAUEN",func(): placement_action.emit("confirm"))
+ placement_confirm.add_theme_stylebox_override("normal",style(Color("e2a536"),12))
+ placement_panel.hide()
+
+func request_placement(request: Dictionary) -> void:
+ close_menu()
+ placement_requested.emit(request)
+
+func show_placement(request: Dictionary) -> void:
+ close_menu()
+ var city=bool(request.get("city",false))
+ var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[request.kind]
+ var moving=int(request.get("index",-1))>=0
+ var price=0.0 if moving else float(definition.cost)*Game.difficulty() if city else Game.cost_for(request.kind)
+ placement_title.text="%s · %s" % [definition.name,"kostenlos verschieben" if moving else Catalog.number(price)+" Münzen"]
+ placement_confirm.text="SETZEN" if moving else "BAUEN"
+ placement_panel.show()
+
+func update_placement(reason: String) -> void:
+ placement_hint.text="Standort frei · tippen oder ziehen, dann bestätigen" if reason.is_empty() else reason
+ placement_confirm.disabled=not reason.is_empty()
+
+func hide_placement() -> void:
+ if placement_panel!=null: placement_panel.hide()
+
+func sawdust_menu() -> void:
+ modal_title.text="DEINE SPÄNEBOX"
+ var box=card("Aus Sägespänen wird Geld","Leere den Behälter regelmäßig per Verkauf. Pellet- und Papierfabriken können den gespeicherten Vorrat weiterverarbeiten. Ein voller Behälter blockiert niemals das Sägewerk.")
+ dynamic_text(box,func(): return "%s / %s Sägespäne · %s %% gefüllt\nVerkaufserlös: %s Münzen" % [Catalog.number(Game.state.resources.sawdust),Catalog.number(Game.capacity()),int(100*float(Game.state.resources.sawdust)/Game.capacity()),Catalog.number(float(Game.state.resources.sawdust)*float(Catalog.PRICES.sawdust)*Game.multiplier()*Game.boost("money"))])
+ button(box,"BEHÄLTER LEEREN & VERKAUFEN",func(): action(func(): Game.sell("sawdust")))
+ text(box,"Bei voller Box wird nur neuer Überlauf kompostiert, bis du Platz schaffst. Optional kannst du neuen Überlauf automatisch verkaufen lassen. Der gesammelte Vorrat bleibt immer erhalten.",15,MUTED)
+ button(box,"Überlauf-Autoverkauf: AN" if Game.state.auto_sawdust else "Überlauf-Autoverkauf: AUS",func(): action(func(): Game.state.auto_sawdust=not Game.state.auto_sawdust))
+
+func welcome_menu() -> void:
+ modal_title.text="WILLKOMMEN IM WALD"
+ var box=card("Dein erstes Holz. Dein eigenes Imperium.","Aus einer kleinen Forststation wird deine lebendige Industriestadt. Du bestimmst, wo neue Gebäude stehen und wie dein Betrieb wächst.")
+ text(box,"1  Bäume fällen und Holz abliefern\n2  Bretter, Trockenholz und Möbel herstellen\n3  Gebäude selbst platzieren und verbessern\n4  Häuser bauen und neue Regionen erschließen",18,CREAM)
+ button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.state.tutorial=1; Game.save(true); update_stats(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
+ button(box,"Ich kenne mich aus · überspringen",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
+
+func guide_menu() -> void:
+ if int(Game.state.tutorial)==0: welcome_menu(); return
+ modal_title.text="DEIN WEG ZUM IMPERIUM"
+ var step=mini(int(Game.state.tutorial),4)
+ var box=card("Schritt %s / 4" % step,["","Tippe auf Fällen oder auf Bäume. Nach fünf gefällten Bäumen geht es weiter.","Tippe auf Abliefern. Dein Rucksack wird in das Holzlager geleert; Helfer liefern zusätzlich automatisch.","Öffne Verkaufen und verkaufe etwas Holz oder Bretter. Missionsprämien helfen beim ersten Ausbau.","Öffne Bauen, wähle ein Gebäude und platziere es in der Welt. Grün bedeutet frei; Rot zeigt Straßen oder belegte Flächen."][step])
+ button(box,"WEITER SPIELEN",func(): close_menu())
+ var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. LKWs verkaufen Möbel automatisch. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. Förderbrücken lassen die Straßen frei.")
+ text(help,"Spänebox: regelmäßig leeren und verkaufen. Bei Störungen zeigt das Betriebsfenster den konkreten Grund. Mit einem Finger die Welt bewegen, mit zwei Fingern zoomen. Im Baumodus bewegt ein Finger das Bauwerk; zwei Finger bewegen die Kamera.",15,MUTED)
+ button(help,"BAUKATALOG ÖFFNEN",func(): open_menu("catalog"))
+ if int(Game.state.tutorial)<5: button(help,"ANLEITUNG ÜBERSPRINGEN",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
