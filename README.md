@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Waldleben 0.12
+# Timber Loot Tycoon — Die erste Kleinstadt 0.13
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.12-test.apk](releases/Timber-Loot-Tycoon-v0.12-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.13-test.apk](releases/Timber-Loot-Tycoon-v0.13-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -19,7 +19,20 @@ python3 scripts/backup.py
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
 
-## Neu in 0.12
+## Neu in 0.13 — Vom Holzlager zur Kleinstadt
+
+- Zusammenhängendes Land von 640 × 560 Einheiten. Nach den drei bisherigen Regionen und 20 Bewohnern erschließt du Ost- und Westviertel: jeweils zwölf zusätzliche Hausgrundstücke, acht weitere Industriebetriebe und eine Zufahrt. Insgesamt bis zu 36 Stadtgrundstücke und 40 Betriebe; bisherige Positionen bleiben erhalten.
+- Eigene Asphaltstraßen und Fußwege: Start und Ziel auf der Karte wählen, rechtwinklige Kurve wechseln, Kosten prüfen und bestätigen. Straßen schließen am vorhandenen Netz an; Gebäude, Baustellen, nicht erschlossene Viertel und Wasser werden geprüft. Abbrechen ist kostenlos. Strecken bleiben im Spielstand und lassen sich ohne Erstattung entfernen; aktive Busverbindungen sind geschützt.
+- Eigene Formen für zwölf Stadtgebäude, darunter Feuerwehr mit Fahrzeughalle und Löschwagen, Wohnhaus mit Balkonen, Landhaus mit Veranda, Villa mit Pool, Laden mit Auslage, Schule, Gesundheitszentrum, Hotel, Bürohaus, Park und neuer Nachtclub. Größere Ausbaustufen erhalten mehr Etagen beziehungsweise zusätzliche Ausstattung. Vorgartenspaziergänge meiden den Villenpool.
+- Goldene Mietanzeigen über Häusern zum Antippen, Abholung am Haus oder für die ganze Stadt. Neue Profile sammeln Miete im Hauskonto, auch während der maximal acht Offline-Stunden. Für 2.500 Münzen, angepasst an Prestige, übernimmt ein Hausverwalter die automatische Auszahlung. Alte Spielstände behalten ihre bisherige automatische Miete kostenlos.
+- Bis zu acht frei gesetzte Haltestellen und drei Buslinien mit selbst gewählter Stationsreihenfolge. Sichtbare Busse fahren auf dem tatsächlichen Straßengraphen, halten vier Sekunden und öffnen die Türen; Bewohner warten am Unterstand. Abgeschlossene Rundfahrten verdienen einen nach Einwohnerzahl begrenzten Fahrpreis abzüglich Betriebskosten. Route, Fahrstand und Ertrag werden gespeichert und offline weitergerechnet. Unterbrochene Strecken bringen keine Fahrgelder.
+- Werkzeugstufen 11–15 zeigen jetzt Mini-Forstmaschinen, Harvester und schwere Bagger mit bewegtem Arm, Säge und Holzladung. Arbeitsstreifen halten die Modelle sichtbar. Transportstufen zeigen Handwagen, Schubkarre, Pickup, LKW und schwere Forsttransporter. Bereits gekaufte Stufen erscheinen nach Laden ohne erneuten Kauf. Die bestehenden Leistungswerte bleiben erhalten; die Maschinen sind eine begrenzte szenische Darstellung des Gesamtteams.
+- Direkter Zugang zu Straßen und Busverkehr im Baukatalog und in der Stadt; neue Meilensteine für Wege, Mietabholung, Busfahrten und Viertel. Förderstrecken verbinden auch Betriebe in den neuen Gebieten und überbrücken eigene Straßen.
+- Android-Versionscode 1300, gleiches Paket, gleicher Testschlüssel und Schema-1-Spielstand. Als Update installieren, ohne vorher zu deinstallieren.
+
+![Kleinstadt mit eigenen Gebäudemodellen und Mietanzeigen; aufgebauter Demonstrationsstand](docs/preview-town.png)
+
+## Weiterhin aus 0.12
 
 - Hütten erhalten Bank, Tisch mit Tasse und Brotdose, Sonnenschirm, Blumen und eine leuchtende Laterne. Parks haben richtige Bänke und zusätzliche Pflanzkübel. Die Dekoration bleibt innerhalb der bestehenden Grundstücke und dreht sich mit dem Gebäude.
 - Ab vier dargestellten Mitarbeitern besucht ein Mitglied des sichtbaren Teams den Hütten-Pausenplatz. Es geht über den freien Vorplatz zur Bank, sitzt mit einer Tasse und kehrt wieder zurück. Der Mitarbeiter wird aus der bestehenden begrenzten Teamdarstellung genommen, es entsteht kein zusätzliches Personal.
@@ -70,13 +83,13 @@ Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifi
 
 ## Spielumfang
 
-- Zusammenhängende Landschaft von 400 × 390 Einheiten, zehn Biome, 1.000 instanzierte Bäume, zehn sichtbare Bossbäume. Straßen und Projektzufahrten bleiben auf Land. Bäume wachsen nach; Holzfäller sind in begrenzter Anzahl sichtbar.
-- Bis zu 24 frei platzierbare Industriebetriebe, mehrere Betriebe desselben Typs und unabhängige Upgrades. Sammelstation, Lager, Hütten, Sägewerke, Trocknung, Möbelfabrik, Garage, Forschung, Fertighauswerk, Tischlerei, Pellet-, Papier- und Designmöbel-Produktion.
+- Zusammenhängende Landschaft von 640 × 560 Einheiten, zehn Biome, 1.000 instanzierte Bäume, zehn sichtbare Bossbäume. Straßen und Projektzufahrten bleiben auf Land. Bäume wachsen nach; Holzfäller sind in begrenzter Anzahl sichtbar.
+- Bis zu 40 frei platzierbare Industriebetriebe, mehrere Betriebe desselben Typs und unabhängige Upgrades. Sammelstation, Lager, Hütten, Sägewerke, Trocknung, Möbelfabrik, Garage, Forschung, Fertighauswerk, Tischlerei, Pellet-, Papier- und Designmöbel-Produktion.
 - Echte Ressourcenbilanzen, faire gemeinsame Materialzuteilung, sichtbare laufende Fördergüter und Sägen, Bauzeit, Gerüste und Kräne. Bestehende Betriebe produzieren während Upgrades weiter.
-- Zwölf Stadtgrundstücke in drei erschließbaren Regionen. Zehn Gebäudetypen: Häuser, Laden, Wohnhaus, Villa, Hotel, Büros, Park, Schule, Klinik, Feuerwehr. Bis Stufe zehn, Miete, Bewohner und öffentliche Boni.
+- Bis zu 36 Stadtgrundstücke in drei Regionen und zwei zusätzlichen Vierteln. Zwölf Gebäudetypen: Holzhaus, Landhaus, Laden, Wohnhaus, Villa, Hotel, Büros, Nachtclub, Park, Schule, Klinik, Feuerwehr. Bis Stufe zehn, Miete, Bewohner und öffentliche Boni.
 - Materialplaner für ein Stadthaus: Bestände und Kosten, Schutz vor automatischem Verbrauch, optional genau ein automatischer Bauauftrag. Manuelle Verkäufe bleiben möglich.
 - Fünf Großprojekte mit je drei bezahlten Bauabschnitten und anschließendem laufenden Ertrag. Standortmodelle und Zufahrten sind sichtbar.
-- 15 Werkzeug- und zehn Fahrzeugstufen; Mitarbeiter, automatische Möbel-Exporte, wiederholbare Lieferaufträge, sieben Meilensteine, fünf Forschungsrichtungen.
+- 15 Werkzeug- und zehn Fahrzeugstufen; Mitarbeiter, automatische Möbel-Exporte, wiederholbare Lieferaufträge, elf Meilensteine, fünf Forschungsrichtungen.
 - Sechs Loot-Seltenheiten mit offen angezeigten Wahrscheinlichkeiten. Werkzeug- und Fahrzeugteile sind zum Herstellen verwendbar; freigeschaltete Skins lassen sich anlegen. Münzen, Diamanten, Tickets, Geldscheine und Mythic Tokens werden gespeichert; Tokens verbessern dauerhaft die Loot-Chance. Geldscheine dienen derzeit als Auftragszähler/Vorratswährung.
 - Zeitlich begrenzte Booster, steigende Prestige-Kosten und dauerhafte Geld-, Produktions- und Loot-Boni. Permanente Währungen, Inventar und Skins überstehen den Neustart; der Prestige-Hain benötigt eine vorherige Ära.
 - Tageszeit, Regen, Nebel, Holzsplitter-Pool und Originalsounds. Akkumodus reduziert dargestellte Arbeiter, LKWs und Wettereffekte; Wälder verwenden MultiMeshes und statische Modelle zusammengefasste Geometrie.
@@ -87,15 +100,17 @@ Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifi
 1. **Fällen** zeigt den aktiven Wald und füllt den Rucksack. **Abliefern** bringt Holz ins Lager und zeigt die Industrie. Antippen im Wald funktioniert ebenfalls; Ziehen und Zwei-Finger-Zoom bewegen die Kamera.
 2. Holz und Bretter unter **Verkaufen** handeln, Missionen abholen und eine Trockenkammer sowie Möbelfabrik unter **Bauen → Produktion** beauftragen.
 3. Mitarbeiter und Lager ausbauen. Möbel werden durch LKWs automatisch exportiert. Fördergüter bewegen sich nur bei aktiver Produktion des jeweiligen Betriebs.
-4. Fertighauswerk bauen. Unter **Stadt → Grundstück** ein Holzhaus als Bauziel vormerken. Nach Lieferung und Fertigstellung bringt es Miete und Wohnraum. Weitere Fabrikzweige, Regionen und Projekte öffnen den nächsten Ausbau.
+4. Fertighauswerk bauen. Unter **Stadt → Grundstück** ein Holzhaus als Bauziel vormerken. Nach Lieferung und Fertigstellung bringt es Miete und Wohnraum. Die goldene Anzeige über dem Haus oder Stadt → Mieten holt Erträge ab; der Hausverwalter automatisiert das. Weitere Fabrikzweige, Regionen und Projekte öffnen den nächsten Ausbau.
+
+5. Unter **Bauen → Straßen & Wege** eigene Strecken anlegen. Im Busmenü zwei Haltestellen an Straßen bauen, in Fahrreihenfolge auswählen und den ersten Bus kaufen. **Stadt → Regionen & Projekte** erschließt später weitere Viertel.
 
 Die automatisierte Progressionsprüfung erreicht das erste Haus aus einem frischen Profil ohne geschenkte Ressourcen nach 1.682 simulierten Sekunden. Dies ist ein einzelner geprüfter Spielpfad, keine Langzeit-Balance-Zusage.
 
 ## Prüfung und Grenzen
 
-`bash scripts/test.sh` verwendet temporäre Spielstände: 220 Regelprüfungen, ein frischer Verlauf bis zum ersten Haus, 4.135 Szenen-/Geometrieprüfungen, 56 Platzierungs-/Tutorialprüfungen und 42 Prüfungen der offenen Produktion, Schattenumschaltung und Bildschirmaufteilung sowie 23 Begleiter- und 30 Alltagsszenenprüfungen sowie ein abschließender Headless-Start. Eine zusätzliche OpenGL-Prüfung testet die sieben wirklich gerenderten 3D-Symbole, Transparenz, Beleuchtung, getrennte Szenen, Druckzustand und erneutes Zeichnen nach Rückkehr aus dem Hintergrund (23 Prüfungen einschließlich 3D-Biber und sichtbarer Winkeanimation). [Prüfbericht](docs/VALIDATION.md). Die Bilder unter `docs/` stammen aus dem Spiel; die Stadtansicht verwendet ausdrücklich einen nur für das Bild aufgebauten Demonstrationsstand.
+`bash scripts/test.sh` verwendet temporäre Spielstände: 220 Regelprüfungen, ein frischer Verlauf bis zum ersten Haus, 4.139 Szenen-/Geometrieprüfungen, 56 Platzierungs-/Tutorialprüfungen und 42 Prüfungen der offenen Produktion, Schattenumschaltung und Bildschirmaufteilung sowie 23 Begleiter- und 30 Alltagsszenenprüfungen sowie 216 Stadt-/Straßen-/Busprüfungen und ein abschließender Headless-Start. Eine zusätzliche OpenGL-Prüfung testet die sieben wirklich gerenderten 3D-Symbole, Transparenz, Beleuchtung, getrennte Szenen, Druckzustand und erneutes Zeichnen nach Rückkehr aus dem Hintergrund (23 Prüfungen einschließlich 3D-Biber und sichtbarer Winkeanimation). [Prüfbericht](docs/VALIDATION.md). Die Bilder unter `docs/` stammen aus dem Spiel; die Stadtansicht verwendet ausdrücklich einen nur für das Bild aufgebauten Demonstrationsstand.
 
-Noch offen: reale Android-Gerätetests für Touch, Safe Area, Hintergrund, Temperatur und Akku; 50-Stunden-Balancing, Barrierefreiheit, Release-Signierung, iOS und Store-Abnahme. Freies Straßenzeichnen, Immobilienverkauf/Umbau, vollständig simulierte Bahn-/Schifffahrt und eigene Musik pro Biom sind noch nicht enthalten. Fahrzeuge verwenden derzeit ein gemeinsames LKW-Modell; höhere Stufen verändern Geschwindigkeit und Kapazität. Geldscheine und einige seltene Baupläne haben noch keinen eigenen Ausgabepfad. Großprojekte verwenden Standortmodelle; es gibt noch keinen echten Hafenverkehr. Keine Werbung, In-App-Käufe oder Cloud-Spielstandsynchronisierung.
+Noch offen: reale Android-Gerätetests für Touch, Safe Area, Hintergrund, Temperatur und Akku; 50-Stunden-Balancing, Barrierefreiheit, Release-Signierung, iOS und Store-Abnahme. Immobilienverkauf/Umbau, frei formbares Wasser/Gelände, Autobahnen, vollständige Bahn-/Schifffahrt und eigene Musik pro Biom sind noch nicht enthalten. Busse fahren berechnete Routen mit vereinfachter Einwohnernachfrage, ohne vollständige Kollisions-/Stausimulation. Die sichtbaren Transportstufen fahren den bisherigen gemeinsamen Export-Rundkurs; sie routen noch keine individuellen Warenaufträge. Förderbänder nutzen weiterhin gemeinsame Ressourcenpuffer. Geldscheine und einige seltene Baupläne haben noch keinen eigenen Ausgabepfad. Großprojekte verwenden Standortmodelle; es gibt noch keinen echten Hafenverkehr. Keine Werbung, In-App-Käufe oder Cloud-Spielstandsynchronisierung.
 
 ## Sicherung
 

@@ -36,6 +36,10 @@ var placement_point = Vector3.ZERO
 var placement_rotation = 0
 var right_drag = false
 var placement_check_clock = 0.0
+var town_layer: TownWorld
+var road_anchor: Variant = null
+var road_endpoint: Variant = null
+var road_horizontal = true
 
 func _ready() -> void:
  RenderingServer.set_default_clear_color(Color("53bbd3"))
@@ -69,6 +73,9 @@ func _ready() -> void:
  build_forest()
  world_buildings = Node3D.new()
  add_child(world_buildings)
+ town_layer = TownWorld.new()
+ town_layer.world = self
+ add_child(town_layer)
  actors = Node3D.new()
  add_child(actors)
  rebuild()
@@ -94,20 +101,27 @@ func _ready() -> void:
 
 func build_landscape() -> void:
  Models.box(scenery,Vector3(1100,1,1100),Vector3(0,-5,0),Color("38b4cf"))
- Models.box(scenery,Vector3(400,5,390),Vector3(0,-2.5,5),Color("b3a06d"))
- Models.box(scenery,Vector3(396,0.7,386),Vector3(0,0,5),Color("64d078"))
+ Models.box(scenery,Vector3(640,5,560),Vector3(0,-2.5,5),Color("b3a06d"))
+ Models.box(scenery,Vector3(636,0.7,556),Vector3(0,0,5),Color("64d078"))
  for i in 10:
   var p = Catalog.biome_position(i)
   Models.box(scenery,Vector3(84,0.35,76),p+Vector3(0,0.5,0),Color(Catalog.BIOMES[i].ground))
   Models.label(scenery,Catalog.BIOMES[i].name,p+Vector3(0,2,-32),30)
   var rock = Models.cylinder(scenery,3,4,p+Vector3(25,1.5,24),Color("b4b7a2"),1.3)
   rock.rotation.z = 0.2
+ # Distant groves frame the larger landscape without adding per-tree processing.
+ for side in [-1,1]:
+  for row in 4:
+   for col in 8:
+    var p=Vector3(side*(210+col*11),0,200+row*13)
+    Models.cylinder(scenery,0.55,3.2,p+Vector3(0,1.8,0),Color("a97e4c"))
+    Models.cylinder(scenery,3.4,8,p+Vector3(0,6,0),Color("3baf75"),0.2)
  # The entire connected road network stays at least 15 units inside land.
  for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
  for z in [-160,-60,-28,4,36,68,100,132,164]: road(Vector3(0,0.72,z),Vector3(164,0.25,7),false)
  for project in Catalog.PROJECTS:
   var side = signf(project.position.x)
-  road(Vector3(side*132,0.72,project.position.z+13),Vector3(104,0.25,7),false)
+  road(Vector3(side*132,0.72,Catalog.project_road_z(project)),Vector3(104,0.25,7),false)
  for z in [-160,164]:
   for x in [-80,80]:
    Models.box(scenery,Vector3(1,1,1),Vector3(x,1.2,z),Color("d6d8bc"))
@@ -160,7 +174,7 @@ func build_forest() -> void:
    if absf(point.x-80)<8: point.x = 90
    if absf(point.x+80)<8: point.x = -90
    for project in Catalog.PROJECTS:
-    if signf(point.x)==signf(project.position.x) and absf(point.x)>80 and absf(point.z-project.position.z-13)<7:
+    if signf(point.x)==signf(project.position.x) and absf(point.x)>80 and absf(point.z-Catalog.project_road_z(project))<7:
      point.z -= 14
     if point.distance_to(project.position)<18: point.x -= signf(point.x)*16
    var scale_value = random.randf_range(0.75,1.25)
@@ -242,6 +256,7 @@ func rebuild() -> void:
    Models.label(model,project.name,Vector3(0,19,0),30)
   else: Models.label(world_buildings,project.name,project.position+Vector3(0,2,0),26)
  actor_signature = ""
+ if town_layer!=null: town_layer.rebuild()
  refresh_forest_clearance()
  if network!=null:
   remove_child(network)
@@ -252,8 +267,13 @@ func rebuild() -> void:
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation)
+ if absf(point.x)>190:
+  var direction=Basis(Vector3.UP,deg_to_rad(rotation))*Vector3(0,0,1)
+  path=PackedVector3Array([point+direction*(Placement.size_for(rotation).y/2)+Vector3(0,0.68,0),point+direction*(Placement.size_for(rotation).y/2+2)+Vector3(0,0.68,0)])
  var length = path[0].distance_to(path[1])
- if length>0.1: Models.box(world_buildings,Vector3(3.0,0.12,length),(path[0]+path[1])/2,Color("efe2ae"))
+ if length>0.1:
+  var strip=Models.box(world_buildings,Vector3(3.0,0.12,length),(path[0]+path[1])/2,Color("efe2ae"))
+  strip.rotation.y=atan2(path[1].x-path[0].x,path[1].z-path[0].z)
 
 func refresh_forest_clearance() -> void:
  var rectangles = []
@@ -263,6 +283,16 @@ func refresh_forest_clearance() -> void:
   if job.type in ["home","building"]:
    var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
    rectangles.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(3))
+ for road_record in Game.state.town.roads:
+  var radius=float(TownRules.TYPES[road_record.kind].width)/2+2
+  for c in road_record.cells:
+   var p=Vector2(TownRules.cell(c))
+   rectangles.append(Rect2(p-Vector2.ONE*radius,Vector2.ONE*radius*2))
+ if actors!=null:
+  for actor in actors.get_children():
+   if actor.has_meta("forestry_tier"):
+    var p=Vector2(actor.origin_point.x,actor.origin_point.z)
+    rectangles.append(Rect2(p-Vector2(9,9),Vector2(18,18)))
  for biome in trees.size():
   for i in trees[biome].size():
    var tree = trees[biome][i]
@@ -272,7 +302,7 @@ func refresh_forest_clearance() -> void:
    set_tree_visible(biome,i,not tree.blocked and tree.regrow<=0)
 
 func sync_actors() -> void:
- var signature = "%s/%s/%s/%s" % [Game.state.workers,Game.state.trucks,Game.state.biome,Game.state.quality]
+ var signature = "%s/%s/%s/%s/%s/%s" % [Game.state.workers,Game.state.trucks,Game.state.biome,Game.state.quality,Game.state.tool,Game.state.vehicle]
  if signature == actor_signature: return
  actor_signature = signature
  clear_children(actors)
@@ -292,12 +322,21 @@ func sync_actors() -> void:
   worker.facing = deg_to_rad(Game.state.buildings[factories[i]].get("rotation",0))+PI/2
   actors.add_child(worker)
  for i in staff-operators:
+  var neighbor = i==staff-operators-1 and staff>=4 and cabin_index>=0
+  if int(Game.state.tool)>=10 and not neighbor:
+   if i<mini(staff-operators,2 if Game.state.quality==0 else 4):
+    var machine=ForestryMachine.new()
+    machine.tier=int(Game.state.tool)
+    machine.origin_point=Catalog.biome_position(int(Game.state.biome))+Vector3([-26,-10,10,26][i%4],0,-5)
+    machine.phase=i*4.5
+    actors.add_child(machine)
+   continue
   var worker = TimberWorker.new()
   worker.origin_point = Catalog.biome_position(int(Game.state.biome))+Vector3((i%4)*5-10,0,18)
   worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1
-  if i==staff-operators-1 and staff>=4 and cabin_index>=0:
+  if neighbor:
    worker.role="neighbor"
    var base=Game.building_position(cabin_index)
    var angle=deg_to_rad(Game.state.buildings[cabin_index].get("rotation",0))
@@ -311,22 +350,27 @@ func sync_actors() -> void:
   actors.add_child(worker)
  for i in mini(int(Game.state.trucks),3 if Game.state.quality == 0 else 8):
   var truck = TimberTruck.new()
+  truck.tier=int(Game.state.vehicle)
   truck.path.assign([Vector3(-78,1,-26),Vector3(2,1,-26),Vector3(2,1,70),Vector3(78,1,70),Vector3(78,1,162),Vector3(-78,1,162)])
   truck.segment = i%truck.path.size()
   truck.speed = 9+int(Game.state.vehicle)
   actors.add_child(truck)
   truck.position = truck.path[truck.segment]
+ var inhabited=[]
+ for i in Game.state.homes.size():
+  if int(Catalog.HOMES[Game.state.homes[i].kind].people)>0: inhabited.append(i)
  for i in mini(Game.residents(),6):
   var resident = TimberWorker.new()
   resident.role = "resident"
-  var home_index=i%Game.state.homes.size()
+  var home_index=inhabited[i%inhabited.size()]
   var turn=Basis.from_euler(Vector3(0,deg_to_rad(Game.state.homes[home_index].get("rotation",0)),0))
   var point=Game.home_position(home_index)
-  resident.origin_point = point+turn*Vector3(-4.5,0,9)
-  resident.destination = point+turn*Vector3(4.5,0,9)
+  resident.origin_point = point+turn*Vector3(-4.5,0,10.4)
+  resident.destination = point+turn*Vector3(4.5,0,10.4)
   resident.phase = i*2.1
   resident.pace = 0.55
   actors.add_child(resident)
+ refresh_forest_clearance()
 
 func make_weather() -> void:
  weather = GPUParticles3D.new()
@@ -436,8 +480,8 @@ func make_chip_pool() -> void:
   chip_pool.append(effect)
 
 func set_camera() -> void:
- focus.x = clampf(focus.x,-175,175)
- focus.z = clampf(focus.z,-160,170)
+ focus.x = clampf(focus.x,-300,300)
+ focus.z = clampf(focus.z,-245,245)
  camera.size = zoom
  camera.position = focus+Vector3(90,120,130)
  camera.look_at(focus)
@@ -450,9 +494,9 @@ func focus_at(point: Vector3) -> void:
 func camera_action(action: String) -> void:
  match action:
   "+": zoom = maxf(40,zoom*0.82)
-  "−": zoom = minf(390,zoom*1.22)
+  "−": zoom = minf(650,zoom*1.22)
   "home": focus = Game.building_position(mini(1,Game.state.buildings.size()-1)); zoom = 96
-  "world": focus = Vector3.ZERO; zoom = 370
+  "world": focus = Vector3.ZERO; zoom = 590
  set_camera()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -483,7 +527,7 @@ func _unhandled_input(event: InputEvent) -> void:
   if touches.size() >= 2:
    var values = touches.values()
    var distance = values[0].distance_to(values[1])
-   if pinch_distance > 0: zoom = clampf(zoom*pinch_distance/maxf(distance,1),40,390)
+   if pinch_distance > 0: zoom = clampf(zoom*pinch_distance/maxf(distance,1),40,650)
    if not placement.is_empty(): pan(event.relative*0.5)
    pinch_distance = distance
    drag_distance = 100
@@ -506,9 +550,17 @@ func tap_world(screen: Vector2) -> void:
  var point = plane.intersects_ray(camera.project_ray_origin(screen),camera.project_ray_normal(screen))
  if point == null: return
  if not placement.is_empty():
+  if placement.get("network",false):
+   network_at(point,true)
+   return
   placement_point = Placement.snap(point)
   update_ghost()
   return
+ if town_layer!=null and town_layer.tap_rent(screen): return
+ for stop in Game.state.town.stops:
+  if point.distance_to(TownRules.point(TownRules.cell(stop.cell)))<8:
+   hud.open_menu("transit")
+   return
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
   if b.kind=="sawmill":
@@ -528,7 +580,7 @@ func tap_world(screen: Vector2) -> void:
     Game.chop()
    else: Game.notice.emit("Dieses Biom zuerst im Welt-Menü freischalten")
    return
- for i in 12:
+ for i in Game.city_plot_count():
   if point.distance_to(Catalog.home_position(i))<12:
    hud.show_plot(i)
    return
@@ -536,6 +588,16 @@ func tap_world(screen: Vector2) -> void:
 func begin_placement(request: Dictionary) -> void:
  cancel_placement()
  placement = request.duplicate(true)
+ if placement.get("network",false):
+  road_anchor=null
+  road_endpoint=null
+  road_horizontal=true
+  placement_point=focus
+  ghost=Node3D.new()
+  add_child(ghost)
+  hud.show_placement(placement)
+  update_network_ghost()
+  return
  var city = bool(placement.get("city",false))
  var index = int(placement.get("index",-1))
  if city and index<0 and int(placement.get("plot",-1))<0: placement.plot = Game.next_city_plot()
@@ -556,8 +618,7 @@ func begin_placement(request: Dictionary) -> void:
  ghost.add_child(model)
  var mat = Models.material(Color(1,1,1,0.45)).duplicate()
  mat.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
- for child in model.get_children():
-  if child is MeshInstance3D: child.material_override=mat
+ tint_preview(model,mat)
  ghost_plate = Models.box(ghost,Vector3(19,0.2,23),Vector3(0,0.9,0),Color("5bfba0"))
  hud.show_placement(placement)
  update_ghost()
@@ -565,11 +626,15 @@ func begin_placement(request: Dictionary) -> void:
 func place_at_screen(screen: Vector2) -> void:
  var point = Plane(Vector3.UP,0).intersects_ray(camera.project_ray_origin(screen),camera.project_ray_normal(screen))
  if point!=null:
+  if placement.get("network",false):
+   network_at(point,false)
+   return
   placement_point=Placement.snap(point)
   update_ghost()
 
 func update_ghost() -> void:
  if ghost==null: return
+ if placement.get("network",false): update_network_ghost(); return
  ghost.position=placement_point
  ghost.rotation_degrees.y=placement_rotation
  var city=bool(placement.get("city",false))
@@ -588,6 +653,7 @@ func update_ghost() -> void:
 func placement_action(action: String) -> void:
  if placement.is_empty(): return
  if action=="cancel": cancel_placement(); return
+ if placement.get("network",false): network_action(action); return
  if action=="rotate": placement_rotation=posmod(placement_rotation+90,360); update_ghost(); return
  if action!="confirm": return
  var city=bool(placement.get("city",false))
@@ -600,8 +666,65 @@ func placement_action(action: String) -> void:
 
 func cancel_placement() -> void:
  placement={}
+ road_anchor=null
+ road_endpoint=null
  if ghost!=null:
   remove_child(ghost)
   ghost.queue_free()
   ghost=null
  if hud!=null: hud.hide_placement()
+
+
+func tint_preview(root: Node, mat: Material) -> void:
+ for child in root.get_children():
+  if child is MeshInstance3D: child.material_override=mat
+  tint_preview(child,mat)
+
+func network_at(point: Vector3, tapped: bool) -> void:
+ placement_point=TownRules.point(TownRules.snap(point))
+ if placement.kind!="bus_stop":
+  if road_anchor==null:
+   if tapped: road_anchor=TownRules.snap(point)
+  else: road_endpoint=TownRules.snap(point)
+ update_network_ghost()
+
+func update_network_ghost() -> void:
+ if ghost==null: return
+ clear_children(ghost)
+ var reason=""
+ var price=0.0
+ if placement.kind=="bus_stop":
+  reason=Game.stop_reason(placement_point)
+  var c=TownRules.nearest(placement_point,TownRules.road_cells(Game.state.town))
+  var model=TownWorld.stop_model()
+  ghost.add_child(model)
+  model.position=placement_point if c==null else TownRules.point(c)
+  if c!=null and TownRules.road_cells(Game.state.town).has(c+Vector2i(0,4)): model.rotation.y=PI/2
+  price=300*Game.difficulty()
+ else:
+  if road_anchor==null: reason="Zuerst den Startpunkt auf der Karte antippen"
+  elif road_endpoint==null or road_endpoint==road_anchor: reason="Jetzt das Ziel antippen oder den Weg ziehen"
+  else:
+   var cells=TownRules.path(road_anchor,road_endpoint,road_horizontal)
+   reason=Game.road_reason(placement.kind,cells)
+   price=Game.road_cost(placement.kind,cells)
+   var corner=Vector2i(road_endpoint.x,road_anchor.y) if road_horizontal else Vector2i(road_anchor.x,road_endpoint.y)
+   TownWorld.draw_segment(ghost,TownRules.point(road_anchor),TownRules.point(corner),placement.kind)
+   TownWorld.draw_segment(ghost,TownRules.point(corner),TownRules.point(road_endpoint),placement.kind)
+  if road_anchor!=null: Models.cylinder(ghost,1,0.25,TownRules.point(road_anchor)+Vector3(0,1,0),Color("ffffff"))
+ if reason.is_empty() and price>float(Game.state.coins): reason="Es fehlen %s Münzen" % Catalog.number(price-float(Game.state.coins))
+ var mat=Models.material(Color("69ebad") if reason.is_empty() else Color("ee8972"))
+ tint_preview(ghost,mat)
+ hud.placement_title.text="%s · %s Münzen" % ["Haltestelle" if placement.kind=="bus_stop" else TownRules.TYPES[placement.kind].name,Catalog.number(price)]
+ hud.update_placement(reason)
+ if reason.is_empty(): hud.placement_hint.text="Straßenrand frei · bestätigen" if placement.kind=="bus_stop" else "Strecke frei · Kurve wechseln oder bestätigen"
+
+func network_action(action: String) -> void:
+ if action=="rotate": road_horizontal=not road_horizontal; update_network_ghost(); return
+ if action!="confirm": return
+ var success=false
+ if placement.kind=="bus_stop": success=Game.build_stop(placement_point)
+ elif road_anchor!=null and road_endpoint!=null: success=Game.build_road(placement.kind,TownRules.path(road_anchor,road_endpoint,road_horizontal))
+ if success:
+  cancel_placement()
+  hud.open_menu("networks")

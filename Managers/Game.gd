@@ -14,6 +14,7 @@ var save_clock = 0.0
 var rng = RandomNumberGenerator.new()
 var offline_report = ""
 var last_save_ok = true
+var town_route_cache: Dictionary = {}
 
 func initial_state() -> Dictionary:
  var resources = {}
@@ -26,7 +27,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
+  "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
   "boss_hp":100.0, "bosses":0, "time":9.0, "elapsed":0.0, "weather":0,
@@ -53,6 +54,13 @@ func restore(saved: Dictionary) -> void:
  for key in Catalog.RESOURCES:
   if not state.resources.has(key): state.resources[key] = 0.0
  if not saved.has("tutorial"): state.tutorial = 5
+ var town_defaults = TownRules.initial()
+ for key in town_defaults:
+  if not state.town.has(key): state.town[key] = town_defaults[key]
+ if not saved.has("town"):
+  state.town.rent_auto = true
+  state.town.rent_manager = true
+ town_route_cache.clear()
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -219,13 +227,14 @@ func step(delta: float) -> void:
   state.exported += exported
   flow["export"] = exported/maxf(delta,0.001)
   earn(exported*float(Catalog.PRICES.furniture)*multiplier()*boost("money"))
- var rent = 0.0
  var public_bonus = 1.0
  for h in state.homes:
   if h.kind in ["park","clinic"]: public_bonus += 0.04*int(h.level)
  for h in state.homes:
-  rent += float(Catalog.HOMES[h.kind].rent)*int(h.level)*minf(public_bonus,2.0)
- earn(rent*delta*multiplier()*boost("money"))
+  var rent = float(Catalog.HOMES[h.kind].rent)*int(h.level)*minf(public_bonus,2.0)*delta*multiplier()*boost("money")
+  if state.town.rent_auto: earn(rent)
+  else: h.rent_bank = float(h.get("rent_bank",0.0))+rent
+ step_transit(delta)
  for project_index in Catalog.PROJECTS.size():
   if int(state.projects.get(str(project_index),0)) >= 3:
    earn(float(Catalog.PROJECTS[project_index].income)*delta*multiplier()*boost("money"))
@@ -307,9 +316,15 @@ func home_position(index: int) -> Vector3:
  return Placement.position_of(h,Catalog.home_position(int(h.plot)))
 
 func placement_reason(point: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1) -> String:
- var reason = Placement.terrain_reason(point,rotation)
+ var reason = Placement.terrain_reason(point,rotation,int(state.town.districts))
  if not reason.is_empty(): return reason
  var rectangle = Placement.bounds(point,rotation).grow(0.6)
+ for road in state.town.roads:
+  var width = float(TownRules.TYPES[road.kind].width)/2.0+0.5
+  for p in road.cells:
+   if rectangle.grow(width).has_point(Vector2(TownRules.cell(p))): return "Eigene Straßen und Wege freihalten"
+ for stop in state.town.stops:
+  if rectangle.grow(7).has_point(Vector2(TownRules.cell(stop.cell))): return "Abstand zur Haltestelle halten"
  for i in state.buildings.size():
   if i == ignore_building: continue
   if rectangle.intersects(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0)))): return "Abstand zu anderen Gebäuden halten"
@@ -327,8 +342,11 @@ func free_position(preferred: Vector3, rotation: int = 0, ignore_building: int =
  if placement_reason(point,rotation,ignore_building,ignore_home).is_empty(): return point
  var best = Vector3(INF,0,INF)
  var distance = INF
- for z in [-144,-112,-80,-44,-12,20,52,84,116,148]:
-  for x in [-60,-40,-20,20,40,60]:
+ var candidates_x = [-60,-40,-20,20,40,60]
+ if int(state.town.districts)>=1: candidates_x.append_array([216,248,280])
+ if int(state.town.districts)>=2: candidates_x.append_array([-216,-248,-280])
+ for z in [-144,-112,-80,-48,-44,-16,-12,20,52,84,116,148]:
+  for x in candidates_x:
    var candidate = Vector3(x,0,z)
    if placement_reason(candidate,rotation,ignore_building,ignore_home).is_empty() and candidate.distance_squared_to(preferred)<distance:
     best = candidate
@@ -336,7 +354,7 @@ func free_position(preferred: Vector3, rotation: int = 0, ignore_building: int =
  return best
 
 func next_city_plot() -> int:
- for plot in 4*(int(state.region)+1):
+ for plot in city_plot_count():
   var occupied = false
   for home in state.homes:
    if int(home.plot)==plot: occupied = true
@@ -363,7 +381,7 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0) -> b
  var pending = 0
  for j in state.jobs:
   if j.type == "building": pending += 1
- if state.buildings.size()+pending >= 24:
+ if state.buildings.size()+pending >= 24+int(state.town.districts)*8:
   notice.emit("Industriegebiet voll · vorhandene Betriebe ausbauen")
   return false
  var position_value = free_position(Catalog.industry_position((state.buildings.size()+pending)%16),rotation) if point==null else Placement.snap(point)
@@ -395,7 +413,7 @@ func upgrade(index: int) -> bool:
  return true
 
 func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 0) -> bool:
- if not Catalog.HOMES.has(kind) or plot < 0 or plot >= 4*(int(state.region)+1) or level("prefab") < 1: return false
+ if not Catalog.HOMES.has(kind) or plot < 0 or plot >= city_plot_count() or level("prefab") < 1: return false
  for h in state.homes:
   if int(h.plot) == plot: return false
  for j in state.jobs:
@@ -506,7 +524,7 @@ func plan_materials() -> Dictionary:
  return Catalog.HOMES[state.plan.kind].materials
 
 func set_plan(kind: String, plot: int) -> void:
- if not Catalog.HOMES.has(kind) or plot < 0 or plot >= 4*(int(state.region)+1): return
+ if not Catalog.HOMES.has(kind) or plot < 0 or plot >= city_plot_count(): return
  for home in state.homes:
   if int(home.plot)==plot: return
  state.plan = {"kind":kind,"plot":plot,"auto":false}
@@ -642,6 +660,10 @@ func mission_definitions() -> Array:
  {"id":"mill","name":"Erreiche Sägewerk-Stufe 10","value":level("sawmill"),"target":10,"reward":1800*tier},
  {"id":"export","name":"Exportiere %s Möbel" % (100*tier),"value":state.exported,"target":100*tier,"reward":2500*tier},
  {"id":"city","name":"Baue dein erstes Stadthaus","value":state.homes.size(),"target":1,"reward":3500*tier},
+ {"id":"roads","name":"Baue deine erste eigene Straße oder einen Weg","value":state.town.roads.size(),"target":1,"reward":600*tier},
+ {"id":"rent","name":"Hole 100 Münzen Miete ab","value":state.town.rent_collected,"target":100,"reward":700*tier},
+ {"id":"bus","name":"Beende drei Bus-Rundfahrten","value":state.town.trips_total,"target":3,"reward":1200*tier},
+ {"id":"district","name":"Erschließe ein neues Stadtviertel","value":state.town.districts,"target":1,"reward":10000*tier},
  {"id":"biomes","name":"Erschließe fünf Biome","value":state.unlocked,"target":5,"reward":7000*tier}]
 
 func claim_mission(id: String) -> bool:
@@ -684,6 +706,7 @@ func prestige() -> bool:
   return false
  var old = state.duplicate(true)
  state = initial_state()
+ town_route_cache.clear()
  for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled"]: state[key] = old[key]
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
@@ -692,3 +715,232 @@ func prestige() -> bool:
  changed.emit()
  save(true)
  return true
+
+# City expansion, rent and transit share the same saved economy as the factories.
+func city_plot_count() -> int:
+ return 4*(int(state.region)+1)+12*int(state.town.districts)
+
+func district_cost() -> float:
+ return 35000.0*pow(4.0,int(state.town.districts))*difficulty()
+
+func expand_district() -> bool:
+ if int(state.town.districts)>=2: return false
+ if int(state.region)<2 or residents()<20:
+  notice.emit("Zuerst drei Regionen und 20 Bewohner erreichen")
+  return false
+ if not pay(district_cost()): return false
+ state.town.districts += 1
+ town_route_cache.clear()
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ notice.emit("Neues Stadtviertel · 12 Bauplätze und eine Zufahrt erschlossen")
+ return true
+
+func rent_total() -> float:
+ var total = 0.0
+ for h in state.homes: total += float(h.get("rent_bank",0.0))
+ return total
+
+func collect_rent(index: int = -1) -> float:
+ if index < -1 or index>=state.homes.size(): return 0.0
+ var amount = 0.0
+ for i in state.homes.size():
+  if index>=0 and i!=index: continue
+  amount += float(state.homes[i].get("rent_bank",0.0))
+  state.homes[i].rent_bank = 0.0
+ if amount>0:
+  state.town.rent_collected=float(state.town.rent_collected)+amount
+  earn(amount)
+  changed.emit()
+  save(true)
+  notice.emit("%s Münzen Miete abgeholt" % Catalog.number(amount))
+ return amount
+
+func set_rent_auto(enabled: bool) -> bool:
+ if enabled and not state.town.rent_manager:
+  if not pay(2500.0*difficulty()): return false
+  state.town.rent_manager = true
+ collect_rent()
+ state.town.rent_auto = enabled
+ changed.emit()
+ save(true)
+ return true
+
+func road_cost(kind: String, cells: Array) -> float:
+ if not TownRules.TYPES.has(kind): return INF
+ var existing = TownRules.road_cells(state.town)
+ if kind=="path":
+  for road in state.town.roads:
+   for p in road.cells: existing[TownRules.cell(p)] = true
+ var count_new = 0
+ for c in cells:
+  if not existing.has(c): count_new+=1; existing[c]=true
+ return count_new*4.0*float(TownRules.TYPES[kind].price)*difficulty()
+
+func road_reason(kind: String, cells: Array) -> String:
+ if not TownRules.TYPES.has(kind) or cells.size()<2: return "Start und Ziel auf dem Land wählen"
+ if state.town.roads.size()>=48: return "Maximal 48 Strecken · bestehende Wege verwalten"
+ if cells.size()>61: return "Kürzere Abschnitte bauen · höchstens 240 Meter"
+ var width = float(TownRules.TYPES[kind].width)/2.0+0.7
+ var occupied = []
+ for i in state.buildings.size(): occupied.append(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0))).grow(width))
+ for i in state.homes.size(): occupied.append(Placement.bounds(home_position(i),int(state.homes[i].get("rotation",0))).grow(width))
+ for job in state.jobs:
+  if job.type in ["home","building"]:
+   var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
+   occupied.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(width))
+ for project in Catalog.PROJECTS: occupied.append(Placement.bounds(project.position,0).grow(width))
+ for i in cells.size():
+  var c: Vector2i = cells[i]
+  if c.x%4!=0 or c.y%4!=0: return "Am Straßenraster ausrichten"
+  if i>0 and (absi(c.x-cells[i-1].x)+absi(c.y-cells[i-1].y))!=4: return "Nur zusammenhängende Strecken bauen"
+  if abs(c.x)>300 or c.y < -172 or c.y>176: return "Straßen müssen vollständig auf dem Land bleiben"
+  if (c.x>190 and int(state.town.districts)<1) or (c.x < -190 and int(state.town.districts)<2): return "Dieses Stadtviertel zuerst erschließen"
+  for rectangle in occupied:
+   if rectangle.has_point(Vector2(c)): return "Gebäude und Baustellen umfahren"
+ var permanent=TownRules.road_cells(state.town)
+ for c in cells:
+  if permanent.has(c): continue
+  for stop in state.town.stops:
+   if TownRules.point(c).distance_to(TownRules.point(TownRules.cell(stop.cell)))<8: return "Haltestellenunterstand freihalten"
+ if road_cost(kind,cells)<=0: return "Hier liegt bereits ein Weg"
+ if kind=="asphalt":
+  var connected = false
+  var existing = TownRules.road_cells(state.town)
+  for c in cells:
+   if existing.has(c): connected = true; break
+  if not connected: return "Straße am bestehenden Straßennetz beginnen oder enden lassen"
+ return ""
+
+func build_road(kind: String, cells: Array) -> bool:
+ var reason = road_reason(kind,cells)
+ if not reason.is_empty(): notice.emit(reason); return false
+ if not pay(road_cost(kind,cells)): return false
+ var saved_cells = []
+ for c in cells: saved_cells.append([c.x,c.y])
+ state.town.roads.append({"kind":kind,"cells":saved_cells})
+ town_route_cache.clear()
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func remove_road(index: int) -> bool:
+ if index<0 or index>=state.town.roads.size(): return false
+ var remaining = TownRules.road_cells(state.town,index)
+ for stop in state.town.stops:
+  if not remaining.has(TownRules.cell(stop.cell)):
+   notice.emit("Zuerst die Haltestelle an dieser Straße entfernen")
+   return false
+ for line in state.town.lines:
+  if TownRules.route(state.town,line.stops,index).is_empty():
+   notice.emit("Diese Straße wird von einer Buslinie benötigt")
+   return false
+ state.town.roads.remove_at(index)
+ town_route_cache.clear()
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func stop_reason(point: Vector3) -> String:
+ if state.town.stops.size()>=8: return "Maximal acht Haltestellen"
+ var c = TownRules.nearest(point,TownRules.road_cells(state.town))
+ if c==null: return "Haltestelle direkt an einer verbundenen Straße platzieren"
+ for stop in state.town.stops:
+  if TownRules.point(TownRules.cell(stop.cell)).distance_to(TownRules.point(c))<16: return "Mehr Abstand zur nächsten Haltestelle"
+ for i in state.buildings.size():
+  if Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0))).grow(7).has_point(Vector2(c)): return "Haltestelle vor einem freien Straßenrand platzieren"
+ for i in state.homes.size():
+  if Placement.bounds(home_position(i),int(state.homes[i].get("rotation",0))).grow(7).has_point(Vector2(c)): return "Haltestelle vor einem freien Straßenrand platzieren"
+ for project in Catalog.PROJECTS:
+  if Placement.bounds(project.position,0).grow(7).has_point(Vector2(c)): return "Projektzufahrt freihalten"
+ for job in state.jobs:
+  if job.type in ["home","building"]:
+   var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
+   if Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(7).has_point(Vector2(c)): return "Baustelle freihalten"
+ return ""
+
+func build_stop(point: Vector3) -> bool:
+ var reason = stop_reason(point)
+ if not reason.is_empty(): notice.emit(reason); return false
+ if not pay(300.0*difficulty()): return false
+ var c = TownRules.nearest(point,TownRules.road_cells(state.town))
+ var id = int(state.town.next_stop)
+ state.town.stops.append({"id":id,"name":"Haltestelle %s" % id,"cell":[c.x,c.y]})
+ state.town.next_stop = id+1
+ town_route_cache.clear()
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func remove_stop(id: int) -> bool:
+ for line in state.town.lines:
+  if id in line.stops: notice.emit("Zuerst die zugehörige Buslinie einstellen"); return false
+ for i in state.town.stops.size():
+  if int(state.town.stops[i].id)!=id: continue
+  state.town.stops.remove_at(i)
+  town_route_cache.clear()
+  rebuild_world.emit()
+  changed.emit()
+  save(true)
+  return true
+ return false
+
+func transit_plan(stops: Array) -> Dictionary:
+ var key = "%s/%s/%s/%s" % [state.town.roads.hash(),state.town.stops.hash(),state.town.districts,stops]
+ if not town_route_cache.has(key): town_route_cache[key] = TownRules.route(state.town,stops)
+ return town_route_cache[key]
+
+func create_bus_line(stops: Array) -> bool:
+ if state.town.lines.size()>=3 or stops.size()<2: return false
+ var unique = []
+ for id in stops:
+  if int(id) in unique: notice.emit("Jede Haltestelle nur einmal auswählen"); return false
+  unique.append(int(id))
+ var plan = transit_plan(unique)
+ if plan.is_empty(): notice.emit("Mindestens zwei Haltestellen über Straßen verbinden"); return false
+ if residents()<4: notice.emit("Vier Bewohner für die erste Buslinie benötigt"); return false
+ if not pay(1800.0*difficulty()): return false
+ var id = int(state.town.next_line)
+ state.town.lines.append({"id":id,"stops":unique,"phase":0.0,"trips":0,"income":0.0})
+ state.town.next_line = id+1
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func remove_bus_line(index: int) -> bool:
+ if index<0 or index>=state.town.lines.size(): return false
+ state.town.lines.remove_at(index)
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func bus_profit(line: Dictionary, plan: Dictionary) -> float:
+ if plan.is_empty() or residents()<=0: return 0.0
+ var passengers = minf(12.0,residents()*0.5)
+ return maxf(0,passengers*3.0*line.stops.size()-float(plan.duration)*0.08)*multiplier()*boost("money")
+
+func step_transit(delta: float) -> void:
+ for line in state.town.lines:
+  var plan = transit_plan(line.stops)
+  if plan.is_empty(): continue
+  var phase = float(line.phase)+delta
+  var trips = floori(phase/float(plan.duration))
+  line.phase = fposmod(phase,float(plan.duration))
+  if trips>0:
+   var income = bus_profit(line,plan)*trips
+   earn(income)
+   line.income = float(line.income)+income
+   line.trips = int(line.trips)+trips
+   state.town.trips_total=int(state.town.trips_total)+trips
+
+
+func plot_position(plot: int) -> Vector3:
+ for i in state.homes.size():
+  if int(state.homes[i].plot)==plot: return home_position(i)
+ return Catalog.home_position(plot)

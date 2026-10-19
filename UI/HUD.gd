@@ -36,6 +36,8 @@ var placement_confirm: Button
 var build_category = "Produktion"
 var spatial_icons: SubViewport
 var companion: Control
+var route_selection: Array = []
+var placement_rotate: Button
 
 func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxTexture:
  return Surface.create(color,radius,pressed)
@@ -70,7 +72,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"WALDLEBEN / 12",11,GOLD)
+ var edition = text(brand,"KLEINSTADT / 13",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -357,6 +359,8 @@ func render_menu() -> void:
   "team": team_menu()
   "garage": garage_menu()
   "city": city_menu()
+  "networks": networks_menu()
+  "transit": transit_menu()
   "plot": plot_menu()
   "contracts": contracts_menu()
   "world": world_menu()
@@ -408,6 +412,9 @@ func catalog_menu() -> void:
   var tab=button(tabs,category,func(): build_category=category; render_menu())
   tab.add_theme_font_size_override("font_size",14)
   if category==build_category: tab.add_theme_stylebox_override("normal",style(Color("d99432"),13))
+ var routes=row(contents)
+ button(routes,"Straßen & Wege",func(): open_menu("networks"))
+ button(routes,"Bus & Haltestellen",func(): open_menu("transit"))
  var grid=GridContainer.new()
  grid.columns=2
  grid.size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -467,6 +474,7 @@ func team_menu() -> void:
   button(tool,"AUS TEILEN BAUEN · %s Teile" % (3+int(Game.state.tool)*2),func(): action(func(): Game.craft_tool()))
 
 func garage_menu() -> void:
+ text(contents,"Transportstufen verändern deine Straßenfahrzeuge vom Handwagen bis zum schweren Forsttransporter. Maschinen im Wald schaltest du unter Team mit den Werkzeugstufen frei.",15,MUTED)
  modal_title.text = "VEHICLE GARAGE"
  var box = card("%s LKW unterwegs" % Game.state.trucks,"Export wird automatisch aus dem Möbelbestand bezahlt. Ein LKW transportiert je Marktstufe 15 Möbel pro Minute. Garage schafft weitere Stellplätze.")
  button(box,"LKW KAUFEN · %s" % Catalog.number(Game.truck_cost()),func(): action(func(): Game.buy_truck()))
@@ -481,8 +489,15 @@ func city_menu() -> void:
  var navigation = row(contents)
  button(navigation,"Regionen & Projekte",func(): open_menu("empire"))
  button(navigation,"Materialplaner",func(): open_menu("planner"))
+ var urban=row(contents)
+ button(urban,"Straßen & Wege",func(): open_menu("networks"))
+ button(urban,"Buslinien",func(): open_menu("transit"))
+ var rents=card("Deine Miete","Auf die goldene Münzanzeige über einem Haus tippen oder hier gesammelt abholen. Bewohner und öffentliche Einrichtungen erhöhen den Ertrag.")
+ dynamic_text(rents,func(): return "Abholbereit: %s Münzen" % Catalog.number(Game.rent_total()))
+ button(rents,"ALLE MIETEN ABHOLEN",func(): action(func(): Game.collect_rent()))
+ button(rents,"Hausverwaltung: AUTOMATISCH" if Game.state.town.rent_auto else "Hausverwaltung einschalten"+(" · %s Münzen" % Catalog.number(2500*Game.difficulty()) if not Game.state.town.rent_manager else ""),func(): action(func(): Game.set_rent_auto(not Game.state.town.rent_auto)))
  jobs_cards()
- for i in 12:
+ for i in Game.city_plot_count():
   var index = i
   var title = "Freies Grundstück %s" % (i+1)
   for h in Game.state.homes:
@@ -492,8 +507,8 @@ func city_menu() -> void:
 func plot_menu() -> void:
  var plot = current_index
  modal_title.text = "GRUNDSTÜCK %s" % (plot+1)
- button(contents,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Catalog.home_position(plot)); close_menu())
- if plot >= 4*(int(Game.state.region)+1):
+ button(contents,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Game.plot_position(plot)); close_menu())
+ if plot >= Game.city_plot_count():
   card("Neue Region benötigt","Erweitere dein Unternehmen, um weitere Grundstücke zu erschließen.")
   button(contents,"REGIONEN",func(): open_menu("empire"))
   return
@@ -503,6 +518,9 @@ func plot_menu() -> void:
   if int(h.plot) == plot:
    var d = Catalog.HOMES[h.kind]
    var box = card("%s · Stufe %s" % [d.name,h.level],"Grundmiete: %s Münzen/s · Bewohner: %s" % [float(d.rent)*int(h.level),int(d.people)*int(h.level)])
+   if float(d.rent)>0:
+    dynamic_text(box,func(): return "Abholbereit: %s Münzen" % Catalog.number(Game.state.homes[index].get("rent_bank",0)))
+    button(box,"MIETE ABHOLEN",func(): action(func(): Game.collect_rent(index)))
    var materials = {}
    for key in d.materials: materials[key] = ceilf(float(d.materials[key])*0.5*int(h.level))
    text(box,"Ausbau: %s Münzen\n%s" % [Catalog.number(float(d.cost)*pow(1.4,int(h.level))*Game.difficulty()),materials_text(materials)],15,GOLD)
@@ -552,7 +570,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -579,10 +597,14 @@ func loot_menu() -> void:
 
 func empire_menu() -> void:
  modal_title.text = "KONZERN & REGIONEN"
- var region = card(["Waldquartier","Seenregion","Stadtregion"][int(Game.state.region)],"%s / 12 Stadtgrundstücke verfügbar · %s Bewohner" % [4*(int(Game.state.region)+1),Game.residents()])
+ var region = card(["Waldquartier","Seenregion","Stadtregion"][int(Game.state.region)],"%s Stadtgrundstücke verfügbar · %s Bewohner" % [Game.city_plot_count(),Game.residents()])
  if Game.state.region < 2:
   text(region,"Nächste Region: %s Münzen · %s Bewohner" % [Catalog.number(6000*pow(5,int(Game.state.region))*Game.difficulty()),4 if Game.state.region==0 else 20],16,GOLD)
   button(region,"REGION ERSCHLIESSEN",func(): action(func(): Game.expand_region()))
+ var district=card("Stadtviertel · %s/2" % Game.state.town.districts,"Ost- und Westviertel bieten je zwölf zusätzliche Bauplätze und acht weitere Industriebetriebe. Eine Zufahrt verbindet sie mit deinem Netz; die Straßen im Viertel legst du selbst an.")
+ if int(Game.state.town.districts)<2:
+  text(district,"%s Münzen · drei Regionen und 20 Bewohner" % Catalog.number(Game.district_cost()),15,GOLD)
+  button(district,"NEUES STADTVIERTEL ERSCHLIESSEN",func(): action(func(): Game.expand_district()))
  for i in Catalog.PROJECTS.size():
   var index = i
   var p = Catalog.PROJECTS[i]
@@ -678,7 +700,7 @@ func build_placement_bar() -> void:
  placement_hint=text(box,"",14,CREAM)
  var choices=row(box)
  button(choices,"Abbrechen",func(): placement_action.emit("cancel"))
- button(choices,"Drehen 90°",func(): placement_action.emit("rotate"))
+ placement_rotate=button(choices,"Drehen 90°",func(): placement_action.emit("rotate"))
  placement_confirm=button(choices,"BAUEN",func(): placement_action.emit("confirm"))
  placement_confirm.add_theme_stylebox_override("normal",style(Color("e2a536"),12))
  placement_panel.hide()
@@ -689,6 +711,15 @@ func request_placement(request: Dictionary) -> void:
 
 func show_placement(request: Dictionary) -> void:
  close_menu()
+ placement_rotate.text="Drehen 90°"
+ placement_rotate.disabled=false
+ if request.get("network",false):
+  placement_title.text="HALTESTELLE" if request.kind=="bus_stop" else "STRASSE / WEG"
+  placement_confirm.text="BAUEN"
+  placement_rotate.text="Kurve wechseln"
+  placement_rotate.disabled=request.kind=="bus_stop"
+  placement_panel.show()
+  return
  var city=bool(request.get("city",false))
  var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[request.kind]
  var moving=int(request.get("index",-1))>=0
@@ -736,3 +767,65 @@ func guide_menu() -> void:
  text(help,"Spänebox: regelmäßig leeren und verkaufen. Bei Störungen zeigt das Betriebsfenster den konkreten Grund. Mit einem Finger die Welt bewegen, mit zwei Fingern zoomen. Im Baumodus bewegt ein Finger das Bauwerk; zwei Finger bewegen die Kamera.",15,MUTED)
  button(help,"BAUKATALOG ÖFFNEN",func(): open_menu("catalog"))
  if int(Game.state.tutorial)<5: button(help,"ANLEITUNG ÜBERSPRINGEN",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
+
+
+func networks_menu() -> void:
+ modal_title.text="STRASSEN & WEGE"
+ card("Dein eigenes Wegenetz","Startpunkt antippen, Ziel antippen oder ziehen, Kurve wählen und bestätigen. Zwei Finger bewegen die Karte. Straßen müssen an das vorhandene Netz anschließen; Fußwege dürfen auch frei liegen. Gebäude und Wasser bleiben frei.")
+ var links=row(contents)
+ button(links,"Stadt",func(): open_menu("city"))
+ button(links,"Buslinien",func(): open_menu("transit"))
+ for kind in TownRules.TYPES:
+  var key=str(kind)
+  var d=TownRules.TYPES[kind]
+  var box=card(d.name,"%s Münzen je Meter · bezahlt wird nur neu gebaute Strecke" % Catalog.number(float(d.price)*Game.difficulty()))
+  button(box,"STRECKE ZEICHNEN",func(): request_placement({"network":true,"kind":key}))
+ text(contents,"%s / 48 eigene Strecken. Entfernen erstattet keine Baukosten. Haltestellen und laufende Linien bleiben geschützt." % Game.state.town.roads.size(),15,MUTED)
+ for i in Game.state.town.roads.size():
+  var index=i
+  var record=Game.state.town.roads[i]
+  var box=card("%s %s" % [TownRules.TYPES[record.kind].name,i+1],"%s Meter" % ((record.cells.size()-1)*4))
+  var choices=row(box)
+  button(choices,"ANSEHEN",func(): focus_requested.emit(TownRules.point(TownRules.cell(record.cells[0]))); close_menu())
+  button(choices,"ENTFERNEN",func(): action(func(): Game.remove_road(index)))
+
+func transit_menu() -> void:
+ modal_title.text="BUS & HALTESTELLEN"
+ card("Die Stadt kommt in Bewegung","Baue mindestens zwei Haltestellen an verbundenen Straßen. Wähle sie in Fahrreihenfolge und kaufe einen Bus. Er hält vier Sekunden, fährt alle Stationen und kehrt zurück. Ab vier Bewohnern startet der Linienbetrieb.")
+ var nav=row(contents)
+ button(nav,"Straßen bauen",func(): open_menu("networks"))
+ button(nav,"HALTESTELLE · %s" % Catalog.number(300*Game.difficulty()),func(): request_placement({"network":true,"kind":"bus_stop"}),Game.state.town.stops.size()<8)
+ text(contents,"Neue Linie · Haltestellen in der gewünschten Reihenfolge antippen",16,GOLD)
+ var valid_ids=[]
+ for stop in Game.state.town.stops: valid_ids.append(int(stop.id))
+ route_selection=route_selection.filter(func(id): return id in valid_ids)
+ for stop in Game.state.town.stops:
+  var id=int(stop.id)
+  var selected=route_selection.find(id)
+  var box=card(stop.name)
+  var choices=row(box)
+  button(choices,"%s · AUSWÄHLEN" % (str(selected+1) if selected>=0 else "○"),func():
+   if id in route_selection: route_selection.erase(id)
+   else: route_selection.append(id)
+   render_menu())
+  button(choices,"ANSEHEN",func(): focus_requested.emit(TownRules.point(TownRules.cell(stop.cell))); close_menu())
+  button(box,"Haltestelle entfernen",func(): action(func(): Game.remove_stop(id)))
+ var planned=Game.transit_plan(route_selection)
+ if not planned.is_empty():
+  text(contents,"Rundfahrt: %s Sekunden · bis zu 12 Fahrgäste
+Ertrag nach Betriebskosten: %s Münzen je Runde" % [ceili(planned.duration),Catalog.number(Game.bus_profit({"stops":route_selection},planned))],15,MUTED)
+ button(contents,"BUS KAUFEN & LINIE STARTEN · %s" % Catalog.number(1800*Game.difficulty()),func():
+  if Game.create_bus_line(route_selection): route_selection.clear()
+  Game.save(true)
+  render_menu(),not planned.is_empty() and Game.state.town.lines.size()<3 and Game.residents()>=4)
+ for i in Game.state.town.lines.size():
+  var index=i
+  var line=Game.state.town.lines[i]
+  var plan=Game.transit_plan(line.stops)
+  var box=card("Linie %s · %s Stationen" % [line.id,line.stops.size()])
+  dynamic_text(box,func(): return "%s Rundfahrten · %s Münzen verdient" % [line.trips,Catalog.number(line.income)])
+  if plan.is_empty(): text(box,"Straßenverbindung fehlt",15,GOLD)
+  button(box,"BUS ANSEHEN",func():
+   focus_requested.emit(TownRules.bus_sample(plan,float(line.phase)).position)
+   close_menu())
+  button(box,"LINIE EINSTELLEN · keine Erstattung",func(): action(func(): Game.remove_bus_line(index)))

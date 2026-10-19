@@ -30,10 +30,10 @@ func run() -> void:
    check(absf(point.x-80)>=8 and absf(point.x+80)>=8,"Forest leaves main roads clear")
    for project in Catalog.PROJECTS:
     if signf(point.x)==signf(project.position.x) and absf(point.x)>80:
-     check(absf(point.z-project.position.z-13)>=7,"Forest leaves project approach clear")
+     check(absf(point.z-Catalog.project_road_z(project))>=7,"Forest leaves project approach clear")
  check(scene.world_buildings.get_child_count()>5,"Visible starter buildings and access paths")
  var hud = scene.hud
- for menu in ["industry","catalog","team","garage","city","contracts","world","more","missions","loot","research","boosters","prestige","market","settings","confirm_prestige","empire","planner"]:
+ for menu in ["industry","catalog","team","garage","city","networks","transit","contracts","world","more","missions","loot","research","boosters","prestige","market","settings","confirm_prestige","empire","planner"]:
   hud.open_menu(menu)
   await process_frame
   check(hud.overlay.visible and hud.contents.get_child_count()>0,"Menu renders: "+menu)
@@ -52,7 +52,7 @@ func run() -> void:
  Game.state.buildings.append({"kind":"prefab","level":2,"paused":false})
  hud.show_plot(1)
  await process_frame
- check(hud.contents.get_child_count()==11,"All ten city types are accessible")
+ check(hud.contents.get_child_count()==Catalog.HOMES.size()+1,"All city types are accessible")
  Game.state.coins = 10000
  Game.order_building("kiln")
  check(scene.cranes.size()>0,"Paid construction shows a crane immediately")

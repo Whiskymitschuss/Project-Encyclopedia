@@ -1,3 +1,15 @@
+# Prüfung 0.13 — Die erste Kleinstadt
+
+- 220 Regel-, 4.139 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter-, 30 Alltagsszenen- und 216 neue Stadtprüfungen: 4.726 Headless-Prüfungen. Dazu frischer erster-Haus-Verlauf nach 1.682 simulierten Sekunden und Hauptszenenstart.
+- Mietprüfungen: manuelle Konten, exakte Auszahlung, keine Doppelabholung, acht Stunden Offline-Miete, JSON-Roundtrip, einmalig bezahlte Hausverwaltung und kostenlose Beibehaltung automatischer Miete für alte Profile.
+- Bauprüfungen: Voraussetzungen und Preis vor Erschließung, 24/36 verfügbare Grundstücke, tatsächlich fertig gebautes Haus im Ostviertel, Straßenanschluss, Meterpreis nur für neue Strecke, Abbruch ohne Kosten, Ablehnung bei Wasser, gesperrtem Viertel, Gebäuden oder fehlendem Anschluss. Asphalt und unabhängige Fußwege bleiben unterscheidbar.
+- Verkehr: physisch freie Haltestellen, keine Busse auf Fußwegen, eindeutige Stationen, Einwohner-Voraussetzung, echte Graphverbindung, Bewegung und vier Sekunden Aufenthalt, Fahrgeld erst bei abgeschlossener Rundfahrt, JSON-/Offline-Fortschritt, Schutz von Haltestellen und Zwischenverbindungen gegen Abriss. Beschädigte/unverbundene gespeicherte Routen verdienen kein Geld.
+- Szenenprüfungen: Werkzeug- und Transportstufen wechseln die sichtbaren Modelle, begrenzte Forstmaschinenzahl, bewegter Sägearm bei tatsächlichem Erntefluss, alle zwölf Gebäudemodelle samt Details innerhalb ihrer Grundstücksfläche, direkter Straßen-/Buszugang, echte Bestätigung aus der Weltvorschau, sichtbarer fahrender Linienbus, Antippen des Mietlabels und Förderverbindung für einen verschobenen Betrieb im Ostviertel.
+- Zusätzliche 23 echte OpenGL-Prüfungen für 3D-Menüs, Portrait, Transparenz, Beleuchtung und Resume. Stadt, Maschinen, neue Bauflächen, Straßen-Vorschau und Busmenü werden aus einem ausdrücklich aufgebauten Demonstrationsprofil gerendert. Nutzerprofile werden dafür nicht verwendet.
+- Begrenzungen: vereinfachte Nachfrage je Linie und gemeinsame Produktionspuffer; keine vollständige Kollisions-/Stausimulation und keine individuellen Exportfahrten. Echte Android-Updateinstallation, Touch/Safe Area, Ton, Temperatur und Akku bleiben für 0.13 auf Hardware zu prüfen. Der Nutzer hat zuvor 0.11 auf seinem Telefon als funktionierend bestätigt.
+
+## Historischer Prüfbericht 0.12
+
 # Prüfung 0.12 — Waldleben
 
 - 220 Regel-, 4.135 Szenen-, 56 Platzierungs-, 42 Werkstatt-, 23 Begleiter- und 30 neue Alltagsszenenprüfungen: 4.506 Headless-Prüfungen plus frischer erster-Haus-Verlauf und abschließender Start. Die unveränderte Wirtschaft erreicht das erste Haus weiterhin nach 1.682 simulierten Sekunden.

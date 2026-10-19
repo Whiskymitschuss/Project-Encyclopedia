@@ -37,6 +37,8 @@ const HOMES = {
  "park":{"name":"Quartierspark","cost":2000,"materials":{"boards":20.0,"parts":2.0},"rent":0.0,"people":0,"color":"8bb86e"},
  "school":{"name":"Berufsschule","cost":7000,"materials":{"walls":8.0,"roofs":4.0,"furniture":8.0},"rent":0.0,"people":0,"color":"d5b86e"},
  "clinic":{"name":"Gesundheitszentrum","cost":9000,"materials":{"walls":10.0,"roofs":5.0,"parts":6.0},"rent":0.0,"people":0,"color":"93c6b5"},
+ "landhouse":{"name":"Landhaus","cost":4800,"materials":{"walls":6.0,"roofs":4.0,"furniture":4.0},"rent":6.0,"people":6,"color":"b5cc87"},
+ "nightclub":{"name":"Nachtclub","cost":16000,"materials":{"walls":12.0,"roofs":5.0,"parts":8.0,"design":3.0},"rent":22.0,"people":8,"color":"9c80c9"},
  "fire":{"name":"Feuerwehr","cost":11000,"materials":{"walls":10.0,"roofs":6.0,"parts":8.0},"rent":0.0,"people":0,"color":"c96e5a"}}
 const BIOMES = [
  {"name":"Starter-Wald","cost":0,"wood":"Holz","ground":"70d675","tree":"289f62"},
@@ -70,7 +72,15 @@ static func industry_position(index: int) -> Vector3:
  return Vector3([-45,-21,21,45][index % 4],0, -43 + int(index / 4.0) * 32)
 
 static func home_position(index: int) -> Vector3:
+ if index>=12:
+  var local = (index-12)%12
+  var side = 1 if index<24 else -1
+  return Vector3(side*[216,248,280][local%3],0,-112+int(local/3.0)*32)
  return Vector3([-45,-21,21,45][index % 4],0, 86 + int(index / 4.0) * 30)
 
 static func biome_position(index: int) -> Vector3:
  return [Vector3(-140,0,-115),Vector3(-45,0,-115),Vector3(45,0,-115),Vector3(140,0,-115),Vector3(-140,0,-30),Vector3(140,0,-30),Vector3(-140,0,50),Vector3(140,0,50),Vector3(-140,0,130),Vector3(140,0,130)][index]
+
+
+static func project_road_z(project: Dictionary) -> float:
+ return snappedf(float(project.position.z)+16.0,4.0)

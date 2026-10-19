@@ -30,7 +30,7 @@ func run() -> void:
  fresh()
  check(Catalog.BIOMES.size()==10,"Ten biomes")
  check(Catalog.TOOLS.size()==15,"Fifteen tool tiers")
- check(Catalog.HOMES.size()==10,"Ten city building types")
+ check(Catalog.HOMES.size()==12 and Catalog.HOMES.has("landhouse") and Catalog.HOMES.has("nightclub"),"Twelve city types include landhouse and nightclub")
  check(Game.state.buildings.size()==5,"Fresh company has a working starter industry")
  Game.chop()
  check(Game.state.bag > 0,"Manual wood goes into bag")
@@ -155,7 +155,7 @@ func run() -> void:
  Game.simulate(60)
  check(Game.state.homes.size()==1 and Game.residents()==4,"Completed home adds residents")
  Game.simulate(10)
- check(Game.state.coins>coins_after_payment,"Completed home earns rent")
+ check(Game.state.coins+Game.rent_total()>coins_after_payment,"Completed home accrues collectible rent")
  fresh()
  Game.state.coins = 1e7
  check(not Game.research_buy("production"),"Research needs a real center")

@@ -81,6 +81,7 @@ static func log_pile(parent: Node3D, at: Vector3, count: int = 4) -> void:
   end.rotation.x = PI/2
 
 static func building(kind: String, level: int, city: bool = false) -> Node3D:
+ if city: return load("res://Buildings/TownModels.gd").create(kind,level)
  if not city and (Catalog.RECIPES.has(kind) or kind in ["station","warehouse"]):
   return load("res://Buildings/FactoryModels.gd").create(kind,level)
  var root = Node3D.new()
@@ -190,7 +191,7 @@ static func bake(root: Node3D) -> void:
  var batches = {}
  var old = []
  for child in root.get_children():
-  if not child is MeshInstance3D or child.name in ["Saw","Crane","SawdustFill"]: continue
+  if not child is MeshInstance3D or (child.name in ["Saw","Crane","SawdustFill"] or child.get_meta("animated",false)): continue
   var key = child.material_override
   if not batches.has(key):
    var surface = SurfaceTool.new()

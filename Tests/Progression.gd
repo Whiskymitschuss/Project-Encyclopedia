@@ -32,6 +32,7 @@ func run() -> void:
   if not game.state.homes.is_empty():
    var before = game.state.coins
    game.simulate(10)
+   game.collect_rent()
    if game.state.coins<=before:
     printerr("FAILED: First home has no income")
     quit(1)

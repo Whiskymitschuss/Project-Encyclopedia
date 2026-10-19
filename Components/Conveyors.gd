@@ -4,15 +4,44 @@ extends Node3D
 const SOURCES = {"sawmill":["station"],"warehouse":["station"],"kiln":["sawmill"],"furniture":["kiln"],"prefab":["kiln"],"joinery":["sawmill"],"pellet":["sawmill"],"paper":["sawmill"],"design":["furniture"],"market":["furniture"]}
 var links: Array = []
 var goods: MultiMesh
+var road_spans: Array = []
 
 func build() -> void:
+ road_spans.clear()
+ for project in Catalog.PROJECTS:
+  var side=signf(project.position.x)
+  road_spans.append([Vector2(side*80,Catalog.project_road_z(project)),Vector2(side*184,Catalog.project_road_z(project))])
+ for road in Game.state.town.roads:
+  if road.kind!="asphalt": continue
+  var start=Vector2(TownRules.cell(road.cells[0]))
+  var previous=start
+  var last_direction=Vector2.ZERO
+  for i in range(1,road.cells.size()):
+   var p=Vector2(TownRules.cell(road.cells[i]))
+   var direction=(p-previous).normalized()
+   if last_direction!=Vector2.ZERO and direction!=last_direction:
+    road_spans.append([start,previous])
+    start=previous
+   last_direction=direction
+   previous=p
+  road_spans.append([start,previous])
  var grid = AStarGrid2D.new()
- grid.region = Rect2i(-39,-78,79,162)
+ grid.region = Rect2i(-151,-88,303,178) if int(Game.state.town.districts)>0 else Rect2i(-39,-78,79,162)
  grid.cell_size = Vector2(2,2)
  grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
  grid.default_compute_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
  grid.default_estimate_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
  grid.update()
+ if int(Game.state.town.districts)>0:
+  # Inter-district conveyors use the land corridors around standing forests.
+  for biome in 10:
+   var center=Catalog.biome_position(biome)
+   if absf(center.x)<80: continue
+   for x in range(floori((center.x-42)/2),ceili((center.x+42)/2)+1):
+    for z in range(floori((center.z-35)/2),ceili((center.z+35)/2)+1):
+     var id=Vector2i(x,z)
+     if grid.is_in_boundsv(id): grid.set_point_solid(id,true)
+  for project in Catalog.PROJECTS: mark_footprint(grid,project.position,0)
  for i in Game.state.buildings.size(): mark_footprint(grid,Game.building_position(i),int(Game.state.buildings[i].get("rotation",0)))
  for i in Game.state.homes.size(): mark_footprint(grid,Game.home_position(i),int(Game.state.homes[i].get("rotation",0)))
  for i in Game.state.buildings.size():
@@ -83,7 +112,13 @@ func elevation(point: Vector2) -> float:
  var distance = absf(point.x)
  for x in [-80,80]: distance=minf(distance,absf(point.x-x))
  for z in Placement.ROADS: distance = minf(distance,absf(point.y-z))
- # Cross roads on raised conveyor bridges; truck clearance remains free.
+ for span in road_spans:
+  distance=minf(distance,point.distance_to(Geometry2D.get_closest_point_to_segment(point,span[0],span[1])))
+ for district in int(Game.state.town.districts):
+  var side=1 if district==0 else -1
+  distance=minf(distance,absf(point.x-side*200))
+  if point.x*side>=80: distance=minf(distance,absf(point.y+160))
+ # Cross roads on raised conveyor bridges; truck and bus clearance remains free.
  return 1.8+4.6*clampf((12.0-distance)/8.0,0,1)
 
 func deck(from: Vector3, to: Vector3) -> void:
@@ -95,7 +130,7 @@ func deck(from: Vector3, to: Vector3) -> void:
  for side in [-1,1]:
   var rail = Models.box(self,Vector3(0.15,0.65,length+0.15),center+basis.x*side*1.25+Vector3(0,0.25,0),Color("f3c45b"))
   rail.basis = basis
- if center.y>3 or length>6:
+ if (center.y>3 or length>6) and elevation(Vector2(center.x,center.z))<6.0:
   for side in [-1,1]: Models.box(self,Vector3(0.35,center.y,0.35),Vector3(center.x,center.y/2,center.z)+basis.x*side*1.0,Color("6f8e93"))
 
 func point_at(link: Dictionary, distance: float) -> Vector3:
