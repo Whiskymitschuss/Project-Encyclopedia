@@ -1,0 +1,16 @@
+[
+  {
+    "file": "Timber-Loot-Tycoon-v0.9-test.apk",
+    "bytes": 56577150,
+    "http_status": 200,
+    "sha256": "9ec4fe4252eb8914b908a50f0fa935b181a1e693f0def026e8f9420e379a15c1",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.9.0-workshop/releases/Timber-Loot-Tycoon-v0.9-test.apk"
+  },
+  {
+    "file": "Timber-Loot-Tycoon-v0.9-source.zip",
+    "bytes": 1569317,
+    "http_status": 200,
+    "sha256": "6bc0400009cd0a514d63d338275179f5ccebc7cf52701264482c0b3bfec5fc4f",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.9.0-workshop/releases/Timber-Loot-Tycoon-v0.9-source.zip"
+  }
+]

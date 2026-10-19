@@ -12,7 +12,7 @@
 - APK: 56.577.150 Bytes, SHA256 `9ec4fe4252eb8914b908a50f0fa935b181a1e693f0def026e8f9420e379a15c1`.
 - Quell-ZIP: 62 Dateien, 1.569.317 Bytes, SHA256 `6bc0400009cd0a514d63d338275179f5ccebc7cf52701264482c0b3bfec5fc4f`. Jede Datei gegen Git-Blob des APK-Quellstands geprüft.
 - Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005` (unverändert).
-- Externe HTTPS-Downloads werden nach dem Push vollständig zurückgeladen und vor Ausgabe an den Benutzer per SHA256 verglichen.
+- Beide externen HTTPS-Downloads vom unveränderlichen Tag `v0.9.0-workshop` vollständig mit HTTP 200 zurückgeladen und SHA256 mit den Originaldateien verglichen. Auch die APK und ZIP aus der unabhängigen GitHub-Kopie stimmen überein. Bericht: `download-verification-09.json`.
 
 ## Historischer Prüfbericht 0.8
 
