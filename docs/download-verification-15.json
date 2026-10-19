@@ -1,0 +1,54 @@
+{
+  "tag": "v0.15.0-delivery",
+  "published_commit": "59c67941764ce88a80a5cb2b776702d641f46418",
+  "source_commit": "7ca882361dc542394440f2b911725d8e4e78128f",
+  "full_https_downloads_verified": true,
+  "all_hashes_match_independent_github_restore": true,
+  "headless_checks_in_fresh_clone": 8374,
+  "opengl_checks_in_fresh_clone": 54,
+  "device_install_or_launch_tested": false,
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.15-test.apk",
+      "bytes": 58240874,
+      "http_status": 200,
+      "sha256": "cc18ae1e7ae29061beeff725b4ad74cd5e504a98e90ea79011ad111e58246c1a",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/releases/Timber-Loot-Tycoon-v0.15-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.15-source.zip",
+      "bytes": 7868511,
+      "http_status": 200,
+      "sha256": "a713e233e6d6f53670ed357c2f63b20f516f861bb9ccf498c69dcabfcd544cb2",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/releases/Timber-Loot-Tycoon-v0.15-source.zip"
+    },
+    {
+      "file": "preview-delivery-world.png",
+      "bytes": 342711,
+      "http_status": 200,
+      "sha256": "388cd1e64993c444fec0dad1179d7dd37ad032676c364b26351e41ecd4fd4de3",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/docs/preview-delivery-world.png"
+    },
+    {
+      "file": "preview-delivery-construction.png",
+      "bytes": 292528,
+      "http_status": 200,
+      "sha256": "aecd3413a9ede13a617ee2f982a9df0a8d638f123fb95a63299326b3113d48f6",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/docs/preview-delivery-construction.png"
+    },
+    {
+      "file": "preview-delivery-materials.png",
+      "bytes": 164323,
+      "http_status": 200,
+      "sha256": "cb360d55e69d260711061e8d774f6c057a5e5f4d6e155e9b49fb3cbdb6e7f137",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/docs/preview-delivery-materials.png"
+    },
+    {
+      "file": "preview-delivery-orders.png",
+      "bytes": 183900,
+      "http_status": 200,
+      "sha256": "dc5b6533cd3d38787aef8f854748d4b943d3ff06a55dac137649a986072a8b83",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/docs/preview-delivery-orders.png"
+    }
+  ]
+}

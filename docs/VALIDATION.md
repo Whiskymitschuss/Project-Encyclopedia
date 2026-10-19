@@ -16,6 +16,8 @@
 - Gleiches Zertifikat wie 0.14: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1500, Speicherformat 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Alle neuen Laufzeitskripte liegen im APK; Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
 - Frische unabhängige GitHub-Kopie unter `/workspace/timber-restore-15`: Erstimport, vollständige 8.374 Headless-Prüfungen, erster-Haus-Verlauf und Hauptszenenstart bestanden. Anschließend auch alle 54 OpenGL-Prüfungen in dieser unabhängigen Kopie bestanden.
 
+- APK, passende Quell-ZIP und vier Vorschauen vom festen Tag `v0.15.0-delivery` vollständig per HTTPS mit HTTP 200 heruntergeladen. Alle Bytezahlen und SHA256 stimmen mit Originaldateien und der unabhängigen GitHub-Wiederherstellung überein. Bericht: `download-verification-15.json`.
+
 ## Historischer Prüfbericht 0.14
 
 # Prüfung 0.14 — Ein lebendiges Waldtal

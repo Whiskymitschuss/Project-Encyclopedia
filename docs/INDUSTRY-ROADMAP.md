@@ -31,7 +31,7 @@ Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser 
 | Fuhrpark | Spezifischer Muldenkipper, geschlossener Kasten-LKW, Betonmischer, funktionierender Gabelstapler und Mobilkran; Lager-Ladebuchten mit Warteschlangen, Fahrzeugauswahl und durchgehende Fahrzeug-Identitäten statt einer Darstellung je Fahrt |
 | Personal und Logistik | Vollständige acht Arbeiteranimationen, individuelle Trage-/Lauf-/Werkzeug-Upgrades, erweiterte Automatikmodi Fabriken zuerst / Lager füllen / Überschuss verkaufen und Expressangebote |
 | Gesamtsimulation | Umstellung der übrigen bisherigen gemeinsamen Holz-/Stadtpuffer auf lokale End-to-End-Logistik; die alten automatischen Exportfahrten sind bisher keine individuellen Ladungsaufträge |
-| Mobile Bedienung | Optionaler Figuren-Joystick, erweiterte Fahrzeugauswahl; derzeit bleibt die bestehende Touch-Kamera und direkte Gebäude-/Baustellenauswahl erhalten |
+| Mobile Bedienung | Vollständige Materialvorschau vor dem Setzen neuer Gebäude und überarbeitete ältere Stadt-Hilfetexte; optionaler Figuren-Joystick, erweiterte Fahrzeugauswahl; derzeit bleibt die bestehende Touch-Kamera und direkte Gebäude-/Baustellenauswahl erhalten |
 | Hardware und Balance | Android-Updateinstallation, Touch/Safe Area, Ton, echte Framerate, Temperatur/Akku und längeres Wirtschaftsbalancing auf Geräten |
 
 Es werden keine Buttons für diese offenen Systeme als fertiggestellt angeboten. Die bestehende Holzindustrie bleibt die Grundlage für die weiteren Erweiterungen.
