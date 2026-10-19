@@ -1,3 +1,19 @@
+# Timber Loot Tycoon 0.11 — Benno im Wald
+
+**[Android-Update 0.11 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.11.0-benno/releases/Timber-Loot-Tycoon-v0.11-test.apk)**
+
+**[Passendes Quellprojekt 0.11 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.11.0-benno/releases/Timber-Loot-Tycoon-v0.11-source.zip)**
+
+Benno ist da: ein eigener kleiner 3D-Biber mit Winken, Blinzeln und freundlichen Begrüßungen. Er freut sich über fertige Gebäude, Häuser, Upgrades, neue Regionen und besonderen Loot. Hinweise beziehen sich auf deinen wirklichen Spielstand. Die neue Willkommensgrafik verwendet die vom Nutzer bereitgestellte Biber-Vorlage.
+
+Sprechblasen schließen oder Benno antippen zum Plaudern. In Menüs und beim Platzieren macht er Platz. Abschalten unter Mehr → Einstellungen; die Einstellung bleibt auch beim Prestige erhalten. Keine tägliche Verluststrafe, kein Pflichtdialog und keine gekauften Begrüßungen.
+
+Als Update über die vorhandene App installieren; nicht vorher deinstallieren oder App-Daten löschen. Gleicher Testschlüssel, Paket und Speicherdatei, Versionscode 1100. Danach steht oben rechts **BENNO / 11**. Android 7.0+, ARM64/ARMv7 und OpenGL ES 3.0, etwa 58 MB, keine Android-Berechtigungen.
+
+4.476 Headless-Prüfungen plus frischer Verlauf bis zum ersten Haus sowie 23 OpenGL-Prüfungen bestanden. Echter Handy-/Resume-/Leistungstest der APK bleibt offen. APK-Quellstand: `66aab5d885a18d5446b4450fa6c9fc05724a7c5e`. Das passende Quellarchiv enthält 82 gegen Git geprüfte Dateien. Prüfsummen in `SHA256SUMS.txt`, Paketbericht im `.apk.json`.
+
+## Historischer Stand 0.10
+
 # Timber Loot Tycoon 0.10 — Sculpted World
 
 **[Android-Update 0.10 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.10.0-sculpt/releases/Timber-Loot-Tycoon-v0.10-test.apk)**

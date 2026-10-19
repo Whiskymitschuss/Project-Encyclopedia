@@ -6,6 +6,14 @@
 - Begrüßung und Biber, Werkstatt, Baukatalog, Platzierung und neue Willkommen-Grafik unter OpenGL geprüft. Die fortgeschrittenen Capture-Bilder verwenden einen ausdrücklich aufgebauten Demonstrationsstand und eine inszenierte Feierblase; ihre Ressourcen sind kein Nutzerspielstand.
 - APK-Gerätetest, Benachrichtigungen/Resume unter Android und langfristige Begleiterhäufigkeit bleiben auf Hardware zu prüfen. Kein Sprachsynthese-/Voiceover-System, keine Loginpflicht, keine täglichen Verluststrafen oder erzwungenen Belohnungsdialoge.
 
+## Auslieferung 0.11
+
+- APK-Quellstand: `66aab5d885a18d5446b4450fa6c9fc05724a7c5e`.
+- APK: 58.102.026 Bytes, SHA256 `3588bc86c9f0364438e171aaed11e3dd8b9223bfe90c8d1add7a954c11b2997a`.
+- Quell-ZIP: 82 Dateien, 2.580.510 Bytes, SHA256 `6f6e72f015b2900f377f049195421f1ac2a615530569beab3f786112a9039d0d`. Dateiinhalte einzeln gegen ihre Git-Blobs des APK-Quellstands geprüft.
+- Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, identisch zur bisherigen APK. Versionscode 1100, Schema 1, unveränderte Paketkennung und Speicherdatei, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft.
+- Neue unabhängige GitHub-Kopie unter `/workspace/timber-restore-11`. Erstimport, vollständige Headless-Suite und anschließend separate OpenGL-Prüfung. Wiederherstellungs- und Downloadabschluss wird im externen Prüfbericht festgehalten.
+
 ## Historischer Prüfbericht 0.10
 
 # Prüfung 0.10 — Sculpted World
