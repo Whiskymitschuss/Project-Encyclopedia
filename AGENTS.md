@@ -1,0 +1,10 @@
+# Timber Loot Tycoon: Arbeits- und Sicherungsregeln
+
+- Vorhandenen Checkout verwenden; ohne ausdrücklichen Auftrag keinen Worktree anlegen. Die GitHub-Historie ist der verbindliche externe Quellstand. Vor Änderungen `git status` und README lesen; Benutzerarbeit bewahren.
+- Tests mit `bash scripts/test.sh` ausführen. Diese verwenden temporäre Profile. Bestehende Benutzerspielstände niemals für Tests ändern.
+- Wenn der Auftrag Implementieren und Sichern umfasst, geprüfte Meilensteine committen und nach `origin/main` übertragen. Den Push durch Vergleich des vollen lokalen Commit-Hashes mit `git ls-remote origin refs/heads/main` bestätigen. Ein lokaler Commit oder ein Cloud-Dateipfad ist keine externe Sicherung.
+- `python3 scripts/backup.py` erzeugt zusätzlich Quell-ZIP, vollständiges Git-Bundle und SHA256-Manifest. Die Quell-ZIP lässt `releases/` aus; das Bundle enthält die gesamte Historie. Bei einer Wiederherstellungsprüfung aus einem neuen Verzeichnis klonen und die relevanten Tests dort erneut ausführen.
+- `releases/` enthält ausnahmsweise die bewusst gesicherte Android-Test-APK und ihre passende Quell-ZIP. Vor einer Änderung der APK den Build ausführen, Signatur/Paket prüfen und Quell-Commit sowie SHA256 dokumentieren. Keine APK in den nächsten Export einschließen. Für viele spätere Binärversionen eine geeignete Release-Ablage verwenden, sobald der API-Zugriff verfügbar ist.
+- Private Schlüssel, Zugangsdaten, `.export_credentials.cfg`, Spielstände und Caches nicht in Git aufnehmen. Der lokale Debug-Schlüssel unter `/workspace/.timber-runtime/android` ist keine Release-Signierung und muss für kompatible Testupdates erhalten bleiben.
+- Handy-Downloads nur als funktionierend melden, wenn der externe Link wirklich die Datei liefert und ihr Hash mit dem gebauten Ergebnis übereinstimmt. Nie erneut einen ungeprüften lokalen Cloud-Pfad als Download ausgeben.
+- Automatisierte Szenenprüfung, simulierte Spielzeit, echter Android-Gerätetest und Langzeit-Balancing klar auseinanderhalten. Keine Store-Reife oder Gerätekompatibilität ohne entsprechenden Nachweis behaupten.

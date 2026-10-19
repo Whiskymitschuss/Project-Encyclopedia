@@ -18,6 +18,10 @@ Signierter Debug-Export für ARM64/ARMv7. APK-Integrität, Signatur, 16-KB-ZIP-A
 
 Git-Meilensteine werden zum Repository übertragen. Abschließend wird aus GitHub in ein neues Verzeichnis geklont, der gespeicherte Stand geprüft und die APK mit dem lokalen SHA256 verglichen. Quell-ZIP und vollständiges Git-Bundle mit SHA256-Manifest ergänzen die externe Git-Sicherung. Ein nicht bestätigter Push gilt nicht als Sicherung.
 
+Ergebnis der Wiederherstellungsprüfung: GitHub-Commit `6d4d65f65cc9d35ff635ec25a42084b29c53449b` wurde erfolgreich nach `/workspace/timber-restore-check` geklont. Dort bestand die vollständige Testsuite erneut (207 Regeln, frischer Verlauf, 4.135 Szenen-/Geometrieprüfungen, abschließender Start). Die zurückgeladene APK stimmt mit SHA256 `893e4ec1ea95a18881d1abf9ee0ac8caf16797699fd1d3bbb908755a4788041e` überein.
+
+Beide direkten HTTPS-Downloads von `raw.githubusercontent.com` wurden vollständig abgerufen: APK HTTP 200, 56.531.203 Bytes; Quell-ZIP HTTP 200, 763.308 Bytes. Beide SHA256-Werte entsprechen `releases/SHA256SUMS.txt`. Das Quellarchiv enthält 43 Dateien, einschließlich Hauptszene, Regeln, Tests und Build-Helfern, ohne Cache, APK oder privaten Schlüssel.
+
 ## Offene Nachweise
 
 Kein 50-Stunden-Spieltest, kein Android-Leistungs-/Akkuprofil, keine abschließende Touch-/Safe-Area-/Hintergrundprüfung, keine iOS-/Store-Freigabe. Die erwähnten 28 Minuten sind simulierte Wirtschaft, kein gemessener menschlicher Spieldurchlauf. Screenshots des ausgebauten Gebiets belegen die Darstellung und keine erspielte Progression.

@@ -6,3 +6,4 @@ __pycache__/
 .export_credentials.cfg
 *.apk
 *.aab
+docs/*.import
