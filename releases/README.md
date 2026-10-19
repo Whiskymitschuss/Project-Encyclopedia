@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.15 — Lieferwerk
+
+**[Android-Update 0.15 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/releases/Timber-Loot-Tycoon-v0.15-test.apk)**
+
+**[Passendes Quellprojekt 0.15 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/releases/Timber-Loot-Tycoon-v0.15-source.zip)**
+
+Erster spielbarer Abschnitt des Industrie-Masterplans: echte lokale Lieferkette Holz → Bretter → Möbel → Laden, Materialzähler über Gebäuden, Ladenfristen mit Bonus und reduzierter Auszahlung bei Verspätung. Unter **Aufträge → Lieferkette** mit vorhandener Möbelfabrik eröffnen.
+
+Neue Betriebe und Upgrades kosten anfangs nur Münzen. Ab Unternehmenslevel 4 benötigen Baustellen tatsächlich angelieferte Materialien, sieben Bauphasen und zugewiesene Bauarbeiter. Muttern und Schrauben gibt es im Materialdepot für Spielmünzen. Lieferfahrzeuge nehmen echte Ladung auf, fahren auf Straßen zur Baustelle, entladen und kehren leer zurück. Pause, Priorität, Personal, Baukamera und sichere Abbrüche sind verbunden. Ab Level 10 lässt sich die globale Baustellen-Automatik aktivieren.
+
+Neue Stein-, Metall- und Betonketten sowie Bergbaumaschinen sind noch offen; der vollständige tatsächliche Stand steht im [Industrie-Masterplan](../docs/INDUSTRY-ROADMAP.md). Weitere vorhandene Holz-/Stadtbetriebe behalten ihre bisherige Wirtschaft.
+
+**Als Update installieren, nicht vorher deinstallieren und keine App-Daten löschen.** Gleiches Paket, gleicher Testschlüssel, Schema-1-Spielstand; Versionscode 1500. Danach steht oben rechts **LIEFERWERK / 15**. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB, keine Berechtigungen. Handy-Installation, Touch und reale Leistung dieser Version bleiben zu prüfen.
+
+8.374 Headless-Prüfungen und erster-Haus-Verlauf bestanden, ebenso 54 lokale OpenGL-Prüfungen. Auch die unabhängige frische GitHub-Kopie hat alle 8.374 Headless- und 54 OpenGL-Prüfungen bestanden. Quellstand `7ca882361dc542394440f2b911725d8e4e78128f`, passendes Archiv mit 160 einzeln gegen Git geprüften Dateien. APK-Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
+
+## Historischer Stand 0.14
+
 # Timber Loot Tycoon 0.14 — Ein lebendiges Waldtal
 
 **[Android-Update 0.14 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/releases/Timber-Loot-Tycoon-v0.14-test.apk)**

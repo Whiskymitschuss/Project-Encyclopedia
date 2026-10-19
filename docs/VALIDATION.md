@@ -8,6 +8,14 @@
 - Desktop OpenGL: 23 UI-, 9 Landschafts- und 22 Liefer-/Baustellenprüfungen, insgesamt **54** ohne Fehler. Enthalten sind tatsächlich gerenderte Materialicons, freie HUD-Bereiche, Ladung auf Hin-/Rückfahrt, reale teilweise belieferte Baustelle und kleine Portraitfenster mit skalierter UI.
 - Vier Vorschauen aus einem ausdrücklich aufgebauten Demonstrationsprofil; keine Nutzerprofile werden dafür verwendet. Sie zeigen Lieferwelt, Materialbaustelle und deren Menüs. Kein echter Android-Geräte- oder Leistungsnachweis. Offene Master-Phasen: [Industrie-Masterplan](INDUSTRY-ROADMAP.md).
 
+## Auslieferung 0.15
+
+- APK-Quellstand: `7ca882361dc542394440f2b911725d8e4e78128f`.
+- APK: 58.240.874 Bytes, SHA256 `cc18ae1e7ae29061beeff725b4ad74cd5e504a98e90ea79011ad111e58246c1a`.
+- Quell-ZIP: 160 Dateien, 7.868.511 Bytes, SHA256 `a713e233e6d6f53670ed357c2f63b20f516f861bb9ccf498c69dcabfcd544cb2`. Jede Datei gegen den Git-Blob des APK-Quellstands geprüft.
+- Gleiches Zertifikat wie 0.14: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1500, Speicherformat 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Alle neuen Laufzeitskripte liegen im APK; Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
+- Frische unabhängige GitHub-Kopie unter `/workspace/timber-restore-15`: Erstimport, vollständige 8.374 Headless-Prüfungen, erster-Haus-Verlauf und Hauptszenenstart bestanden. Anschließend auch alle 54 OpenGL-Prüfungen in dieser unabhängigen Kopie bestanden.
+
 ## Historischer Prüfbericht 0.14
 
 # Prüfung 0.14 — Ein lebendiges Waldtal
