@@ -1,0 +1,17 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.7-test.apk",
+  "bytes": 56531203,
+  "sha256": "893e4ec1ea95a18881d1abf9ee0ac8caf16797699fd1d3bbb908755a4788041e",
+  "version": "0.7.0-test",
+  "package": "com.whiskymitschuss.timberloot",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [],
+  "device_install_or_launch_tested": false,
+  "source_commit": "f90c6701601baafbd4754f8a19ed5e41605e59f7"
+}
