@@ -1,0 +1,30 @@
+config_version=5
+
+[application]
+config/name="Timber Loot Tycoon"
+config/version="0.7.0-rebuild"
+run/main_scene="res://Scenes/Main.tscn"
+config/features=PackedStringArray("4.6", "GL Compatibility")
+config/icon="res://Assets/icon.svg"
+
+[autoload]
+Store="*res://SaveSystem/Store.gd"
+Game="*res://Managers/Game.gd"
+
+[display]
+window/size/viewport_width=540
+window/size/viewport_height=960
+window/size/window_width_override=540
+window/size/window_height_override=960
+window/stretch/mode="canvas_items"
+window/handheld/orientation=1
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.35, 0.68, 0.75, 1)
+textures/default_filters/use_nearest_mipmap_filter=false
+
+[audio]
+driver/enable_input=false
