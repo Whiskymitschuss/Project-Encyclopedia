@@ -14,7 +14,7 @@
 - Quell-ZIP: 69 Dateien, 1.947.082 Bytes, SHA256 `305f51e32f7f83226989e1c3d8466752a9c2b87b53f5d0aa99fb764d94aec796`. Jede enthaltene Datei stimmt mit ihrem Git-Blob am APK-Quellstand überein.
 - Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, unverändert zu 0.9. Versionscode 1000, Spielstandschema 1, GL Compatibility, keine Berechtigungen.
 - Wiederherstellung: neue unabhängige Kopie von GitHub unter `/workspace/timber-restore-10`. Zuerst Import mit `bash scripts/godot.sh --headless --editor --import --quit`, dann `bash scripts/test.sh`. Die gesonderte OpenGL-Prüfung ist `Tests/VisualUI.gd` und benötigt einen verfügbaren X11-/OpenGL-Bildschirm. Grafikprüfung nach dem Import ausführen; ein direkter Skriptstart vor dem Erstimport hat noch keinen globalen GDScript-Klassenindex.
-- Probedownload und endgültige Wiederherstellungsbestätigung werden nach dem Push im Downloadbericht dokumentiert.
+- APK, passende Quell-ZIP und Vorschau vom festen Tag `v0.10.0-sculpt` vollständig per HTTPS zurückgeladen, jeweils HTTP 200 und identischer SHA256. Bericht: `download-verification-10.json`. In der neu geklonten Kopie bestehen nach dem Erstimport sämtliche 4.453 Headless-Prüfungen, der erste-Haus-Verlauf, Hauptszenenstart sowie die 19 OpenGL-Prüfungen erneut.
 
 ## Historischer Prüfbericht 0.9
 
