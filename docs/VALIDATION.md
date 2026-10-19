@@ -17,6 +17,9 @@
 - Quell-ZIP: 177 Dateien, 8,892,181 Bytes, SHA256 `f17dc81dcbaff01bfd59c3a656e7d9dd6bd5a2b5e69ea9225f8346cd1391a081`. Jede Datei gegen den Git-Blob des APK-Quellstands geprüft; Release-Dateien sind aus dem Quellarchiv ausgeschlossen.
 - Gleiches Zertifikat wie 0.15: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1600, Speicherformat 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Alle neuen Laufzeitskripte sind im APK enthalten; das entfernte Conveyor-Skript sowie Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
 
+- Frische unabhängige GitHub-Kopie unter `/workspace/timber-restore-16`: Erstimport, alle **12.461 Headless-Prüfungen**, erster-Haus-Verlauf, Hauptszenenstart sowie alle **81 OpenGL-Prüfungen** erneut bestanden. Die Kopie hat einen sauberen Git-Status.
+- APK, passende Quell-ZIP und alle vier neuen Vorschauen vom festen Tag `v0.16.0-traffic` vollständig per HTTPS mit HTTP 200 heruntergeladen. Alle SHA256 und Dateigrößen stimmen mit den Originalen und der unabhängigen GitHub-Kopie überein. Bericht: [download-verification-16.json](download-verification-16.json).
+
 ## Historischer Prüfbericht 0.15
 
 # Prüfung 0.15 — Lieferwerk, erster Abschnitt des Industrie-Masterplans

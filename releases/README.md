@@ -14,6 +14,8 @@ Im Baukatalog und anderen Listen direkt über Karten und Schaltflächen mit dem 
 
 12.461 automatisierte Headless- und 81 Desktop-OpenGL-Prüfungen bestanden. APK-Quellstand `c8c9e032f643d965e432773af4b6d334c62d3ed1`; das passende Quellarchiv enthält 177 einzeln gegen Git geprüfte Dateien. Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`. Die neue Version wurde noch nicht auf echter Android-Hardware geprüft. Die offenen größeren Industriephasen stehen im [Industrie-Masterplan](../docs/INDUSTRY-ROADMAP.md).
 
+Auch die unabhängige frische GitHub-Kopie hat alle 12.461 Headless- und 81 OpenGL-Prüfungen bestanden. APK, Quellarchiv und vier Vorschauen wurden über die oben verlinkte feste Version vollständig per HTTPS heruntergeladen und mit beiden Projektkopien verglichen. [Download-Prüfbericht](../docs/download-verification-16.json).
+
 ## Historischer Stand 0.15
 
 # Timber Loot Tycoon 0.15 — Lieferwerk
