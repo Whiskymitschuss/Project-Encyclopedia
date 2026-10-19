@@ -107,6 +107,19 @@ static func create(kind: String, level: int) -> Node3D:
     block(root,Vector3(2.6,1,1.5),Vector3(x,1,8),Color("a98450"))
     for offset in [-0.8,0,0.8]: Models.cylinder(root,0.35,0.5,Vector3(x+offset,1.7,8),Color("edab4b"),0.18)
    top=7
+  "police","taxi":
+   wing(root,Vector3(13,4.8,10),Vector3(-0.5,3.2,-1),tone,false)
+   windows(root,3.3,3.2,4.2,3,CREAM)
+   entrance(root,0,4.2)
+   block(root,Vector3(10,1.3,0.3),Vector3(0,5.8,4.4),DARK)
+   if kind=="police":
+    Models.cylinder(root,0.7,0.15,Vector3(-4,5.8,4.65),Color("f7d578"))
+    Models.cylinder(root,0.15,3.6,Vector3(5.5,7.6,-3),DARK)
+    block(root,Vector3(2.8,0.2,0.2),Vector3(5.5,9,-3),DARK)
+   else:
+    for x in [-4,-2,0,2,4]: block(root,Vector3(0.7,0.7,0.1),Vector3(x,5.8,4.65),Color("ffd868"))
+    for x in [-5,0,5]: block(root,Vector3(0.15,0.05,4),Vector3(x,0.55,8.3),CREAM)
+   top=10
   "fire":
    wing(root,Vector3(14,4.6,11),Vector3(-0.6,3.1,-0.5),tone,false)
    for x in [-3.8,2.5]:

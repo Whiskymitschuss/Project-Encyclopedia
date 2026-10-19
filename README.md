@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Lieferwerk 0.15
+# Timber Loot Tycoon — Stadtverkehr 0.16
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.15-test.apk](releases/Timber-Loot-Tycoon-v0.15-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.16-test.apk](releases/Timber-Loot-Tycoon-v0.16-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -19,9 +19,26 @@ python3 scripts/backup.py
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
 
-## Neu in 0.15 — Material wird wirklich geliefert
+## Neu in 0.16 — LKWs und Stadtleben
 
-- Kleine spielbare Linie **Holz → Bretter → Möbel → Laden** unter **Aufträge → Lieferkette** eröffnen. Sie verwendet vorhandene Gebäude, eigene Puffer, echte Bandladungen und bis zu zwei der gekauften Transportfahrzeuge. Antippbare Materialzähler zeigen Leerstand, Teilmengen und volle Ausgänge direkt über den Gebäuden.
+- Die Förderstrecken zwischen den Gebäuden sind entfernt. **Holz → Bretter → Möbel → Laden** verwendet auf allen drei Teilstrecken tatsächliche Straßenfahrten. Die gesamte gekaufte Fahrzeugflotte wird gemeinsam mit Baustellen vergeben, einschließlich Beladen, Entladen und leerer Rückfahrt. Nachgelagerte Lieferungen haben Vorrang, damit bereits ein einzelner Start-LKW die ganze Kette bedienen kann.
+- Pickup und LKW, ab Transportstufe 5 ein Gelenk-Auflieger, ab Stufe 7 ein Tiefbett mit Rampen. Holz, Bretter, Möbel und Materialkisten sitzen auf dem tatsächlichen Ladebereich; leere Rückfahrten zeigen keine Ladung. Ein Upgrade ersetzt auch schon aktive Fahrzeugmodelle. Kleine maschineninterne Rollentische bleiben Teil der Verarbeitung.
+- Polizei, Feuerwehr, Rettungswagen und Taxis fahren echte Aufträge über das Straßennetz. Rettung und Gemeindehilfe haben einen Arbeitsaufenthalt am Ziel; Taxifahrgäste warten, steigen ein und werden an einem tatsächlichen Stadtziel abgesetzt. Abgeschlossene Fahrten sammeln Spielmünzen in der abholbaren Stadtkasse. Ohne eigene Wache kommt Hilfe von der bestehenden westlichen Zufahrt.
+- Neue frei platzierbare **Polizeiwache und Taxizentrale**, jeweils mit eigener Gebäudeform. Eigene Feuerwehr und Klinik dienen den passenden Fahrzeugen als Ausgangspunkt; bessere Dienstgebäude erlauben mehr gleichzeitig verfügbare Fahrzeuge. Bis zu zwölf gespeicherte Bewohnerwege zwischen tatsächlichen Häusern und Zielen ergänzen die bisherigen Vorgartenszenen. Begrenzte wiederverwendbare Figuren-/Fahrzeugpools und der Akkumodus begrenzen die Darstellung.
+- Direkter Zugang über **Stadt → Stadtleben & Fahrzeuge** oder **Mehr**. Dort Fahrten anfordern, Stadtkasse abholen, neue Fahrten ein-/ausschalten, Standorte bauen und Fahrzeuge ansehen. Erledigte Aufträge und laufende Wege überstehen Laden und Offlinezeit. Aktive Wege schützen ihre Straßen und Standorte bis zum Abschluss.
+- Im Baukatalog und allen anderen Listen **direkt über Karten und Schaltflächen mit dem Finger wischen**. Eine Wischbewegung löst keinen Kauf aus; kurze Berührungen bedienen weiterhin die richtige Schaltfläche. Nachlauf, abgebrochene Touchgesten und kleine Hochformatfenster sind berücksichtigt. Die schmale Scrollleiste ist entfernt, die Kamera bleibt hinter dem Menü stehen.
+- Alte gespeicherte Bandladungen werden verlustfrei zu ausstehenden Straßenlieferungen am Ausgang zurückgeführt, auch wenn der dortige Puffer voll ist. Bereits angekommenes Material wird nicht doppelt gebucht. Neue Auftragsfristen berücksichtigen die längeren Straßenfahrten. Gleiches Paket, gleicher Testschlüssel, Schema 1 und Android-Versionscode 1600: als Update installieren.
+- Die fortgeschrittenen bisherigen Fabriken verwenden weiterhin ihre gemeinsamen Lager. Individuelle Transporte für deren gesamte Wirtschaft, Kollisionsverkehr, Kreuzungsampeln und die späteren Stein-/Stahl-/Betonketten bleiben weitere Schritte; diese Version behauptet keine vollständige Verkehrssimulation.
+
+![Stadtverkehr mit echten Dienstfahrten; ausdrücklich aufgebautes Demonstrationsprofil](docs/preview-traffic-city.png)
+
+![Holz, Bretter und Möbel auf Tiefbett-Aufliegern; ausdrücklich aufgebautes Demonstrationsprofil](docs/preview-traffic-freight.png)
+
+## Weiterhin aus 0.15 — Material wird wirklich geliefert
+
+Die damaligen Bandfahrten sind seit 0.16 durch den oben beschriebenen Straßenverkehr ersetzt.
+
+- Kleine spielbare Linie **Holz → Bretter → Möbel → Laden** unter **Aufträge → Lieferkette** eröffnen. Sie verwendet vorhandene Gebäude, eigene Puffer und die gekauften Transportfahrzeuge. Antippbare Materialzähler zeigen Leerstand, Teilmengen und volle Ausgänge direkt über den Gebäuden.
 - Ladenaufträge mit Frist und Bonus. Verspätete Möbel verdienen 70 % des Verkaufspreises; der Auftrag bleibt erfüllbar. Kein echtes Geld und kein Game Over.
 - Unternehmenslevel: einfache Geld-Upgrades auf Level 1–3; ab Level 4 Materialbaustellen mit sieben Bauphasen. Holz, Bretter, Muttern und Schrauben müssen tatsächlich am Bauplatz ankommen. Hardware gibt es gegen Spielmünzen im Materialdepot.
 - Liefer-LKWs nehmen Ware am Lager auf, fahren über Straßen zur Baustelle, entladen und kehren leer zurück. Baustellen und Laden teilen sich den gekauften Fuhrpark. Pause, Priorität, Materialkauf, Baukamera, sichere Bauabbrüche und ein begrenztes zuweisbares Bauteam sind spielbar. Ab Level 10 kann die globale Baustellen-Automatik übernehmen.
@@ -111,8 +128,8 @@ Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifi
 
 - Zusammenhängendes natürliches Gelände um die unveränderten Bauflächen von 640 × 560 Einheiten, zehn Biome, 1.000 instanzierte Bäume, zehn sichtbare Bossbäume. Straßen und Projektzufahrten bleiben auf Land. Bäume wachsen nach; Holzfäller sind in begrenzter Anzahl sichtbar.
 - Bis zu 40 frei platzierbare Industriebetriebe, mehrere Betriebe desselben Typs und unabhängige Upgrades. Sammelstation, Lager, Hütten, Sägewerke, Trocknung, Möbelfabrik, Garage, Forschung, Fertighauswerk, Tischlerei, Pellet-, Papier- und Designmöbel-Produktion.
-- Echte Ressourcenbilanzen, faire gemeinsame Materialzuteilung, sichtbare laufende Fördergüter und Sägen, Bauzeit, Gerüste und Kräne. Bestehende Betriebe produzieren während Upgrades weiter.
-- Bis zu 36 Stadtgrundstücke in drei Regionen und zwei zusätzlichen Vierteln. Zwölf Gebäudetypen: Holzhaus, Landhaus, Laden, Wohnhaus, Villa, Hotel, Büros, Nachtclub, Park, Schule, Klinik, Feuerwehr. Bis Stufe zehn, Miete, Bewohner und öffentliche Boni.
+- Echte Ressourcenbilanzen, faire gemeinsame Materialzuteilung, sichtbare Straßenladungen und arbeitende Sägen, Bauzeit, Gerüste und Kräne. Bestehende Betriebe produzieren während Upgrades weiter.
+- Bis zu 36 Stadtgrundstücke in drei Regionen und zwei zusätzlichen Vierteln. Vierzehn Gebäudetypen einschließlich Polizeiwache und Taxizentrale: Holzhaus, Landhaus, Laden, Wohnhaus, Villa, Hotel, Büros, Nachtclub, Park, Schule, Klinik, Feuerwehr. Bis Stufe zehn, Miete, Bewohner und öffentliche Boni.
 - Materialplaner für ein Stadthaus: Bestände und Kosten, Schutz vor automatischem Verbrauch, optional genau ein automatischer Bauauftrag. Manuelle Verkäufe bleiben möglich.
 - Fünf Großprojekte mit je drei bezahlten Bauabschnitten und anschließendem laufenden Ertrag. Standortmodelle und Zufahrten sind sichtbar.
 - 15 Werkzeug- und zehn Fahrzeugstufen; Mitarbeiter, automatische Möbel-Exporte, wiederholbare Lieferaufträge, elf Meilensteine, fünf Forschungsrichtungen.

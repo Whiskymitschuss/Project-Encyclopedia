@@ -43,14 +43,15 @@ func run() -> void:
    check(rect.position.y>=170 and rect.end.y<=scene.hud.size.y-190,"World badge stays clear of the fixed mobile HUD")
    check(b.icon.texture!=null and not b.label.text.is_empty(),"World material badge has both a rendered icon and fraction")
  check(visible>=3,"Production view has at least three readable non-overlapping material badges")
- check(layer.belt_visual_count>0,"Rendered belt loads come from live shipments")
+ check(layer.truck_visual_count>0,"Rendered wood loads travel on a real street vehicle")
+ game.state.trucks=3
  game.state.delivery.buffers.furniture.furniture=2
  game.step(1)
  await draw()
  check(layer.truck_visual_count>0,"A real loaded delivery vehicle appears on the shop route")
  var trucks=0
  for shipment in game.state.delivery.shipments:
-  if shipment.mode=="truck":
+  if shipment.mode=="truck" and shipment.key=="furniture":
    var node=layer.visuals[int(shipment.id)]
    trucks+=1
    check(node.cargo_furniture and node.cargo!=null and node.cargo.visible==not shipment.arrived,"Furniture cargo is visible on loaded trips and absent on empty returns")

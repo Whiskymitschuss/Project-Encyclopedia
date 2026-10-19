@@ -314,12 +314,6 @@ func refresh() -> void:
   for actor in world.actors.get_children():
    if actor.has_meta("forestry_tier"): bounds.append(Rect2(Vector2(actor.origin_point.x,actor.origin_point.z)-Vector2(9,9),Vector2(18,18)))
  spans=road_spans()
- if world!=null and world.network!=null:
-  for link in world.network.links:
-   for i in range(1,link.points.size()):
-    var a=link.points[i-1]
-    var b=link.points[i]
-    spans.append([Vector2(a.x,a.z),Vector2(b.x,b.z),1.8])
  quality=int(Game.state.quality)
  for kind in batches:
   var data=batches[kind]

@@ -27,7 +27,6 @@ var chip_index = 0
 var cranes: Array = []
 var environment_resource: Environment
 var auto_tree_clock = 0.0
-var network: ConveyorNetwork
 var bins: Array = []
 var placement: Dictionary = {}
 var ghost: Node3D
@@ -41,6 +40,7 @@ var road_anchor: Variant = null
 var road_endpoint: Variant = null
 var road_horizontal = true
 var landscape: ValleyLandscape
+var city_traffic: Node3D
 var delivery_world: Node3D
 var base_streets: Node3D
 var biome_labels: Array = []
@@ -95,6 +95,9 @@ func _ready() -> void:
  delivery_world=load("res://Components/DeliveryWorld.gd").new()
  delivery_world.world=self
  add_child(delivery_world)
+ city_traffic=load("res://Components/CityTraffic.gd").new()
+ city_traffic.world=self
+ add_child(city_traffic)
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
  make_weather()
@@ -314,12 +317,6 @@ func rebuild() -> void:
  actor_signature = ""
  if town_layer!=null: town_layer.rebuild()
  refresh_forest_clearance()
- if network!=null:
-  remove_child(network)
-  network.queue_free()
- network = ConveyorNetwork.new()
- add_child(network)
- network.build()
  if landscape!=null: landscape.refresh()
  if delivery_world!=null: delivery_world.rebuild()
 
@@ -406,14 +403,6 @@ func sync_actors() -> void:
    worker.pace=0.85
    worker.phase=0
   actors.add_child(worker)
- for i in mini(maxi(0,int(Game.state.trucks)-(mini(2,int(Game.state.trucks)) if Game.state.delivery.active else 0)-Game.state.construction_shipments.size()),3 if Game.state.quality == 0 else 8):
-  var truck = TimberTruck.new()
-  truck.tier=int(Game.state.vehicle)
-  truck.path.assign([Vector3(-78,1,-26),Vector3(2,1,-26),Vector3(2,1,70),Vector3(78,1,70),Vector3(78,1,162),Vector3(-78,1,162)])
-  truck.segment = i%truck.path.size()
-  truck.speed = 9+int(Game.state.vehicle)
-  actors.add_child(truck)
-  truck.position = truck.path[truck.segment]
  var inhabited=[]
  for i in Game.state.homes.size():
   if int(Catalog.HOMES[Game.state.homes[i].kind].people)>0: inhabited.append(i)
@@ -566,6 +555,7 @@ func camera_action(action: String) -> void:
  set_camera()
 
 func _unhandled_input(event: InputEvent) -> void:
+ if hud!=null and hud.overlay.visible: return
  if event is InputEventMouse and event.device==-1: return
  if event is InputEventMouseButton:
   if event.button_index == MOUSE_BUTTON_WHEEL_UP: camera_action("+")

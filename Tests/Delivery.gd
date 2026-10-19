@@ -26,6 +26,8 @@ func wood_units() -> float:
  for kind in data.buffers:
   var b=data.buffers[kind]
   result += float(b.wood)+float(b.boards)*2+float(b.furniture)*4
+ for kind in data.recovered:
+  for key in data.recovered[kind]: result+=float(data.recovered[kind][key])*({"wood":1,"boards":2,"furniture":4}[key])
  for s in data.shipments:
   if not s.arrived: result += float(s.amount)*({"wood":1,"boards":2,"furniture":4}[s.key])
  return result
@@ -88,7 +90,7 @@ func run() -> void:
  var old_position=game.building_position(1)
  check(not game.move_building(1,Vector3(-40,0,116)) and game.building_position(1)==old_position,"An active delivery building cannot move underneath saved cargo routes")
  var routes=game.delivery_routes()
- check(routes.get("sawmill",[]).size()>1 and routes.get("furniture",[]).size()>1,"Both production conveyor routes exist")
+ check(routes.get("sawmill",[]).size()>1 and routes.get("furniture",[]).size()>1,"All production truck routes exist")
  check(routes.get("market",[]).size()>2,"Shop truck has a real street route")
  var cells=TownRules.road_cells(game.state.town)
  var road=routes.market
@@ -104,7 +106,7 @@ func run() -> void:
  check(shipment.amount>0 and not shipment.arrived and shipment.travel>=2,"Shipment carries real goods and takes travel time")
  check(absf(wood_units()-total)<0.0001,"Dispatch conserves all wood equivalents including in-transit goods")
  var midpoint=JSON.parse_string(JSON.stringify(game.snapshot()))
- for second in 260:
+ for second in 460:
   game.step(1)
   check(absf(wood_units()-total)<0.0001,"All stages and shop sales conserve material: %s" % second)
   for kind in DeliveryChain.KINDS:
@@ -157,7 +159,7 @@ func run() -> void:
  await process_frame
  scene.delivery_world._process(0)
  check(scene.delivery_world.badges.size()==4,"Four material badges are attached to the real assigned buildings")
- check(scene.delivery_world.belt_visual_count>0,"A real economic wood shipment creates a visible belt load")
+ check(scene.delivery_world.truck_visual_count>0,"A real economic wood shipment creates a loaded road vehicle")
  var badge=scene.delivery_world.badges[1]
  badge.button.pressed.emit()
  check(scene.hud.current=="building" and scene.hud.current_index==int(game.state.delivery.nodes.sawmill),"Tapping a material badge opens its building details")

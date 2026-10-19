@@ -17,6 +17,7 @@ var rng = RandomNumberGenerator.new()
 var offline_report = ""
 var last_save_ok = true
 var town_route_cache: Dictionary = {}
+var city_route_cache: Dictionary = {}
 var delivery_route_cache: Dictionary = {}
 var delivery_route_signature = 0
 
@@ -31,7 +32,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -75,6 +76,10 @@ func restore(saved: Dictionary) -> void:
  delivery_route_signature = 0
  for key in DeliveryChain.initial():
   if not state.delivery.has(key): state.delivery[key] = DeliveryChain.initial()[key]
+ DeliveryChain.migrate_belts(state)
+ for key in CityServices.initial():
+  if not state.city_services.has(key): state.city_services[key]=CityServices.initial()[key]
+ city_route_cache.clear()
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -187,6 +192,7 @@ func production_status(index: int) -> String:
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
 func step(delta: float) -> void:
+ CityServices.tick(state,delta,city_route_cache)
  ConstructionRules.transport_tick(state,delta)
  state.elapsed += delta
  state.time = fmod(float(state.time) + delta / 60.0,24.0)
@@ -243,7 +249,7 @@ func step(delta: float) -> void:
    else: flow["sawdust_composted"] = excess/maxf(delta,0.001)
  if state.auto_export:
   var export_reserve = reserve_for("furniture")+(4.0 if level("design")>0 else 0.0)
-  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),maxi(0,int(state.trucks)-(mini(2,int(state.trucks)) if state.delivery.active else 0)-state.construction_shipments.size())*maxi(0,level("market")-(int(state.buildings[int(state.delivery.nodes.market)].level) if state.delivery.active else 0))*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
+  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),maxi(0,int(state.trucks)-(int(state.trucks) if state.delivery.active else 0)-state.construction_shipments.size())*maxi(0,level("market")-(int(state.buildings[int(state.delivery.nodes.market)].level) if state.delivery.active else 0))*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
   state.resources.furniture -= exported
   state.exported += exported
   flow["export"] = exported/maxf(delta,0.001)
@@ -403,11 +409,21 @@ func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = f
  if not state.construction_shipments.is_empty():
   notice.emit("Laufende Baustellenlieferungen zuerst beenden lassen")
   return false
+ if CityServices.uses_building(state,index,city):
+  notice.emit("Laufende Stadtfahrt an diesem Gebäude zuerst beenden lassen")
+  return false
  var records = state.homes if city else state.buildings
  if index<0 or index>=records.size(): return false
  point = Placement.snap(point)
  var reason = placement_reason(point,rotation,-1 if city else index,index if city else -1)
  if not reason.is_empty(): notice.emit(reason); return false
+ # A resident can choose another walk after their home is moved. This cancels
+ # only the pedestrian trip, never a vehicle assignment or any economic cargo.
+ var ref_type="home" if city else "building"
+ state.city_services.walkers=state.city_services.walkers.filter(func(person):
+  for ref in [person.source_ref,person.destination_ref]:
+   if ref.type==ref_type and int(ref.index)==index: return false
+  return true)
  records[index].position = [point.x,point.z]
  records[index].rotation = posmod(rotation,360)
  rebuild_world.emit()
@@ -762,6 +778,7 @@ func prestige() -> bool:
  delivery_route_cache.clear()
  delivery_route_signature = 0
  for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled"]: state[key] = old[key]
+ state.city_services.enabled=bool(old.city_services.enabled)
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
  state.coins = 350.0*(1+int(state.prestige)*0.25)
@@ -887,6 +904,18 @@ func build_road(kind: String, cells: Array) -> bool:
 func remove_road(index: int) -> bool:
  if index<0 or index>=state.town.roads.size(): return false
  var remaining = TownRules.road_cells(state.town,index)
+ # Keep saved active trips valid. Docks are outside the road graph, so only
+ # interior waypoints protect a road until its last vehicle has returned.
+ var paths=[]
+ for shipment in state.delivery.shipments+state.construction_shipments: paths.append(shipment.path)
+ for mission in state.city_services.missions:
+  paths.append_array([mission.outward,mission.second,mission.back])
+ for walker in state.city_services.walkers: paths.append(walker.path)
+ for path in paths:
+  for point in path.slice(1,-1):
+   if not remaining.has(Vector2i(roundi(point[0]),roundi(point[2]))):
+    notice.emit("Auf dieser Straße sind noch Fahrzeuge oder Bewohner unterwegs")
+    return false
  for stop in state.town.stops:
   if not remaining.has(TownRules.cell(stop.cell)):
    notice.emit("Zuerst die Haltestelle an dieser Straße entfernen")
@@ -1022,10 +1051,8 @@ func delivery_routes() -> Dictionary:
  if signature==delivery_route_signature and not delivery_route_cache.is_empty(): return delivery_route_cache
  delivery_route_signature = signature
  delivery_route_cache = {}
- for link in LogisticsRoutes.belts(state):
-  for kind in ["sawmill","furniture"]:
-   if int(link.target)==int(state.delivery.nodes[kind]): delivery_route_cache[kind] = LogisticsRoutes.encode(link.points)
- delivery_route_cache.market = LogisticsRoutes.road_route(state,int(state.delivery.nodes.furniture),int(state.delivery.nodes.market))
+ for link in DeliveryChain.LINKS:
+  delivery_route_cache[link[1]] = LogisticsRoutes.road_route(state,int(state.delivery.nodes[link[0]]),int(state.delivery.nodes[link[1]]))
  return delivery_route_cache
 
 func start_delivery() -> bool:
@@ -1099,6 +1126,8 @@ func stop_delivery() -> bool:
  var returned = {}
  for kind in state.delivery.buffers:
   for key in state.delivery.buffers[kind]: returned[key] = float(returned.get(key,0))+float(state.delivery.buffers[kind][key])
+ for kind in state.delivery.recovered:
+  for key in state.delivery.recovered[kind]: returned[key] = float(returned.get(key,0))+float(state.delivery.recovered[kind][key])
  for shipment in state.delivery.shipments:
   if not shipment.arrived: returned[shipment.key] = float(returned.get(shipment.key,0))+float(shipment.amount)
  for key in returned:
@@ -1192,3 +1221,18 @@ func cancel_construction(id: int) -> bool:
   changed.emit()
   return true
  return false
+
+
+func collect_city_income() -> float:
+ var amount=float(state.city_services.treasury)
+ state.city_services.treasury=0.0
+ state.city_services.collected+=amount
+ earn(amount*multiplier())
+ changed.emit()
+ return amount
+
+func request_city_service(kind: String) -> bool:
+ var result=CityServices.dispatch(state,kind,city_route_cache)
+ if not result: notice.emit("Alle Fahrzeuge dieses Dienstes unterwegs oder Ziel nicht erreichbar")
+ changed.emit()
+ return result

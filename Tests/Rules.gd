@@ -30,7 +30,7 @@ func run() -> void:
  fresh()
  check(Catalog.BIOMES.size()==10,"Ten biomes")
  check(Catalog.TOOLS.size()==15,"Fifteen tool tiers")
- check(Catalog.HOMES.size()==12 and Catalog.HOMES.has("landhouse") and Catalog.HOMES.has("nightclub"),"Twelve city types include landhouse and nightclub")
+ check(Catalog.HOMES.size()==14 and Catalog.HOMES.has("landhouse") and Catalog.HOMES.has("nightclub"),"Fourteen city types include police, taxis, landhouse and nightclub")
  check(Game.state.buildings.size()==5,"Fresh company has a working starter industry")
  Game.chop()
  check(Game.state.bag > 0,"Manual wood goes into bag")

@@ -159,13 +159,6 @@ func run() -> void:
  scene.sync_actors()
  for actor in scene.actors.get_children():
   if actor.has_meta("forestry_tier"): check(actor.tier==14 and actor.scale.x>1,"Titan upgrade replaces the small machine")
- for tier in 10:
-  Game.state.vehicle=tier
-  scene.sync_actors()
-  for actor in scene.actors.get_children():
-   if not actor.has_meta("transport_tier"): continue
-   check(actor.tier==tier,"Saved transport tier changes its visible model")
-   actor._process(0.1)
  Game.state.tool=0
  scene.sync_actors()
  machine_count=0
@@ -224,10 +217,11 @@ func run() -> void:
  check(scene.town_layer.tap_rent(projected) and Game.rent_total()==0,"Tapping the world coin label really collects that house's rent")
  Game.state.town.districts=1
  check(Game.move_building(1,Vector3(248,0,-112)),"A working sawmill can move into an expanded district")
- var connected=false
- for link in scene.network.links:
-  if int(link.target)==1: connected=true
- check(connected,"Expanded industrial district still receives a visible conveyor connection")
+ check(LogisticsRoutes.road_route(Game.state,0,1).is_empty(),"A remote parcel without an access road cannot invent a freight route")
+ check(Game.build_road("asphalt",TownRules.path(Vector2i(200,-128),Vector2i(248,-128))),"The player can connect an expanded industrial parcel with a real access road")
+ var expanded=LogisticsRoutes.road_route(Game.state,0,1)
+ check(expanded.size()>1,"Expanded industrial district receives freight after its access road is built")
+ check(scene.get("network")==null,"Expanded districts do not recreate obsolete conveyor decks")
  scene.queue_free()
  await process_frame
  print("TOWN: ",checks," checks, ",failures.size()," failures")

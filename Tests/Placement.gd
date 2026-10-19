@@ -95,15 +95,11 @@ func run() -> void:
  check(Game.state.tutorial==5 and Game.state.jobs.size()==1,"Actual placed construction completes the tutorial")
  check(scene.ghost==null and not scene.hud.placement_panel.visible,"Successful construction closes the preview")
  check(scene.bins.size()==1,"Sawmill has a visible live sawdust bin")
- check(scene.network.links.size()>0,"Real building positions create conveyor connections")
- check(scene.network.elevation(Vector2(78,50))>=6,"Eastern boulevard also has truck clearance")
- check(scene.network.elevation(Vector2(-78,50))>=6,"Western boulevard also has truck clearance")
- for link in scene.network.links:
-  check(link.length>0 and link.points.size()>1,"Conveyor route has physical length and endpoints")
-  for p in link.points:
-   check(absf(p.x)<80 and p.z>=-156 and p.z<=166,"Conveyors remain inside the connected land network")
-   if absf(p.x)<=3.5:
-    check(p.y>=6,"Road crossings leave truck clearance")
+ check(scene.get("network")==null,"Inter-building conveyor network has been removed")
+ var road_route=LogisticsRoutes.road_route(Game.state,0,1)
+ check(road_route.size()>1,"Starter factories remain connected by a real truck road")
+ for p in road_route:
+  check(float(p[1])<2,"Freight travels at street level without conveyor bridges")
  scene.hud.open_menu("sawdust")
  check(scene.hud.contents.get_child_count()>0,"Bin can be emptied through a direct control")
  for menu in ["catalog","guide","welcome"]:

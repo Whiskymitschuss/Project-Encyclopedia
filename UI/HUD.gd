@@ -72,7 +72,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"LIEFERWERK / 15",11,GOLD)
+ var edition = text(brand,"STADTVERKEHR / 16",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -200,7 +200,7 @@ func build_overlay() -> void:
  var close_button = button(heading,"×",func(): close_menu())
  close_button.size_flags_horizontal = Control.SIZE_SHRINK_END
  close_button.custom_minimum_size.x = 46
- scroll = ScrollContainer.new()
+ scroll = load("res://UI/TouchScroll.gd").new()
  scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
  scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
  container.add_child(scroll)
@@ -371,6 +371,7 @@ func render_menu() -> void:
   "city": city_menu()
   "networks": networks_menu()
   "transit": transit_menu()
+  "services": services_menu()
   "plot": plot_menu()
   "contracts": contracts_menu()
   "world": world_menu()
@@ -450,7 +451,7 @@ func catalog_menu() -> void:
  button(contents,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
  text(contents,"Auswählen → in der Welt platzieren → drehen → bestätigen. Bezahlt wird erst beim Bestätigen. Straßen bleiben frei; Waldflächen werden geräumt.",15,MUTED)
  var tabs=row(contents)
- for name_value in ["Produktion","Wohnen","Versorgung"]:
+ for name_value in ["Produktion","Stadt","Versorgung"]:
   var category=str(name_value)
   var tab=button(tabs,category,func(): build_category=category; render_menu())
   tab.add_theme_font_size_override("font_size",14)
@@ -464,7 +465,7 @@ func catalog_menu() -> void:
  grid.add_theme_constant_override("h_separation",10)
  grid.add_theme_constant_override("v_separation",10)
  contents.add_child(grid)
- var city=build_category=="Wohnen"
+ var city=build_category=="Stadt"
  var definitions=Catalog.HOMES if city else Catalog.BUILDINGS
  for kind in definitions:
   if not city and ((build_category=="Versorgung")!=(kind in ["station","cabin","warehouse","market","research","garage"])): continue
@@ -523,9 +524,9 @@ func team_menu() -> void:
   button(tool,"AUS TEILEN BAUEN · %s Teile" % (3+int(Game.state.tool)*2),func(): action(func(): Game.craft_tool()))
 
 func garage_menu() -> void:
- text(contents,"Transportstufen verändern deine Straßenfahrzeuge vom Handwagen bis zum schweren Forsttransporter. Maschinen im Wald schaltest du unter Team mit den Werkzeugstufen frei.",15,MUTED)
+ text(contents,"Transportupgrades verbessern Ladekapazität und Fahrtempo. Höhere Stufen zeigen Gelenk-Auflieger und Tiefbetttransporter. Maschinen im Wald schaltest du unter Team mit den Werkzeugstufen frei.",15,MUTED)
  modal_title.text = "VEHICLE GARAGE"
- var box = card("%s Transportfahrzeuge" % Game.state.trucks,"Der Lieferbetrieb reserviert bis zu zwei vorhandene Fahrzeuge für Ladenlieferungen mit echtem Bestand und Rückfahrt. Weitere Fahrzeuge beliefern zusätzliche Verkaufsstellen im bisherigen Exportbetrieb. Die Garage schafft Stellplätze.")
+ var box = card("%s Transportfahrzeuge" % Game.state.trucks,"Deine gemeinsame Flotte transportiert Holz, Bretter, Möbel und Baumaterial. Beladen, Entladen und leere Rückfahrt belegen das Fahrzeug. Die Garage schafft zusätzliche Stellplätze.")
  button(box,"LIEFERKETTE & ZUTEILUNG",func(): open_menu("delivery"))
  button(box,"LKW KAUFEN · %s" % Catalog.number(Game.truck_cost()),func(): action(func(): Game.buy_truck()))
  var vehicle = card(Catalog.VEHICLES[int(Game.state.vehicle)],"Fahrzeugverbesserungen erhöhen Rucksack, Exportkapazität und sichtbare Fahrgeschwindigkeit.")
@@ -535,13 +536,14 @@ func garage_menu() -> void:
 
 func city_menu() -> void:
  modal_title.text = "DEINE STADT"
- card("%s Bewohner · %s Gebäude" % [Game.residents(),Game.state.homes.size()],"Bauwirtschaft: Möbelproduktion → Fertighauswerk → Wand- und Dachmodule → Häuser → Miete. Material und Geld werden bei Auftrag bezahlt. Erst fertiggestellte Gebäude erwirtschaften Ertrag.")
+ card("%s Bewohner · %s Gebäude" % [Game.residents(),Game.state.homes.size()],"Bauwirtschaft: Möbelproduktion → Fertighauswerk → Wand- und Dachmodule → Häuser → Miete. Ab Level 4 wird der Bauauftrag mit Münzen bezahlt; das Baumaterial kommt danach per LKW zur Baustelle. Erst fertiggestellte Gebäude erwirtschaften Ertrag.")
  var navigation = row(contents)
  button(navigation,"Regionen & Projekte",func(): open_menu("empire"))
  button(navigation,"Materialplaner",func(): open_menu("planner"))
  var urban=row(contents)
  button(urban,"Straßen & Wege",func(): open_menu("networks"))
  button(urban,"Buslinien",func(): open_menu("transit"))
+ button(contents,"STADTLEBEN · POLIZEI, FEUERWEHR & TAXIS",func(): open_menu("services"))
  var rents=card("Deine Miete","Auf die goldene Münzanzeige über einem Haus tippen oder hier gesammelt abholen. Bewohner und öffentliche Einrichtungen erhöhen den Ertrag.")
  dynamic_text(rents,func(): return "Abholbereit: %s Münzen" % Catalog.number(Game.rent_total()))
  button(rents,"ALLE MIETEN ABHOLEN",func(): action(func(): Game.collect_rent()))
@@ -595,7 +597,7 @@ func plot_menu() -> void:
 
 func contracts_menu() -> void:
  modal_title.text = "AUFTRÄGE & LIEFERUNGEN"
- var line = card("Dein Laden · echte Lieferkette","Holz → Bretter → Möbel. Förderbänder bringen Material zwischen den Betrieben; bis zu zwei deiner Fahrzeuge liefern die Möbel an den Laden. Pünktliche Aufträge bringen einen Bonus.")
+ var line = card("Dein Laden · echte Lieferkette","Holz → Bretter → Möbel. Holz-, Bretter- und Möbellieferungen fahren mit deinen Fahrzeugen über Straßen. Pünktliche Aufträge bringen einen Bonus.")
  if Game.state.delivery.active: dynamic_text(line,func(): return delivery_order_text())
  button(line,"LIEFERKETTE ÖFFNEN",func(): open_menu("delivery"))
  button(contents,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
@@ -624,7 +626,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -738,7 +740,7 @@ func settings_menu() -> void:
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.15.0 · Lieferwerk\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.16.0 · Stadtverkehr\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -818,7 +820,7 @@ func guide_menu() -> void:
  var step=mini(int(Game.state.tutorial),4)
  var box=card("Schritt %s / 4" % step,["","Tippe auf Fällen oder auf Bäume. Nach fünf gefällten Bäumen geht es weiter.","Tippe auf Abliefern. Dein Rucksack wird in das Holzlager geleert; Helfer liefern zusätzlich automatisch.","Öffne Verkaufen und verkaufe etwas Holz oder Bretter. Missionsprämien helfen beim ersten Ausbau.","Öffne Bauen, wähle ein Gebäude und platziere es in der Welt. Grün bedeutet frei; Rot zeigt Straßen oder belegte Flächen."][step])
  button(box,"WEITER SPIELEN",func(): close_menu())
- var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. LKWs verkaufen Möbel automatisch. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. Förderbrücken lassen die Straßen frei.")
+ var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. LKWs verkaufen Möbel automatisch. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. LKWs verbinden die Betriebe über das Straßennetz.")
  text(help,"Spänebox: regelmäßig leeren und verkaufen. Bei Störungen zeigt das Betriebsfenster den konkreten Grund. Mit einem Finger die Welt bewegen, mit zwei Fingern zoomen. Im Baumodus bewegt ein Finger das Bauwerk; zwei Finger bewegen die Kamera.",15,MUTED)
  button(help,"LIEFERKETTE & LADENAUFTRÄGE",func(): open_menu("delivery"))
  button(help,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
@@ -897,7 +899,7 @@ func delivery_order_text() -> String:
 
 func delivery_menu() -> void:
  modal_title.text = "DEIN LIEFERBETRIEB"
- var help = card("Aus deinem Holz werden Möbel","Kleine Lieferkette: Sammelstation → Sägewerk (2 Holz → 1 Brett) → Möbelfabrik (2 Bretter → 1 Möbel) → Verkaufsstelle. Material auf dem Band und im Fahrzeug gehört noch nicht zum Zielgebäude.")
+ var help = card("Aus deinem Holz werden Möbel","Kleine Lieferkette: Sammelstation → Sägewerk (2 Holz → 1 Brett) → Möbelfabrik (2 Bretter → 1 Möbel) → Verkaufsstelle. Material im Fahrzeug gehört noch nicht zum Zielgebäude.")
  var data = Game.state.delivery
  if not data.active:
   text(help,"Der erste betriebsbereite Betrieb jeder Art wird dieser Linie zugeordnet. Die beiden Fabriken arbeiten dann mit eigenen Puffern; weitere Betriebe behalten ihre bisherigen Rezepte. Für diese einfache Möbellinie ist keine Trockenkammer nötig.",15,MUTED)
@@ -924,7 +926,7 @@ func delivery_menu() -> void:
   var actions = row(box)
   button(actions,"ANSEHEN / AUSBAUEN",func(): show_building(index))
   button(actions,"INS LAGER HOLEN",func(): action(func(): Game.unload_delivery(key)))
- var freight = card("Unterwegs · bis zu %s Fahrzeuge" % mini(2,int(Game.state.trucks)),"Lieferfahrzeuge bleiben während der leeren Rückfahrt belegt. Voller Zielpuffer reserviert Platz für ankommende Ware und verhindert Überladung.")
+ var freight = card("Unterwegs · %s Fahrzeuge" % int(Game.state.trucks),"Lieferfahrzeuge bleiben während der leeren Rückfahrt belegt. Voller Zielpuffer reserviert Platz für ankommende Ware und verhindert Überladung.")
  dynamic_text(freight,func(): return "%s aktive Lieferungen" % Game.state.delivery.shipments.size())
  button(freight,"GARAGE",func(): open_menu("garage"))
  button(contents,"LINIE AUFLÖSEN & VORRÄTE ZURÜCKHOLEN",func(): action(func(): Game.stop_delivery()))
@@ -947,3 +949,30 @@ func construction_menu() -> void:
   button(choices,"10 KAUFEN",func(): action(func(): Game.buy_hardware(id,10)))
  card("So wird geliefert","Der Bauauftrag wird beim Platzieren bezahlt. Ein Transportfahrzeug nimmt tatsächlichen Vorrat am Lager auf, fährt über Straßen zur Baustelle, entlädt und kehrt leer zurück. Belegte Fahrzeuge fehlen an der Möbellinie. Automatik kauft keine Teile. Material bleibt für den Bau geschützt. Laufende alte Baustellen bleiben gültig.")
  button(contents,"BAUKATALOG",func(): open_menu("catalog"))
+
+
+func services_menu() -> void:
+ modal_title.text="LEBEN IN DEINER STADT"
+ var data=Game.state.city_services
+ var box=card("Deine Gemeindedienste","Polizei hilft in der Nachbarschaft, Feuerwehr prüft Rauchmelder und Rettungswagen leisten Erste Hilfe. Taxis holen Fahrgäste ab und bringen sie zu ihren Zielen. Ohne eigene Wache kommt die Gemeinde von der westlichen Zufahrt.")
+ button(box,"Neue Fahrten: AN" if data.enabled else "Neue Fahrten: AUS",func(): action(func(): data.enabled=not data.enabled))
+ dynamic_text(box,func(): return "%s aktive Fahrten · %s Spaziergänger\nStadtkasse: %s Münzen" % [data.missions.size(),data.walkers.size(),Catalog.number(float(data.treasury)*Game.multiplier())])
+ button(box,"STADTKASSE ABHOLEN",func(): action(func(): Game.collect_city_income()))
+ text(box,"Fahrgeld und Gemeindebonus entstehen erst nach erledigter Fahrt beziehungsweise Hilfe vor Ort. Laufende Fahrten enden auch bei ausgeschalteten neuen Aufträgen. Offline bleibt die Simulation aktiv.",14,MUTED)
+ for kind in CityServices.TYPES:
+  var key=str(kind)
+  var definition=Catalog.HOMES[CityServices.BUILDINGS[kind]]
+  var card_box=card({"police":"Polizei","fire":"Feuerwehr","ambulance":"Rettungsdienst","taxi":"Taxi"}[kind],"Eigener Standort: "+definition.name+". Kürzere Wege und mit höherem Gebäudelevel mehr gleichzeitig verfügbare Dienstfahrzeuge.")
+  dynamic_text(card_box,func(): return "%s abgeschlossene Aufträge" % int(data.completed.get(key,0)))
+  button(card_box,"FAHRT ANFORDERN",func(): action(func(): Game.request_city_service(key)))
+  button(card_box,"STANDORT BAUEN",func(): request_placement({"kind":CityServices.BUILDINGS[key],"city":true,"index":-1,"plot":-1}),Game.level("prefab")>0)
+ for mission in data.missions:
+  var job=mission
+  var entry=card(CityServices.NAMES[job.kind])
+  var focus_button=button(entry,"FAHRZEUG ANSEHEN",func():
+   if not job in data.missions: return
+   focus_requested.emit(CityServices.sample(job).position)
+   close_menu())
+  dynamic_text(entry,func():
+   focus_button.disabled=not job in data.missions
+   return "%s · %s s bis Rückkehr" % [CityServices.sample(job).status,maxi(0,ceili(float(job.total)-float(job.age)))] if job in data.missions else "Auftrag abgeschlossen · Bonus in der Stadtkasse")

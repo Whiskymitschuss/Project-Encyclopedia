@@ -28,6 +28,8 @@ const RECIPES = {
  "paper":{"in":{"wood":3.0,"sawdust":3.0},"out":{"paper":2.0},"speed":0.2},
  "design":{"in":{"furniture":2.0,"paper":2.0,"parts":1.0},"out":{"design":1.0},"speed":0.04}}
 const HOMES = {
+ "police":{"name":"Polizeiwache","cost":9000,"materials":{"walls":9.0,"roofs":5.0,"parts":6.0},"rent":0.0,"people":0,"color":"659fbd"},
+ "taxi":{"name":"Taxizentrale","cost":6500,"materials":{"walls":6.0,"roofs":3.0,"parts":4.0},"rent":0.0,"people":0,"color":"e7ba62"},
  "house":{"name":"Holzhaus","cost":1200,"materials":{"walls":3.0,"roofs":2.0,"furniture":2.0},"rent":2.0,"people":4,"color":"d99066"},
  "shop":{"name":"Quartiersladen","cost":2600,"materials":{"walls":5.0,"roofs":3.0,"parts":3.0},"rent":4.0,"people":2,"color":"e4b66b"},
  "apartments":{"name":"Wohnhaus","cost":5500,"materials":{"walls":9.0,"roofs":4.0,"parts":6.0,"furniture":6.0},"rent":8.0,"people":14,"color":"87a5be"},

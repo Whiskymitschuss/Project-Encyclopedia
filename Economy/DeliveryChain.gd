@@ -7,7 +7,7 @@ const KINDS = ["station","sawmill","furniture","market"]
 const LINKS = [["station","sawmill","wood"],["sawmill","furniture","boards"],["furniture","market","furniture"]]
 
 static func initial() -> Dictionary:
- return {"active":false,"nodes":{},"buffers":{},"progress":{},"shipments":[],"next_id":1,"orders":0,"on_time":0,"late_orders":0,"sold":0,"order":{},"last_receipt":"","paused":false}
+ return {"recovered":{},"active":false,"nodes":{},"buffers":{},"progress":{},"shipments":[],"next_id":1,"orders":0,"on_time":0,"late_orders":0,"sold":0,"order":{},"last_receipt":"","paused":false}
 
 static func start(state: Dictionary) -> bool:
  if state.delivery.active: return false
@@ -25,7 +25,7 @@ static func start(state: Dictionary) -> bool:
  return true
 
 static func next_order(state: Dictionary, data: Dictionary) -> Dictionary:
- return {"amount":3+mini(int(data.orders)/3,5),"delivered":0,"left":maxf(75,180-int(state.prestige)*10-mini(int(data.orders)*3,45)),"late":false}
+ return {"amount":3+mini(int(data.orders)/3,5),"delivered":0,"left":maxf(150,300-int(state.prestige)*10-mini(int(data.orders)*3,90)),"late":false}
 
 static func owns(state: Dictionary, index: int) -> bool:
  return state.delivery.active and index in state.delivery.nodes.values()
@@ -49,6 +49,13 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   var index = int(data.nodes.get(kind,-1))
   if index<0 or index>=state.buildings.size(): return report
   if state.buildings[index].get("paused",false): return report
+ for kind in data.recovered:
+  var keys = data.recovered[kind].keys()
+  keys.sort()
+  for key in keys:
+   var amount = minf(float(data.recovered[kind][key]),maxf(0,capacity(state,kind)-float(data.buffers[kind][key])))
+   data.recovered[kind][key] -= amount
+   data.buffers[kind][key] += amount
  # Arrival precedes production and dispatch. A dispatch can never teleport goods
  # into a downstream recipe in the same simulation tick.
  var finished = []
@@ -109,8 +116,9 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   for key in job.materials:
    if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)>0.0001 and float(state.resources[key])>0:
     reserve_truck=1
- var truck_count = mini(2,maxi(0,int(state.trucks)-state.construction_shipments.size()-reserve_truck))
- for i in LINKS.size():
+ var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-reserve_truck)
+ # Deliver downstream first so one starter truck can serve the entire chain.
+ for i in [2,1,0]:
   var source = LINKS[i][0]
   var target = LINKS[i][1]
   var key = LINKS[i][2]
@@ -118,18 +126,18 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   if route.size()<2: continue
   var busy = 0
   for s in data.shipments:
-   if (i==2 and s.mode=="truck") or (i<2 and s.source==source and s.mode=="belt"): busy += 1
-  if busy >= (truck_count if i==2 else 3): continue
+   if s.mode=="truck": busy += 1
+  if busy >= truck_count: continue
   var room = capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
-  var batch = mini(2+mini(int(state.vehicle),4),mini(floori(float(data.buffers[source][key])),floori(room)))
+  var batch = mini(4+int(state.vehicle)*2,mini(floori(float(data.buffers[source][key])),floori(room)))
   if batch<=0: continue
-  var travel = maxf(2,LogisticsRoutes.length(route)/(10.0+int(state.vehicle)) if i==2 else LogisticsRoutes.length(route)/5.0)
+  var travel = maxf(2,LogisticsRoutes.length(route)/(12.0+int(state.vehicle)))
   # The truck remains assigned while unloading and driving back empty.
   var drive = travel
-  if i==2: travel+=4.0
-  var total = travel+drive+2 if i==2 else travel
+  travel+=4.0
+  var total = travel+drive+2
   data.buffers[source][key] -= batch
-  data.shipments.append({"id":data.next_id,"source":source,"target":target,"key":key,"amount":batch,"mode":"truck" if i==2 else "belt","path":route.duplicate(true),"load":2.0 if i==2 else 0.0,"drive":drive,"unload":2.0 if i==2 else 0.0,"travel":travel,"total":total,"age":0.0,"arrived":false})
+  data.shipments.append({"id":data.next_id,"source":source,"target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":total,"age":0.0,"arrived":false})
   data.next_id += 1
  return report
 
@@ -146,3 +154,17 @@ static func status(state: Dictionary, kind: String) -> Dictionary:
   amount=float(data.buffers[kind][output_key])
   need=int(capacity(state,kind))
  return {"key":key,"amount":amount,"need":need,"ready":amount>=need,"full":full,"empty":amount<1,"text":"Ausgang voll" if full else "Bereit" if amount>=need else "Wartet auf Lieferung"}
+
+
+static func migrate_belts(state: Dictionary) -> void:
+ var data=state.delivery
+ if not data.has("recovered"): data.recovered={}
+ var kept=[]
+ for shipment in data.shipments:
+  if shipment.get("mode","")!="belt": kept.append(shipment); continue
+  if shipment.get("arrived",false): continue
+  var source=str(shipment.source)
+  if not data.recovered.has(source): data.recovered[source]={}
+  var key=str(shipment.key)
+  data.recovered[source][key]=float(data.recovered[source].get(key,0))+float(shipment.amount)
+ data.shipments=kept

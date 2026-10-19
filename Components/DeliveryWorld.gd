@@ -1,14 +1,12 @@
 extends Node3D
 
 var world: Node3D
-var belt_root: Node3D
 var badges: Array = []
 var visuals: Dictionary = {}
 var visual_pool: Dictionary = {}
 var overlay: Control
 var clock = 0.0
 var truck_visual_count = 0
-var belt_visual_count = 0
 
 func _ready() -> void:
  overlay = Control.new()
@@ -24,15 +22,7 @@ func rebuild() -> void:
  badges.clear()
  visuals.clear()
  visual_pool.clear()
- belt_root = Node3D.new()
- add_child(belt_root)
  if Game.state.delivery.active:
-  var drawing = ConveyorNetwork.new()
-  belt_root.add_child(drawing)
-  for kind in ["sawmill","furniture"]:
-   var route = Game.delivery_routes().get(kind,[])
-   for i in range(1,route.size()): drawing.deck(LogisticsRoutes.vector(route[i-1]),LogisticsRoutes.vector(route[i]))
-  Models.bake(drawing)
   for kind in DeliveryChain.KINDS:
    var index = int(Game.state.delivery.nodes[kind])
    make_badge(kind,index,-1)
@@ -109,30 +99,31 @@ func _process(delta: float) -> void:
   occupied.append(rect)
   b.button.position = p
  truck_visual_count = 0
- belt_visual_count = 0
  var present = {}
  var shipments = Game.state.delivery.shipments+Game.state.construction_shipments
  for shipment in shipments:
   var id = int(shipment.id)
   present[id] = true
-  var is_truck = shipment.mode=="truck"
-  var signature = ("truck:" if is_truck else "belt:")+str(shipment.key)+":"+str(Game.state.vehicle)
+  var signature = "truck:"+str(shipment.key)+":"+str(Game.state.vehicle)
+  if visuals.has(id) and str(visuals[id].get_meta("pool_key"))!=signature:
+   var old=visuals[id]
+   var old_key=str(old.get_meta("pool_key"))
+   old.hide()
+   if not visual_pool.has(old_key): visual_pool[old_key]=[]
+   if visual_pool[old_key].size()<4: visual_pool[old_key].append(old)
+   else: old.queue_free()
+   visuals.erase(id)
   if not visuals.has(id) and visual_pool.has(signature) and not visual_pool[signature].is_empty():
    visuals[id]=visual_pool[signature].pop_back()
    visuals[id].show()
   if not visuals.has(id):
    var node: Node3D
-   if is_truck:
-    node = TimberTruck.new()
-    node.tier = maxi(2,mini(4,int(Game.state.vehicle)))
-    node.cargo_furniture = shipment.key=="furniture"
-    node.cargo_boxes = shipment.key not in ["wood","furniture"]
-   else:
-    node = Node3D.new()
-    if shipment.key=="wood": Models.log_pile(node,Vector3(-0.5,0.5,0),2)
-    else:
-     for j in 3: Models.box(node,Vector3(1.6,0.18,2.3),Vector3(0,0.3+j*0.2,0),Color("f5c777"))
-    Models.bake(node)
+   node = TimberTruck.new()
+   node.tier = maxi(2,int(Game.state.vehicle))
+   node.cargo_furniture = shipment.key=="furniture"
+   node.cargo_boxes = shipment.key not in ["wood","boards","furniture"]
+   node.cargo_boards = shipment.key=="boards"
+   node.road_freight = true
    add_child(node)
    node.set_meta("pool_key",signature)
    visuals[id] = node
@@ -145,25 +136,23 @@ func _process(delta: float) -> void:
   var age = float(shipment.age)+minf(Game.tick_clock,0.99) if running else float(shipment.age)
   var progress = clampf(age/float(shipment.travel),0,1)
   var returning = false
-  if is_truck and shipment.has("drive"):
+  if shipment.has("drive"):
    progress=clampf((age-float(shipment.get("load",0)))/float(shipment.drive),0,1)
    if age>=float(shipment.travel):
     returning=true
     progress=1-clampf((age-float(shipment.travel))/float(shipment.drive),0,1)
-  elif is_truck and age>float(shipment.travel)+2:
+  elif age>float(shipment.travel)+2:
    returning=true
    progress = 1-clampf((age-float(shipment.travel)-2)/float(shipment.travel),0,1)
   var sample = LogisticsRoutes.sample(shipment.path,progress)
-  node.position = sample.position+Vector3(0,0.55,0) if not is_truck else sample.position
+  node.position = sample.position
   var direction = -sample.direction if returning else sample.direction
-  node.rotation.y = atan2(direction.x,direction.z)
-  if is_truck and progress>0.02 and progress<0.98: node.position+=Vector3(direction.z,0,-direction.x)*1.0
-  if is_truck:
-   truck_visual_count += 1
-   if running:
-    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
-   if node.cargo!=null: node.cargo.visible = not shipment.arrived
-  else: belt_visual_count += 1
+  node.follow_heading(direction,delta)
+  if progress>0.02 and progress<0.98: node.position+=Vector3(direction.z,0,-direction.x)*1.0
+  truck_visual_count += 1
+  if running and progress>0 and progress<1:
+   for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
+  if node.cargo!=null: node.cargo.visible = not shipment.arrived
  for id in visuals.keys():
   if not present.has(id):
    var node=visuals[id]
