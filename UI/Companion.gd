@@ -93,13 +93,14 @@ func progress() -> Dictionary:
 
 func observe() -> void:
  var now=progress()
+ var tree_target=25*(int(Game.state.prestige)+1)
  if not previous.is_empty():
   if now.prestige>previous.prestige: queue_message("Ein neues Kapitel! Ich bin wieder an deiner Seite. Lass uns etwas Schönes aufbauen.",true)
   elif now.homes>previous.homes: queue_message("Ein neues Zuhause! Unser Wald wird langsam zu einer richtigen kleinen Stadt.",true)
   elif now.buildings>previous.buildings: queue_message("Der neue Betrieb ist fertig! Das Team hat ganze Arbeit geleistet.",true)
   elif now.levels>previous.levels: queue_message("Ausbau geschafft! Ich mag es, wenn aus kleinen Anfängen etwas Großes wächst.",true)
   elif now.unlocked>previous.unlocked: queue_message("Eine neue Waldregion! Ich bin gespannt, was wir dort entdecken.",true)
-  elif previous.trees<25 and now.trees>=25: queue_message("25 Bäume – stark gemacht! Schau bei den Missionen nach deiner Belohnung.",true,"missions")
+  elif previous.trees<tree_target and now.trees>=tree_target: queue_message("%s Bäume – stark gemacht! Schau bei den Missionen nach deiner Belohnung." % tree_target,true,"missions")
  previous=now
 
 func queue_message(words: String, celebrate: bool=false, menu: String="") -> void:

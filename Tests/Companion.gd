@@ -83,6 +83,13 @@ func run() -> void:
  buddy.idle=101
  buddy._process(0.1)
  check(not buddy.bubble.visible,"Same idle hint does not keep returning")
+ buddy.pending={}
+ game.state.trees=25
+ buddy.observe()
+ check(buddy.pending.is_empty(),"Prestige does not announce a tree mission reward too early")
+ game.state.trees=50
+ buddy.observe()
+ check(buddy.pending.get("text","").contains("50 Bäume"),"Tree celebration follows the actual prestige mission target")
  buddy.fresh=false
  buddy.reported_offline=false
  game.offline_report="12 Min. offline · +80 Münzen"
