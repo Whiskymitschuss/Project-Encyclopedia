@@ -62,8 +62,10 @@ func _ready() -> void:
  header.add_child(top)
  var brand = row(top)
  var title = text(brand,"TIMBER LOOT",26)
+ title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- text(brand,"REBUILD / 07",12,GOLD)
+ var edition = text(brand,"REBUILD / 07",12,GOLD)
+ edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  money = text(top,"",23,GOLD)
  subtitle = text(top,"",13,MUTED)
  mission_button = button(self,"",func(): open_menu("missions"))
@@ -97,17 +99,19 @@ func _ready() -> void:
  supply.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
  supply.custom_minimum_size.y = 35
  var actions = row(bottom)
- var chop = button(actions,"FÄLLEN",func(): Game.chop())
+ var chop = button(actions,"FÄLLEN",func():
+  if Game.state.bag < Game.bag_capacity(): focus_requested.emit(Catalog.biome_position(int(Game.state.biome)))
+  Game.chop())
  chop.add_theme_stylebox_override("normal",style(GOLD,14))
  chop.add_theme_color_override("font_color",INK)
- button(actions,"Abliefern",func(): Game.deposit())
+ button(actions,"Abliefern",func(): Game.deposit(); camera_action.emit("home"))
  button(actions,"Verkaufen",func(): open_menu("market"))
  var navigation = row(bottom)
  for entry in [["Industrie","industry"],["Stadt","city"],["Aufträge","contracts"],["Welt","world"],["Mehr","more"]]:
   var tab = str(entry[1])
   var nav_button = button(navigation,str(entry[0]),func(): open_menu(tab))
   nav_button.add_theme_font_size_override("font_size",14)
- toast = text(self,"",16,CREAM)
+ toast = text(self,"",15,CREAM)
  toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
  toast.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  toast.offset_left = 20
@@ -276,6 +280,8 @@ func render_menu() -> void:
   "prestige": prestige_menu()
   "market": market_menu()
   "settings": settings_menu()
+  "empire": empire_menu()
+  "planner": planner_menu()
   "confirm_prestige": confirm_prestige_menu()
  scroll.set_deferred("scroll_vertical",old_scroll)
 
@@ -296,7 +302,8 @@ func industry_menu() -> void:
 
 func jobs_cards() -> void:
  for job in Game.state.jobs:
-  var box = card("Baustelle · %s" % (Catalog.HOMES[job.kind].name if job.type in ["home","home_upgrade"] else Catalog.BUILDINGS[job.kind].name))
+  var title = Catalog.PROJECTS[int(job.index)].name if job.type=="project" else Catalog.HOMES[job.kind].name if job.type in ["home","home_upgrade"] else Catalog.BUILDINGS[job.kind].name
+  var box = card("Baustelle · %s" % title)
   dynamic_text(box,func():
    var progress = 1-float(job.left)/float(job.total)
    return "%s · %s Sekunden" % [["Anlieferung","Fundament","Rohbau","Dach","Innenausbau"][mini(int(progress*5),4)],ceili(job.left)])
@@ -337,6 +344,7 @@ func team_menu() -> void:
  if int(Game.state.tool) < 14:
   text(tool,"Nächste Stufe: %s" % Catalog.TOOLS[int(Game.state.tool)+1],16,GOLD)
   button(tool,"VERBESSERN · %s" % Catalog.number(Game.tool_cost()),func(): action(func(): Game.upgrade_tool()))
+  button(tool,"AUS TEILEN BAUEN · %s Teile" % (3+int(Game.state.tool)*2),func(): action(func(): Game.craft_tool()))
 
 func garage_menu() -> void:
  modal_title.text = "VEHICLE GARAGE"
@@ -345,10 +353,14 @@ func garage_menu() -> void:
  var vehicle = card(Catalog.VEHICLES[int(Game.state.vehicle)],"Fahrzeugverbesserungen erhöhen Rucksack, Exportkapazität und sichtbare Fahrgeschwindigkeit.")
  if Game.state.vehicle < 9:
   button(vehicle,"NÄCHSTE STUFE · %s" % Catalog.number(Game.vehicle_cost()),func(): action(func(): Game.upgrade_vehicle()))
+  button(vehicle,"AUS TEILEN BAUEN · %s Teile" % (4+int(Game.state.vehicle)*3),func(): action(func(): Game.craft_vehicle()))
 
 func city_menu() -> void:
  modal_title.text = "DEINE STADT"
  card("%s Bewohner · %s Gebäude" % [Game.residents(),Game.state.homes.size()],"Bauwirtschaft: Möbelproduktion → Fertighauswerk → Wand- und Dachmodule → Häuser → Miete. Material und Geld werden bei Auftrag bezahlt. Erst fertiggestellte Gebäude erwirtschaften Ertrag.")
+ var navigation = row(contents)
+ button(navigation,"Regionen & Projekte",func(): open_menu("empire"))
+ button(navigation,"Materialplaner",func(): open_menu("planner"))
  jobs_cards()
  for i in 12:
   var index = i
@@ -361,6 +373,10 @@ func plot_menu() -> void:
  var plot = current_index
  modal_title.text = "GRUNDSTÜCK %s" % (plot+1)
  button(contents,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Catalog.home_position(plot)); close_menu())
+ if plot >= 4*(int(Game.state.region)+1):
+  card("Neue Region benötigt","Erweitere dein Unternehmen, um weitere Grundstücke zu erschließen.")
+  button(contents,"REGIONEN",func(): open_menu("empire"))
+  return
  for i in Game.state.homes.size():
   var index = i
   var h = Game.state.homes[i]
@@ -382,9 +398,11 @@ func plot_menu() -> void:
  for kind in Catalog.HOMES:
   var key = str(kind)
   var d = Catalog.HOMES[kind]
-  var box = card(d.name,"Miete %s/s · %s Bewohner" % [d.rent,d.people])
+  var public_effect = {"park":"Unternehmensweit +4 % Miete pro Stufe (zusammen maximal +100 %)","school":"+4 % Produktionsleistung pro Stufe (maximal +50 %)","clinic":"Unternehmensweit +4 % Miete pro Stufe (zusammen maximal +100 %)","fire":"+5 % Baugeschwindigkeit pro Stufe (maximal +50 %)"}.get(kind,"")
+  var box = card(d.name,public_effect if not public_effect.is_empty() else "Miete %s/s · %s Bewohner" % [d.rent,d.people])
   text(box,"%s Münzen\n%s" % [Catalog.number(float(d.cost)*Game.difficulty()),materials_text(d.materials)],15,GOLD)
   button(box,"BAU BEAUFTRAGEN",func(): action(func(): Game.order_home(key,plot)))
+  button(box,"ALS BAUZIEL VORMERKEN",func(): Game.set_plan(key,plot); open_menu("planner"))
 
 func contracts_menu() -> void:
  modal_title.text = "GROSSKUNDEN"
@@ -413,7 +431,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -429,9 +447,47 @@ func loot_menu() -> void:
  modal_title.text = "LOOT & INVENTAR"
  var box = card("%s Loot-Tickets" % Game.state.tickets,"Common 50 % · Uncommon 28 % · Rare 15 % · Epic 5,5 % · Legendary 1,4 % · Mythic 0,1 %. Jede Kiste enthält Münzen, Diamanten und einen Inventargegenstand. Keine Echtgeldkäufe.")
  button(box,"LOOTBOX ÖFFNEN",func(): action(func(): Game.open_loot()))
- for key in Game.state.inventory: card(str(key),"Bestand: %s" % Game.state.inventory[key])
+ for key in Game.state.inventory:
+  var item = str(key)
+  var slot = card(item,"Bestand: %s" % Game.state.inventory[key])
+  if item in ["Gebäude-Skin: Modern","Gold-Axt-Skin","Titan-Skin"]:
+   button(slot,"AUSRÜSTEN",func(): action(func(): Game.equip_skin(item)))
  if Game.state.inventory.is_empty(): text(contents,"Dein Inventar wartet auf den ersten Fund.",16,MUTED)
  text(contents,"Geldscheine: %s · Mythic Tokens: %s" % [Game.state.cash,Game.state.tokens],16,GOLD)
+ button(contents,"DAUERHAFT +10 % LOOT · 3 TOKENS",func(): action(func(): Game.invest_tokens()),Game.state.tokens>=3)
+
+func empire_menu() -> void:
+ modal_title.text = "KONZERN & REGIONEN"
+ var region = card(["Waldquartier","Seenregion","Stadtregion"][int(Game.state.region)],"%s / 12 Stadtgrundstücke verfügbar · %s Bewohner" % [4*(int(Game.state.region)+1),Game.residents()])
+ if Game.state.region < 2:
+  text(region,"Nächste Region: %s Münzen · %s Bewohner" % [Catalog.number(6000*pow(5,int(Game.state.region))*Game.difficulty()),4 if Game.state.region==0 else 20],16,GOLD)
+  button(region,"REGION ERSCHLIESSEN",func(): action(func(): Game.expand_region()))
+ for i in Catalog.PROJECTS.size():
+  var index = i
+  var p = Catalog.PROJECTS[i]
+  var stage = int(Game.state.projects.get(str(i),0))
+  var box = card("%s · %s/3" % [p.name,stage],"Fundament → Baukörper → Eröffnung. Erst nach drei abgeschlossenen Bauabschnitten entstehen dauerhaft %s Münzen/s." % p.income)
+  if stage<3:
+   var required = {}
+   for key in p.materials: required[key] = float(p.materials[key])*(stage+1)
+   text(box,"%s Münzen\n%s" % [Catalog.number(float(p.cost)*(stage+1)*Game.difficulty()),materials_text(required)],15,GOLD)
+   button(box,"BAUABSCHNITT BEAUFTRAGEN",func(): action(func(): Game.order_project(index)),not Game.job_for("project",index))
+  button(box,"IN DER WELT ANSEHEN",func(): focus_requested.emit(p.position); close_menu())
+ jobs_cards()
+
+func planner_menu() -> void:
+ modal_title.text = "MATERIALPLANER"
+ if Game.state.plan.is_empty():
+  card("Wähle dein nächstes Bauziel","Öffne ein freies Grundstück, wähle einen Gebäudetyp und tippe auf „Als Bauziel vormerken“. Die Vormerkung selbst kostet nichts.")
+  button(contents,"ZUR STADT",func(): open_menu("city"))
+  return
+ var plan = Game.state.plan
+ var definition = Catalog.HOMES[plan.kind]
+ var box = card("%s · Grundstück %s" % [definition.name,int(plan.plot)+1],"Benötigte Endprodukte werden vor automatischer Verarbeitung und Export geschützt. Rohstoffbedarf: Wand-/Dachmodule brauchen Trockenholz und Bretter; Bauelemente kommen aus der Tischlerei. Manuelle Verkäufe bleiben möglich.")
+ dynamic_text(box,func(): return "Budget: %s / %s Münzen\n%s" % [Catalog.number(Game.state.coins),Catalog.number(float(definition.cost)*Game.difficulty()),materials_text(definition.materials)])
+ button(box,"Automatisch beauftragen: AN" if plan.auto else "Automatisch beauftragen: AUS",func(): action(func(): Game.state.plan.auto = not Game.state.plan.auto))
+ button(box,"JETZT BEAUFTRAGEN",func(): action(func(): Game.order_home(plan.kind,int(plan.plot))))
+ button(box,"BAUZIEL ENTFERNEN",func(): action(func(): Game.state.plan = {}))
 
 func research_menu() -> void:
  modal_title.text = "FORSCHUNGSZENTRUM"

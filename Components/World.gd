@@ -2,8 +2,8 @@ extends Node3D
 
 var camera: Camera3D
 var sun: DirectionalLight3D
-var focus = Vector3(0,0,-12)
-var zoom = 112.0
+var focus = Vector3(0,0,-43)
+var zoom = 170.0
 var world_buildings: Node3D
 var actors: Node3D
 var tree_batches: Array = []
@@ -20,6 +20,10 @@ var pinch_distance = 0.0
 var hud: Control
 var weather: GPUParticles3D
 var audio: Node
+var machines: Array = []
+var chip_pool: Array = []
+var chip_index = 0
+var cranes: Array = []
 
 func _ready() -> void:
  RenderingServer.set_default_clear_color(Color("71b6bf"))
@@ -29,8 +33,8 @@ func _ready() -> void:
  env.background_color = Color("71b6bf")
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
  env.ambient_light_color = Color("c2d9cf")
- env.ambient_light_energy = 0.85
- env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+ env.ambient_light_energy = 0.65
+ env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
  environment_node.environment = env
  add_child(environment_node)
  sun = DirectionalLight3D.new()
@@ -61,6 +65,7 @@ func _ready() -> void:
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
  make_weather()
+ make_chip_pool()
  audio = load("res://Audio/Sound.gd").new()
  add_child(audio)
  Game.harvested.connect(func(_b,_a): audio.play_tone(190,0.07))
@@ -79,6 +84,9 @@ func build_landscape() -> void:
  # The entire connected road network stays at least 15 units inside land.
  for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
  for z in [-160,-60,-28,4,36,68,100,132,164]: road(Vector3(0,0.72,z),Vector3(164,0.25,7),false)
+ for project in Catalog.PROJECTS:
+  var side = signf(project.position.x)
+  road(Vector3(side*132,0.72,project.position.z+13),Vector3(104,0.25,7),false)
  for z in [-160,164]:
   for x in [-80,80]:
    Models.box(scenery,Vector3(1,1,1),Vector3(x,1.2,z),Color("d6d8bc"))
@@ -128,7 +136,12 @@ func build_forest() -> void:
   for i in 100:
    var point = center+Vector3(random.randf_range(-35,35),0,random.randf_range(-29,29))
    # Keep the north road and the center boulevards clear.
-   if absf(point.x-80)<6 or absf(point.x+80)<6: point.x += 9
+   if absf(point.x-80)<8: point.x = 90
+   if absf(point.x+80)<8: point.x = -90
+   for project in Catalog.PROJECTS:
+    if signf(point.x)==signf(project.position.x) and absf(point.x)>80 and absf(point.z-project.position.z-13)<7:
+     point.z -= 14
+    if point.distance_to(project.position)<18: point.x -= signf(point.x)*16
    var scale_value = random.randf_range(0.75,1.25)
    records.append({"point":point,"scale":scale_value,"regrow":0.0})
    for part in 3:
@@ -154,11 +167,15 @@ func rebuild() -> void:
  if world_buildings == null: return
  clear_children(world_buildings)
  moving_goods.clear()
+ machines.clear()
+ cranes.clear()
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
   var model = Models.building(b.kind,int(b.level))
   model.position = Catalog.industry_position(int(b.get("slot",i)))
   world_buildings.add_child(model)
+  var saw = model.get_node_or_null("Saw")
+  if saw != null: machines.append({"node":saw,"kind":b.kind})
   Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,b.level],Vector3(0,10,0),24)
   if Catalog.RECIPES.has(b.kind):
    for j in 3:
@@ -170,10 +187,25 @@ func rebuild() -> void:
   world_buildings.add_child(model)
   Models.label(model,"%s · %s" % [Catalog.HOMES[h.kind].name,h.level],Vector3(0,14,0),24)
  for job in Game.state.jobs:
-  if job.type in ["building","home"]:
+  if job.type in ["building","home","upgrade","home_upgrade","project"]:
    var model = Models.construction(1.0-float(job.left)/float(job.total))
-   model.position = Catalog.home_position(int(job.plot)) if job.type == "home" else Catalog.industry_position(int(job.slot))
+   if job.type in ["home","home_upgrade"]: model.position = Catalog.home_position(int(job.plot))
+   elif job.type == "upgrade":
+    var b = Game.state.buildings[int(job.index)]
+    model.position = Catalog.industry_position(int(b.get("slot",job.index)))
+   elif job.type == "project": model.position = Catalog.PROJECTS[int(job.index)].position
+   else: model.position = Catalog.industry_position(int(job.slot))
    world_buildings.add_child(model)
+   cranes.append(model.get_node("Crane"))
+ for i in Catalog.PROJECTS.size():
+  var project = Catalog.PROJECTS[i]
+  var stage = int(Game.state.projects.get(str(i),0))
+  if stage > 0:
+   var model = Models.building("hotel" if i < 2 else "office",stage*3,true)
+   model.position = project.position
+   world_buildings.add_child(model)
+   Models.label(model,project.name,Vector3(0,19,0),30)
+  else: Models.label(world_buildings,project.name,project.position+Vector3(0,2,0),26)
  actor_signature = ""
 
 func sync_actors() -> void:
@@ -228,10 +260,13 @@ func _process(delta: float) -> void:
  time += delta
  sync_actors()
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- sun.light_energy = 0.3+daylight*0.9
+ sun.light_energy = 0.22+daylight*0.65
  sun.rotation_degrees.x = -25-daylight*40
  weather.position = focus+Vector3(0,36,0)
  weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0
+ for machine in machines:
+  if float(Game.flow.get(machine.kind,0))>0: machine.node.rotate_y(delta*8)
+ for crane in cranes: crane.rotation.y = sin(time*0.45)*0.2
  for item in moving_goods:
   if float(Game.flow.get(item.kind,0)) > 0:
    item.phase = fmod(float(item.phase)+delta*0.18,1.0)
@@ -262,6 +297,32 @@ func on_harvested(biome: int, _amount: float) -> void:
  if closest >= 0:
   trees[biome][closest].regrow = 20.0
   set_tree_visible(biome,closest,false)
+  var effect = chip_pool[chip_index]
+  effect.position = trees[biome][closest].point+Vector3(0,3,0)
+  effect.restart()
+  effect.emitting = true
+  chip_index = (chip_index+1)%chip_pool.size()
+
+func make_chip_pool() -> void:
+ for i in 6:
+  var effect = CPUParticles3D.new()
+  effect.emitting = false
+  effect.one_shot = true
+  effect.amount = 12
+  effect.lifetime = 0.7
+  effect.explosiveness = 1
+  effect.direction = Vector3.UP
+  effect.spread = 80
+  effect.initial_velocity_min = 5
+  effect.initial_velocity_max = 9
+  effect.gravity = Vector3(0,-15,0)
+  effect.scale_amount_min = 0.15
+  effect.scale_amount_max = 0.35
+  var mesh = BoxMesh.new()
+  mesh.material = Models.material(Color("e5bd81"))
+  effect.mesh = mesh
+  add_child(effect)
+  chip_pool.append(effect)
 
 func set_camera() -> void:
  focus.x = clampf(focus.x,-175,175)
@@ -279,7 +340,7 @@ func camera_action(action: String) -> void:
  match action:
   "+": zoom = maxf(40,zoom*0.82)
   "−": zoom = minf(390,zoom*1.22)
-  "home": focus = Vector3(0,0,-12); zoom = 112
+  "home": focus = Vector3(0,0,-43); zoom = 170
   "world": focus = Vector3.ZERO; zoom = 370
  set_camera()
 

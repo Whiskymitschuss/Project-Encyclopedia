@@ -13,5 +13,6 @@ check() {
 }
 check --editor --import --quit
 check --script res://Tests/Rules.gd
+check --script res://Tests/Progression.gd
 check --script res://Tests/Scene.gd
 check --quit-after 90

@@ -17,7 +17,7 @@ func _ready() -> void:
  for x in [-0.23,0.23]: Models.box(body,Vector3(0.3,0.9,0.4),Vector3(x,0.55,0),Color("3e667b"))
  var axe = Models.box(body,Vector3(0.15,1.5,0.15),Vector3(0.7,1.5,0),Color("ab8153"))
  axe.rotation.z = -0.6
- Models.box(body,Vector3(0.7,0.45,0.2),Vector3(1.05,2,0),Color("c4d9d3"))
+ Models.box(body,Vector3(0.7,0.45,0.2),Vector3(1.05,2,0),Color("f4ce71") if Game.state.skin_tool == "Gold" else Color("ad9fd3") if Game.state.skin_tool == "Titan" else Color("c4d9d3"))
  pack = Node3D.new()
  body.add_child(pack)
  Models.log_pile(pack,Vector3(-0.6,1,-0.8),2)

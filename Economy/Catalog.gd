@@ -53,6 +53,12 @@ const TOOLS = ["Rostige Axt","Holzaxt","Stahlaxt","Silberaxt","Goldaxt","Diamant
 const RARITIES = ["Common","Uncommon","Rare","Epic","Legendary","Mythic"]
 const VEHICLES = ["Handwagen","Schubkarre","Pickup","LKW","Schwertransporter","Forstmaschine","Holzharvester","Industrie-Harvester","Mega-Harvester","Titan-Bagger"]
 const RESEARCH = {"production":"Serienfertigung","forestry":"Nachhaltige Forstwirtschaft","logistics":"Transportlogistik","loot":"Glücksforschung","construction":"Modulares Bauen"}
+const PROJECTS = [
+ {"name":"Wald-Ferienanlage","cost":8000.0,"materials":{"walls":8.0,"roofs":4.0,"furniture":8.0},"income":5.0,"position":Vector3(-176,0,-72)},
+ {"name":"Panorama-Hotel","cost":18000.0,"materials":{"walls":15.0,"roofs":8.0,"design":4.0},"income":12.0,"position":Vector3(176,0,-72)},
+ {"name":"Güterbahnhof","cost":40000.0,"materials":{"parts":30.0,"boards":100.0,"walls":20.0},"income":25.0,"position":Vector3(176,0,10)},
+ {"name":"Handelshafen","cost":95000.0,"materials":{"walls":30.0,"roofs":15.0,"parts":40.0},"income":55.0,"position":Vector3(-176,0,90)},
+ {"name":"Timber-Holzhochhaus","cost":220000.0,"materials":{"walls":60.0,"roofs":20.0,"design":30.0,"paper":100.0},"income":120.0,"position":Vector3(176,0,150)}]
 
 static func number(value: float) -> String:
  if absf(value) >= 1e9: return "%.2f Mrd" % (value / 1e9)

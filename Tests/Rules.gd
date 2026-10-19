@@ -162,6 +162,67 @@ func run() -> void:
  check(Game.state.unlocked==1 and Game.state.homes.is_empty(),"Prestige resets local company")
  check(Game.difficulty()>1 and Game.multiplier()>1,"Prestige increases both cost and permanent reward")
  fresh()
+ Game.state.coins = 1e7
+ Game.state.inventory = {"Werkzeugteile":3,"Fahrzeugteile":4,"Gebäude-Skin: Modern":1}
+ check(Game.craft_tool() and Game.state.tool==1 and Game.state.inventory.Werkzeugteile==0,"Tool parts produce a real upgrade")
+ check(not Game.craft_tool(),"Crafting cannot spend missing parts")
+ check(Game.craft_vehicle() and Game.state.vehicle==1,"Vehicle parts produce a real upgrade")
+ check(Game.equip_skin("Gebäude-Skin: Modern") and Game.state.skin=="Modern","Owned building skin can be equipped")
+ check(not Game.equip_skin("Titan-Skin"),"Unowned skins cannot be equipped")
+ Game.state.tokens = 3
+ check(Game.invest_tokens() and Game.state.permanent_loot==1 and Game.state.tokens==0,"Tokens buy a permanent loot improvement")
+ fresh()
+ Game.state.coins = 1e7
+ Game.state.buildings.append({"kind":"prefab","level":1,"paused":false})
+ check(not Game.order_home("house",4),"Unopened city region is protected")
+ check(not Game.expand_region(),"Region requires residents")
+ Game.state.homes.append({"kind":"house","level":1,"plot":0})
+ check(Game.expand_region() and Game.state.region==1,"Population and investment unlock more land")
+ Game.set_plan("house",1)
+ check(not Game.state.plan.is_empty(),"A building goal can be saved")
+ check(Game.reserve_for("furniture")==2,"Goal protects exactly its furniture need")
+ for key in Catalog.HOMES.house.materials: Game.state.resources[key]=Catalog.HOMES.house.materials[key]
+ Game.state.plan.auto = true
+ Game.step(1)
+ check(Game.state.plan.is_empty() and Game.state.jobs.size()==1,"Optional auto-order buys one affordable target")
+ Game.simulate(100)
+ check(Game.state.homes.size()==2 and Game.state.jobs.is_empty(),"Auto-order does not buy subsequent stages")
+ fresh()
+ Game.state.coins = 1e9
+ for stage in 3:
+  for key in Catalog.PROJECTS[0].materials:
+   Game.state.resources[key] = float(Catalog.PROJECTS[0].materials[key])*(stage+1)
+  check(Game.order_project(0),"Project stage starts")
+  check(not Game.order_project(0),"Duplicate project stage rejected")
+  Game.simulate(90)
+  check(int(Game.state.projects.get("0",0))==stage+1,"Project advances exactly once")
+ var project_coins = Game.state.coins
+ Game.step(1)
+ check(Game.state.coins>project_coins,"Completed project provides passive revenue")
+ check(not Game.order_project(0),"Finished project cannot be bought repeatedly")
+ fresh()
+ Game.state.workers = 12
+ Game.state.reserve = false
+ for kind in ["kiln","furniture","prefab","paper","joinery","design"]:
+  Game.state.buildings.append({"kind":kind,"level":3,"paused":false})
+ Game.simulate(1800)
+ check(Game.state.resources.walls>0 and Game.state.resources.roofs>0,"Prefab factory is not permanently starved by furniture")
+ check(Game.state.resources.paper>0 and Game.state.resources.design>0,"Scarce input scheduling reaches later production branches")
+ fresh()
+ Game.state.workers = 0
+ Game.state.reserve = false
+ for kind in ["kiln","furniture","prefab","joinery","paper"]:
+  Game.state.buildings.append({"kind":kind,"level":4,"paused":false})
+ for key in Game.state.resources: Game.state.resources[key] = 1.0
+ var fair_start = Game.state.duplicate(true)
+ Game.step(1)
+ var forward = Game.state.resources.duplicate()
+ Game.restore(fair_start)
+ Game.state.buildings.reverse()
+ Game.step(1)
+ for key in forward:
+  check(close(float(forward[key]),float(Game.state.resources[key])),"Shared allocation is independent of building order: "+key)
+ fresh()
  Game.state.coins = 12345.0
  check(Game.save(true),"Save can be written")
  Game.state.coins = 54321.0

@@ -73,6 +73,7 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
  var root = Node3D.new()
  var definition = Catalog.HOMES[kind] if city else Catalog.BUILDINGS[kind]
  var tone = Color(definition.color)
+ if Game.state.skin == "Modern": tone = tone.lerp(Color("82b2c3"),0.6)
  var floors = mini(1+int((level-1)/4.0),4)
  if city and kind in ["apartments","office","hotel"]: floors += 1
  var width = 12.0

@@ -20,7 +20,17 @@ func initial_state() -> Dictionary:
  var buildings = []
  for kind in ["station","sawmill","warehouse","cabin","market"]:
   buildings.append({"kind":kind,"level":1,"paused":false})
- return {"schema":1,"coins":350.0,"diamonds":5,"tickets":0,"tokens":0,"cash":0,"resources":resources,"bag":0.0,"tool":0,"workers":1,"trucks":1,"vehicle":0,"biome":0,"unlocked":1,"buildings":buildings,"homes":[],"jobs":[],"research":{},"inventory":{},"boosters":{},"prestige":0,"prestige_points":0,"trees":0,"gathered":0.0,"exported":0.0,"earned":0.0,"missions_claimed":{},"contracts":0,"boss_hp":100.0,"bosses":0,"time":9.0,"elapsed":0.0,"weather":0,"quality":1,"reserve":true,"auto_export":true,"muted":false,"last_seen":Time.get_unix_time_from_system()}
+ return {
+  "schema":1, "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
+  "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
+  "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
+  "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
+  "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
+  "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
+  "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
+  "boss_hp":100.0, "bosses":0, "time":9.0, "elapsed":0.0, "weather":0,
+  "quality":1, "reserve":true, "auto_export":true, "muted":false,
+  "last_seen":Time.get_unix_time_from_system()}
 
 func _ready() -> void:
  rng.randomize()
@@ -101,6 +111,12 @@ func residents() -> int:
  for h in state.homes: total += int(Catalog.HOMES[h.kind].people) * int(h.level)
  return total
 
+func public_level(kind: String) -> int:
+ var total = 0
+ for h in state.homes:
+  if h.kind == kind: total += int(h.level)
+ return total
+
 func multiplier() -> float:
  return 1.0 + int(state.prestige) * 0.25
 
@@ -119,6 +135,8 @@ func earn(amount: float) -> void:
  state.earned += amount
 
 func reserve_for(key: String) -> float:
+ var planned = float(plan_materials().get(key,0))
+ if not state.plan.is_empty(): return maxf(planned,10.0 if key == "boards" else 5.0 if key == "dry" else 0.0)
  if not state.reserve: return 0.0
  return {"boards":10.0,"dry":5.0,"furniture":4.0,"walls":2.0,"roofs":2.0,"parts":2.0,"paper":2.0}.get(key,0.0)
 
@@ -134,20 +152,38 @@ func step(delta: float) -> void:
  add_resource("wood",accepted)
  state.gathered += accepted
  flow = {}
+ var proposals = []
+ var demand = {}
+ var output_demand = {}
  for b in state.buildings:
   if b.get("paused",false) or not Catalog.RECIPES.has(b.kind): continue
   var recipe = Catalog.RECIPES[b.kind]
-  var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12)*multiplier()*boost("processing")*delta
+  var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")*delta
+  proposals.append({"kind":b.kind,"recipe":recipe,"cycles":cycles})
   for key in recipe["in"]:
-   cycles = minf(cycles,maxf(0.0,float(state.resources[key])-reserve_for(key))/float(recipe["in"][key]))
+   demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out:
-   cycles = minf(cycles,(capacity()-float(state.resources[key]))/float(recipe.out[key]))
-  cycles = maxf(0,cycles)
-  for key in recipe["in"]: state.resources[key] -= float(recipe["in"][key])*cycles
-  for key in recipe.out: add_resource(key,float(recipe.out[key])*cycles)
-  flow[b.kind] = float(flow.get(b.kind,0)) + cycles/maxf(delta,0.001)
+   output_demand[key] = float(output_demand.get(key,0))+float(recipe.out[key])*cycles
+ # Allocate scarce shared inputs proportionally from one common snapshot.
+ # Apply all consumption before output: no factory depends on array ordering.
+ var produced = {}
+ var consumed = {}
+ for proposal in proposals:
+  var recipe = proposal.recipe
+  var fraction = 1.0
+  for key in recipe["in"]:
+   fraction = minf(fraction,maxf(0.0,float(state.resources[key])-reserve_for(key))/maxf(float(demand[key]),0.0001))
+  for key in recipe.out:
+   fraction = minf(fraction,(capacity()-float(state.resources[key]))/maxf(float(output_demand[key]),0.0001))
+  var cycles = float(proposal.cycles)*maxf(0,fraction)
+  for key in recipe["in"]: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
+  for key in recipe.out: produced[key] = float(produced.get(key,0))+float(recipe.out[key])*cycles
+  flow[proposal.kind] = float(flow.get(proposal.kind,0))+cycles/maxf(delta,0.001)
+ for key in consumed: state.resources[key] = maxf(0,float(state.resources[key])-float(consumed[key]))
+ for key in produced: add_resource(key,float(produced[key]))
  if state.auto_export:
-  var exported = minf(maxf(0,float(state.resources.furniture)-reserve_for("furniture")),int(state.trucks)*level("market")*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
+  var export_reserve = reserve_for("furniture")+(4.0 if level("design")>0 else 0.0)
+  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),int(state.trucks)*level("market")*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
   state.resources.furniture -= exported
   state.exported += exported
   earn(exported*float(Catalog.PRICES.furniture)*multiplier()*boost("money"))
@@ -158,13 +194,23 @@ func step(delta: float) -> void:
  for h in state.homes:
   rent += float(Catalog.HOMES[h.kind].rent)*int(h.level)*minf(public_bonus,2.0)
  earn(rent*delta*multiplier()*boost("money"))
+ for project_index in Catalog.PROJECTS.size():
+  if int(state.projects.get(str(project_index),0)) >= 3:
+   earn(float(Catalog.PROJECTS[project_index].income)*delta*multiplier()*boost("money"))
  var completed = []
  for j in state.jobs:
-  j.left = maxf(0,float(j.left)-delta*(1+research_level("construction")*0.12))
+  j.left = maxf(0,float(j.left)-delta*(1+research_level("construction")*0.12+minf(public_level("fire")*0.05,0.5)))
   if j.left <= 0: completed.append(j)
  for j in completed:
   state.jobs.erase(j)
   finish_job(j)
+ if not state.plan.is_empty() and state.plan.get("auto",false):
+  var plan = state.plan.duplicate(true)
+  var affordable = state.coins >= float(Catalog.HOMES[plan.kind].cost)*difficulty()
+  for key in plan_materials():
+   affordable = affordable and float(state.resources[key]) >= float(plan_materials()[key])
+  if affordable:
+   if order_home(plan.kind,int(plan.plot)): state.plan = {}
 
 func chop() -> void:
  if state.bag >= bag_capacity():
@@ -175,7 +221,7 @@ func chop() -> void:
  state.gathered += amount
  state.trees += 1
  harvested.emit(int(state.biome),amount)
- if rng.randf() < 0.12*(1+research_level("loot")*0.08)*boost("loot"):
+ if rng.randf() < 0.12*(1+research_level("loot")*0.08+int(state.permanent_loot)*0.1)*boost("loot")*multiplier():
   state.tickets += 1
   notice.emit("Loot-Ticket im Baum gefunden!")
  changed.emit()
@@ -228,6 +274,7 @@ func order_building(kind: String) -> bool:
  if not pay(cost_for(kind)): return false
  var duration = 12.0+state.buildings.size()*2.0
  state.jobs.append({"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending})
+ rebuild_world.emit()
  changed.emit()
  save(true)
  return true
@@ -243,12 +290,13 @@ func upgrade(index: int) -> bool:
  if b.level >= Catalog.BUILDINGS[b.kind].max: return false
  if not pay(cost_for(b.kind,int(b.level)+1)): return false
  state.jobs.append({"type":"upgrade","index":index,"kind":b.kind,"left":10.0+int(b.level)*2.0,"total":10.0+int(b.level)*2.0})
+ rebuild_world.emit()
  changed.emit()
  save(true)
  return true
 
 func order_home(kind: String, plot: int) -> bool:
- if not Catalog.HOMES.has(kind) or plot < 0 or plot >= 12 or level("prefab") < 1: return false
+ if not Catalog.HOMES.has(kind) or plot < 0 or plot >= 4*(int(state.region)+1) or level("prefab") < 1: return false
  for h in state.homes:
   if int(h.plot) == plot: return false
  for j in state.jobs:
@@ -256,6 +304,8 @@ func order_home(kind: String, plot: int) -> bool:
  var definition = Catalog.HOMES[kind]
  if not pay(float(definition.cost)*difficulty(),definition.materials): return false
  state.jobs.append({"type":"home","kind":kind,"plot":plot,"left":60.0,"total":60.0})
+ if not state.plan.is_empty() and int(state.plan.plot)==plot: state.plan = {}
+ rebuild_world.emit()
  changed.emit()
  save(true)
  return true
@@ -269,6 +319,7 @@ func upgrade_home(index: int) -> bool:
  for key in definition.materials: materials[key] = ceilf(float(definition.materials[key])*0.5*int(h.level))
  if not pay(float(definition.cost)*pow(1.4,int(h.level))*difficulty(),materials): return false
  state.jobs.append({"type":"home_upgrade","kind":h.kind,"index":index,"plot":h.plot,"left":45.0,"total":45.0})
+ rebuild_world.emit()
  changed.emit()
  save(true)
  return true
@@ -279,6 +330,7 @@ func finish_job(job: Dictionary) -> void:
   "upgrade": state.buildings[int(job.index)].level += 1
   "home": state.homes.append({"kind":job.kind,"level":1,"plot":job.plot})
   "home_upgrade": state.homes[int(job.index)].level += 1
+  "project": state.projects[str(int(job.index))] = int(state.projects.get(str(int(job.index)),0))+1
  rebuild_world.emit()
  notice.emit("Bau abgeschlossen · %s" % job.kind)
 
@@ -312,6 +364,82 @@ func tool_cost() -> float:
 func upgrade_tool() -> bool:
  if int(state.tool) >= Catalog.TOOLS.size()-1 or not pay(tool_cost()): return false
  state.tool += 1
+ changed.emit()
+ return true
+
+func craft_tool() -> bool:
+ var needed = 3+int(state.tool)*2
+ if state.tool >= 14 or int(state.inventory.get("Werkzeugteile",0)) < needed:
+  notice.emit("Nicht genug Werkzeugteile")
+  return false
+ state.inventory.Werkzeugteile -= needed
+ state.tool += 1
+ changed.emit()
+ return true
+
+func craft_vehicle() -> bool:
+ var needed = 4+int(state.vehicle)*3
+ if state.vehicle >= 9 or int(state.inventory.get("Fahrzeugteile",0)) < needed:
+  notice.emit("Nicht genug Fahrzeugteile")
+  return false
+ state.inventory.Fahrzeugteile -= needed
+ state.vehicle += 1
+ changed.emit()
+ return true
+
+func plan_materials() -> Dictionary:
+ if state.plan.is_empty(): return {}
+ return Catalog.HOMES[state.plan.kind].materials
+
+func set_plan(kind: String, plot: int) -> void:
+ if not Catalog.HOMES.has(kind) or plot < 0 or plot >= 4*(int(state.region)+1): return
+ for home in state.homes:
+  if int(home.plot)==plot: return
+ state.plan = {"kind":kind,"plot":plot,"auto":false}
+ changed.emit()
+ notice.emit("Bauziel vorgemerkt · benötigte Vorräte bleiben geschützt")
+
+func expand_region() -> bool:
+ if state.region >= 2: return false
+ var required_population = 4 if int(state.region)==0 else 20
+ if residents() < required_population:
+  notice.emit("Mindestens %s Bewohner für die nächste Region benötigt" % required_population)
+  return false
+ if not pay(6000.0*pow(5.0,int(state.region))*difficulty()): return false
+ state.region += 1
+ state.cash += 3
+ changed.emit()
+ return true
+
+func order_project(index: int) -> bool:
+ if index < 0 or index >= Catalog.PROJECTS.size() or job_for("project",index): return false
+ var stage = int(state.projects.get(str(index),0))
+ if stage >= 3: return false
+ var definition = Catalog.PROJECTS[index]
+ var materials = {}
+ for key in definition.materials: materials[key] = float(definition.materials[key])*(stage+1)
+ if not pay(float(definition.cost)*(stage+1)*difficulty(),materials): return false
+ state.jobs.append({"type":"project","kind":"project","index":index,"left":90.0,"total":90.0})
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+ return true
+
+func equip_skin(item: String) -> bool:
+ if int(state.inventory.get(item,0)) <= 0: return false
+ match item:
+  "Gebäude-Skin: Modern": state.skin = "Modern"
+  "Gold-Axt-Skin": state.skin_tool = "Gold"
+  "Titan-Skin": state.skin_tool = "Titan"
+  _: return false
+ rebuild_world.emit()
+ changed.emit()
+ return true
+
+func invest_tokens() -> bool:
+ if state.tokens < 3: return false
+ state.tokens -= 3
+ state.permanent_loot += 1
  changed.emit()
  return true
 
@@ -442,7 +570,7 @@ func prestige() -> bool:
   return false
  var old = state.duplicate(true)
  state = initial_state()
- for key in ["diamonds","tokens","cash","inventory"]: state[key] = old[key]
+ for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot"]: state[key] = old[key]
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
  state.coins = 350.0*(1+int(state.prestige)*0.25)
