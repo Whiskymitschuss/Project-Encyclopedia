@@ -16,6 +16,8 @@
 - Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, unverändert zu 0.12. Versionscode 1300, Speicherformat 1, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft; GL Compatibility, keine Berechtigungen. Neue Stadt-, Straßen-, Bus- und Forstmaschinen-Skripte sind im Paket enthalten; Tests und Release-Dateien sind ausgeschlossen.
 - Frische unabhängige GitHub-Kopie: `/workspace/timber-restore-13`. Erstimport, vollständige Headless-Suite, erster-Haus-Verlauf und Hauptszenenstart dort erneut bestanden. Anschließend auch die 23 OpenGL-Prüfungen in dieser Kopie bestanden.
 
+- APK, passende Quell-ZIP, Stadt- und Busvorschau vom festen Tag `v0.13.0-town` vollständig per HTTPS mit HTTP 200 zurückgeladen. SHA256 stimmen mit Originaldateien und der unabhängigen GitHub-Wiederherstellung überein. Bericht: `download-verification-13.json`.
+
 ## Historischer Prüfbericht 0.12
 
 # Prüfung 0.12 — Waldleben
