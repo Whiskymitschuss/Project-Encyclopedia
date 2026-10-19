@@ -3,8 +3,16 @@
 - Bestehende 220 Regel-, 4.135 Szenen-/Geometrie- und 56 Platzierungs-/Einführungsprüfungen unverändert im Umfang bestanden. Der frische Verlauf erreicht das erste Haus weiter nach 1.682 simulierten Sekunden ohne Zusatzressourcen.
 - 40 zusätzliche Werkstattprüfungen: tatsächlich leere Maschine steht; echte Umwandlung treibt das Sägeblatt an; sofortige Pause friert Werkzeug und Werkstück ein; Materialmangel stoppt; ein Bediener arbeitet passend zur Maschine; alle acht Produktionsarten werden auf Stufen 1/10/100 instanziiert, ohne Ressourcen zu ändern; HUD bleibt bei drei Bildschirmgrößen innerhalb der Zeichenfläche.
 - OpenGL-Bildausgabe unter Mesa/Xvfb: neuer Einstieg, offene Säge, Stadtansicht, Baukatalog, Platzierung und Willkommen aufgenommen. Die ausgebaute Welt und Materialvorräte sind ausschließlich ein Demonstrationsprofil des Capture-Skripts; kein bestehender Nutzerspielstand wird dafür geändert.
-- Schema 1, Speicherdatei und Paketkennung unverändert. Die Signaturprüfung der Update-APK und die externe Wiederherstellung werden im Auslieferungsbericht ergänzt. Reale Geräteinstallation, Touch und mobile Leistung dieser Version sind noch nicht geprüft.
+- Schema 1, Speicherdatei und Paketkennung unverändert. Paket/Versionscode 900, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft; Zertifikat stimmt mit 0.8 überein. Aus GitHub neu nach `/workspace/timber-restore-09` geklont; alle 4.451 Prüfungen, der frische Verlauf und der Hauptszenenstart erneut bestanden. Reale Geräteinstallation, Touch und mobile Leistung dieser Version sind noch nicht geprüft.
 - Die Referenzbilder dienen als Richtung für offene Produktionsflächen und übersichtliche Bedienung. Modelle und Symbole sind eigene Geometrie/Vektoren. Es werden keine Screenshots oder Spielressourcen fremder Spiele in die App eingebunden.
+
+## Auslieferungsstand 0.9
+
+- Quell-Commit: `8a9f0eb7f1486d1d5b1f24616f057d718c3e62be`.
+- APK: 56.577.150 Bytes, SHA256 `9ec4fe4252eb8914b908a50f0fa935b181a1e693f0def026e8f9420e379a15c1`.
+- Quell-ZIP: 62 Dateien, 1.569.317 Bytes, SHA256 `6bc0400009cd0a514d63d338275179f5ccebc7cf52701264482c0b3bfec5fc4f`. Jede Datei gegen Git-Blob des APK-Quellstands geprüft.
+- Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005` (unverändert).
+- Externe HTTPS-Downloads werden nach dem Push vollständig zurückgeladen und vor Ausgabe an den Benutzer per SHA256 verglichen.
 
 ## Historischer Prüfbericht 0.8
 

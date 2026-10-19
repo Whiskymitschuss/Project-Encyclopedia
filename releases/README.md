@@ -1,3 +1,19 @@
+# Timber Loot Tycoon 0.9 — Open Workshop
+
+**[Android-Update 0.9 direkt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.9.0-workshop/releases/Timber-Loot-Tycoon-v0.9-test.apk)**
+
+**[Passendes Quellprojekt 0.9 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.9.0-workshop/releases/Timber-Loot-Tycoon-v0.9-source.zip)**
+
+Als Update über die vorhandene 0.7/0.8-App installieren; nicht vorher deinstallieren und keine App-Daten löschen. Paket, Testsignatur und Schema-1-Speicherdatei bleiben gleich, Versionscode steigt auf 900. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, etwa 54 MiB, keine Berechtigungen.
+
+Neu: offene Produktionsplätze, sichtbare Stammzufuhr und Werkstücke, Sägeblatt und Werkzeugköpfe mit echtem Produktionsstatus, Helm-/Warnwesten-Arbeiter an Maschinen, Holz- und Bretterstapel sowie kompakte mobile Navigation mit eigenen Symbolen. Alle Wirtschaftssysteme und freies Platzieren aus 0.8 bleiben enthalten.
+
+4.451 automatisierte Prüfungen und der frische Verlauf bis zum ersten Haus bestanden, auch nach erneutem Klonen von GitHub. Signaturgleichheit mit der bisherigen APK sowie 16-KB-ZIP-Ausrichtung und Android-Paket geprüft. Ein echter Handy-Start und Leistungstest dieser Version steht aus.
+
+APK-Quellstand: `8a9f0eb7f1486d1d5b1f24616f057d718c3e62be`. Prüfsummen stehen in `SHA256SUMS.txt`, Paketdaten im `.apk.json`.
+
+## Historischer Stand 0.8
+
 # Timber Loot Tycoon 0.8 — Living Industry
 
 **[Android-Update 0.8 direkt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/main/releases/Timber-Loot-Tycoon-v0.8-test.apk)**
