@@ -1,4 +1,16 @@
-# Timber Loot Tycoon 0.7 — Testdateien
+# Timber Loot Tycoon 0.8 — Living Industry
+
+**[Android-Update 0.8 direkt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/main/releases/Timber-Loot-Tycoon-v0.8-test.apk)**
+
+**[Passendes Quellprojekt 0.8 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/main/releases/Timber-Loot-Tycoon-v0.8-source.zip)**
+
+Als Update über die bestehende 0.7-App installieren, nicht deinstallieren und keine App-Daten löschen. Gleiche Paketkennung, gleicher Testsignaturschlüssel, höhere Versionsnummer (800), gleiche Speicherdatei. Bestehende Spielstände behalten ihren Fortschritt.
+
+Neu: platzieren/drehen/verschieben, farbiger Baukatalog, helle Gebäudekarten, geroutete Förderbrücken, Spänebox mit manuellem Verkauf, Willkommen und Einführung. Die Blockade der Sägewerke durch volle Sägespäne-Behälter ist behoben. Standardmäßig wird nur neuer Überlauf kompostiert; gespeicherte Sägespäne bleiben zum Verkaufen und Weiterverarbeiten erhalten. Überlauf-Autoverkauf ist optional.
+
+220 Regel-, 4.135 Szenen-/Geometrie- und 54 Platzierungs-/Einführungsprüfungen bestanden; frischer Spielverlauf bis zum ersten Haus geprüft. Installation/Touch auf echter Hardware bleibt für diese neue APK offen. Signaturvergleich mit 0.7 ist bestanden.
+
+## Älterer gesicherter Stand 0.7
 
 **[Android-APK direkt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/main/releases/Timber-Loot-Tycoon-v0.7-test.apk)**
 

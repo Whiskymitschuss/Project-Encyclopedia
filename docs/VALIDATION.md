@@ -5,6 +5,7 @@
 - Weiterhin 4.135 Szenen-/Geometrieprüfungen, frischer Verlauf bis zum ersten Haus und abschließender Hauptszenenstart.
 - OpenGL-Bilder von frischer Welt, Baukatalog, Platzierungsvorschau, Willkommen und ausgebautem Demonstrationsstand geprüft.
 - Android-Updateprüfung: neue Versionsnummer 800, unveränderte Paketkennung und bisheriger Testsignaturschlüssel. Paket- und Downloadprüfung werden beim finalen Export erneut ausgeführt.
+- Finaler APK-Export bestanden: 56.560.193 Bytes, SHA256 `25a7303854a39a72907f661d5fe026d9c4eeb90b65121d17264ee34986cb04f1`, Quell-Commit `7b091d0b96638f3921eb0962abff77964a5e3d4d`. Signatur stimmt mit der gespeicherten 0.7-APK überein; keine Android-Berechtigungen, ARM64/ARMv7, OpenGL, Hochformat und 16-KB-ZIP-Ausrichtung geprüft.
 - Grenzen: echte Touch-/Installations-/Leistungsprüfung auf einem Telefon bleibt offen. Förderstrecken zeigen aktive Produktion und gemeinsame Materialpuffer; es gibt keine zusätzliche Fahrzeugkollision oder diskrete Simulation jedes einzelnen Bretts.
 
 Der folgende Bericht dokumentiert den ursprünglichen 0.7-Meilenstein; seine Hashwerte beziehen sich auf diese ältere Fassung.
