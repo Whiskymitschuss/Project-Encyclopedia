@@ -10,6 +10,13 @@
 - Vier neue Vorschauen aus einem ausdrücklich aufgebauten Demonstrationsprofil: Stadtverkehr, Fracht, Dienste und gewischter Baukatalog. Vorhandene Nutzerprofile wurden nicht für Tests oder Aufnahmen verwendet.
 - Keine Behauptung einer vollständigen Kollisions-/Ampelsimulation oder einer neuen End-to-End-Logistik für sämtliche alten fortgeschrittenen Fabriken. Die offenen Master-Phasen bleiben in [Industrie-Masterplan](INDUSTRY-ROADMAP.md) dokumentiert. Kein Android-Geräte-, Touch- oder Leistungsnachweis für die neue Version.
 
+## Auslieferung 0.16
+
+- APK-Quellstand: `c8c9e032f643d965e432773af4b6d334c62d3ed1`.
+- APK: 58,257,975 Bytes, SHA256 `64253ea0dd1eaeee5f2e4e9cdb2105a86e36c2999a219b1a527319caaaafcab4`.
+- Quell-ZIP: 177 Dateien, 8,892,181 Bytes, SHA256 `f17dc81dcbaff01bfd59c3a656e7d9dd6bd5a2b5e69ea9225f8346cd1391a081`. Jede Datei gegen den Git-Blob des APK-Quellstands geprüft; Release-Dateien sind aus dem Quellarchiv ausgeschlossen.
+- Gleiches Zertifikat wie 0.15: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1600, Speicherformat 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Alle neuen Laufzeitskripte sind im APK enthalten; das entfernte Conveyor-Skript sowie Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
+
 ## Historischer Prüfbericht 0.15
 
 # Prüfung 0.15 — Lieferwerk, erster Abschnitt des Industrie-Masterplans

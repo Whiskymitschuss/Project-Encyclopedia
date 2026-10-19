@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.16 — Stadtverkehr
+
+**[Android-Update 0.16 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.16.0-traffic/releases/Timber-Loot-Tycoon-v0.16-test.apk)**
+
+**[Passendes Quellprojekt 0.16 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.16.0-traffic/releases/Timber-Loot-Tycoon-v0.16-source.zip)**
+
+Förderstrecken zwischen den Gebäuden sind entfernt. Holz, Bretter, Möbel und Baumaterial werden über Straßen gefahren; alle drei Kettenstrecken und Baustellen teilen die gekaufte Flotte. Höhere Fahrzeugstufen zeigen Gelenk-Auflieger beziehungsweise Tiefbett mit tatsächlicher Ladung und leerer Rückfahrt. Alte Bandladungen werden ohne Materialverlust übernommen.
+
+Polizei, Feuerwehr, Krankenwagen, Taxis mit Fahrgästen und gespeicherte Bewohnerwege beleben die Stadt. Neue Polizeiwache und Taxizentrale sind frei platzierbar. Unter **Mehr → Stadtleben & Fahrzeuge** Fahrten anfordern, eigene Standorte bauen und die Stadtkasse abholen. Einnahmen entstehen erst bei erfülltem Auftrag. Dienstfahrzeuge kommen bis zum Bau eigener Standorte von der westlichen Zufahrt.
+
+Im Baukatalog und anderen Listen direkt über Karten und Schaltflächen mit dem Finger wischen. Wischen löst keinen Kauf aus; kurze Tipps funktionieren weiterhin. Nachlauf, abgebrochene Gesten und kleine Hochformatbildschirme wurden geprüft.
+
+**Als Update installieren, nicht vorher deinstallieren und keine App-Daten löschen.** Gleiches Paket, gleicher Testschlüssel, Schema-1-Spielstand; Versionscode 1600. Oben rechts steht **STADTVERKEHR / 16**. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB, keine Berechtigungen.
+
+12.461 automatisierte Headless- und 81 Desktop-OpenGL-Prüfungen bestanden. APK-Quellstand `c8c9e032f643d965e432773af4b6d334c62d3ed1`; das passende Quellarchiv enthält 177 einzeln gegen Git geprüfte Dateien. Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`. Die neue Version wurde noch nicht auf echter Android-Hardware geprüft. Die offenen größeren Industriephasen stehen im [Industrie-Masterplan](../docs/INDUSTRY-ROADMAP.md).
+
+## Historischer Stand 0.15
+
 # Timber Loot Tycoon 0.15 — Lieferwerk
 
 **[Android-Update 0.15 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.15.0-delivery/releases/Timber-Loot-Tycoon-v0.15-test.apk)**
