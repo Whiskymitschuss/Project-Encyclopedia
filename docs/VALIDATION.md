@@ -1,3 +1,13 @@
+# Prüfung 0.11 — Benno im Wald
+
+- 220 Regel-, 4.135 Szenen-, 56 Platzierungs-, 42 Werkstatt- und 21 neue Begleiterprüfungen: zusammen 4.474 Headless-Prüfungen. Weiterhin frischer erster-Haus-Verlauf nach 1.682 simulierten Sekunden sowie abschließender Szenenstart.
+- Begleiterprüfungen: kompatibles altes Profil, Begrüßung ohne Währungsänderung, Winkeauslöser, wegklickbare Blase, keine angebliche Fertigstellung bei bloßem Bauauftrag, Reaktion auf Fertigstellung, Menüs und Platzierung frei, Hinweise aus echtem Vorrat, Abschalten ohne Ereignisstau, Einstellung nach Restore/Prestige, erneutes Einschalten, nur einmaliger gleicher Tipp, tatsächlicher Offline-Bericht nur einmal und Rückkehrbegrüßung.
+- 23 OpenGL-Prüfungen: bisherige 3D-Menüs plus getrennte Portraitbeleuchtung, wirklich gerenderter transparenter Biber, sichtbare Silhouette und Änderung der gerenderten Pixel beim Winken.
+- Begrüßung und Biber, Werkstatt, Baukatalog, Platzierung und neue Willkommen-Grafik unter OpenGL geprüft. Die fortgeschrittenen Capture-Bilder verwenden einen ausdrücklich aufgebauten Demonstrationsstand und eine inszenierte Feierblase; ihre Ressourcen sind kein Nutzerspielstand.
+- APK-Gerätetest, Benachrichtigungen/Resume unter Android und langfristige Begleiterhäufigkeit bleiben auf Hardware zu prüfen. Kein Sprachsynthese-/Voiceover-System, keine Loginpflicht, keine täglichen Verluststrafen oder erzwungenen Belohnungsdialoge.
+
+## Historischer Prüfbericht 0.10
+
 # Prüfung 0.10 — Sculpted World
 
 - 220 Regel-, 4.135 Szenen-/Geometrie- und 56 Platzierungsprüfungen. Der frische Spielverlauf erreicht das erste Haus weiterhin nach 1.682 simulierten Sekunden ohne zusätzliche Ressourcen.

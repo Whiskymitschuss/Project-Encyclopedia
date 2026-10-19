@@ -40,6 +40,21 @@ func run() -> void:
  check(raised.content_margin_top<pressed.content_margin_top,"Pressed controls move their content into the face")
  icons.notification(Node.NOTIFICATION_APPLICATION_RESUMED)
  check(icons.render_target_update_mode==SubViewport.UPDATE_ONCE,"3D symbols redraw after application resumes")
+ var portrait=scene.hud.companion.portrait
+ check(portrait.find_world_3d()!=scene.get_world_3d(),"Companion lighting does not leak into the landscape")
+ var beaver=portrait.get_texture().get_image()
+ check(beaver!=null and beaver.get_size()==Vector2i(176,224),"Beaver portrait is actually rendered")
+ if beaver!=null:
+  var occupied=0
+  for y in range(0,224,3):
+   for x in range(0,176,3):
+    if beaver.get_pixel(x,y).a>0.5: occupied+=1
+  check(occupied>200 and occupied<3500,"Beaver has visible geometry and transparent padding")
+  portrait.actor.animate(0.4)
+  portrait.render_target_update_mode=SubViewport.UPDATE_ONCE
+  for i in 3: await process_frame
+  await RenderingServer.frame_post_draw
+  check(beaver.get_data()!=portrait.get_texture().get_image().get_data(),"Waving changes the actual rendered companion portrait")
  scene.queue_free()
  game.state=before
  await process_frame

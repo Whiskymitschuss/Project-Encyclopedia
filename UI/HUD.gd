@@ -35,6 +35,7 @@ var placement_hint: Label
 var placement_confirm: Button
 var build_category = "Produktion"
 var spatial_icons: SubViewport
+var companion: Control
 
 func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxTexture:
  return Surface.create(color,radius,pressed)
@@ -69,7 +70,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"SCULPT / 10",11,GOLD)
+ var edition = text(brand,"BENNO / 11",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -170,12 +171,13 @@ func _ready() -> void:
  toast.add_theme_constant_override("shadow_offset_y",2)
  build_overlay()
  build_placement_bar()
+ companion=load("res://UI/Companion.gd").new()
+ companion.hud=self
+ add_child(companion)
  Game.changed.connect(update_stats)
  Game.notice.connect(show_notice)
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
  update_stats()
- if not Game.offline_report.is_empty(): show_notice(Game.offline_report)
- else: show_notice("Willkommen! Dein Waldimperium wartet." if int(Game.state.tutorial)==0 else "Willkommen zurück. Dein Imperium wartet.")
  if int(Game.state.tutorial)==0: call_deferred("open_menu","welcome")
 
 func build_overlay() -> void:
@@ -656,8 +658,9 @@ func settings_menu() -> void:
  var box = card("Lokaler Spielstand","Automatische Speicherung alle 20 Sekunden, beim Wechsel in den Hintergrund und nach Bauaufträgen. Eine Backup-Datei schützt den vorherigen gültigen Stand. Bis zu acht Stunden Offline-Wirtschaft.")
  button(box,"JETZT SPEICHERN",func(): Game.save())
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
+ button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.10.0 · Sculpted World\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.11.0 · Benno im Wald\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -710,6 +713,13 @@ func sawdust_menu() -> void:
 
 func welcome_menu() -> void:
  modal_title.text="WILLKOMMEN IM WALD"
+ var illustration=TextureRect.new()
+ illustration.texture=load("res://Assets/Brand/timber-beaver.jpg")
+ illustration.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+ illustration.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ illustration.custom_minimum_size=Vector2(0,210)
+ illustration.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ contents.add_child(illustration)
  var box=card("Dein erstes Holz. Dein eigenes Imperium.","Aus einer kleinen Forststation wird deine lebendige Industriestadt. Du bestimmst, wo neue Gebäude stehen und wie dein Betrieb wächst.")
  text(box,"1  Bäume fällen und Holz abliefern\n2  Bretter, Trockenholz und Möbel herstellen\n3  Gebäude selbst platzieren und verbessern\n4  Häuser bauen und neue Regionen erschließen",18,CREAM)
  button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.state.tutorial=1; Game.save(true); update_stats(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))

@@ -29,7 +29,7 @@ func initial_state() -> Dictionary:
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
   "boss_hp":100.0, "bosses":0, "time":9.0, "elapsed":0.0, "weather":0,
-  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false,
+  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false, "companion_enabled":true,
   "last_seen":Time.get_unix_time_from_system()}
 
 func _ready() -> void:
@@ -675,7 +675,7 @@ func prestige() -> bool:
   return false
  var old = state.duplicate(true)
  state = initial_state()
- for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot"]: state[key] = old[key]
+ for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled"]: state[key] = old[key]
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
  state.coins = 350.0*(1+int(state.prestige)*0.25)
