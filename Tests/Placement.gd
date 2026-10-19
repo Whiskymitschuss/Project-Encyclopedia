@@ -96,6 +96,8 @@ func run() -> void:
  check(scene.ghost==null and not scene.hud.placement_panel.visible,"Successful construction closes the preview")
  check(scene.bins.size()==1,"Sawmill has a visible live sawdust bin")
  check(scene.network.links.size()>0,"Real building positions create conveyor connections")
+ check(scene.network.elevation(Vector2(78,50))>=6,"Eastern boulevard also has truck clearance")
+ check(scene.network.elevation(Vector2(-78,50))>=6,"Western boulevard also has truck clearance")
  for link in scene.network.links:
   check(link.length>0 and link.points.size()>1,"Conveyor route has physical length and endpoints")
   for p in link.points:

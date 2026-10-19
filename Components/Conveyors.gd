@@ -81,6 +81,7 @@ func port(grid: AStarGrid2D, at: Vector3, rotation: int, towards: Vector3) -> Ve
 
 func elevation(point: Vector2) -> float:
  var distance = absf(point.x)
+ for x in [-80,80]: distance=minf(distance,absf(point.x-x))
  for z in Placement.ROADS: distance = minf(distance,absf(point.y-z))
  # Cross roads on raised conveyor bridges; truck clearance remains free.
  return 1.8+4.6*clampf((12.0-distance)/8.0,0,1)

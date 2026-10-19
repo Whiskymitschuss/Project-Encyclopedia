@@ -1,7 +1,7 @@
 # Prüfung 0.8 — Living Industry
 
 - 220 Regelprüfungen: zusätzlich volles Sägespäne-Lager, korrekte Überlaufmenge, optionaler Verkauf, Weiterverarbeitung und Wiederanlauf einer gespeicherten Firma mit 2.500 Holz/Sägespänen. Restore kopiert Daten unabhängig, ohne den geladenen Ausgangsstand zu verändern.
-- 54 Platzierungs-/Einführungsprüfungen: Straßen/Wasser/Überlappung, kostenlose abgebrochene Vorschau, bezahlte Baustelle, gesperrte doppelte Platzierung, Rotation und gespeicherter Standort, kostenloses Verschieben samt Erhalt von Stufe/Geld, frei positionierte Häuser, altes Profil ohne Zwangstutorial, neue Einführung, Spänebox und Förderverbindungen mit Straßendurchfahrt.
+- 56 Platzierungs-/Einführungsprüfungen: Straßen/Wasser/Überlappung, kostenlose abgebrochene Vorschau, bezahlte Baustelle, gesperrte doppelte Platzierung, Rotation und gespeicherter Standort, kostenloses Verschieben samt Erhalt von Stufe/Geld, frei positionierte Häuser, altes Profil ohne Zwangstutorial, neue Einführung, Spänebox und Förderverbindungen mit Straßendurchfahrt.
 - Weiterhin 4.135 Szenen-/Geometrieprüfungen, frischer Verlauf bis zum ersten Haus und abschließender Hauptszenenstart.
 - OpenGL-Bilder von frischer Welt, Baukatalog, Platzierungsvorschau, Willkommen und ausgebautem Demonstrationsstand geprüft.
 - Android-Updateprüfung: neue Versionsnummer 800, unveränderte Paketkennung und bisheriger Testsignaturschlüssel. Paket- und Downloadprüfung werden beim finalen Export erneut ausgeführt.

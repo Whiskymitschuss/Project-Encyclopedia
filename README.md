@@ -53,7 +53,7 @@ Die automatisierte Progressionsprüfung erreicht das erste Haus aus einem frisch
 
 ## Prüfung und Grenzen
 
-`bash scripts/test.sh` verwendet temporäre Spielstände: 220 Regelprüfungen, ein frischer Verlauf bis zum ersten Haus, 4.135 Szenen-/Geometrieprüfungen 54 Platzierungs-/Tutorialprüfungen sowie ein abschließender Headless-Start. [Prüfbericht](docs/VALIDATION.md). Die Bilder unter `docs/` stammen aus dem Spiel; die Stadtansicht verwendet ausdrücklich einen nur für das Bild aufgebauten Demonstrationsstand.
+`bash scripts/test.sh` verwendet temporäre Spielstände: 220 Regelprüfungen, ein frischer Verlauf bis zum ersten Haus, 4.135 Szenen-/Geometrieprüfungen 56 Platzierungs-/Tutorialprüfungen sowie ein abschließender Headless-Start. [Prüfbericht](docs/VALIDATION.md). Die Bilder unter `docs/` stammen aus dem Spiel; die Stadtansicht verwendet ausdrücklich einen nur für das Bild aufgebauten Demonstrationsstand.
 
 Noch offen: reale Android-Gerätetests für Touch, Safe Area, Hintergrund, Temperatur und Akku; 50-Stunden-Balancing, Barrierefreiheit, Release-Signierung, iOS und Store-Abnahme. Freies Straßenzeichnen, Immobilienverkauf/Umbau, vollständig simulierte Bahn-/Schifffahrt und eigene Musik pro Biom sind noch nicht enthalten. Fahrzeuge verwenden derzeit ein gemeinsames LKW-Modell; höhere Stufen verändern Geschwindigkeit und Kapazität. Geldscheine und einige seltene Baupläne haben noch keinen eigenen Ausgabepfad. Großprojekte verwenden Standortmodelle; es gibt noch keinen echten Hafenverkehr. Keine Werbung, In-App-Käufe oder Cloud-Spielstandsynchronisierung.
 
