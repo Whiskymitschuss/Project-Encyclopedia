@@ -15,6 +15,8 @@
 - Zertifikat SHA256: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`, identisch zu 0.13. Versionscode 1400, Speicherformat 1, v2-Signatur und 16-KB-ZIP-Ausrichtung geprüft; GL Compatibility, keine Berechtigungen. `ValleyLandscape` im APK enthalten; Tests und Release-Dateien ausgeschlossen.
 - Frische unabhängige GitHub-Kopie: `/workspace/timber-restore-14`. Erstimport, 4.856 Headless-Prüfungen, erster-Haus-Verlauf und Hauptszenenstart dort erneut bestanden. Anschließend auch alle 32 OpenGL-Prüfungen in dieser Kopie bestanden.
 
+- APK, passende Quell-ZIP und drei Landschaftsvorschauen vom festen Tag `v0.14.0-valley` vollständig per HTTPS mit HTTP 200 heruntergeladen. Alle SHA256 stimmen mit Originaldateien und der frischen GitHub-Wiederherstellung überein. Bericht: `download-verification-14.json`.
+
 ## Historischer Prüfbericht 0.13
 
 # Prüfung 0.13 — Die erste Kleinstadt

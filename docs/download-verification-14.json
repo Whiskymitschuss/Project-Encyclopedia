@@ -1,0 +1,37 @@
+[
+  {
+    "file": "Timber-Loot-Tycoon-v0.14-test.apk",
+    "bytes": 58181415,
+    "http_status": 200,
+    "sha256": "0634691f9fe0357572a417a5031dcfbeee2b87585eb252f0040fc43976f4fbb7",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/releases/Timber-Loot-Tycoon-v0.14-test.apk"
+  },
+  {
+    "file": "Timber-Loot-Tycoon-v0.14-source.zip",
+    "bytes": 6847459,
+    "http_status": 200,
+    "sha256": "77fbc20fe249a91c4f7c0246baad6067d86a6ad3f8c1d5d51008ad5b8bbe7256",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/releases/Timber-Loot-Tycoon-v0.14-source.zip"
+  },
+  {
+    "file": "preview-valley-overview.png",
+    "bytes": 572941,
+    "http_status": 200,
+    "sha256": "19dabbff0082a85d5633be5ee3196928c0b115ca8aa0e1126d04c2b92a598cdf",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/docs/preview-valley-overview.png"
+  },
+  {
+    "file": "preview-valley-river.png",
+    "bytes": 269843,
+    "http_status": 200,
+    "sha256": "48e9a5ffc49318a680f1596fee4b32055409752b6645c1eb23cbd0c833d6d11c",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/docs/preview-valley-river.png"
+  },
+  {
+    "file": "preview-valley-evening.png",
+    "bytes": 510829,
+    "http_status": 200,
+    "sha256": "a11aac36a73c31a1aa17c002b474eb03365c065ac58d3201e76ea6d9fd38dff2",
+    "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.14.0-valley/docs/preview-valley-evening.png"
+  }
+]
