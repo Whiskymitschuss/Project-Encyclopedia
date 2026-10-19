@@ -127,7 +127,7 @@ func run() -> void:
  var count=life.celebrations
  life.on_completed(point,"building")
  life._process(0)
- check(life.celebrations==count and not life.effects[0].label.visible,"Disabled scenes suppress opening effects")
+ check(life.celebrations==count and not life.effects[0].label.visible and not life.effects[0].particles.visible,"Disabled scenes immediately suppress opening captions and particles")
  var saved=game.snapshot()
  game.restore(saved)
  check(not game.state.ambient_enabled,"Everyday scene preference survives restore")

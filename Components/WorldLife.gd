@@ -97,6 +97,7 @@ func on_completed(point: Vector3, job_type: String) -> void:
 func _process(delta: float) -> void:
  var enabled=Game.state.get("ambient_enabled",true)
  for effect in effects:
+  effect.particles.visible=enabled
   if not enabled:
    effect.left=0
    effect.particles.emitting=false
