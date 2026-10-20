@@ -69,7 +69,7 @@ func run() -> void:
  check(excavator!=null and excavator.turret!=null and excavator.boom!=null and excavator.stick!=null and excavator.bucket!=null,"Excavator has an articulated turret, boom, stick and actual bucket")
  check(excavator.load_mesh.visible==(StoneIndustry.site(game.state,5).bucket>0),"The visible shovel load follows its actual saved material")
  for shipment in game.state.stone.shipments:
-  var truck=scene.delivery_world.visuals[int(shipment.id)]
+  var truck=scene.delivery_world.visuals[scene.delivery_world.visual_key(shipment)]
   check(truck.cargo.visible==not shipment.arrived,"Every rendered truck shows loaded or empty status from the simulation")
   if shipment.key in ["rock","gravel"]: check(truck.get("bed")!=null,"Bulk raw material uses a real tipper model")
   if shipment.key=="stone": check(truck.cargo_stone and truck.trailer!=null,"Palletized building stones travel on the upgraded flatbed trailer")
@@ -79,7 +79,7 @@ func run() -> void:
   shipment.age=float(shipment.travel)
   game.tick_clock=0
   scene.delivery_world._process(0.1)
-  var node=scene.delivery_world.visuals[int(shipment.id)]
+  var node=scene.delivery_world.visuals[scene.delivery_world.visual_key(shipment)]
   var parked=node.position
   game.tick_clock=0.8
   scene.delivery_world._process(0.1)

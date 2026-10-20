@@ -54,11 +54,36 @@ func make_badge(kind: String, index: int, job_index: int) -> void:
  label.mouse_filter = Control.MOUSE_FILTER_IGNORE
  content.add_child(label)
  button.add_child(content)
+ var output_icon = TextureRect.new()
+ var output_label = Label.new()
+ if kind in ["sawmill","furniture"]:
+  button.custom_minimum_size=Vector2(96,54)
+  button.size=Vector2(96,54)
+  content.offset_bottom=-27
+  var output=HBoxContainer.new()
+  output.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+  output.offset_left=7
+  output.offset_right=-5
+  output.offset_top=27
+  output.mouse_filter=Control.MOUSE_FILTER_IGNORE
+  output_icon.custom_minimum_size=Vector2(24,24)
+  output_icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+  output_icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+  output_icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
+  output.add_child(output_icon)
+  output_label.add_theme_font_size_override("font_size",14)
+  output_label.add_theme_color_override("font_color",Color("fff8e6"))
+  output_label.mouse_filter=Control.MOUSE_FILTER_IGNORE
+  output.add_child(output_label)
+  button.add_child(output)
+ else:
+  output_icon.free()
+  output_label.free()
  button.pressed.connect(func():
   if kind=="construction": world.hud.open_menu("construction")
   else: world.hud.show_building(index))
  overlay.add_child(button)
- badges.append({"kind":kind,"index":index,"job":job_index,"button":button,"icon":icon,"label":label,"at":Vector3.ZERO})
+ badges.append({"kind":kind,"index":index,"job":job_index,"button":button,"icon":icon,"label":label,"output_icon":output_icon if kind in ["sawmill","furniture"] else null,"output_label":output_label if kind in ["sawmill","furniture"] else null,"at":Vector3.ZERO})
 
 func refresh_badges() -> void:
  for b in badges:
@@ -92,6 +117,9 @@ func refresh_badges() -> void:
    b.button.tooltip_text = Catalog.BUILDINGS[b.kind].name+" · "+info.text
   b.icon.texture = load("res://Assets/Resources/%s.svg" % info.key) if ResourceLoader.exists("res://Assets/Resources/%s.svg" % info.key) else load("res://Assets/Resources/boards.svg")
   b.label.text = "%s/%s" % [int(info.amount),int(info.need)]
+  if b.output_icon!=null:
+   b.output_icon.texture=load("res://Assets/Resources/%s.svg" % info.output_key)
+   b.output_label.text="→ %s/%s" % [int(info.output_amount),int(info.output_capacity)]
   var color = Color("42a77c") if info.ready else Color("bd624c") if info.empty else Color("c28c36")
   if info.full: color = Color("42a77c")
   if Game.state.delivery.get("paused",false) and b.kind!="construction": color = Color("667e85")
@@ -104,9 +132,10 @@ func _process(delta: float) -> void:
  for b in badges:
   b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.zoom<260 and not world.camera.is_position_behind(b.at)
   if not b.button.visible: continue
-  var p = world.camera.unproject_position(b.at)-Vector2(41,38)
-  var rect = Rect2(p,Vector2(82,42))
-  if p.x<4 or p.x+82>world.hud.size.x-4 or p.y<170 or p.y+42>world.hud.size.y-190: b.button.hide(); continue
+  var extent: Vector2=b.button.size
+  var p = world.camera.unproject_position(b.at)-Vector2(extent.x/2,extent.y-4)
+  var rect = Rect2(p,extent)
+  if p.x<4 or p.x+extent.x>world.hud.size.x-4 or p.y<170 or p.y+extent.y>world.hud.size.y-190: b.button.hide(); continue
   for previous in occupied:
    if rect.intersects(previous): b.button.hide(); break
   if not b.button.visible: continue
@@ -116,7 +145,7 @@ func _process(delta: float) -> void:
  var present = {}
  var shipments = Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments
  for shipment in shipments:
-  var id = int(shipment.id)
+  var id = visual_key(shipment)
   present[id] = true
   var signature = "truck:"+str(shipment.key)+":"+str(Game.state.vehicle)
   if visuals.has(id) and str(visuals[id].get_meta("pool_key"))!=signature:
@@ -141,6 +170,15 @@ func _process(delta: float) -> void:
    node.road_freight = true
    add_child(node)
    node.set_meta("pool_key",signature)
+   var cargo_label=Label3D.new()
+   cargo_label.name="RouteLabel"
+   cargo_label.position=Vector3(0,7,0)
+   cargo_label.billboard=BaseMaterial3D.BILLBOARD_ENABLED
+   cargo_label.font_size=32
+   cargo_label.pixel_size=0.065
+   cargo_label.outline_size=5
+   cargo_label.no_depth_test=true
+   node.add_child(cargo_label)
    visuals[id] = node
   var node: Node3D = visuals[id]
   var running = true
@@ -169,6 +207,11 @@ func _process(delta: float) -> void:
   if running and progress>0 and progress<1:
    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
   if node.cargo!=null: node.cargo.visible = not shipment.arrived
+  var cargo_label: Label3D=node.get_node("RouteLabel")
+  cargo_label.visible=world.zoom<140
+  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else Catalog.BUILDINGS[shipment.target].name
+  cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
+  cargo_label.modulate=Color("c9e5dc") if shipment.arrived else Color("fff2bf")
   if node.get("bed")!=null:
    node.tipping=-0.55 if age>=float(shipment.load)+float(shipment.drive) and age<float(shipment.travel) and float(shipment.age)<float(shipment.travel) else 0.0
  for id in visuals.keys():
@@ -180,6 +223,11 @@ func _process(delta: float) -> void:
    if visual_pool[key].size()<4: visual_pool[key].append(node)
    else: node.queue_free()
    visuals.erase(id)
+
+func visual_key(shipment: Dictionary) -> String:
+ # Saves retain their original IDs. Separate domains prevent two simultaneous
+ # jobs with the same numeric ID from sharing a model or swapping cargo types.
+ return "%s:%s" % ["construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "wood",int(shipment.id)]
 
 func _exit_tree() -> void:
  if is_instance_valid(overlay): overlay.queue_free()

@@ -37,7 +37,12 @@ static func status(job: Dictionary) -> String:
   var phase_title = PHASES[mini(6,int(job.phase))]
   if job.get("paused",false): return "%s · Baustelle pausiert" % phase_title
   if int(job.workers)<=0: return "%s · wartet auf Bauarbeiter" % phase_title
-  return "%s · %s %% · %s" % [phase_title,int((1-float(job.left)/float(job.total))*100),"Bau läuft" if phase_ready(job) else "wartet auf Materiallieferung"]
+  var work_status = "Bau läuft"
+  for key in job.get("materials",{}):
+   if phase_need(job,key)>0.00001:
+    work_status="wartet auf %s" % Catalog.RESOURCES[key]
+    break
+  return "%s · %s %% · %s" % [phase_title,int((1-float(job.left)/float(job.total))*100),work_status]
  if ready(job): return "Bau läuft · %s s" % ceili(job.left)
  var parts: Array[String] = []
  for key in job.materials:
@@ -52,7 +57,9 @@ static func attach(job: Dictionary, workers: int = 1) -> void:
  job.workers = workers
  job.paused = false
  job.priority = false
- job.requested = false
+ # A paid site requests its phase materials immediately, including before
+ # company level ten. Pausing remains the explicit way to stop new deliveries.
+ job.requested = true
  job.phases = []
  for title in PHASES: job.phases.append({"name":title,"materials":{}})
  for key in job.materials:
@@ -91,6 +98,46 @@ static func incoming(state: Dictionary, id: int, key: String) -> float:
   if int(s.job)==id and s.key==key and not s.arrived: result += float(s.amount)
  return result
 
+static func sources(state: Dictionary, key: String) -> Array:
+ # Only actual outputs are pickup points. Never reclaim a factory's inputs or
+ # goods already on a truck: that would send boards back through the wood line.
+ var result = []
+ if state.delivery.active:
+  var kind = {"wood":"station","boards":"sawmill","furniture":"furniture"}.get(key,"")
+  if not kind.is_empty() and state.delivery.nodes.has(kind):
+   result.append({"kind":kind,"index":int(state.delivery.nodes[kind]),"stock":state.delivery.buffers[kind]})
+ if key in ["stone","gravel"]:
+  for i in state.buildings.size():
+   if state.buildings[i].kind!="stoneworks": continue
+   var data = StoneIndustry.site(state,i)
+   if not data.is_empty(): result.append({"kind":"stoneworks","index":i,"stock":data.stock})
+ var warehouse = -1
+ for i in state.buildings.size():
+  if state.buildings[i].kind=="warehouse": warehouse=i; break
+ if warehouse>=0: result.append({"kind":"warehouse","index":warehouse,"stock":state.resources})
+ return result
+
+static func source_name(shipment: Dictionary) -> String:
+ return str(Catalog.BUILDINGS.get(str(shipment.source),{"name":"Lager"}).name)
+
+static func logistics_status(state: Dictionary, job: Dictionary) -> String:
+ var deliveries: Array[String] = []
+ for s in state.construction_shipments:
+  if int(s.job)!=int(job.id) or s.arrived: continue
+  deliveries.append("%s → Baustelle · %s %s" % [source_name(s),Catalog.number(s.amount),Catalog.RESOURCES[s.key]])
+ if not deliveries.is_empty(): return "Unterwegs: "+" · ".join(deliveries)
+ if job.get("paused",false): return "Pausiert · laufende LKWs dürfen noch entladen"
+ for key in job.get("materials",{}):
+  if phase_need(job,key)<=0.00001: continue
+  var available = false
+  for source in sources(state,key):
+   if float(source.stock.get(key,0))<=0: continue
+   available = true
+   if LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job)).size()>=2:
+    return "%s liegt bereit · wartet auf freien LKW" % Catalog.RESOURCES[key]
+  return "Keine Straßenverbindung für %s" % Catalog.RESOURCES[key] if available else "%s fehlt · Produktion oder Materialdepot versorgt den Bau" % Catalog.RESOURCES[key]
+ return "Material für diese Phase vollständig angeliefert"
+
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done = []
  for s in state.construction_shipments:
@@ -127,25 +174,25 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
   var id = int(job.get("id",-1))
   if not job.has("phases") or job.get("paused",false) or (only_job>=0 and id!=only_job): continue
   if not state.construction_auto and not job.get("requested",false): continue
-  var source = -1
-  for i in state.buildings.size():
-   if state.buildings[i].kind=="warehouse" and not (job.type=="upgrade" and int(job.index)==i): source=i; break
-  if source<0: source=0
-  var route = LogisticsRoutes.road_to_point(state,source,job_position(state,job))
-  if route.size()<2: continue
   var material_keys = job.materials.keys()
   material_keys.sort()
   for key in material_keys:
    var missing = maxf(0,phase_need(job,key)-incoming(state,id,key))
-   var amount = minf(missing,minf(float(state.resources[key]),float(4+int(state.vehicle)*2)))
-   if amount<=0 or free<=0: continue
-   state.resources[key] -= amount
-   var drive = maxf(2,LogisticsRoutes.length(route)/(9+int(state.vehicle)))
-   var travel = drive+4.0
-   state.construction_shipments.append({"id":state.next_shipment,"job":id,"source":"warehouse","target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
-   state.next_shipment += 1
-   free-=1
-   result+=amount
+   for source in sources(state,key):
+    var amount = minf(missing,minf(float(source.stock.get(key,0)),float(4+int(state.vehicle)*2)))
+    if amount<=0 or free<=0: continue
+    var route = LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job))
+    if route.size()<2: continue
+    # Withdrawal itself is the reservation. This stock cannot be loaded by a
+    # second site, the furniture truck or the mineral warehouse dispatcher.
+    source.stock[key] = float(source.stock[key])-amount
+    var drive = maxf(2,LogisticsRoutes.length(route)/(9+int(state.vehicle)))
+    var travel = drive+4.0
+    state.construction_shipments.append({"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
+    state.next_shipment += 1
+    free-=1
+    missing-=amount
+    result+=amount
  return result
 
 static func advance(job: Dictionary, work: float) -> bool:

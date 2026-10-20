@@ -73,7 +73,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"STEIN & HOLZ / 17",11,GOLD)
+ var edition = text(brand,"BAULOGISTIK / 18",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -427,12 +427,15 @@ func jobs_cards() -> void:
     var icon_path="res://Assets/Resources/%s.svg" % material_key
     icon.texture=load(icon_path if ResourceLoader.exists(icon_path) else "res://Assets/Resources/boards.svg")
     material_row.add_child(icon)
-    dynamic_text(material_row,func(): return "%s  %s / %s" % [Catalog.RESOURCES[material_key],Catalog.number(float(job.get("delivered",{}).get(material_key,0))),Catalog.number(float(job.materials[material_key]))])
+    dynamic_text(material_row,func():
+     var cargo=ConstructionRules.incoming(Game.state,int(job.get("id",-1)),material_key)
+     return "%s  %s / %s%s" % [Catalog.RESOURCES[material_key],Catalog.number(float(job.get("delivered",{}).get(material_key,0))),Catalog.number(float(job.materials[material_key]))," · +%s unterwegs" % Catalog.number(cargo) if cargo>0 else ""])
    var id = int(job.get("id",-1))
-   button(box,"LIEFERUNG AUS DEM LAGER ANFORDERN",func(): action(func(): Game.deliver_job(id)),not ConstructionRules.ready(job))
+   button(box,"LIEFERUNG JETZT PRÜFEN",func(): action(func(): Game.deliver_job(id)),not ConstructionRules.ready(job) and not job.get("paused",false))
    var hardware_cost=Game.job_hardware_cost(id)
    if hardware_cost>0: button(box,"FEHLENDE TEILE KAUFEN · %s MÜNZEN" % Catalog.number(hardware_cost),func(): action(func(): Game.buy_job_hardware(id)))
    if job.has("phases"):
+    dynamic_text(box,func(): return ConstructionRules.logistics_status(Game.state,job))
     dynamic_text(box,func():
      var underway=0
      for s in Game.state.construction_shipments:
@@ -749,7 +752,7 @@ func settings_menu() -> void:
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.17.0 · Stein & Holz\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.18.0 · Baulogistik\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -946,8 +949,7 @@ func delivery_menu() -> void:
 
 func construction_menu() -> void:
  modal_title.text = "BAUSTELLEN & MATERIAL"
- var help = card("Erst Material. Dann Richtfest.","Neue Fabriken und Ausbaustufen brauchen Holz, Bretter und Bauteile. Jede Bauphase startet erst mit ihren angelieferten Materialien.")
- button(help,"AUTO-LOGISTIK AB LEVEL 10" if Game.company_level()<10 else "Automatisch anliefern: AN" if Game.state.construction_auto else "Automatisch anliefern: AUS",func(): action(func(): Game.state.construction_auto = not Game.state.construction_auto),Game.company_level()>=10)
+ card("Erst Material. Dann Richtfest.","Lieferungen starten automatisch: direkt vom Sägewerk, Steinwerk oder Lager zur Baustelle. Jede Bauphase wartet auf ihre tatsächlichen Materialien. Alle Transporte teilen sich deine LKWs; mehr Fahrzeuge gibt es in der Garage.")
  if Game.state.jobs.is_empty(): card("Keine offenen Baustellen","Im Baukatalog ein Gebäude platzieren oder auf einen Betrieb tippen und Ausbauen wählen.")
  else: jobs_cards()
  var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Ab Unternehmenslevel 4 arbeiten bis zu fünf zugewiesene Bauarbeiter pro Baustelle. Weitere Kollegen kosten Spielmünzen.")

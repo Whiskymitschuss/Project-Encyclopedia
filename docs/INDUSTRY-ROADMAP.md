@@ -2,6 +2,12 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Korrektur 0.18 — umgesetzt
+
+Die Holzlinie und Steinwerksausgänge versorgen Materialbaustellen direkt über gespeicherte Straßenladungen. Ein Ausgang wird vor dem weiteren Abtransport zum Möbelwerk beziehungsweise Lager exklusiv für die aktuelle Bauphase entnommen. Neue und vorhandene alte Materialprojekte bestellen bereits ab Level 4 automatisch; Pause bleibt erhalten. Lokale Ware wird nicht mehr unsichtbar ins Lager verschoben.
+
+JSON-geladene Gebäudereferenzen behalten die exklusive Zugehörigkeit zur Holzlinie. Feste getrennte Ein-/Ausgangsanzeigen und eindeutige Render-IDs verhindern verwechselte Material-/Fahrzeuganzeigen. Die UI zeigt echte ankommende Mengen und Lieferursprünge. Die unten als offen aufgeführten umfangreicheren Branchen und Flottenmodi bleiben weiterhin offen.
+
 ## Erweiterung 0.17 — umgesetzt
 
 Ab Unternehmenslevel 5 stehen mehrere frei platzierbare Steinbrüche und Steinwerke zur Verfügung, jeweils bis Ausbaustufe 10. Tatsächliche begrenzte Felsadern, gespeicherte Baggerphasen und Schaufelladungen, lokale Abholmulden und Werkslager. Arbeitsgänge besitzen eigenes Material bis zur Fertigstellung. Zwei auswählbare datengetriebene Rezepte: Bausteine und Kies. Transportgewicht, Kipper für Schüttgut, Palettenladung für Bausteine und Straßenlieferung ins vorhandene Lager. Der Bagger entlädt in eine Abholmulde; ein separat zugewiesener LKW übernimmt deren tatsächlichen Inhalt.
@@ -31,7 +37,7 @@ Die unten stehenden größeren Master-Phasen bleiben offen. Es gibt keine vollst
 - Bauarbeiter mit begrenztem gemeinsamem Personalbestand: zwei Start-Bauarbeiter ab Freischaltung, maximal acht einstellbar, bis fünf pro Baustelle zuweisbar. Zuweisungen verändern die tatsächliche Baugeschwindigkeit. Sichtbare Figuren warten bei Materialmangel, tragen Material und arbeiten mit Werkzeug am zugeordneten Bauplatz. Die Animation liest die Simulation; sie ist keine eigenständige Produktionsquelle.
 - Sichtbare Absperrung, Lieferfläche, Materialstapel, Bauphasen-Geometrie, Schild, Kran und Abschlussfeier. Pause hält Bauarbeit und Kran an. Höhere Betriebsmodelle erscheinen erst nach dem tatsächlichen Abschluss. Stadt-Neubauten und Haus-Upgrades ab Level 4 verwenden dieselben Materialphasen; alte bereits bezahlte Hausaufträge bleiben unverändert.
 - Reale Bedienung für Lieferung, Materialkauf, Personalzuweisung, Pause, Priorität, Baukamera und Abbruch. Abbruch bucht vor Ort und in Fahrzeugen vorhandenes Material ins Lager zurück, sobald Platz dafür besteht; bezahlte Münzkosten werden nicht erstattet. Dadurch bleiben keine verwaisten Bau-Ladungen zurück.
-- Ab Level 10 lässt sich die globale automatische Baustellenbelieferung einschalten. Davor bestellt der Spieler Lieferungen für einzelne Projekte. Standort-, Material- und Personalbedarf bleiben sichtbar.
+- Seit 0.18 bestellen Materialbaustellen automatisch ab Level 4, auch direkt an den Ausgängen der Holzlinie und Steinwerke. Standort-, Material- und Personalbedarf bleiben sichtbar. Die frühere zusätzliche Freischaltung auf Level 10 ist für diese Grundversorgung nicht mehr nötig.
 - Antippbare Materialsymbole über den vier Liefergebäuden und Materialbaustellen. Leer rot, teilweise gefüllt gelb, produktionsbereit oder voller Ausgang grün. Sie öffnen die tatsächlichen Gebäudedetails beziehungsweise die Baustellenverwaltung. Anzeigen werden am Bildschirmrand ausgeblendet und überdecken weder den festen HUD noch einander.
 - Erweiterung des bestehenden Schema-1-Speichers mit XP, Baustellen, Phasen, Quittungen, Crew und Ladungen. Volle Fließkommagenauigkeit beim Schreiben. Material-Dispatch besitzt eine feste Reihenfolge unabhängig von der sortierten JSON-Schlüsselreihenfolge. Kleine Ladungsmodelle verwenden einen begrenzten Wiederverwendungspool.
 

@@ -28,7 +28,12 @@ static func next_order(state: Dictionary, data: Dictionary) -> Dictionary:
  return {"amount":3+mini(int(data.orders)/3,5),"delivered":0,"left":maxf(150,300-int(state.prestige)*10-mini(int(data.orders)*3,90)),"late":false}
 
 static func owns(state: Dictionary, index: int) -> bool:
- return state.delivery.active and index in state.delivery.nodes.values()
+ if not state.delivery.active: return false
+ # JSON restores numeric references as floats. Array membership distinguishes
+ # int from float, which previously enabled the old shared recipe as well.
+ for selected in state.delivery.nodes.values():
+  if int(selected)==index: return true
+ return false
 
 static func capacity(state: Dictionary, kind: String) -> float:
  var level = int(state.buildings[int(state.delivery.nodes[kind])].level)
@@ -87,6 +92,9 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
     if kind=="sawmill": report.sawdust += cycles
    report.flow["building:%s" % index] = 1.0/duration
   else: data.progress[kind] = 0.0
+ # Reserve newly produced goods for construction before a downstream truck
+ # can load them. Dispatch withdraws real source stock into its own road cargo.
+ ConstructionRules.dispatch(state)
  # A shop pays only for furniture that physically reached its own buffer.
  var order = data.order
  var sold = mini(floori(float(data.buffers.market.furniture)),int(order.amount)-int(order.delivered))
@@ -110,13 +118,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  else:
   order.left = maxf(0,float(order.left)-delta)
   if order.left<=0: order.late = true
- var reserve_truck = 0
- for job in state.jobs:
-  if not job.has("phases") or job.get("paused",false) or (not state.construction_auto and not job.get("requested",false)): continue
-  for key in job.materials:
-   if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)>0.0001 and float(state.resources[key])>0:
-    reserve_truck=1
- var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-state.stone.shipments.size()-reserve_truck-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
+ var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-state.stone.shipments.size()-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
  # Deliver downstream first so one starter truck can serve the entire chain.
  for i in [2,1,0]:
   var source = LINKS[i][0]
@@ -149,11 +151,14 @@ static func status(state: Dictionary, kind: String) -> Dictionary:
  if kind=="market": amount = float(data.order.delivered); need = int(data.order.amount)
  var output_key = "boards" if kind=="sawmill" else "furniture"
  var full = kind in ["sawmill","furniture"] and float(data.buffers[kind][output_key])>=capacity(state,kind)
- if full:
-  key=output_key
-  amount=float(data.buffers[kind][output_key])
-  need=int(capacity(state,kind))
- return {"key":key,"amount":amount,"need":need,"ready":amount>=need,"full":full,"empty":amount<1,"text":"Ausgang voll" if full else "Bereit" if amount>=need else "Wartet auf Lieferung"}
+ # Input and output retain their own icons. A full board pallet must never
+ # replace the input log counter and then apparently turn back into logs.
+ var result = {"key":key,"amount":amount,"need":need,"ready":amount>=need,"full":full,"empty":amount<1,"text":"Ausgang voll" if full else "Bereit" if amount>=need else "Wartet auf Lieferung"}
+ if kind in ["sawmill","furniture"]:
+  result.output_key=output_key
+  result.output_amount=float(data.buffers[kind][output_key])
+  result.output_capacity=int(capacity(state,kind))
+ return result
 
 
 static func migrate_belts(state: Dictionary) -> void:

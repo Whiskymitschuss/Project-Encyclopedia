@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Stein & Holz 0.17
+# Timber Loot Tycoon — Baulogistik 0.18
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.17-test.apk](releases/Timber-Loot-Tycoon-v0.17-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.18-test.apk](releases/Timber-Loot-Tycoon-v0.18-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -18,6 +18,19 @@ python3 scripts/backup.py
 ```
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
+
+## Korrektur 0.18 — Material kommt wirklich auf der Baustelle an
+
+- Baustellen holen benötigtes Holz, Bretter und Möbel direkt an den Ausgängen der aktiven Holzlinie ab. Fertige Bausteine und Kies können direkt am Steinwerk geladen werden. Andere Materialien kommen weiterhin aus dem gemeinsamen Lager. Jeder Abtransport entnimmt seinen tatsächlichen Bestand genau einmal; erst Entladen erhöht den Baustellenvorrat.
+- Neue Materialbaustellen bestellen ab Level 4 automatisch, statt bis Level 10 auf die globale Automatik zu warten. Schon bezahlte alte Projekte werden beim Update dafür freigeschaltet; Pause, Materialrechnung, Baufortschritt und laufende Ladungen bleiben erhalten. Benötigte Ausgänge gehen vor neuen nachgelagerten Fahrten an den Bau. Die gekaufte Flotte bleibt das gemeinsame Limit.
+- Ein JSON-Ladefehler ließ ausgewählte Gebäude gleichzeitig in der Holzlinie und in der alten gemeinsamen Wirtschaft produzieren: gespeicherte Referenzen wurden als Fließkommazahlen geladen und nicht als dieselben Gebäude erkannt. Numerischer Referenzvergleich erhält jetzt die exklusive Zuordnung; vorhandene Bestände werden nicht gelöscht oder neu erfunden.
+- Sägewerk und Möbelfabrik zeigen **Eingang und Ausgang in getrennten festen Zeilen**. Das Holzsymbol wechselt bei vollem Bretterausgang nicht mehr zum Brett und zurück. Fahrzeuge zeigen Ladungsziel beziehungsweise **LEER · zurück**; getrennte Render-IDs verhindern einen Modelltausch zwischen verschiedenen Lieferarten.
+- Im Baustellenmenü stehen tatsächlich unterwegs befindliche Mengen, Ursprung und Ziel sowie Hinweise auf fehlende Ware, freie LKWs oder unverbundene Straßen. Kein versteckter automatischer Transfer von lokalen Puffern ins Zentrallager mehr. Weitere fortgeschrittene gemeinsame Produktionspuffer werden durch diese Korrektur nicht zu individuellen LKW-Strecken.
+- Android-Version 0.18.0-test, Code 1800, gleiches Paket, gleicher Testschlüssel und Speicherformat 1: **als Update installieren, vorher nicht deinstallieren**.
+
+![Direkte Bretterlieferung vom Sägewerk zur Baustelle; ausdrücklich aufgebautes Demonstrationsprofil](docs/preview-logistics-direct.png)
+
+![Baustellenmenü mit tatsächlich ankommenden Brettern; ausdrücklich aufgebautes Demonstrationsprofil](docs/preview-logistics-menu.png)
 
 ## Neu in 0.17 — Das erste Steinrevier
 

@@ -52,7 +52,7 @@ func run() -> void:
  var trucks=0
  for shipment in game.state.delivery.shipments:
   if shipment.mode=="truck" and shipment.key=="furniture":
-   var node=layer.visuals[int(shipment.id)]
+   var node=layer.visuals[layer.visual_key(shipment)]
    trucks+=1
    check(node.cargo_furniture and node.cargo!=null and node.cargo.visible==not shipment.arrived,"Furniture cargo is visible on loaded trips and absent on empty returns")
  check(trucks>0,"Real delivery truck uses a furniture cargo model")

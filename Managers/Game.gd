@@ -34,7 +34,7 @@ func initial_state() -> Dictionary:
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
   "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
-  "delivery":DeliveryChain.initial(), "construction_auto":false, "next_job":1,
+  "delivery":DeliveryChain.initial(), "construction_auto":false, "construction_logistics_version":1, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
@@ -78,6 +78,9 @@ func restore(saved: Dictionary) -> void:
  for key in DeliveryChain.initial():
   if not state.delivery.has(key): state.delivery[key] = DeliveryChain.initial()[key]
  DeliveryChain.migrate_belts(state)
+ if int(saved.get("construction_logistics_version",0))<1:
+  for job in state.jobs:
+   if job.has("phases"): job.requested=true
  for key in CityServices.initial():
   if not state.city_services.has(key): state.city_services[key]=CityServices.initial()[key]
  city_route_cache.clear()
@@ -184,6 +187,8 @@ func production_status(index: int) -> String:
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
   var info = DeliveryChain.status(state,building.kind)
+  if info.has("output_key"):
+   return "Eingang: %s %s/%s · Ausgang: %s %s/%s · %s" % [Catalog.RESOURCES[info.key],Catalog.number(info.amount),info.need,Catalog.RESOURCES[info.output_key],Catalog.number(info.output_amount),info.output_capacity,info.text]
   return "Lieferbetrieb · %s %s/%s · %s" % [Catalog.RESOURCES[info.key],Catalog.number(info.amount),info.need,info.text]
  if not Catalog.RECIPES.has(building.kind): return "Betriebsbereit"
  if building.get("paused",false): return "Pausiert · Produktion fortsetzen"
@@ -1094,16 +1099,6 @@ func step_delivery(delta: float) -> void:
   var excess = maxf(0,float(report.sawdust)-(capacity()-float(state.resources.sawdust)))
   add_resource("sawdust",float(report.sawdust))
   if excess>0 and state.auto_sawdust: earn(excess*float(Catalog.PRICES.sawdust)*multiplier()*boost("money"))
- if state.construction_auto:
-  for key in ["wood","boards","furniture"]:
-   var need = 0.0
-   for job in state.jobs: need += ConstructionRules.remaining(job,key)
-   need = maxf(0,need-float(state.resources[key]))
-   for kind in DeliveryChain.KINDS:
-    var amount = minf(need,minf(float(state.delivery.buffers[kind][key]),capacity()-float(state.resources[key])))
-    state.delivery.buffers[kind][key] -= amount
-    state.resources[key] += amount
-    need -= amount
  flow.merge(report.flow,true)
 
 func unload_delivery(kind: String) -> float:
