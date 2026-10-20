@@ -3,6 +3,7 @@ extends Node3D
 
 var road_freight = false
 var cargo_boards = false
+var cargo_stone = false
 var trailer: Node3D
 var previous_heading = 0.0
 var cargo_boxes = false
@@ -100,6 +101,10 @@ func make_cargo(at: Vector3, count_value: int) -> void:
  var parent: Node3D = trailer if trailer!=null else self
  parent.add_child(cargo)
  if trailer!=null: cargo.position=Vector3(0,-0.25,-4)
+ if cargo_stone:
+  for i in 6: Models.box(cargo,Vector3(1.1,0.6,1.7),Vector3((i%2-0.5)*1.2,1.8+(i/2)*0.65,-0.6),Color("d7cbb0"))
+  Models.bake(cargo)
+  return
  if cargo_boards:
   for i in 5: Models.box(cargo,Vector3(2.3,0.19,4.2),Vector3(0,1.8+i*0.2,-0.6),Color("ebc17d"))
   Models.bake(cargo)

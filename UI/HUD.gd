@@ -32,6 +32,7 @@ var sawdust_button: Button
 var placement_panel: PanelContainer
 var placement_title: Label
 var placement_hint: Label
+var placement_materials: Label
 var placement_confirm: Button
 var build_category = "Produktion"
 var spatial_icons: SubViewport
@@ -72,7 +73,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"STADTVERKEHR / 16",11,GOLD)
+ var edition = text(brand,"STEIN & HOLZ / 17",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -361,6 +362,7 @@ func render_menu() -> void:
   child.queue_free()
  live_labels.clear()
  match current:
+  "stone": stone_menu()
   "delivery": delivery_menu()
   "construction": construction_menu()
   "industry": industry_menu()
@@ -395,6 +397,7 @@ func industry_menu() -> void:
  modal_title.text = "DEINE INDUSTRIE"
  var help = card("Vom Wald zum Imperium","Fälle Holz und liefere es ab. Helfer füllen das Lager automatisch. Baue zuerst Trockenkammer und Möbelfabrik; danach das Fertighauswerk für deine Stadt.")
  button(help,"LIEFERKETTE · HOLZ → BRETTER → MÖBEL",func(): open_menu("delivery"))
+ button(help,"STEINBRUCH & BAUSTOFFE · AB LEVEL 5",func(): open_menu("stone"))
  button(help,"NEUEN BETRIEB BAUEN",func(): open_menu("catalog"))
  var links = row(contents)
  button(links,"Personal",func(): open_menu("team"))
@@ -449,6 +452,7 @@ func jobs_cards() -> void:
 func catalog_menu() -> void:
  modal_title.text = "BAUWERK AUSWÄHLEN"
  button(contents,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
+ button(contents,"STEINBRUCH & BAUSTOFFE",func(): open_menu("stone"))
  text(contents,"Auswählen → in der Welt platzieren → drehen → bestätigen. Bezahlt wird erst beim Bestätigen. Straßen bleiben frei; Waldflächen werden geräumt.",15,MUTED)
  var tabs=row(contents)
  for name_value in ["Produktion","Stadt","Versorgung"]:
@@ -467,13 +471,16 @@ func catalog_menu() -> void:
  contents.add_child(grid)
  var city=build_category=="Stadt"
  var definitions=Catalog.HOMES if city else Catalog.BUILDINGS
- for kind in definitions:
+ var ordered=definitions.keys()
+ for mineral in StoneIndustry.KINDS:
+  if ordered.has(mineral): ordered.erase(mineral); ordered.append(mineral)
+ for kind in ordered:
   if not city and ((build_category=="Versorgung")!=(kind in ["station","cabin","warehouse","market","research","garage"])): continue
   var key=str(kind)
   var d=definitions[kind]
   var enabled=(Game.level("prefab")>0 and Game.next_city_plot()>=0) if city else Game.available(kind)
   var price=float(d.cost)*Game.difficulty() if city else Game.cost_for(kind)
-  var caption="%s\n%s Münzen\n%s" % [d.name,Catalog.number(price),"PLATZIEREN" if enabled else "GESPERRT"]
+  var caption="%s\n%s Münzen\n%s" % [d.name,Catalog.number(price),"PLATZIEREN" if enabled else "AB LEVEL 5" if kind in StoneIndustry.KINDS else "GESPERRT"]
   var tile=button(grid,caption,func(): request_placement({"kind":key,"city":city,"index":-1,"plot":-1}),enabled)
   tile.custom_minimum_size.y=100
   tile.add_theme_font_size_override("font_size",15)
@@ -495,7 +502,7 @@ func building_menu() -> void:
  if b.kind == "sawmill":
   text(box,"Leere die sichtbare Spänebox regelmäßig. Ein voller Behälter stoppt die Bretterproduktion nicht; neuer Überlauf wird kompostiert oder auf Wunsch verkauft.",15,MUTED)
   button(box,"SPÄNEBOX LEEREN",func(): open_menu("sawdust"))
- if Game.company_level()>=4: text(box,"Material für Stufe %s: %s" % [int(b.level)+1,materials_text(ConstructionRules.materials(b.kind,int(b.level)+1))],15,MUTED)
+ if Game.company_level()>=4: text(box,"Material für Stufe %s: %s" % [int(b.level)+1,materials_text(Game.build_materials(b.kind,int(b.level)+1))],15,MUTED)
  else: text(box,"Bis Level 3: Ausbau nur mit Münzen. Ab Level 4 kommen Baustoffe und Lieferfahrzeuge dazu.",15,MUTED)
  if Game.delivery_owns(index):
   text(box,"Zum Verschieben zuerst die Lieferlinie auflösen. Ihre Vorräte und Ladungen kommen vollständig ins Lager zurück.",14,MUTED)
@@ -504,7 +511,9 @@ func building_menu() -> void:
  var management=row(box)
  button(management,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
  button(management,"VERSCHIEBEN",func(): request_placement({"kind":b.kind,"city":false,"index":index}),not Game.delivery_owns(index) and not Game.job_for("upgrade",index))
- if Catalog.RECIPES.has(b.kind):
+ if b.kind in StoneIndustry.KINDS:
+  stone_site_controls(box,index)
+ if Catalog.RECIPES.has(b.kind) or b.kind in StoneIndustry.KINDS:
   button(box,"Produktion fortsetzen" if b.paused else "Produktion pausieren",func(): action(func(): b.paused = not b.paused))
  if b.kind=="cabin": button(box,"PERSONAL EINSTELLEN",func(): open_menu("team"))
  if b.kind=="garage": button(box,"FAHRZEUGE VERWALTEN",func(): open_menu("garage"))
@@ -626,7 +635,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -740,7 +749,7 @@ func settings_menu() -> void:
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.16.0 · Stadtverkehr\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.17.0 · Stein & Holz\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -748,13 +757,14 @@ func build_placement_bar() -> void:
  placement_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  placement_panel.offset_left=14
  placement_panel.offset_right=-14
- placement_panel.offset_top=-352
+ placement_panel.offset_top=-390
  placement_panel.offset_bottom=-202
  placement_panel.add_theme_stylebox_override("panel",style(INK,20))
  var box=VBoxContainer.new()
  placement_panel.add_child(box)
  placement_title=text(box,"",20,GOLD)
  placement_hint=text(box,"",14,CREAM)
+ placement_materials=text(box,"",13,MUTED)
  var choices=row(box)
  button(choices,"Abbrechen",func(): placement_action.emit("cancel"))
  placement_rotate=button(choices,"Drehen 90°",func(): placement_action.emit("rotate"))
@@ -771,6 +781,7 @@ func show_placement(request: Dictionary) -> void:
  placement_rotate.text="Drehen 90°"
  placement_rotate.disabled=false
  if request.get("network",false):
+  placement_materials.text=""
   placement_title.text="HALTESTELLE" if request.kind=="bus_stop" else "STRASSE / WEG"
   placement_confirm.text="BAUEN"
   placement_rotate.text="Kurve wechseln"
@@ -782,6 +793,8 @@ func show_placement(request: Dictionary) -> void:
  var moving=int(request.get("index",-1))>=0
  var price=0.0 if moving else float(definition.cost)*Game.difficulty() if city else Game.cost_for(request.kind)
  placement_title.text="%s · %s" % [definition.name,"kostenlos verschieben" if moving else Catalog.number(price)+" Münzen"]
+ var materials={} if moving else definition.materials if city else Game.build_materials(request.kind) if Game.company_level()>=4 else {}
+ placement_materials.text="" if materials.is_empty() else ("Später per LKW: " if Game.company_level()>=4 else "Beim Bau bezahlen: ")+materials_text(materials)
  placement_confirm.text="SETZEN" if moving else "BAUEN"
  placement_panel.show()
 
@@ -947,6 +960,7 @@ func construction_menu() -> void:
   var choices = row(depot)
   button(choices,"1 KAUFEN",func(): action(func(): Game.buy_hardware(id,1)))
   button(choices,"10 KAUFEN",func(): action(func(): Game.buy_hardware(id,10)))
+ button(contents,"STEINBRUCH & BAUSTOFFE",func(): open_menu("stone"))
  card("So wird geliefert","Der Bauauftrag wird beim Platzieren bezahlt. Ein Transportfahrzeug nimmt tatsächlichen Vorrat am Lager auf, fährt über Straßen zur Baustelle, entlädt und kehrt leer zurück. Belegte Fahrzeuge fehlen an der Möbellinie. Automatik kauft keine Teile. Material bleibt für den Bau geschützt. Laufende alte Baustellen bleiben gültig.")
  button(contents,"BAUKATALOG",func(): open_menu("catalog"))
 
@@ -976,3 +990,51 @@ func services_menu() -> void:
   dynamic_text(entry,func():
    focus_button.disabled=not job in data.missions
    return "%s · %s s bis Rückkehr" % [CityServices.sample(job).status,maxi(0,ceili(float(job.total)-float(job.age)))] if job in data.missions else "Auftrag abgeschlossen · Bonus in der Stadtkasse")
+
+
+func stone_site_controls(parent: Node, index: int) -> void:
+ StoneIndustry.synchronize(Game.state)
+ var b=Game.state.buildings[index]
+ var data=StoneIndustry.site(Game.state,index)
+ dynamic_text(parent,func(): return "Lokales Lager · %s je Material\nGestein %s · Bausteine %s · Kies %s" % [int(StoneIndustry.capacity(Game.state,index)),int(data.stock.rock),int(data.stock.stone),int(data.stock.gravel)])
+ if b.kind=="quarry":
+  var vein_button=button(parent,"NEUE FELSADER · %s MÜNZEN" % Catalog.number(Game.vein_cost(index)),func(): action(func(): Game.explore_vein(index)))
+  dynamic_text(parent,func():
+   vein_button.disabled=float(data.reserve)>0 or float(data.bucket)>0
+   return "Vorkommen: %s/%s · Schaufel: %s\nEine neue Felsader kann nach Erschöpfung mit Spielmünzen erschlossen werden." % [int(data.reserve),int(data.vein_size),int(data.bucket)])
+ else:
+  dynamic_text(parent,func(): return "Nächster Auftrag: "+StoneIndustry.definitions.recipes[data.recipe].name+". Ein laufender Arbeitsgang wird zuerst abgeschlossen.")
+  var choices=row(parent)
+  for key in StoneIndustry.definitions.recipes:
+   var id=str(key)
+   var recipe=StoneIndustry.definitions.recipes[id]
+   button(choices,recipe.name,func(): action(func(): Game.set_stone_recipe(index,id)))
+ button(parent,"STEINKETTE ANSEHEN",func(): open_menu("stone"))
+
+func stone_menu() -> void:
+ modal_title.text="STEINBRUCH & BAUSTOFFE"
+ var unlocked=Game.company_level()>=5
+ card("Holz bleibt dein Fundament","Ab Unternehmenslevel 5: Steinbruch bauen → Steinwerk bauen → Muldenkipper liefern Gestein → Bausteine oder Kies herstellen → LKWs bringen fertige Ware ins Lager. Dort kann sie verkauft oder zu Materialbaustellen geliefert werden. Alle Güterfahrten teilen deinen gekauften Fuhrpark. Beide Betriebe brauchen eine erreichbare Straße. Baue bei entlegenen Grundstücken zuerst eine Zufahrt.")
+ if not unlocked: text(contents,"Dein Unternehmenslevel: %s/5. Bäume, neue Gebäude und Ausbauten liefern Erfahrung." % Game.company_level(),16,GOLD)
+ var choices=row(contents)
+ for kind in StoneIndustry.KINDS:
+  var key=str(kind)
+  button(choices,Catalog.BUILDINGS[key].name+" BAUEN",func(): request_placement({"kind":key,"city":false,"index":-1}),unlocked)
+ dynamic_text(contents,func(): return "%s LKW für Holz, Stein und Baustellen · %s Steinfahrten aktiv\nBaustoffe im Lager: %s Bausteine · %s Kies" % [Game.state.trucks,Game.state.stone.shipments.size(),int(Game.state.resources.stone),int(Game.state.resources.gravel)])
+ button(contents,"GARAGE & FAHRZEUGE",func(): open_menu("garage"))
+ for i in Game.state.buildings.size():
+  if Game.state.buildings[i].kind not in StoneIndustry.KINDS: continue
+  var index=i
+  var b=Game.state.buildings[index]
+  var box=card("%s · Stufe %s/10" % [Catalog.BUILDINGS[b.kind].name,int(b.level)])
+  dynamic_text(box,func(): return Game.production_status(index))
+  stone_site_controls(box,index)
+  button(box,"ANSEHEN & AUSBAUEN",func(): show_building(index))
+ var trader=card("Baustoffhändler · nur Spielmünzen","Notversorgung für neue Bauaufträge. Eigene Produktion ist günstiger. Du kannst den ersten Steinbruch und das erste Steinwerk mit Holz, Brettern und einfachen Teilen errichten; sie benötigen noch keine eigenen Steinprodukte.")
+ for key in StoneIndustry.definitions.trader:
+  var id=str(key)
+  dynamic_text(trader,func(): return "%s: %s im Lager · %s Münzen/Stück" % [Catalog.RESOURCES[id],int(Game.state.resources[id]),Catalog.number(Game.stone_trader_price(id))])
+  var buttons=row(trader)
+  button(buttons,"1 KAUFEN",func(): action(func(): Game.buy_stone_material(id,1)),unlocked)
+  button(buttons,"10 KAUFEN",func(): action(func(): Game.buy_stone_material(id,10)),unlocked)
+ button(contents,"BAUSTELLEN & LIEFERUNGEN",func(): open_menu("construction"))

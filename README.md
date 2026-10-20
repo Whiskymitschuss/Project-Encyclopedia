@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Stadtverkehr 0.16
+# Timber Loot Tycoon — Stein & Holz 0.17
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.16-test.apk](releases/Timber-Loot-Tycoon-v0.16-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.17-test.apk](releases/Timber-Loot-Tycoon-v0.17-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -19,7 +19,24 @@ python3 scripts/backup.py
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
 
-## Neu in 0.16 — LKWs und Stadtleben
+## Neu in 0.17 — Das erste Steinrevier
+
+- Ab **Unternehmenslevel 5** frei platzierbare Steinbrüche und Steinwerke mit jeweils zehn Ausbaustufen. Der erste Bau benötigt vorhandenes Holz und Bretter, keine eigenen Steinprodukte. Deine Holzindustrie bleibt bestehen.
+- Ein tatsächlicher Bagger pro Steinbruch: Gestein lösen → geladene Schaufel schwenken → Abholmulde beladen → Arm zurückführen. Auf Stufe 1 werden zwei Einheiten in einem sieben Sekunden langen Arbeitszyklus gewonnen. Vorkommen, Schaufel und Mulde besitzen getrennte gespeicherte Bestände. Volle Mulden stoppen den Abbau; erschöpfte Felsadern lassen sich für Spielmünzen neu erschließen. Baggerkapazität und Arbeitsgeschwindigkeit steigen mit dem Betriebsausbau.
+- **Muldenkipper** fahren Gestein vom Steinbruch zum Steinwerk. Dort wählst du **3 Gestein → 5 Bausteine in 6 Sekunden** oder **3 Gestein → 4 Kies in 5 Sekunden**, vor Produktionsboni. Ein begonnener Auftrag wird zuerst fertiggestellt. Eingangsware gehört während der Verarbeitung dem gespeicherten Arbeitsauftrag; volle Ausgänge verhindern neue Aufträge.
+- Fertige Bausteine fahren auf Paletten zum vorhandenen Lager, Kies in Kippern. Erst nach Entladung steht Material für Verkauf oder Baustellen zur Verfügung. Wird das Lager während der Fahrt gefüllt, wartet der beladene LKW am Ziel. Teilmengen, Rückfahrt, freie Kapazität und tatsächliches Transportgewicht werden berücksichtigt.
+- Holzlinie, Steinkette und Materialbaustellen nutzen dieselbe Zahl gekaufter LKWs. Abwechselnde Vergabe verhindert, dass ein einzelner Starter-LKW eine Branche dauerhaft verhungern lässt. Mehrere Steinwerke können unterschiedliche Produkte herstellen. Kein neuer Förderbandverkehr.
+- Steinbetriebe benötigen ab Ausbau 2 Bausteine und Kies; größere Holzindustrie-Upgrades ab Zielstufe 6 und Unternehmenslevel 5 bekommen ebenfalls solche Fundamente. Bereits bezahlte Baustellen werden unverändert fortgesetzt. Ein teurerer Baustoffhändler gegen Spielmünzen verhindert blockierende Abhängigkeiten; Geldbooster erzeugen beim Kaufen und Weiterverkaufen keinen Gewinn.
+- **Bauen → Steinbruch & Baustoffe** oder **Mehr → Steinbruch & Baustoffe**: Standorte bauen, lokale Vorräte und Vorkommen ansehen, Produkt wählen, neue Felsader erschließen, Betrieb ausbauen und Notmaterial beschaffen. Materialicons und Füllstände erscheinen auch direkt über den Anlagen. Der neue Liefermeilenstein belohnt 50 ins Lager gebrachte Baustoffe.
+- Die Bauvorschau zeigt vor dem Bezahlen den späteren Materialbedarf und den aktuellen Lagerbestand. Ein Fehler wurde behoben, der Stadt-Baupläne trotz freiem Platz blockierte, wenn Material erst nach Baubeginn per LKW ankommen sollte.
+- Rezepte, Rohstoffmetadaten und Baggerzyklen stehen in [Economy/stone_industry.json](Economy/stone_industry.json). Die JSON-Datei ist ausdrücklich im Android-Paket enthalten. Simulation und Speicherung laufen unabhängig von sichtbaren Modellen; alte Schema-1-Spielstände erhalten keine erfundenen Mineralvorräte.
+- Gleicher Testschlüssel und gleiches Paket, Versionscode 1700: als Update installieren. Sand, Metall, Beton, direkte Schaufelbeladung einzelner wartender LKWs sowie vollständige Fahrzeugidentitäten und Kollisionsverkehr bleiben weitere Master-Phasen.
+
+![Steinbranche neben der Holzverarbeitung; ausdrücklich aufgebautes Demonstrationsprofil](docs/preview-stone-industry.png)
+
+![Bagger, Vorkommen und echte Gesteinsladung; ausdrücklich aufgebautes Demonstrationsprofil](docs/preview-stone-quarry.png)
+
+## Weiterhin aus 0.16 — LKWs und Stadtleben
 
 - Die Förderstrecken zwischen den Gebäuden sind entfernt. **Holz → Bretter → Möbel → Laden** verwendet auf allen drei Teilstrecken tatsächliche Straßenfahrten. Die gesamte gekaufte Fahrzeugflotte wird gemeinsam mit Baustellen vergeben, einschließlich Beladen, Entladen und leerer Rückfahrt. Nachgelagerte Lieferungen haben Vorrang, damit bereits ein einzelner Start-LKW die ganze Kette bedienen kann.
 - Pickup und LKW, ab Transportstufe 5 ein Gelenk-Auflieger, ab Stufe 7 ein Tiefbett mit Rampen. Holz, Bretter, Möbel und Materialkisten sitzen auf dem tatsächlichen Ladebereich; leere Rückfahrten zeigen keine Ladung. Ein Upgrade ersetzt auch schon aktive Fahrzeugmodelle. Kleine maschineninterne Rollentische bleiben Teil der Verarbeitung.

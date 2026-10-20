@@ -3,12 +3,15 @@ extends RefCounted
 
 const HARDWARE = {"nuts":8.0,"screws":6.0}
 
-static func materials(kind: String, level: int = 1) -> Dictionary:
+static func materials(kind: String, level: int = 1, industrial: bool = false) -> Dictionary:
  var size = 1+floori((level-1)/5.0)
  var result = {"wood":float(8+level*2),"boards":float(3+level)}
  if kind in ["furniture","garage","research","prefab","joinery","paper","design"] or level>1:
   result.nuts = float(size)
   result.screws = float(size+1)
+ if industrial and ((kind in ["quarry","stoneworks"] and level>=2) or (kind in ["sawmill","warehouse","garage","furniture","prefab","joinery"] and level>=6)):
+  result.stone=float(level*2)
+  result.gravel=float(level)
  return result
 
 static func remaining(job: Dictionary, key: String) -> float:
@@ -53,7 +56,7 @@ static func attach(job: Dictionary, workers: int = 1) -> void:
  job.phases = []
  for title in PHASES: job.phases.append({"name":title,"materials":{}})
  for key in job.materials:
-  var weights = {"wood":[0.2,0,0.4,0,0.4,0,0],"boards":[0,0.25,0.25,0.25,0.25,0,0],"nuts":[0,0,0.5,0,0,0.5,0],"screws":[0,0,0,0.5,0,0.5,0],"walls":[0,0.25,0.25,0.5,0,0,0],"roofs":[0,0,0,0,1.0,0,0],"parts":[0,0,1.0,0,0,0,0]}.get(key,[0,0,0,0,0,1.0,0])
+  var weights = {"wood":[0.2,0,0.4,0,0.4,0,0],"boards":[0,0.25,0.25,0.25,0.25,0,0],"stone":[0,1.0,0,0,0,0,0],"gravel":[0,1.0,0,0,0,0,0],"nuts":[0,0,0.5,0,0,0.5,0],"screws":[0,0,0,0.5,0,0.5,0],"walls":[0,0.25,0.25,0.5,0,0,0],"roofs":[0,0,0,0,1.0,0,0],"parts":[0,0,1.0,0,0,0,0]}.get(key,[0,0,0,0,0,1.0,0])
   var left = int(job.materials[key])
   for i in 7:
    if float(weights[i])<=0: continue
@@ -112,7 +115,7 @@ static func transport_tick(state: Dictionary, delta: float) -> void:
  for s in done: state.construction_shipments.erase(s)
 
 static func dispatch(state: Dictionary, only_job: int = -1) -> float:
- var busy = state.construction_shipments.size()
+ var busy = state.construction_shipments.size()+state.stone.shipments.size()
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
  var free = maxi(0,int(state.trucks)-busy)

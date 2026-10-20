@@ -18,6 +18,7 @@ var offline_report = ""
 var last_save_ok = true
 var town_route_cache: Dictionary = {}
 var city_route_cache: Dictionary = {}
+var stone_route_cache: Dictionary = {}
 var delivery_route_cache: Dictionary = {}
 var delivery_route_signature = 0
 
@@ -32,7 +33,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -80,6 +81,10 @@ func restore(saved: Dictionary) -> void:
  for key in CityServices.initial():
   if not state.city_services.has(key): state.city_services[key]=CityServices.initial()[key]
  city_route_cache.clear()
+ stone_route_cache.clear()
+ for key in StoneIndustry.initial():
+  if not state.stone.has(key): state.stone[key]=StoneIndustry.initial()[key]
+ StoneIndustry.synchronize(state)
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -176,6 +181,7 @@ func reserve_for(key: String) -> float:
 func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
  var building = state.buildings[index]
+ if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
   var info = DeliveryChain.status(state,building.kind)
   return "Lieferbetrieb · %s %s/%s · %s" % [Catalog.RESOURCES[info.key],Catalog.number(info.amount),info.need,info.text]
@@ -205,6 +211,8 @@ func step(delta: float) -> void:
  add_resource("wood",accepted)
  state.gathered += accepted
  flow = {"harvest":accepted/maxf(delta,0.001)}
+ flow.merge(StoneIndustry.tick(state,delta,(1+research_level("production")*0.12)*multiplier()*boost("processing")),true)
+ state.stone.ready=not StoneIndustry.requests(state,stone_route_cache).is_empty()
  var proposals = []
  var demand = {}
  var output_demand = {}
@@ -249,13 +257,16 @@ func step(delta: float) -> void:
    else: flow["sawdust_composted"] = excess/maxf(delta,0.001)
  if state.auto_export:
   var export_reserve = reserve_for("furniture")+(4.0 if level("design")>0 else 0.0)
-  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),maxi(0,int(state.trucks)-(int(state.trucks) if state.delivery.active else 0)-state.construction_shipments.size())*maxi(0,level("market")-(int(state.buildings[int(state.delivery.nodes.market)].level) if state.delivery.active else 0))*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
+  var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),maxi(0,int(state.trucks)-(int(state.trucks) if state.delivery.active else 0)-state.construction_shipments.size()-state.stone.shipments.size())*maxi(0,level("market")-(int(state.buildings[int(state.delivery.nodes.market)].level) if state.delivery.active else 0))*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
   state.resources.furniture -= exported
   state.exported += exported
   flow["export"] = exported/maxf(delta,0.001)
   earn(exported*float(Catalog.PRICES.furniture)*multiplier()*boost("money"))
+ var old_dispatch=int(state.delivery.next_id)
  step_delivery(delta)
+ if int(state.delivery.next_id)>old_dispatch: state.stone.turn="stone"
  ConstructionRules.dispatch(state)
+ StoneIndustry.dispatch(state,stone_route_cache)
  var public_bonus = 1.0
  for h in state.homes:
   if h.kind in ["park","clinic"]: public_bonus += 0.04*int(h.level)
@@ -341,6 +352,7 @@ func pay(cost: float, materials: Dictionary = {}) -> bool:
  return true
 
 func available(kind: String) -> bool:
+ if kind in StoneIndustry.KINDS: return company_level()>=5
  if kind in ["prefab","joinery","pellet"]: return level("furniture") > 0
  if kind == "paper": return count("prefab") > 0
  if kind == "design": return count("paper") > 0 and count("joinery") > 0
@@ -406,6 +418,9 @@ func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = f
  if not city and (delivery_owns(index) or job_for("upgrade",index)):
   notice.emit("Vor dem Verschieben die Lieferlinie auflösen oder den laufenden Ausbau abschließen")
   return false
+ if not city and StoneIndustry.uses_building(state,index):
+  notice.emit("Laufende Steinlieferung zuerst beenden lassen")
+  return false
  if not state.construction_shipments.is_empty():
   notice.emit("Laufende Baustellenlieferungen zuerst beenden lassen")
   return false
@@ -444,7 +459,7 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0) -> b
  if not reason.is_empty(): notice.emit(reason); return false
  if not pay(cost_for(kind)): return false
  var duration = 12.0+state.buildings.size()*2.0
- state.jobs.append({"id":state.next_job,"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending,"position":[position_value.x,position_value.z],"rotation":rotation,"materials":ConstructionRules.materials(kind) if company_level()>=4 else {},"delivered":{}})
+ state.jobs.append({"id":state.next_job,"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending,"position":[position_value.x,position_value.z],"rotation":rotation,"materials":build_materials(kind) if company_level()>=4 else {},"delivered":{}})
  if company_level()>=4: ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
  state.next_job += 1
  if state.tutorial == 4: state.tutorial = 5
@@ -463,7 +478,7 @@ func upgrade(index: int) -> bool:
  var b = state.buildings[index]
  if b.level >= Catalog.BUILDINGS[b.kind].max: return false
  if not pay(cost_for(b.kind,int(b.level)+1)): return false
- state.jobs.append({"id":state.next_job,"type":"upgrade","index":index,"kind":b.kind,"left":10.0+int(b.level)*2.0,"total":10.0+int(b.level)*2.0,"materials":ConstructionRules.materials(b.kind,int(b.level)+1) if company_level()>=4 else {},"delivered":{}})
+ state.jobs.append({"id":state.next_job,"type":"upgrade","index":index,"kind":b.kind,"left":10.0+int(b.level)*2.0,"total":10.0+int(b.level)*2.0,"materials":build_materials(b.kind,int(b.level)+1) if company_level()>=4 else {},"delivered":{}})
  if company_level()>=4: ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
  state.next_job += 1
  rebuild_world.emit()
@@ -523,6 +538,7 @@ func finish_job(job: Dictionary) -> void:
   var record = state.buildings.back() if job.type=="building" else state.homes.back()
   if job.has("position"): record.position = job.position.duplicate()
   record.rotation = int(job.get("rotation",0))
+ StoneIndustry.synchronize(state)
  rebuild_world.emit()
  notice.emit("Bau abgeschlossen · %s" % job.kind)
  var point=Vector3.ZERO
@@ -732,6 +748,7 @@ func mission_definitions() -> Array:
  {"id":"rent","name":"Hole 100 Münzen Miete ab","value":state.town.rent_collected,"target":100,"reward":700*tier},
  {"id":"bus","name":"Beende drei Bus-Rundfahrten","value":state.town.trips_total,"target":3,"reward":1200*tier},
  {"id":"district","name":"Erschließe ein neues Stadtviertel","value":state.town.districts,"target":1,"reward":10000*tier},
+ {"id":"stone_delivery","name":"Liefere 50 Bausteine oder Kies ins Lager","value":state.stone.delivered,"target":50,"reward":2000*tier},
  {"id":"biomes","name":"Erschließe fünf Biome","value":state.unlocked,"target":5,"reward":7000*tier}]
 
 func claim_mission(id: String) -> bool:
@@ -778,6 +795,7 @@ func prestige() -> bool:
  delivery_route_cache.clear()
  delivery_route_signature = 0
  for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled"]: state[key] = old[key]
+ stone_route_cache.clear()
  state.city_services.enabled=bool(old.city_services.enabled)
  state.prestige = int(old.prestige)+1
  state.prestige_points = int(old.prestige_points)+1
@@ -907,7 +925,7 @@ func remove_road(index: int) -> bool:
  # Keep saved active trips valid. Docks are outside the road graph, so only
  # interior waypoints protect a road until its last vehicle has returned.
  var paths=[]
- for shipment in state.delivery.shipments+state.construction_shipments: paths.append(shipment.path)
+ for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments: paths.append(shipment.path)
  for mission in state.city_services.missions:
   paths.append_array([mission.outward,mission.second,mission.back])
  for walker in state.city_services.walkers: paths.append(walker.path)
@@ -1181,7 +1199,7 @@ func add_company_xp(amount: int) -> void:
  state.company_xp += maxi(0,amount)
  if company_level()>before:
   company_level_unlocked.emit(company_level())
-  notice.emit("Unternehmenslevel %s%s" % [company_level()," · Materialbaustellen freigeschaltet" if before<4 and company_level()>=4 else ""])
+  notice.emit("Unternehmenslevel %s%s" % [company_level()," · Steinbruch & Baustoffe freigeschaltet" if before<5 and company_level()>=5 else " · Materialbaustellen freigeschaltet" if before<4 and company_level()>=4 else ""])
 
 func free_builders() -> int:
  var assigned = 0
@@ -1236,3 +1254,40 @@ func request_city_service(kind: String) -> bool:
  if not result: notice.emit("Alle Fahrzeuge dieses Dienstes unterwegs oder Ziel nicht erreichbar")
  changed.emit()
  return result
+
+
+func build_materials(kind: String, target_level: int = 1) -> Dictionary:
+ return ConstructionRules.materials(kind,target_level,company_level()>=5)
+
+func set_stone_recipe(index: int, recipe: String) -> bool:
+ if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="stoneworks" or not StoneIndustry.definitions.recipes.has(recipe): return false
+ StoneIndustry.synchronize(state)
+ StoneIndustry.site(state,index).recipe=recipe
+ changed.emit()
+ return true
+
+func vein_cost(index: int) -> float:
+ var data=StoneIndustry.site(state,index)
+ return ceilf(200*(1+maxi(0,int(data.get("veins",1))-1)*0.3)*difficulty())
+
+func explore_vein(index: int) -> bool:
+ if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="quarry": return false
+ var data=StoneIndustry.site(state,index)
+ if data.is_empty() or float(data.reserve)>0 or float(data.bucket)>0 or not pay(vein_cost(index)): return false
+ var size=float(StoneIndustry.definitions.extraction.deposit)+(int(state.buildings[index].level)-1)*float(StoneIndustry.definitions.extraction.deposit_per_level)
+ data.reserve=size
+ data.vein_size=size
+ data.veins=int(data.veins)+1
+ changed.emit()
+ return true
+
+func stone_trader_price(key: String) -> float:
+ if not StoneIndustry.definitions.trader.has(key): return INF
+ return ceilf(maxf(float(StoneIndustry.definitions.trader[key])*difficulty(),float(Catalog.PRICES[key])*multiplier()*boost("money")*2))
+
+func buy_stone_material(key: String, amount: int) -> bool:
+ if company_level()<5 or not StoneIndustry.definitions.trader.has(key) or amount<=0 or amount>1000: return false
+ if float(state.resources[key])+amount>capacity() or not pay(stone_trader_price(key)*amount): return false
+ state.resources[key]+=amount
+ changed.emit()
+ return true

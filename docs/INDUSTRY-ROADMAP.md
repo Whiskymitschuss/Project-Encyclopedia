@@ -2,6 +2,14 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Erweiterung 0.17 — umgesetzt
+
+Ab Unternehmenslevel 5 stehen mehrere frei platzierbare Steinbrüche und Steinwerke zur Verfügung, jeweils bis Ausbaustufe 10. Tatsächliche begrenzte Felsadern, gespeicherte Baggerphasen und Schaufelladungen, lokale Abholmulden und Werkslager. Arbeitsgänge besitzen eigenes Material bis zur Fertigstellung. Zwei auswählbare datengetriebene Rezepte: Bausteine und Kies. Transportgewicht, Kipper für Schüttgut, Palettenladung für Bausteine und Straßenlieferung ins vorhandene Lager. Der Bagger entlädt in eine Abholmulde; ein separat zugewiesener LKW übernimmt deren tatsächlichen Inhalt.
+
+Die Steinkette teilt den gekauften Fuhrpark mit der Holzlinie und dem vorhandenen Bau-Dispatcher. Abwechselnde Vergabe lässt auch einen einzelnen LKW beide Branchen bedienen. Ausbauten neuer Steinbetriebe und späterer größerer Holzfabriken verwenden die echten neuen Materialien. Erste Steinbetriebe benötigen ihre eigenen Erzeugnisse noch nicht; ein Notmaterialhändler verhindert Sackgassen. Alte bezahlte Materialrechnungen bleiben erhalten. Direkte Produktionsauswahl, Felsaderkauf, lokale Materialanzeigen, Lagerverkauf, neuer Liefermeilenstein sowie Materialvorschau vor dem Platzieren sind spielbar.
+
+Weiterhin offen: zusätzliche Steinplatten, Sand, Erz/Kohle/Stahl, Schraubenfertigung, Zement und Beton, separate Steinlagergebäude, direkte Baggerbeladung eines wartenden Kippers, vollständige individuelle Fahrzeugflotten und Kreuzungs-/Kollisionsverkehr. Die bisherigen übrigen gemeinsamen Holz-/Stadtpuffer sind unverändert. Es handelt sich um einen abgeschlossenen Stein-Abschnitt des Master-Plans, nicht um dessen vollständige Umsetzung.
+
 ## Erweiterung 0.16 — umgesetzt
 
 Sämtliche Verbindungen der kleinen Holzlinie und alle Materialbaustellen nutzen denselben gekauften Fuhrpark. Keine Förderstrecken zwischen Gebäuden; alte Bandladungen werden sicher zurückgeführt. Trailer ab Fahrzeugindex 4, Tiefbett ab Index 6, erkennbare Güter und leere Rückfahrten. Nachgelagerte Lieferungen zuerst; ein Starterfahrzeug kann alle Stationen bedienen. Maschineninterne Rollen sind weiterhin Teil der Produktionsmodelle.
@@ -31,15 +39,15 @@ Die unten stehenden größeren Master-Phasen bleiben offen. Es gibt keine vollst
 
 | Bereich | Nächster zusammenhängender Abschnitt |
 | --- | --- |
-| Rohstoffe und neue Quellen | Steinbruch, Sandgrube, Erzmine, Kohle, begrenzte oder regenerierende Vorkommen; vollständige Material-Metadaten einschließlich Gewicht und Verwendung |
-| Bagger und Abbau | Wirtschaftlich wirksame Schaufelzyklen, Oberwagen, Arm und Schaufel; Übergabe an Muldenkipper |
-| Neue Produktionsketten | Steinwerk/Brecher, Stahlwerk, Schraubenfabrik, Zementversorgung und Betonwerk mit lokalen Puffern und echten Lieferungen |
+| Rohstoffe und neue Quellen | Sandgrube, Erzmine und Kohle; Steinbruch mit begrenzten Vorkommen, Rohstoffmetadaten und Transportgewicht ist seit 0.17 vorhanden |
+| Bagger und Abbau | Direkte Übergabe von der Baggerschaufel an einen wartenden Kipper; seit 0.17 wirtschaftlich wirksame Schaufelzyklen, Oberwagen, Arm und Schaufel mit Abholmulde |
+| Neue Produktionsketten | Stahlwerk, Schraubenfabrik, Zementversorgung und Betonwerk; Steinwerk/Brecher mit lokalen Puffern und echten Lieferungen ist seit 0.17 vorhanden |
 | Produktrezepte | Konfigurierbare Auswahl von Balken, Platten, Stahlträgern/-wänden, Schrauben, Tischen, Stühlen, Regalen und Betonfundamenten; zusätzliche produktabhängige Gebäudegeometrie |
 | Level 5–9 und 11–20 | Die im Master-Prompt aufgeführten zusätzlichen Industrie-Freischaltungen, Standorte und Hochleistungsmaschinen; aktuelle vorhandene Holz-/Stadtfreischaltungen bleiben bis dahin gültig |
-| Fuhrpark | Spezifischer Muldenkipper, geschlossener Kasten-LKW, Betonmischer, funktionierender Gabelstapler und Mobilkran; Lager-Ladebuchten mit Warteschlangen, Fahrzeugauswahl und durchgehende Fahrzeug-Identitäten statt einer Darstellung je Fahrt |
+| Fuhrpark | Geschlossener Kasten-LKW, Betonmischer, funktionierender Gabelstapler und Mobilkran; Lager-Ladebuchten mit Warteschlangen, Fahrzeugauswahl und durchgehende Fahrzeug-Identitäten statt einer Darstellung je Fahrt |
 | Personal und Logistik | Vollständige acht Arbeiteranimationen, individuelle Trage-/Lauf-/Werkzeug-Upgrades, erweiterte Automatikmodi Fabriken zuerst / Lager füllen / Überschuss verkaufen und Expressangebote |
 | Gesamtsimulation | Umstellung der übrigen bisherigen gemeinsamen Holz-/Stadtpuffer auf lokale End-to-End-Logistik; die alten automatischen Exportfahrten sind bisher keine individuellen Ladungsaufträge |
-| Mobile Bedienung | Vollständige Materialvorschau vor dem Setzen neuer Gebäude und überarbeitete ältere Stadt-Hilfetexte; optionaler Figuren-Joystick, erweiterte Fahrzeugauswahl; derzeit bleibt die bestehende Touch-Kamera und direkte Gebäude-/Baustellenauswahl erhalten |
+| Mobile Bedienung | Erweiterte Fahrzeugauswahl und überarbeitete ältere Stadt-Hilfetexte; Materialvorschau vor dem Platzieren ist seit 0.17 vorhanden; optionaler Figuren-Joystick, erweiterte Fahrzeugauswahl; derzeit bleibt die bestehende Touch-Kamera und direkte Gebäude-/Baustellenauswahl erhalten |
 | Hardware und Balance | Android-Updateinstallation, Touch/Safe Area, Ton, echte Framerate, Temperatur/Akku und längeres Wirtschaftsbalancing auf Geräten |
 
 Es werden keine Buttons für diese offenen Systeme als fertiggestellt angeboten. Die bestehende Holzindustrie bleibt die Grundlage für die weiteren Erweiterungen.

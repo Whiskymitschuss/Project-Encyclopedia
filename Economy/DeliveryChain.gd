@@ -116,7 +116,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   for key in job.materials:
    if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)>0.0001 and float(state.resources[key])>0:
     reserve_truck=1
- var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-reserve_truck)
+ var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-state.stone.shipments.size()-reserve_truck-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
  # Deliver downstream first so one starter truck can serve the entire chain.
  for i in [2,1,0]:
   var source = LINKS[i][0]

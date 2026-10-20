@@ -1,0 +1,13 @@
+{
+  "materials": {
+    "rock": {"name":"Gestein","icon":"rock","weight":2,"value":2,"source":"Steinbruch","uses":["Bausteine","Kies"]},
+    "stone": {"name":"Bausteine","icon":"stone","weight":1,"value":5,"source":"Steinwerk","uses":["Fundamente","Betriebsausbau"]},
+    "gravel": {"name":"Kies","icon":"gravel","weight":1,"value":3,"source":"Steinwerk","uses":["Fundamente","später Beton"]}
+  },
+  "recipes": {
+    "blocks": {"name":"Bausteine","in":{"rock":3},"out":{"stone":5},"seconds":6},
+    "gravel": {"name":"Kies","in":{"rock":3},"out":{"gravel":4},"seconds":5}
+  },
+  "extraction": {"phase_seconds":[3,1.5,1,1.5],"buckets":[2,4,6,8,12,14,16,18,20,24],"deposit":600,"deposit_per_level":200},
+  "trader": {"stone":18,"gravel":12}
+}

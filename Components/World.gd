@@ -271,6 +271,8 @@ func rebuild() -> void:
   world_buildings.add_child(model)
   var saw = model.get_node_or_null("Saw")
   if saw != null: machines.append({"node":saw,"index":i})
+  var mineral = model.get_node_or_null("StonePlant")
+  if mineral!=null: mineral.building_index=i
   var processing = model.get_node_or_null("Processing")
   if processing != null: processing.building_index = i
   if not Game.delivery_owns(i): Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
@@ -364,7 +366,7 @@ func sync_actors() -> void:
  var staff = mini(int(Game.state.workers),8 if Game.state.quality == 0 else 16)
  var factories = []
  for i in Game.state.buildings.size():
-  if Catalog.RECIPES.has(Game.state.buildings[i].kind): factories.append(i)
+  if Catalog.RECIPES.has(Game.state.buildings[i].kind) or Game.state.buildings[i].kind=="stoneworks": factories.append(i)
  var operators = mini(mini(staff/3,factories.size()),2 if Game.state.quality==0 else 6)
  var cabin_index=-1
  for i in Game.state.buildings.size():
@@ -704,7 +706,7 @@ func update_ghost() -> void:
   var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[placement.kind]
   var price=float(definition.cost)*Game.difficulty() if city else Game.cost_for(placement.kind)
   if float(Game.state.coins)<price: reason="Es fehlen %s Münzen" % Catalog.number(price-float(Game.state.coins))
-  elif city:
+  elif city and Game.company_level()<4:
    for key in definition.materials:
     if float(Game.state.resources[key])<float(definition.materials[key]): reason="Es fehlt: %s" % Catalog.RESOURCES[key]; break
  ghost_plate.material_override=Models.material(Color("43e69a") if reason.is_empty() else Color("f16c5d"))

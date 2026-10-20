@@ -26,6 +26,8 @@ func rebuild() -> void:
   for kind in DeliveryChain.KINDS:
    var index = int(Game.state.delivery.nodes[kind])
    make_badge(kind,index,-1)
+ for i in Game.state.buildings.size():
+  if Game.state.buildings[i].kind in StoneIndustry.KINDS: make_badge("mineral",i,-1)
  for i in Game.state.jobs.size():
   if not Game.state.jobs[i].get("materials",{}).is_empty(): make_badge("construction",-1,i)
  refresh_badges()
@@ -72,6 +74,18 @@ func refresh_badges() -> void:
     if ConstructionRules.remaining(job,key)>0: break
    b.at = world.job_position(job)+Vector3(0,9,0)
    b.button.tooltip_text = ConstructionRules.status(job)
+  elif b.kind=="mineral":
+   var data=StoneIndustry.site(Game.state,b.index)
+   if data.is_empty(): b.button.hide(); continue
+   var quarry=Game.state.buildings[b.index].kind=="quarry"
+   var product="stone" if data.recipe=="blocks" else "gravel"
+   var full=not quarry and float(data.stock[product])>=StoneIndustry.capacity(Game.state,b.index)-4
+   var key="rock" if quarry or not full else product
+   var amount=float(data.stock[key])
+   var need=int(StoneIndustry.capacity(Game.state,b.index)) if quarry or full else 3
+   info={"key":key,"amount":amount,"need":need,"ready":amount>=need,"empty":amount<1,"full":full}
+   b.at=Game.building_position(b.index)+Vector3(0,9,0)
+   b.button.tooltip_text=StoneIndustry.status(Game.state,b.index)
   else:
    info = DeliveryChain.status(Game.state,b.kind)
    b.at = Game.building_position(b.index)+Vector3(0,9,0)
@@ -100,7 +114,7 @@ func _process(delta: float) -> void:
   b.button.position = p
  truck_visual_count = 0
  var present = {}
- var shipments = Game.state.delivery.shipments+Game.state.construction_shipments
+ var shipments = Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments
  for shipment in shipments:
   var id = int(shipment.id)
   present[id] = true
@@ -118,22 +132,24 @@ func _process(delta: float) -> void:
    visuals[id].show()
   if not visuals.has(id):
    var node: Node3D
-   node = TimberTruck.new()
+   node = load("res://Vehicles/DumpTruck.gd").new() if shipment.key in ["rock","gravel"] else TimberTruck.new()
    node.tier = maxi(2,int(Game.state.vehicle))
    node.cargo_furniture = shipment.key=="furniture"
    node.cargo_boxes = shipment.key not in ["wood","boards","furniture"]
    node.cargo_boards = shipment.key=="boards"
+   node.cargo_stone = shipment.key=="stone"
    node.road_freight = true
    add_child(node)
    node.set_meta("pool_key",signature)
    visuals[id] = node
   var node: Node3D = visuals[id]
   var running = true
-  if shipment.target!="construction":
+  if shipment.target not in ["construction","mineral"]:
    running = not Game.state.delivery.paused
    for kind in DeliveryChain.KINDS:
     if Game.state.buildings[int(Game.state.delivery.nodes[kind])].get("paused",false): running=false
   var age = float(shipment.age)+minf(Game.tick_clock,0.99) if running else float(shipment.age)
+  if not shipment.arrived: age=minf(age,float(shipment.travel)-0.000001)
   var progress = clampf(age/float(shipment.travel),0,1)
   var returning = false
   if shipment.has("drive"):
@@ -153,6 +169,8 @@ func _process(delta: float) -> void:
   if running and progress>0 and progress<1:
    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
   if node.cargo!=null: node.cargo.visible = not shipment.arrived
+  if node.get("bed")!=null:
+   node.tipping=-0.55 if age>=float(shipment.load)+float(shipment.drive) and age<float(shipment.travel) and float(shipment.age)<float(shipment.travel) else 0.0
  for id in visuals.keys():
   if not present.has(id):
    var node=visuals[id]

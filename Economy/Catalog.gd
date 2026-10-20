@@ -1,9 +1,11 @@
 class_name Catalog
 extends RefCounted
 
-const RESOURCES = {"nuts":"Muttern", "screws":"Schrauben", "wood":"Holz", "boards":"Bretter", "dry":"Trockenholz", "furniture":"Möbel", "sawdust":"Sägespäne", "walls":"Wandmodule", "roofs":"Dachmodule", "parts":"Bauelemente", "pellets":"Pellets", "paper":"Papier", "design":"Designmöbel"}
-const PRICES = {"nuts":8.0,"screws":6.0,"wood":2.0,"boards":6.0,"dry":15.0,"furniture":65.0,"sawdust":0.5,"walls":160.0,"roofs":220.0,"parts":110.0,"pellets":14.0,"paper":26.0,"design":480.0}
+const RESOURCES = {"rock":"Gestein", "stone":"Bausteine", "gravel":"Kies", "nuts":"Muttern", "screws":"Schrauben", "wood":"Holz", "boards":"Bretter", "dry":"Trockenholz", "furniture":"Möbel", "sawdust":"Sägespäne", "walls":"Wandmodule", "roofs":"Dachmodule", "parts":"Bauelemente", "pellets":"Pellets", "paper":"Papier", "design":"Designmöbel"}
+const PRICES = {"rock":2.0,"stone":5.0,"gravel":3.0,"nuts":8.0,"screws":6.0,"wood":2.0,"boards":6.0,"dry":15.0,"furniture":65.0,"sawdust":0.5,"walls":160.0,"roofs":220.0,"parts":110.0,"pellets":14.0,"paper":26.0,"design":480.0}
 const BUILDINGS = {
+ "quarry":{"name":"Steinbruch","cost":1800,"max":10,"color":"d9a84d","desc":"Ein eigener Bagger löst Gestein. Muldenkipper beliefern die Steinwerke. Ab Unternehmenslevel 5."},
+ "stoneworks":{"name":"Steinwerk","cost":2500,"max":10,"color":"e38853","desc":"3 Gestein → 5 Bausteine oder 4 Kies. Produktion und LKW-Anlieferung laufen mit lokalen Vorräten. Ab Level 5."},
  "station":{"name":"Sammelstation","cost":150,"max":50,"color":"dbb579","desc":"Liefert das Holz der Helfer an die Betriebe."},
  "sawmill":{"name":"Sägewerk","cost":250,"max":100,"color":"278fa9","desc":"2 Holz → 1 Brett + 1 Sägespäne"},
  "kiln":{"name":"Trockenkammer","cost":500,"max":50,"color":"d9844f","desc":"2 Bretter → 1 Trockenholz"},

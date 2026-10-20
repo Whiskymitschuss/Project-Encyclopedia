@@ -82,6 +82,7 @@ static func log_pile(parent: Node3D, at: Vector3, count: int = 4) -> void:
 
 static func building(kind: String, level: int, city: bool = false) -> Node3D:
  if city: return load("res://Buildings/TownModels.gd").create(kind,level)
+ if kind in ["quarry","stoneworks"]: return load("res://Buildings/StoneModels.gd").create(kind,level)
  if not city and (Catalog.RECIPES.has(kind) or kind in ["station","warehouse"]):
   return load("res://Buildings/FactoryModels.gd").create(kind,level)
  var root = Node3D.new()
