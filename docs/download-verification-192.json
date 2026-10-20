@@ -1,0 +1,27 @@
+{
+  "checked_utc": "2026-10-20T09:35:17.477100+00:00",
+  "tag": "v0.19.2-cardfix",
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.19.2-test.apk",
+      "bytes": 58396802,
+      "http_status": 200,
+      "sha256": "ad54a55a0b35d5370603c6e13f41f1eafedeb0639659c6800d52c150935198e3",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.2-cardfix/releases/Timber-Loot-Tycoon-v0.19.2-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.19.2-source.zip",
+      "bytes": 13333293,
+      "http_status": 200,
+      "sha256": "a82d0385b2aa4bc943abd13fa582a2014cfecfee8ce9515083fb3a956f57c4da",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.2-cardfix/releases/Timber-Loot-Tycoon-v0.19.2-source.zip"
+    },
+    {
+      "file": "preview-card-fixed.png",
+      "bytes": 343092,
+      "http_status": 200,
+      "sha256": "17c2ae2635160bb3c9a0dcae51841acbb3fc3a87e4a15e1c65ecce038d575c15",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.2-cardfix/docs/preview-card-fixed.png"
+    }
+  ]
+}

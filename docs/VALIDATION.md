@@ -17,6 +17,8 @@
 - Zertifikat identisch mit 0.19.1: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Paket `com.whiskymitschuss.timberloot`, Code 1920, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-Ausrichtung und Hochformat geprüft. Keine neuen Berechtigungen. Tests, Dokumentation, Skripte und Release-Dateien sind aus dem APK ausgeschlossen.
 - Eine unabhängige frische GitHub-Kopie importiert das Projekt und besteht die **437 Layout- sowie 87 neuen Desktop-OpenGL-/Touch-Prüfungen** erneut. Ihr Quell-Checkout bleibt sauber. Die vollständige Headless-Suite und die übrigen gezielten Grafikprüfungen wurden im ursprünglichen Checkout ausgeführt.
 
+APK, passende Quell-ZIP und Karten-Vorschau wurden vom festen Tag `v0.19.2-cardfix` vollständig per HTTPS mit HTTP 200 zurückgeladen. Größen und SHA256 stimmen mit gebautem Original und unabhängiger GitHub-Wiederherstellung überein. [Download-Prüfbericht](download-verification-192.json).
+
 ## Historischer Prüfbericht 0.19.1
 
 # Prüfung 0.19.1 — Zehn Kapitel und Rathaus

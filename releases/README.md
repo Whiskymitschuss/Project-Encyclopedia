@@ -12,6 +12,8 @@ Die Gebäudekarte bleibt auch bei wechselnden Textgrößen auf den verfügbaren 
 
 APK-Quellstand `226519915f46e3f8e883190f6670422b8cbab86f`. Quell-ZIP: 263 Dateien, jede gegen ihren Git-Blob geprüft. APK: 58,396,802 Bytes, SHA256 `ad54a55a0b35d5370603c6e13f41f1eafedeb0639659c6800d52c150935198e3`. Quell-ZIP: 13,333,293 Bytes, SHA256 `a82d0385b2aa4bc943abd13fa582a2014cfecfee8ce9515083fb3a956f57c4da`. Signatur/Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
 
+APK, passende Quell-ZIP und Karten-Vorschau wurden vom festen Tag `v0.19.2-cardfix` vollständig per HTTPS mit HTTP 200 zurückgeladen. Größen und SHA256 stimmen mit gebautem Original und unabhängiger GitHub-Wiederherstellung überein. [Download-Prüfbericht](../docs/download-verification-192.json).
+
 ## Historischer Stand 0.19.1
 
 # Timber Loot Tycoon 0.19.1 — Zehn Kapitel & Rathaus
