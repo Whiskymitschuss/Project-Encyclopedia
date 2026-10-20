@@ -1,0 +1,40 @@
+{
+  "release_tag": "v0.18.0-logistics",
+  "published_commit": "cecb09c44327697fcfa4e67b4a0383a5c96d752b",
+  "source_commit": "7ea1dfd7643fe95228d0d696d14ff3cb3c149fd7",
+  "verified_original_and_fresh_github_clone": true,
+  "headless_checks_each": 17771,
+  "desktop_opengl_checks_each": 138,
+  "first_home_simulated_seconds": 1682,
+  "device_install_or_launch_tested": false,
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.18-test.apk",
+      "bytes": 58300624,
+      "http_status": 200,
+      "sha256": "279d5dcadd02f56b53c9b93ac2304fd743765fa3f348aa70444eed9b86c859a8",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/releases/Timber-Loot-Tycoon-v0.18-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.18-source.zip",
+      "bytes": 10537974,
+      "http_status": 200,
+      "sha256": "3313f02c382d64e3a853b0c8333ac6d2017d773e0d54555280039e5939fa57fd",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/releases/Timber-Loot-Tycoon-v0.18-source.zip"
+    },
+    {
+      "file": "preview-logistics-direct.png",
+      "bytes": 350629,
+      "http_status": 200,
+      "sha256": "a7866d2c08867d9c0c29f130d75e3829e4234c0f722d98cd345dbc0f6fd718ac",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/docs/preview-logistics-direct.png"
+    },
+    {
+      "file": "preview-logistics-menu.png",
+      "bytes": 182928,
+      "http_status": 200,
+      "sha256": "ef2dc5cba49797e60d4ed0a1dd1174bb076676e129b41f70b93af2611d7c4789",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/docs/preview-logistics-menu.png"
+    }
+  ]
+}

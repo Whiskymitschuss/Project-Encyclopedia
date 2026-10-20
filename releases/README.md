@@ -12,6 +12,8 @@ Ein Ladefehler mit als Fließkommazahlen gespeicherten Gebäudereferenzen konnte
 
 17.771 Headless- und 138 Desktop-OpenGL-Prüfungen bestanden. APK-Quellstand `7ea1dfd7643fe95228d0d696d14ff3cb3c149fd7`. Die passende Quell-ZIP enthält 210 einzeln gegen Git geprüfte Dateien; Release-Dateien sind aus ihr ausgeschlossen. APK: 58,300,624 Bytes, SHA256 `279d5dcadd02f56b53c9b93ac2304fd743765fa3f348aa70444eed9b86c859a8`. Quell-ZIP: 10,537,974 Bytes, SHA256 `3313f02c382d64e3a853b0c8333ac6d2017d773e0d54555280039e5939fa57fd`. Signatur und Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
 
+Auch in einer unabhängigen frischen GitHub-Kopie bestehen alle 17.771 Headless- und 138 Desktop-OpenGL-Prüfungen. APK, Quellarchiv und beide Vorschauen wurden vom festen Versionstag vollständig per HTTPS zurückgeladen und mit beiden Kopien verglichen. [Download-Prüfbericht](../docs/download-verification-18.json).
+
 ## Historischer Stand 0.17
 
 # Timber Loot Tycoon 0.17 — Stein & Holz
