@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Zehn Kapitel 0.19.1
+# Timber Loot Tycoon — Gebäudekarte 0.19.2
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.19.1-test.apk](releases/Timber-Loot-Tycoon-v0.19-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.19.2-test.apk](releases/Timber-Loot-Tycoon-v0.19.2-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -18,6 +18,15 @@ python3 scripts/backup.py
 ```
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
+
+## Korrektur 0.19.2 — Gebäudekarte bleibt auf dem Bildschirm
+
+- Gebäudekarten besitzen eine auf den verfügbaren Bildschirmbereich begrenzte Höhe. Wechselnde beziehungsweise vorübergehend große Textlayouts können die Karte nicht mehr über den oberen Bildschirmrand schieben.
+- Titel und Schließen bleiben fest sichtbar. Längere Inhalte lassen sich mit dem Finger innerhalb der Karte scrollen; regelmäßige Aktualisierungen erhalten die Leseposition und ersetzen keine gedrückt gehaltenen Schaltflächen.
+- Auf schmalen logischen Ansichten stehen die Aktionen untereinander. Die Navigation unten und der obere HUD-Bereich bleiben erreichbar. Materialanzeigen aus der Welt überdecken die Karte oder Baupalette nicht mehr.
+- Android-Code 1920, gleiches Paket, gleicher Testschlüssel und bisheriger Speicherpfad. Als Update installieren, vorher nicht deinstallieren. Details zum gezielten Layout-/Touch-Test stehen in [Prüfbericht](docs/VALIDATION.md).
+
+![Begrenzte Gebäudekarte aus isoliertem Testprofil](docs/preview-card-fixed.png)
 
 ## Neu in 0.19.1 — Zehn Kapitel, ein wachsendes Rathaus
 

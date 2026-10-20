@@ -130,7 +130,10 @@ func _process(delta: float) -> void:
  clock += delta
  if clock>=0.5: clock=0; refresh_badges()
  var occupied: Array[Rect2] = []
- if world.hud.get("ux")!=null and world.hud.ux.event_button.visible: occupied.append(world.hud.ux.event_button.get_global_rect())
+ if world.hud.get("ux")!=null:
+  var ux=world.hud.ux
+  for control in [ux.event_button,ux.sheet,ux.palette]:
+   if control.visible: occupied.append(control.get_global_rect())
  for b in badges:
   b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.zoom<260 and not world.camera.is_position_behind(b.at)
   if not b.button.visible: continue

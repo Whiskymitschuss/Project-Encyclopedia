@@ -4,6 +4,9 @@ var hud
 var selection={}
 var sheet: PanelContainer
 var sheet_body: VBoxContainer
+var sheet_scroll
+var sheet_title: Label
+var sheet_close: Button
 var palette: PanelContainer
 var palette_body: VBoxContainer
 var event_button: Button
@@ -34,11 +37,34 @@ func _ready() -> void:
  sheet.offset_top=-502
  sheet.offset_bottom=-204
  sheet.grow_vertical=Control.GROW_DIRECTION_BEGIN
+ sheet.clip_contents=true
  sheet.add_theme_stylebox_override("panel",hud.style(hud.PAPER,20))
+ var frame=VBoxContainer.new()
+ frame.set_meta("light_card",true)
+ frame.add_theme_constant_override("separation",5)
+ sheet.add_child(frame)
+ var handle=hud.text(frame,"━━  HOCHWISCHEN FÜR DETAILS",11,hud.MUTED)
+ handle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ var heading=hud.row(frame)
+ sheet_title=hud.text(heading,"",19,hud.INK)
+ sheet_title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ sheet_title.max_lines_visible=2
+ sheet_title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
+ sheet_close=hud.button(heading,"×",func(): hide_panels(true))
+ sheet_close.custom_minimum_size=Vector2(44,44)
+ sheet_close.size_flags_horizontal=Control.SIZE_SHRINK_END
+ # A scroll container isolates the content's minimum height from the panel.
+ # Dynamic text wrapping must never grow and permanently displace this card.
+ sheet_scroll=load("res://UI/TouchScroll.gd").new()
+ sheet_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL
+ frame.add_child(sheet_scroll)
  sheet_body=VBoxContainer.new()
+ sheet_body.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  sheet_body.set_meta("light_card",true)
  sheet_body.add_theme_constant_override("separation",5)
- sheet.add_child(sheet_body)
+ sheet_scroll.add_child(sheet_body)
+ hud.resized.connect(layout_sheet)
+ layout_sheet()
  sheet.hide()
  palette=PanelContainer.new()
  add_child(palette)
@@ -66,10 +92,18 @@ func _ready() -> void:
  Game.construction_finished.connect(on_completed)
  Game.shipment_delivered.connect(on_delivery)
  refresh()
+func layout_sheet() -> void:
+ var height=minf(360,maxf(120,hud.size.y-422))
+ sheet.offset_left=14
+ sheet.offset_right=-14
+ sheet.offset_top=-204-height
+ sheet.offset_bottom=-204
 func panels_visible() -> bool: return sheet.visible or palette.visible
 func hide_panels(clear: bool=false) -> void:
  sheet.hide()
  palette.hide()
+ sheet_scroll.scroll_vertical=0
+ sheet_scroll.velocity=0
  if clear:
   selection={}
   if world().get("selection_world")!=null: world().selection_world.choose({})
@@ -95,6 +129,8 @@ func select_building(index: int,city: bool=false,focus: bool=false) -> void:
  hud.current_index=int(records[index].plot) if city else index
  hud.close_menu()
  palette.hide()
+ sheet_scroll.scroll_vertical=0
+ sheet_scroll.velocity=0
  if focus: hud.focus_requested.emit(Game.home_position(index) if city else Game.building_position(index))
  if world().get("selection_world")!=null: world().selection_world.choose(selection)
  render_sheet()
@@ -105,6 +141,8 @@ func select_job(id: int,focus: bool=false) -> void:
   hud.current="construction"
   hud.close_menu()
   palette.hide()
+  sheet_scroll.scroll_vertical=0
+  sheet_scroll.velocity=0
   if focus: hud.focus_requested.emit(ConstructionRules.job_position(Game.state,job))
   if world().get("selection_world")!=null: world().selection_world.choose(selection)
   render_sheet()
@@ -113,6 +151,8 @@ func select_truck(value: Dictionary) -> void:
  selection=value.duplicate(true)
  hud.close_menu()
  palette.hide()
+ sheet_scroll.scroll_vertical=0
+ sheet_scroll.velocity=0
  if world().get("selection_world")!=null: world().selection_world.choose(selection)
  render_sheet()
 func find_job() -> Dictionary:
@@ -126,17 +166,17 @@ func find_trip() -> Dictionary:
  return {}
 func clear_box(box: Node) -> void:
  for child in box.get_children(): box.remove_child(child); child.queue_free()
+func sheet_actions() -> BoxContainer:
+ if hud.size.x>=400: return hud.row(sheet_body)
+ var column=VBoxContainer.new()
+ column.add_theme_constant_override("separation",5)
+ sheet_body.add_child(column)
+ return column
 func render_sheet() -> void:
+ var previous_scroll=sheet_scroll.scroll_vertical
  clear_box(sheet_body)
  if selection.is_empty(): sheet.hide(); return
- var handle=hud.text(sheet_body,"━━  HOCHWISCHEN FÜR DETAILS",11,hud.MUTED)
- handle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
- var heading=hud.row(sheet_body)
- var title=hud.text(heading,"",19,hud.INK)
- title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
- var close=hud.button(heading,"×",func(): hide_panels(true))
- close.custom_minimum_size=Vector2(44,44)
- close.size_flags_horizontal=Control.SIZE_SHRINK_END
+ var title=sheet_title
  if selection.kind in ["building","home"]:
   var city=selection.kind=="home"
   var index=int(selection.index)
@@ -158,8 +198,9 @@ func render_sheet() -> void:
   for key_value in needs.slice(0,3):
    var key=str(key_value)
    var item=hud.button(goods,Catalog.RESOURCES[key],func(): open_material(key))
+   item.clip_text=true
    item.add_theme_font_size_override("font_size",13)
-  var actions=hud.row(sheet_body)
+  var actions=sheet_actions()
   var bill=UXRules.upgrade_bill(Game.state,city,index)
   hud.button(actions,"Ausbauen · %s" % Catalog.number(bill.coins) if not bill.is_empty() else ("MAX · Stufe %s" % int(b.level) if int(b.level)>=(10 if city else int(Catalog.BUILDINGS[b.kind].max)) else "Ausbau läuft"),func():
    if city: Game.upgrade_home(index)
@@ -167,7 +208,7 @@ func render_sheet() -> void:
    refresh(),not bill.is_empty())
   if city and float(Catalog.HOMES[b.kind].rent)>0: hud.button(actions,"Miete abholen",func(): Game.collect_rent(index); refresh())
   else: hud.button(actions,"Wege ausblenden" if world().get("selection_world")!=null and world().selection_world.show_routes else "Wege anzeigen",func(): toggle_routes())
-  var other=hud.row(sheet_body)
+  var other=sheet_actions()
   hud.button(other,"Details ↑",func(): expand_selection())
   hud.button(other,"Stufen 1–10" if city else "Verschieben",func():
    if city: show_evolution(b.kind,int(b.level))
@@ -183,9 +224,10 @@ func render_sheet() -> void:
    var count=UXRules.material_counts(Game.state,job,key)
    if count.missing<=0 and count.incoming<=0: continue
    var item=hud.button(row,"%s\n%s da · %s fährt · %s fehlt" % [Catalog.RESOURCES[key],int(count.arrived),int(count.incoming),int(count.missing)],func(): open_material(key))
+   item.clip_text=true
    item.add_theme_font_size_override("font_size",12)
    if row.get_child_count()>=2: break
-  var actions=hud.row(sheet_body)
+  var actions=sheet_actions()
   hud.button(actions,"Wege ausblenden" if world().get("selection_world")!=null and world().selection_world.show_routes else "Wege anzeigen",func(): toggle_routes())
   hud.button(actions,"Bauteam & Details ↑",func(): expand_selection())
  elif selection.kind=="truck":
@@ -202,7 +244,9 @@ func render_sheet() -> void:
    hud.text(sheet_body,"%s: ca. %s s" % ["Zurück am Start" if s.arrived else "Ankunft bei freiem Entladeplatz",ceili(remaining)],14,hud.MUTED)
   hud.button(sheet_body,"Route hervorheben",func(): toggle_routes())
  apply_fonts(sheet)
+ layout_sheet()
  sheet.show()
+ sheet_scroll.set_deferred("scroll_vertical",previous_scroll)
 func expand_selection() -> void:
  if selection.is_empty(): return
  sheet.hide()
@@ -222,7 +266,8 @@ func refresh() -> void:
   if not event.read: count+=1
  event_button.text="! %s Hinweise & Ereignisse" % count if count>0 else "✓ Stadt im Blick"
  if not Game.return_report.is_empty(): event_button.text="Willkommen zurück · Bilanz ›"
- if sheet.visible and not sheet_gesture and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): render_sheet()
+ var content_gesture=sheet_scroll.pointer!=-99 or absf(sheet_scroll.velocity)>=8
+ if sheet.visible and not sheet_gesture and not content_gesture and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): render_sheet()
 func _process(delta: float) -> void:
  refresh_clock+=delta
  event_button.visible=not hud.overlay.visible and not hud.placement_panel.visible and not palette.visible
@@ -232,7 +277,7 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
  if not sheet.visible: sheet_gesture=false; return
  if event is InputEventScreenTouch:
-  if event.pressed and Rect2(sheet.global_position,Vector2(sheet.size.x,22)).has_point(event.position):
+  if event.pressed and Rect2(sheet.global_position,Vector2(sheet.size.x,32)).has_point(event.position):
    sheet_gesture=true
    sheet_start=event.position
    get_viewport().set_input_as_handled()
