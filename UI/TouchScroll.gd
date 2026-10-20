@@ -61,7 +61,17 @@ func end_gesture(point: Vector2, canceled: bool = false) -> void:
   velocity=0
   pressed.pressed.emit()
 
+func passes_to_child(node: Node,point: Vector2) -> bool:
+ for child in node.get_children():
+  if not child is Control or not child.is_visible_in_tree(): continue
+  if (child.get_meta("gesture_passthrough",false) or child is LineEdit) and child.get_global_rect().has_point(point): return true
+  if passes_to_child(child,point): return true
+ return false
+
 func _input(event: InputEvent) -> void:
+ if pointer==-99 and (event is InputEventScreenTouch or event is InputEventMouseButton) and passes_to_child(self,event.position):
+  velocity=0
+  return
  if not is_visible_in_tree():
   if is_instance_valid(candidate): candidate.set_pressed_no_signal(false)
   pointer=-99

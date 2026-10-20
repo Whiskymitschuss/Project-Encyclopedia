@@ -88,6 +88,7 @@ func _ready() -> void:
 
 func progress() -> Dictionary:
  var levels=0
+ for home in Game.state.homes: levels+=int(home.level)
  for building in Game.state.buildings: levels+=int(building.level)
  return {"buildings":Game.state.buildings.size(),"homes":Game.state.homes.size(),"levels":levels,"unlocked":int(Game.state.unlocked),"prestige":int(Game.state.prestige),"trees":int(Game.state.trees)}
 
@@ -96,8 +97,8 @@ func observe() -> void:
  var tree_target=25*(int(Game.state.prestige)+1)
  if not previous.is_empty():
   if now.prestige>previous.prestige: queue_message("Ein neues Kapitel! Ich bin wieder an deiner Seite. Lass uns etwas Schönes aufbauen.",true)
-  elif now.homes>previous.homes: queue_message("Ein neues Zuhause! Unser Wald wird langsam zu einer richtigen kleinen Stadt.",true)
-  elif now.buildings>previous.buildings: queue_message("Der neue Betrieb ist fertig! Das Team hat ganze Arbeit geleistet.",true)
+  elif now.homes>previous.homes: queue_message(TownEvolution.title(str(Game.state.homes.back().kind),int(Game.state.homes.back().level))+" ist fertig! Unser Wald wächst zu einer Stadt.",true,"city")
+  elif now.buildings>previous.buildings: queue_message(str(Catalog.BUILDINGS[Game.state.buildings.back().kind].name)+" ist fertig! Das Team hat ganze Arbeit geleistet.",true,"industry")
   elif now.levels>previous.levels: queue_message("Ausbau geschafft! Ich mag es, wenn aus kleinen Anfängen etwas Großes wächst.",true)
   elif now.unlocked>previous.unlocked: queue_message("Eine neue Waldregion! Ich bin gespannt, was wir dort entdecken.",true)
   elif previous.trees<tree_target and now.trees>=tree_target: queue_message("%s Bäume – stark gemacht! Schau bei den Missionen nach deiner Belohnung." % tree_target,true,"missions")
@@ -135,6 +136,10 @@ func greeting() -> String:
 func hint() -> Dictionary:
  if float(Game.state.resources.sawdust)>Game.capacity()*0.65: return {"id":"bin","text":"Unsere Spänebox ist gut gefüllt. Du kannst die Späne verkaufen oder für Papier und Pellets aufheben.","menu":"sawdust"}
  if float(Game.state.bag)>=Game.bag_capacity(): return {"id":"bag","text":"Dein Rucksack ist voll. Bei Abliefern wird daraus Nachschub für unsere Säge.","menu":""}
+ var hints=UXRules.current_hints(Game.state)
+ if not hints.is_empty():
+  var next=hints[0]
+  return {"id":next.id,"text":next.text+". Ich zeige dir, was gebraucht wird.","menu":"events"}
  if Game.level("kiln")==0 and float(Game.state.resources.boards)>5: return {"id":"kiln","text":"Aus Brettern wird in der Trockenkammer Trockenholz. Damit können wir später Möbel fertigen.","menu":"catalog"}
  if not Game.state.homes.is_empty(): return {"id":"city","text":"Ich mag unsere kleine Stadt. Jedes neue Zuhause macht aus dem Betrieb ein Stück Heimat.","menu":"city"}
  return {"id":"forest","text":"Ein guter Moment, einfach mal zuzuschauen. Unser Wald sieht heute besonders schön aus.","menu":""}
@@ -157,7 +162,7 @@ func _process(delta: float) -> void:
   pending={}
  elif not enabled_before: greeted=false
  enabled_before=enabled
- var available=enabled and not hud.overlay.visible and not hud.placement_panel.visible
+ var available=enabled and not hud.overlay.visible and not hud.placement_panel.visible and (hud.get("ux")==null or not hud.ux.panels_visible())
  avatar.visible=available
  portrait.running=available
  if not available:

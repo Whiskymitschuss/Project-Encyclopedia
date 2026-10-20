@@ -36,8 +36,10 @@ var placement_materials: Label
 var placement_confirm: Button
 var build_category = "Produktion"
 var spatial_icons: SubViewport
+var ux: Control
 var companion: Control
 var route_selection: Array = []
+var placement_undo: Button
 var placement_rotate: Button
 
 func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxTexture:
@@ -73,7 +75,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"BAULOGISTIK / 18",11,GOLD)
+ var edition = text(brand,"STADTGEFÜHL / 19",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -143,7 +145,9 @@ func _ready() -> void:
  var navigation = row(bottom)
  for entry in [["Bauen","catalog","factory"],["Team","team","team"],["Aufträge","contracts","orders"],["Welt","world","world"],["Mehr","more","more"]]:
   var tab = str(entry[1])
-  var nav_button = button(navigation,str(entry[0]),func(): open_menu(tab))
+  var nav_button = button(navigation,str(entry[0]),func():
+   if tab=="catalog" and ux!=null: ux.open_palette()
+   else: open_menu("overview" if tab=="world" else tab))
   nav_button.text="\n\n"+str(entry[0])
   nav_button.custom_minimum_size.y=68
   nav_button.add_theme_font_size_override("font_size",12)
@@ -177,6 +181,10 @@ func _ready() -> void:
  companion=load("res://UI/Companion.gd").new()
  companion.hud=self
  add_child(companion)
+ ux=load("res://UI/CityUX.gd").new()
+ ux.hud=self
+ add_child(ux)
+ ux.call_deferred("apply_accessibility")
  Game.changed.connect(update_stats)
  Game.notice.connect(show_notice)
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
@@ -217,7 +225,7 @@ func text(parent: Node, value: String, font_size: int = 17, color: Color = CREAM
  label.add_theme_font_size_override("font_size",font_size)
  var ink = color
  if parent.has_meta("light_card"):
-  ink = INK if color==CREAM else Color("ad6508") if color==GOLD else Color("52767a") if color==MUTED else color
+  ink = INK if color==CREAM or Game.state.ux.high_contrast else Color("ad6508") if color==GOLD else Color("52767a") if color==MUTED else color
  label.add_theme_color_override("font_color",ink)
  label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  parent.add_child(label)
@@ -256,7 +264,9 @@ func button(parent: Node, title: String, callback: Callable, enabled: bool = tru
  node.custom_minimum_size = Vector2(0,48)
  node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  node.disabled = not enabled
- node.pressed.connect(callback)
+ node.pressed.connect(func():
+  if ux!=null: ux.feedback()
+  callback.call())
  parent.add_child(node)
  return node
 
@@ -316,6 +326,10 @@ func _process(delta: float) -> void:
    if is_instance_valid(item.label): item.label.text = item.callback.call()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+ if event.is_action_pressed("ui_cancel") and ux!=null and ux.panels_visible():
+  ux.hide_panels(true)
+  get_viewport().set_input_as_handled()
+  return
  if event.is_action_pressed("ui_cancel") and placement_panel.visible:
   placement_action.emit("cancel")
   get_viewport().set_input_as_handled()
@@ -325,6 +339,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
   get_viewport().set_input_as_handled()
 
 func open_menu(tab: String) -> void:
+ if ux!=null: ux.hide_panels()
  if placement_panel!=null and placement_panel.visible: placement_action.emit("cancel")
  current = tab
  scroll.scroll_vertical = 0
@@ -391,6 +406,9 @@ func render_menu() -> void:
   "welcome": welcome_menu()
   "guide": guide_menu()
   "confirm_prestige": confirm_prestige_menu()
+  _:
+   if ux!=null: ux.populate_menu(current)
+ if ux!=null: ux.apply_accessibility()
  scroll.set_deferred("scroll_vertical",old_scroll)
 
 func industry_menu() -> void:
@@ -420,6 +438,9 @@ func jobs_cards() -> void:
     var material_key=str(resource_key)
     var material_row=row(box)
     material_row.set_meta("light_card",true)
+    var help=button(material_row,"?",func(): ux.open_material(material_key))
+    help.custom_minimum_size=Vector2(44,48)
+    help.size_flags_horizontal=Control.SIZE_SHRINK_END
     var icon=TextureRect.new()
     icon.custom_minimum_size=Vector2(30,30)
     icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
@@ -429,7 +450,7 @@ func jobs_cards() -> void:
     material_row.add_child(icon)
     dynamic_text(material_row,func():
      var cargo=ConstructionRules.incoming(Game.state,int(job.get("id",-1)),material_key)
-     return "%s  %s / %s%s" % [Catalog.RESOURCES[material_key],Catalog.number(float(job.get("delivered",{}).get(material_key,0))),Catalog.number(float(job.materials[material_key]))," · +%s unterwegs" % Catalog.number(cargo) if cargo>0 else ""])
+     return "%s  %s / %s%s · %s fehlen" % [Catalog.RESOURCES[material_key],Catalog.number(float(job.get("delivered",{}).get(material_key,0))),Catalog.number(float(job.materials[material_key]))," · +%s unterwegs" % Catalog.number(cargo) if cargo>0 else "",Catalog.number(maxf(0,ConstructionRules.remaining(job,material_key)-cargo))])
    var id = int(job.get("id",-1))
    button(box,"LIEFERUNG JETZT PRÜFEN",func(): action(func(): Game.deliver_job(id)),not ConstructionRules.ready(job) and not job.get("paused",false))
    var hardware_cost=Game.job_hardware_cost(id)
@@ -454,6 +475,7 @@ func jobs_cards() -> void:
 
 func catalog_menu() -> void:
  modal_title.text = "BAUWERK AUSWÄHLEN"
+ button(contents,"BAULEISTE AN DER KARTE",func(): ux.open_palette())
  button(contents,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
  button(contents,"STEINBRUCH & BAUSTOFFE",func(): open_menu("stone"))
  text(contents,"Auswählen → in der Welt platzieren → drehen → bestätigen. Bezahlt wird erst beim Bestätigen. Straßen bleiben frei; Waldflächen werden geräumt.",15,MUTED)
@@ -548,6 +570,7 @@ func garage_menu() -> void:
 
 func city_menu() -> void:
  modal_title.text = "DEINE STADT"
+ button(contents,"STADTKARTE & VIERTEL",func(): open_menu("overview"))
  card("%s Bewohner · %s Gebäude" % [Game.residents(),Game.state.homes.size()],"Bauwirtschaft: Möbelproduktion → Fertighauswerk → Wand- und Dachmodule → Häuser → Miete. Ab Level 4 wird der Bauauftrag mit Münzen bezahlt; das Baumaterial kommt danach per LKW zur Baustelle. Erst fertiggestellte Gebäude erwirtschaften Ertrag.")
  var navigation = row(contents)
  button(navigation,"Regionen & Projekte",func(): open_menu("empire"))
@@ -581,7 +604,9 @@ func plot_menu() -> void:
   var h = Game.state.homes[i]
   if int(h.plot) == plot:
    var d = Catalog.HOMES[h.kind]
-   var box = card("%s · Stufe %s" % [d.name,h.level],"Grundmiete: %s Münzen/s · Bewohner: %s" % [float(d.rent)*int(h.level),int(d.people)*int(h.level)])
+   var box = card("%s · Stufe %s / 10" % [TownEvolution.title(h.kind,int(h.level)),h.level],"Grundmiete: %s Münzen/s · Bewohner: %s" % [float(d.rent)*int(h.level),int(d.people)*int(h.level)])
+   button(box,"ALLE 10 ARCHITEKTURSTUFEN ANSEHEN",func(): ux.show_evolution(h.kind,int(h.level)))
+   if int(h.level)<10: text(box,"Nächste Stufe: "+TownEvolution.title(h.kind,int(h.level)+1),16,GOLD)
    if float(d.rent)>0:
     dynamic_text(box,func(): return "Abholbereit: %s Münzen" % Catalog.number(Game.state.homes[index].get("rent_bank",0)))
     button(box,"MIETE ABHOLEN",func(): action(func(): Game.collect_rent(index)))
@@ -621,7 +646,8 @@ func contracts_menu() -> void:
  button(contents,"MISSIONEN",func(): open_menu("missions"))
 
 func world_menu() -> void:
- modal_title.text = "WELTKARTE"
+ modal_title.text = "WALDREGIONEN"
+ button(contents,"STADTKARTE & FREIE GRUNDSTÜCKE",func(): open_menu("overview"))
  text(contents,"Zehn Waldregionen mit eigenen Farben und Erträgen. Die Unternehmensära erhöht Erschließungskosten; dauerhafte Boni bleiben.",15,MUTED)
  for i in 10:
   var index = i
@@ -638,7 +664,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- for entry in [["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
+ for entry in [["Stadtkarte & Bauflächen","overview"],["Viertel & gemeinsame Ausbaupläne","districts"],["Hinweise & Ereignisse","events"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
 
@@ -752,7 +778,8 @@ func settings_menu() -> void:
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
- text(contents,"Version 0.18.0 · Baulogistik\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ if ux!=null: ux.settings_controls(box)
+ text(contents,"Version 0.19.0 · Stadtgefühl\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -760,8 +787,9 @@ func build_placement_bar() -> void:
  placement_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  placement_panel.offset_left=14
  placement_panel.offset_right=-14
- placement_panel.offset_top=-390
+ placement_panel.offset_top=-470
  placement_panel.offset_bottom=-202
+ placement_panel.grow_vertical=Control.GROW_DIRECTION_BEGIN
  placement_panel.add_theme_stylebox_override("panel",style(INK,20))
  var box=VBoxContainer.new()
  placement_panel.add_child(box)
@@ -771,6 +799,7 @@ func build_placement_bar() -> void:
  var choices=row(box)
  button(choices,"Abbrechen",func(): placement_action.emit("cancel"))
  placement_rotate=button(choices,"Drehen 90°",func(): placement_action.emit("rotate"))
+ placement_undo=button(box,"LETZTEN VORSCHAUSCHRITT ZURÜCK",func(): placement_action.emit("undo"))
  placement_confirm=button(choices,"BAUEN",func(): placement_action.emit("confirm"))
  placement_confirm.add_theme_stylebox_override("normal",style(Color("e2a536"),12))
  placement_panel.hide()
@@ -781,14 +810,15 @@ func request_placement(request: Dictionary) -> void:
 
 func show_placement(request: Dictionary) -> void:
  close_menu()
+ placement_undo.disabled=true
  placement_rotate.text="Drehen 90°"
  placement_rotate.disabled=false
  if request.get("network",false):
   placement_materials.text=""
-  placement_title.text="HALTESTELLE" if request.kind=="bus_stop" else "STRASSE / WEG"
+  placement_title.text="HALTESTELLE" if request.kind=="bus_stop" else "VIERTEL MARKIEREN" if request.kind=="group" else "STRASSE / WEG"
   placement_confirm.text="BAUEN"
   placement_rotate.text="Kurve wechseln"
-  placement_rotate.disabled=request.kind=="bus_stop"
+  placement_rotate.disabled=request.kind in ["bus_stop","group"]
   placement_panel.show()
   return
  var city=bool(request.get("city",false))
@@ -850,6 +880,7 @@ func networks_menu() -> void:
  var links=row(contents)
  button(links,"Stadt",func(): open_menu("city"))
  button(links,"Buslinien",func(): open_menu("transit"))
+ button(contents,"LETZTE UNBENUTZTE STRASSE ZURÜCKNEHMEN",func(): action(func(): Game.undo_road()),not Game.state.ux.road_undo.is_empty())
  for kind in TownRules.TYPES:
   var key=str(kind)
   var d=TownRules.TYPES[kind]

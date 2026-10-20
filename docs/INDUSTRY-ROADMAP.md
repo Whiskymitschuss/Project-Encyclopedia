@@ -2,6 +2,12 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Erweiterung 0.19 — umgesetzt
+
+Vollständiges beschriebenes UX-Paket: kontextuelle Gebäudekarten, Materialhilfe, echte auswählbare Lieferungen und markierte Straßenwege, horizontale Baupalette, Straßenzeichnen mit geschützter Rücknahme, benannte Viertel mit tatsächlichen gemeinsamen Ausbauplänen, antippbare Übersicht und bestehende Regionsfreischaltungen, persistente Bauereignisse, konkrete Benno-Hinweise und Zugänglichkeitseinstellungen. Alle 14 Stadtgebäudetypen erhalten zehn echte Geometrie-/Architekturstadien; fertiggestellte Gebäude wechseln erst nach dem echten Bauabschluss. Grundrisse, Wirtschaft, Baustellen und Spielstände bleiben verbunden.
+
+Die Übersichtskarte organisiert die vorhandene Welt. Zusätzliche Landkäufe außerhalb der bestehenden Gebiete, tatsächliche Brand-/Schadensereignisse, Hafen-/Schiffslogistik und Flughäfen sind eigene künftige Gameplay-Kapitel; die vorhandenen Feuerwehr-/Rettungsdienstfahrten bleiben echte Gemeindedienste. Die [UX-Prüfliste](UX-CHECKLIST.md) beschreibt die konkrete Bedienung dieser Version.
+
 ## Korrektur 0.18 — umgesetzt
 
 Die Holzlinie und Steinwerksausgänge versorgen Materialbaustellen direkt über gespeicherte Straßenladungen. Ein Ausgang wird vor dem weiteren Abtransport zum Möbelwerk beziehungsweise Lager exklusiv für die aktuelle Bauphase entnommen. Neue und vorhandene alte Materialprojekte bestellen bereits ab Level 4 automatisch; Pause bleibt erhalten. Lokale Ware wird nicht mehr unsichtbar ins Lager verschoben.

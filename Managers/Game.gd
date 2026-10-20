@@ -1,6 +1,7 @@
 extends Node
 
 signal changed
+signal shipment_delivered(point: Vector3, material: String, amount: float)
 signal notice(message: String)
 signal harvested(biome: int, amount: float)
 signal rebuild_world
@@ -29,7 +30,7 @@ func initial_state() -> Dictionary:
  for kind in ["station","sawmill","warehouse","cabin","market"]:
   buildings.append({"kind":kind,"level":1,"paused":false})
  return {
-  "schema":1, "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
+  "schema":1, "ux":UXRules.initial(), "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
@@ -59,6 +60,8 @@ func restore(saved: Dictionary) -> void:
  for key in state:
   if saved.has(key):
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
+ for key in UXRules.initial():
+  if not state.ux.has(key): state.ux[key]=UXRules.initial()[key]
  for key in Catalog.RESOURCES:
   if not state.resources.has(key): state.resources[key] = 0.0
  if not saved.has("tutorial"): state.tutorial = 5
@@ -173,8 +176,7 @@ func earn(amount: float) -> void:
  state.earned += amount
 
 func reserve_for(key: String) -> float:
- var building_need = 0.0
- for job in state.jobs: building_need += ConstructionRules.remaining(job,key)
+ var building_need = ConstructionRules.reserved_materials(state,key)
  if building_need>0: return maxf(building_need,float(plan_materials().get(key,0)))
  var planned = float(plan_materials().get(key,0))
  if not state.plan.is_empty(): return maxf(planned,10.0 if key == "boards" else 5.0 if key == "dry" else 0.0)
@@ -186,6 +188,9 @@ func production_status(index: int) -> String:
  var building = state.buildings[index]
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
+  if state.delivery.paused or building.get("paused",false): return "Pausiert · Produktion fortsetzen"
+  for selected in state.delivery.nodes.values():
+   if state.buildings[int(selected)].get("paused",false): return "Lieferlinie wartet auf pausiertes Gebäude"
   var info = DeliveryChain.status(state,building.kind)
   if info.has("output_key"):
    return "Eingang: %s %s/%s · Ausgang: %s %s/%s · %s" % [Catalog.RESOURCES[info.key],Catalog.number(info.amount),info.need,Catalog.RESOURCES[info.output_key],Catalog.number(info.output_amount),info.output_capacity,info.text]
@@ -203,6 +208,9 @@ func production_status(index: int) -> String:
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
 func step(delta: float) -> void:
+ var awaiting=[]
+ for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments:
+  if not shipment.arrived: awaiting.append(shipment)
  CityServices.tick(state,delta,city_route_cache)
  ConstructionRules.transport_tick(state,delta)
  state.elapsed += delta
@@ -299,6 +307,7 @@ func step(delta: float) -> void:
  for j in completed:
   state.jobs.erase(j)
   finish_job(j)
+ if allocate_group_crews(): rebuild_world.emit()
  if not state.plan.is_empty() and state.plan.get("auto",false):
   var plan = state.plan.duplicate(true)
   var affordable = state.coins >= float(Catalog.HOMES[plan.kind].cost)*difficulty()
@@ -306,6 +315,9 @@ func step(delta: float) -> void:
    affordable = affordable and float(state.resources[key]) >= float(plan_materials()[key])
   if affordable:
    if order_home(plan.kind,int(plan.plot)): state.plan = {}
+
+ for shipment in awaiting:
+  if shipment.arrived and not shipment.path.is_empty(): shipment_delivered.emit(LogisticsRoutes.vector(shipment.path.back()),str(shipment.key),float(shipment.amount))
 
 func chop() -> void:
  if state.bag >= bag_capacity():
@@ -478,7 +490,7 @@ func job_for(type: String, index: int) -> bool:
   if j.type == type and int(j.get("index",-1)) == index: return true
  return false
 
-func upgrade(index: int) -> bool:
+func upgrade(index: int, batch: bool = false) -> bool:
  if index < 0 or index >= state.buildings.size() or job_for("upgrade",index): return false
  var b = state.buildings[index]
  if b.level >= Catalog.BUILDINGS[b.kind].max: return false
@@ -486,9 +498,10 @@ func upgrade(index: int) -> bool:
  state.jobs.append({"id":state.next_job,"type":"upgrade","index":index,"kind":b.kind,"left":10.0+int(b.level)*2.0,"total":10.0+int(b.level)*2.0,"materials":build_materials(b.kind,int(b.level)+1) if company_level()>=4 else {},"delivered":{}})
  if company_level()>=4: ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
  state.next_job += 1
- rebuild_world.emit()
- changed.emit()
- save(true)
+ if not batch:
+  rebuild_world.emit()
+  changed.emit()
+  save(true)
  return true
 
 func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 0) -> bool:
@@ -513,7 +526,7 @@ func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 
  save(true)
  return true
 
-func upgrade_home(index: int) -> bool:
+func upgrade_home(index: int, batch: bool = false) -> bool:
  if index < 0 or index >= state.homes.size() or job_for("home_upgrade",index): return false
  var h = state.homes[index]
  if int(h.level) >= 10: return false
@@ -526,9 +539,10 @@ func upgrade_home(index: int) -> bool:
   state.jobs.back().merge({"id":state.next_job,"materials":materials.duplicate(true),"delivered":{}})
   ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
   state.next_job+=1
- rebuild_world.emit()
- changed.emit()
- save(true)
+ if not batch:
+  rebuild_world.emit()
+  changed.emit()
+  save(true)
  return true
 
 func finish_job(job: Dictionary) -> void:
@@ -543,6 +557,7 @@ func finish_job(job: Dictionary) -> void:
   var record = state.buildings.back() if job.type=="building" else state.homes.back()
   if job.has("position"): record.position = job.position.duplicate()
   record.rotation = int(job.get("rotation",0))
+ allocate_group_crews()
  StoneIndustry.synchronize(state)
  rebuild_world.emit()
  notice.emit("Bau abgeschlossen · %s" % job.kind)
@@ -553,6 +568,12 @@ func finish_job(job: Dictionary) -> void:
   "upgrade": point=building_position(int(job.index))
   "home_upgrade": point=home_position(int(job.index))
   "project": point=Catalog.PROJECTS[int(job.index)].position
+ var finished_name="Bauabschnitt"
+ if job.type=="home": finished_name=UXRules.title(state,true,state.homes.size()-1)
+ elif job.type=="home_upgrade": finished_name=UXRules.title(state,true,int(job.index))
+ elif job.type=="building": finished_name=UXRules.title(state,false,state.buildings.size()-1)
+ elif job.type=="upgrade": finished_name=UXRules.title(state,false,int(job.index))
+ UXRules.push_event(state,"finished:%s:%s:%s" % [int(state.elapsed),job.type,int(job.get("id",job.get("index",-1)))],finished_name+" · fertiggestellt",point)
  construction_finished.emit(point,str(job.type))
 
 func hire_cost() -> float:
@@ -799,7 +820,8 @@ func prestige() -> bool:
  town_route_cache.clear()
  delivery_route_cache.clear()
  delivery_route_signature = 0
- for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled"]: state[key] = old[key]
+ for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled","muted","quality"]: state[key] = old[key]
+ for preference in ["vibration","large_text","high_contrast","motion"]: state.ux[preference]=old.ux[preference]
  stone_route_cache.clear()
  state.city_services.enabled=bool(old.city_services.enabled)
  state.prestige = int(old.prestige)+1
@@ -915,7 +937,12 @@ func build_road(kind: String, cells: Array) -> bool:
  if not pay(road_cost(kind,cells)): return false
  var saved_cells = []
  for c in cells: saved_cells.append([c.x,c.y])
- state.town.roads.append({"kind":kind,"cells":saved_cells})
+ var road_id=int(state.ux.get("next_road",1))
+ state.ux.next_road=road_id+1
+ var paid=road_cost(kind,cells)
+ state.town.roads.append({"kind":kind,"cells":saved_cells,"id":road_id})
+ state.ux.road_undo.append({"id":road_id,"paid":paid})
+ while state.ux.road_undo.size()>10: state.ux.road_undo.pop_front()
  town_route_cache.clear()
  delivery_route_cache.clear()
  delivery_route_signature = 0
@@ -1207,6 +1234,7 @@ func assign_builders(id: int, amount: int) -> bool:
   var wanted = clampi(amount,0,5)
   if wanted>int(job.workers)+free_builders(): return false
   job.workers=wanted
+  job.auto_crew=false
   rebuild_world.emit()
   changed.emit()
   return true
@@ -1286,3 +1314,74 @@ func buy_stone_material(key: String, amount: int) -> bool:
  state.resources[key]+=amount
  changed.emit()
  return true
+
+
+func create_group(a: Vector3,b: Vector3,name_value: String = "Neues Viertel") -> int:
+ var start=Vector2(minf(a.x,b.x),minf(a.z,b.z))
+ var extent=Vector2(absf(a.x-b.x),absf(a.z-b.z))
+ if extent.x<4 or extent.y<4 or state.ux.groups.size()>=12: return -1
+ var group={"id":state.ux.next_group,"name":name_value.strip_edges().left(32),"bounds":[start.x,start.y,extent.x,extent.y]}
+ if UXRules.group_members(state,group).is_empty(): notice.emit("Mindestens ein Gebäude markieren"); return -1
+ state.ux.next_group=int(state.ux.next_group)+1
+ state.ux.groups.append(group)
+ changed.emit()
+ save(true)
+ return int(group.id)
+
+func rename_group(id: int,name_value: String) -> bool:
+ var clean=name_value.strip_edges().left(32)
+ if clean.is_empty(): return false
+ for group in state.ux.groups:
+  if int(group.id)==id:
+   group.name=clean
+   changed.emit()
+   save(true)
+   return true
+ return false
+
+func upgrade_group(id: int,quoted_price: float=-1) -> bool:
+ for group in state.ux.groups:
+  if int(group.id)!=id: continue
+  var bill=UXRules.group_bill(state,group)
+  if quoted_price>=0 and absf(float(bill.coins)-quoted_price)>0.0001: notice.emit("Ausbauplan hat sich geändert · neuen Gesamtpreis prüfen"); return false
+  if bill.targets.is_empty(): notice.emit("Alle Gebäude sind ausgebaut oder haben bereits einen Bauauftrag"); return false
+  if state.coins<float(bill.coins): notice.emit("Für den ganzen Auftrag fehlen Münzen"); return false
+  if company_level()<4:
+   for key in bill.materials:
+    if float(state.resources[key])<float(bill.materials[key]): notice.emit("Für den ganzen Auftrag fehlt %s" % Catalog.RESOURCES[key]); return false
+  for target in bill.targets:
+   if target.city: upgrade_home(int(target.index),true)
+   else: upgrade(int(target.index),true)
+   if state.jobs.back().has("phases"):
+    state.jobs.back().auto_crew=true
+    state.jobs.back().district_group=id
+  rebuild_world.emit()
+  changed.emit()
+  save(true)
+  return true
+ return false
+
+func undo_road() -> bool:
+ while not state.ux.road_undo.is_empty():
+  var last=state.ux.road_undo.back()
+  var index=-1
+  for i in state.town.roads.size():
+   if int(state.town.roads[i].get("id",-1))==int(last.id): index=i; break
+  if index<0: state.ux.road_undo.pop_back(); continue
+  if not remove_road(index): return false
+  state.coins+=float(last.paid)
+  state.ux.road_undo.pop_back()
+  changed.emit()
+  save(true)
+  notice.emit("Letzte unbenutzte Strecke zurückgenommen · Baukosten erstattet")
+  return true
+ return false
+
+
+func allocate_group_crews() -> bool:
+ var assigned=false
+ for queued in state.jobs:
+  if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free_builders()>0:
+   queued.workers=1
+   assigned=true
+ return assigned

@@ -17,6 +17,17 @@ static func materials(kind: String, level: int = 1, industrial: bool = false) ->
 static func remaining(job: Dictionary, key: String) -> float:
  return maxf(0,float(job.get("materials",{}).get(key,0))-float(job.get("delivered",{}).get(key,0)))
 
+static func reserved_materials(state: Dictionary,key: String) -> float:
+ # Preserve affordable future bills, while leaving warehouse room for the
+ # production feeding very large district plans. Ordinary plans are unchanged.
+ var ordinary=0.0
+ var district=0.0
+ for job in state.jobs:
+  if job.has("district_group"):
+   if not job.get("paused",false): district+=remaining(job,key)
+  else: ordinary+=remaining(job,key)
+ return ordinary+minf(district,StoneIndustry.warehouse_capacity(state)*0.5)
+
 static func ready(job: Dictionary) -> bool:
  for key in job.get("materials",{}):
   if remaining(job,key)>0.00001: return false
@@ -36,7 +47,7 @@ static func status(job: Dictionary) -> String:
  if job.has("phases"):
   var phase_title = PHASES[mini(6,int(job.phase))]
   if job.get("paused",false): return "%s · Baustelle pausiert" % phase_title
-  if int(job.workers)<=0: return "%s · wartet auf Bauarbeiter" % phase_title
+  if int(job.workers)<=0: return "%s · %s" % [phase_title,"wartet auf freies Bauteam" if job.get("auto_crew",false) else "wartet auf Bauarbeiter"]
   var work_status = "Bau läuft"
   for key in job.get("materials",{}):
    if phase_need(job,key)>0.00001:
@@ -173,6 +184,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  for job in jobs:
   var id = int(job.get("id",-1))
   if not job.has("phases") or job.get("paused",false) or (only_job>=0 and id!=only_job): continue
+  if job.has("district_group") and int(job.get("workers",0))<=0: continue
   if not state.construction_auto and not job.get("requested",false): continue
   var material_keys = job.materials.keys()
   material_keys.sort()

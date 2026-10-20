@@ -80,8 +80,9 @@ func make_badge(kind: String, index: int, job_index: int) -> void:
   output_icon.free()
   output_label.free()
  button.pressed.connect(func():
-  if kind=="construction": world.hud.open_menu("construction")
-  else: world.hud.show_building(index))
+  if kind=="construction":
+   if job_index<Game.state.jobs.size(): world.hud.ux.select_job(int(Game.state.jobs[job_index].get("id",-1)))
+  else: world.hud.ux.select_building(index))
  overlay.add_child(button)
  badges.append({"kind":kind,"index":index,"job":job_index,"button":button,"icon":icon,"label":label,"output_icon":output_icon if kind in ["sawmill","furniture"] else null,"output_label":output_label if kind in ["sawmill","furniture"] else null,"at":Vector3.ZERO})
 
@@ -129,6 +130,7 @@ func _process(delta: float) -> void:
  clock += delta
  if clock>=0.5: clock=0; refresh_badges()
  var occupied: Array[Rect2] = []
+ if world.hud.get("ux")!=null and world.hud.ux.event_button.visible: occupied.append(world.hud.ux.event_button.get_global_rect())
  for b in badges:
   b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.zoom<260 and not world.camera.is_position_behind(b.at)
   if not b.button.visible: continue

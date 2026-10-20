@@ -83,8 +83,8 @@ func on_completed(point: Vector3, job_type: String) -> void:
  effect.label.show()
  effect.particles.amount=12 if Game.state.quality==0 else 32
  effect.particles.position=Vector3(0,4,8)
- effect.particles.restart()
- effect.particles.emitting=true
+ if Game.state.ux.motion: effect.particles.restart()
+ effect.particles.emitting=bool(Game.state.ux.motion)
  var crowd=people()
  crowd.sort_custom(func(a,b): return a.position.distance_squared_to(point)<b.position.distance_squared_to(point))
  var cheered=0

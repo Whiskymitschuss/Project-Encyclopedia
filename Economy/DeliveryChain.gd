@@ -71,8 +71,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    shipment.arrived = true
   if float(shipment.age)>=float(shipment.total): finished.append(shipment)
  for shipment in finished: data.shipments.erase(shipment)
- var protected_wood = 0.0
- for job in state.jobs: protected_wood += ConstructionRules.remaining(job,"wood")
+ var protected_wood = ConstructionRules.reserved_materials(state,"wood")
  var take = minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
  data.buffers.station.wood += take
  state.resources.wood -= take

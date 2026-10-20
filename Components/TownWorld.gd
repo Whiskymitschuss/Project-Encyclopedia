@@ -99,7 +99,7 @@ func refresh_rents() -> void:
  for entry in rent_labels:
   if int(entry.index)>=Game.state.homes.size(): entry.label.hide(); continue
   var amount=float(Game.state.homes[entry.index].get("rent_bank",0))
-  entry.label.visible=amount>=1
+  entry.label.visible=amount>=1 and world.zoom<135
   entry.label.text="● %s · ABHOLEN" % Catalog.number(amount)
 
 func tap_rent(screen: Vector2) -> bool:
@@ -110,7 +110,8 @@ func tap_rent(screen: Vector2) -> bool:
   var d=screen.distance_to(world.camera.unproject_position(entry.label.global_position))
   if d<distance: closest=int(entry.index); distance=d
  if closest<0: return false
- Game.collect_rent(closest)
+ var amount=Game.collect_rent(closest)
+ if amount>0 and world.hud.get("ux")!=null: world.hud.ux.feedback("build")
  refresh_rents()
  return true
 

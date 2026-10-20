@@ -24,6 +24,7 @@ check --script res://Tests/Valley.gd
 check --script res://Tests/Delivery.gd
 check --script res://Tests/Construction.gd
 check --script res://Tests/LogisticsFix.gd
+check --script res://Tests/CityUX.gd
 check --script res://Tests/Traffic.gd
 check --script res://Tests/Stone.gd
 check --quit-after 90

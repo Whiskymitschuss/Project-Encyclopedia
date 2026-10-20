@@ -42,7 +42,11 @@ var road_horizontal = true
 var landscape: ValleyLandscape
 var city_traffic: Node3D
 var delivery_world: Node3D
+var selection_world: Node3D
+var preview_history=[]
+var pinch_active=false
 var base_streets: Node3D
+var town_name_labels: Array = []
 var biome_labels: Array = []
 var boss_labels: Array = []
 
@@ -98,6 +102,9 @@ func _ready() -> void:
  city_traffic=load("res://Components/CityTraffic.gd").new()
  city_traffic.world=self
  add_child(city_traffic)
+ selection_world=load("res://Components/SelectionWorld.gd").new()
+ selection_world.world=self
+ add_child(selection_world)
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
  make_weather()
@@ -263,6 +270,7 @@ func rebuild() -> void:
  machines.clear()
  cranes.clear()
  bins.clear()
+ town_name_labels.clear()
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
   var model = Models.building(b.kind,int(b.level))
@@ -291,7 +299,7 @@ func rebuild() -> void:
   model.position = Game.home_position(home_index)
   model.rotation_degrees.y = int(h.get("rotation",0))
   world_buildings.add_child(model)
-  Models.label(model,"%s · %s" % [Catalog.HOMES[h.kind].name,int(h.level)],Vector3(0,14,0),24)
+  town_name_labels.append(Models.label(model,"%s · %s" % [TownEvolution.title(h.kind,int(h.level)),int(h.level)],Vector3(0,float(model.get_meta("height",10))+1,0),24))
   add_approach(model.position,int(h.get("rotation",0)))
  for job in Game.state.jobs:
   if job.type in ["building","home","upgrade","home_upgrade","project"]:
@@ -455,6 +463,7 @@ func _process(delta: float) -> void:
  sun.light_energy = 0.24+daylight*0.58
  sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
  environment_resource.ambient_light_energy = 0.34+daylight*0.12
+ for label in town_name_labels: label.visible=zoom<135
  for label in biome_labels: label.visible=zoom<300
  for label in boss_labels: label.visible=zoom<180
  environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
@@ -568,18 +577,26 @@ func _unhandled_input(event: InputEvent) -> void:
    if event.pressed:
     drag_distance = 0
     last_pointer = event.position
+    start_network_drag(event.position)
    elif drag_distance < 12: tap_world(event.position)
  elif event is InputEventMouseMotion and (dragging or right_drag):
-  if not placement.is_empty() and not right_drag: place_at_screen(event.position)
+  if not placement.is_empty() and not right_drag:
+   drag_distance+=event.relative.length()
+   place_at_screen(event.position)
   else: pan(event.relative)
  elif event is InputEventScreenTouch:
   if event.pressed:
    touches[event.index] = event.position
-   drag_distance = 0
+   if touches.size()>1: pinch_active=true
+   else:
+    pinch_active=false
+    drag_distance = 0
+    start_network_drag(event.position)
   else:
-   if touches.size() == 1 and drag_distance < 12: tap_world(event.position)
+   if touches.size() == 1 and drag_distance < 12 and not pinch_active and not event.canceled: tap_world(event.position)
    touches.erase(event.index)
    pinch_distance = 0
+   if touches.is_empty(): pinch_active=false
  elif event is InputEventScreenDrag:
   touches[event.index] = event.position
   if touches.size() >= 2:
@@ -592,7 +609,9 @@ func _unhandled_input(event: InputEvent) -> void:
    set_camera()
   else:
    if placement.is_empty(): pan(event.relative)
-   else: place_at_screen(event.position)
+   else:
+    drag_distance+=event.relative.length()
+    place_at_screen(event.position)
 
 func pan(relative: Vector2) -> void:
  drag_distance += relative.length()
@@ -611,10 +630,18 @@ func tap_world(screen: Vector2) -> void:
   if placement.get("network",false):
    network_at(point,true)
    return
-  placement_point = Placement.snap(point)
+  var next=Placement.snap(point)
+  if next!=placement_point:
+   preview_history.append({"point":placement_point,"rotation":placement_rotation})
+   while preview_history.size()>24: preview_history.pop_front()
+  placement_point = next
   update_ghost()
   return
+ if selection_world!=null:
+  var truck=selection_world.pick_truck(screen)
+  if not truck.is_empty(): hud.ux.select_truck(truck); return
  if town_layer!=null and town_layer.tap_rent(screen): return
+ if pick_tall_home(screen): return
  for stop in Game.state.town.stops:
   if point.distance_to(TownRules.point(TownRules.cell(stop.cell)))<8:
    hud.open_menu("transit")
@@ -625,15 +652,16 @@ func tap_world(screen: Vector2) -> void:
    var bin_position = Game.building_position(i)+Basis(Vector3.UP,deg_to_rad(int(b.get("rotation",0))))*Vector3(7.5,0,-3)
    if point.distance_to(bin_position)<3.5: hud.open_menu("sawdust"); return
   if Placement.bounds(Game.building_position(i),int(b.get("rotation",0))).has_point(Vector2(point.x,point.z)):
-   hud.show_building(i)
+   hud.ux.select_building(i)
    return
  for job in Game.state.jobs:
   if Placement.bounds(job_position(job),int(job.get("rotation",0))).has_point(Vector2(point.x,point.z)):
-   hud.open_menu("construction")
+   if job.has("id"): hud.ux.select_job(int(job.id))
+   else: hud.open_menu("construction")
    return
  for i in Game.state.homes.size():
   if Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).has_point(Vector2(point.x,point.z)):
-   hud.show_plot(int(Game.state.homes[i].plot))
+   hud.ux.select_building(i,true)
    return
  for i in 10:
   if point.distance_to(Catalog.biome_position(i)) < 46:
@@ -648,7 +676,9 @@ func tap_world(screen: Vector2) -> void:
    return
 
 func begin_placement(request: Dictionary) -> void:
+ if hud.get("ux")!=null: hud.ux.hide_panels(true)
  cancel_placement()
+ preview_history.clear()
  placement = request.duplicate(true)
  if placement.get("network",false):
   road_anchor=null
@@ -676,7 +706,8 @@ func begin_placement(request: Dictionary) -> void:
  if not is_finite(placement_point.x): placement_point=Placement.snap(focus)
  ghost = Node3D.new()
  add_child(ghost)
- var model = Models.building(placement.kind,1,city)
+ var preview_level=int((Game.state.homes if city else Game.state.buildings)[index].level) if index>=0 else 1
+ var model = Models.building(placement.kind,preview_level,city)
  ghost.add_child(model)
  var mat = Models.material(Color(1,1,1,0.45)).duplicate()
  mat.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -691,7 +722,11 @@ func place_at_screen(screen: Vector2) -> void:
   if placement.get("network",false):
    network_at(point,false)
    return
-  placement_point=Placement.snap(point)
+  var next=Placement.snap(point)
+  if next!=placement_point:
+   preview_history.append({"point":placement_point,"rotation":placement_rotation})
+   while preview_history.size()>24: preview_history.pop_front()
+  placement_point=next
   update_ghost()
 
 func update_ghost() -> void:
@@ -711,12 +746,31 @@ func update_ghost() -> void:
     if float(Game.state.resources[key])<float(definition.materials[key]): reason="Es fehlt: %s" % Catalog.RESOURCES[key]; break
  ghost_plate.material_override=Models.material(Color("43e69a") if reason.is_empty() else Color("f16c5d"))
  hud.update_placement(reason)
+ hud.placement_undo.disabled=preview_history.is_empty()
+ if reason.is_empty():
+  var dock=TownRules.nearest(placement_point,TownRules.road_cells(Game.state.town),32)
+  hud.placement_hint.text="✓ Standort frei · Straßenanschluss %s m" % int(placement_point.distance_to(TownRules.point(dock))) if dock!=null else "✓ Standort frei · Zufahrt noch nicht erreichbar"
 
 func placement_action(action: String) -> void:
  if placement.is_empty(): return
  if action=="cancel": cancel_placement(); return
+ if action=="undo":
+  if placement.get("network",false):
+   if road_endpoint!=null: road_endpoint=null
+   else: road_anchor=null
+   update_network_ghost()
+  elif not preview_history.is_empty():
+   var old=preview_history.pop_back()
+   placement_point=old.point
+   placement_rotation=int(old.rotation)
+   update_ghost()
+  return
  if placement.get("network",false): network_action(action); return
- if action=="rotate": placement_rotation=posmod(placement_rotation+90,360); update_ghost(); return
+ if action=="rotate":
+  preview_history.append({"point":placement_point,"rotation":placement_rotation})
+  placement_rotation=posmod(placement_rotation+90,360)
+  update_ghost()
+  return
  if action!="confirm": return
  var city=bool(placement.get("city",false))
  var index=int(placement.get("index",-1))
@@ -724,7 +778,9 @@ func placement_action(action: String) -> void:
  if index>=0: success=Game.move_building(index,placement_point,placement_rotation,city)
  elif city: success=Game.order_home(placement.kind,int(placement.plot),placement_point,placement_rotation)
  else: success=Game.order_building(placement.kind,placement_point,placement_rotation)
- if success: cancel_placement()
+ if success:
+  hud.ux.feedback("build")
+  cancel_placement()
 
 func cancel_placement() -> void:
  placement={}
@@ -743,6 +799,7 @@ func tint_preview(root: Node, mat: Material) -> void:
   tint_preview(child,mat)
 
 func network_at(point: Vector3, tapped: bool) -> void:
+ if not tapped and road_endpoint==TownRules.snap(point): return
  placement_point=TownRules.point(TownRules.snap(point))
  if placement.kind!="bus_stop":
   if road_anchor==null:
@@ -752,9 +809,24 @@ func network_at(point: Vector3, tapped: bool) -> void:
 
 func update_network_ghost() -> void:
  if ghost==null: return
+ hud.placement_undo.disabled=road_anchor==null
  clear_children(ghost)
  var reason=""
  var price=0.0
+ if placement.kind=="group":
+  if road_anchor==null: reason="Einen Bereich mit Gebäuden aufziehen"
+  elif road_endpoint==null: reason="Bis zur anderen Ecke ziehen"
+  else:
+   var a=TownRules.point(road_anchor)
+   var b=TownRules.point(road_endpoint)
+   var extent=Vector2(absf(a.x-b.x),absf(a.z-b.z))
+   if extent.x<4 or extent.y<4: reason="Einen größeren Bereich markieren"
+   var rectangle={"bounds":[minf(a.x,b.x),minf(a.z,b.z),extent.x,extent.y]}
+   if UXRules.group_members(Game.state,rectangle).is_empty(): reason="Mindestens ein Gebäude markieren"
+   Models.box(ghost,Vector3(maxf(1,extent.x),0.1,maxf(1,extent.y)),(a+b)/2+Vector3(0,0.9,0),Color("68e3ad"))
+  hud.placement_title.text="VIERTEL MARKIEREN · KOSTENLOS"
+  hud.update_placement(reason)
+  return
  if placement.kind=="bus_stop":
   reason=Game.stop_reason(placement_point)
   var c=TownRules.nearest(placement_point,TownRules.road_cells(Game.state.town))
@@ -785,11 +857,15 @@ func network_action(action: String) -> void:
  if action=="rotate": road_horizontal=not road_horizontal; update_network_ghost(); return
  if action!="confirm": return
  var success=false
- if placement.kind=="bus_stop": success=Game.build_stop(placement_point)
+ if placement.kind=="group":
+  if road_anchor!=null and road_endpoint!=null: success=Game.create_group(TownRules.point(road_anchor),TownRules.point(road_endpoint),"Viertel %s" % int(Game.state.ux.next_group))>=0
+ elif placement.kind=="bus_stop": success=Game.build_stop(placement_point)
  elif road_anchor!=null and road_endpoint!=null: success=Game.build_road(placement.kind,TownRules.path(road_anchor,road_endpoint,road_horizontal))
  if success:
+  var grouping=placement.kind=="group"
+  hud.ux.feedback("build")
   cancel_placement()
-  hud.open_menu("networks")
+  hud.open_menu("districts" if grouping else "networks")
 
 
 func job_position(job: Dictionary) -> Vector3:
@@ -798,3 +874,37 @@ func job_position(job: Dictionary) -> Vector3:
  if job.type=="upgrade": return Game.building_position(int(job.index))
  if job.type=="project": return Catalog.PROJECTS[int(job.index)].position
  return Placement.position_of(job,Catalog.industry_position(int(job.get("slot",0))))
+
+
+func start_network_drag(screen: Vector2) -> void:
+ if placement.is_empty() or not placement.get("network",false) or placement.kind=="bus_stop" or road_anchor!=null: return
+ var point=Plane(Vector3.UP,0).intersects_ray(camera.project_ray_origin(screen),camera.project_ray_normal(screen))
+ if point!=null:
+  road_anchor=TownRules.snap(point)
+  update_network_ghost()
+
+func pick_tall_home(screen: Vector2) -> bool:
+ var best=-1
+ var closest=INF
+ var origin=camera.project_ray_origin(screen)
+ var direction=camera.project_ray_normal(screen)
+ # Compare all solid building volumes, so a tower is not selected through a
+ # nearer factory and its upper floors remain tappable above the ground plot.
+ for model in world_buildings.get_children():
+  var is_home=model.has_meta("town_kind")
+  var index=-1
+  if is_home:
+   for i in Game.state.homes.size():
+    if model.position.distance_to(Game.home_position(i))<0.1: index=i; break
+  var extent=Placement.size_for(roundi(model.rotation_degrees.y))
+  var top=float(model.get_meta("height",9.0))
+  var volume=AABB(model.position-Vector3(extent.x/2,0,extent.y/2),Vector3(extent.x,top,extent.y))
+  var hit=volume.intersects_ray(origin,direction)
+  if hit==null: continue
+  var distance=origin.distance_squared_to(hit)
+  if distance>=closest: continue
+  closest=distance
+  best=index if is_home and top>=12 else -1
+ if best<0: return false
+ hud.ux.select_building(best,true)
+ return true

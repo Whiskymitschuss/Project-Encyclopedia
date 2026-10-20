@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Baulogistik 0.18
+# Timber Loot Tycoon — Stadtgefühl 0.19
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.18-test.apk](releases/Timber-Loot-Tycoon-v0.18-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verlangt keine Android-Berechtigungen. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.19-test.apk](releases/Timber-Loot-Tycoon-v0.19-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -18,6 +18,28 @@ python3 scripts/backup.py
 ```
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
+
+## Neu in 0.19 — Stadtgefühl und zehn Architekturstadien
+
+- **Alle 14 Stadtgebäudetypen besitzen zehn tatsächliche, unterscheidbare 3D-Ausbaustufen**. Wohnhäuser werden zu Hochhäusern, Hotels zu Resorts, die Feuerwache zur zentralen Hauptfeuerwache und die Rettungsstation zum Krankenhaus beziehungsweise Klinikum. Landhäuser, Villen, Läden, Büros, Schulen, Polizei, Taxis, Nachtclubs und Parks entwickeln ebenfalls ihre eigene Architektur. Grundrisse und gespeicherte Positionen bleiben gültig. Ein bezahlter Ausbauplan verändert das fertige Gebäude erst nach tatsächlichem Bauabschluss.
+- **Gebäudekarte unten** beim Antippen in der Welt, mit Zustand, Materialien, Ausbau und Miete. Am Griff hochwischen öffnet die ausführlichen Details. Gebäude bleiben im oberen Weltbereich sichtbar; auch die oberen Etagen hoher Häuser lassen sich antippen. Unter „Stufen 1–10“ zeigt eine eigene 3D-Vorschau die tatsächlichen Modelle.
+- **Materialhilfe mit direkter Aktion**: fehlende Materialien antippen, tatsächlichen Lagerbestand, lokale Produktionsausgänge und beladene LKWs ansehen, zum passenden Betrieb oder Bauplatz springen. Gemeinsam genutzter Lagerbestand wird nicht als weiterer privater Fabrikbestand dargestellt. Baustellen zeigen angekommen, unterwegs und noch fehlend getrennt.
+- **LKWs antippen und ihre echten Lieferwege markieren**. Die Karte zeigt tatsächliche Ladung, Ursprung, Ziel, Arbeitszustand und eine begrenzte Ankunftsschätzung. Eine leere Rückfahrt bleibt leer; wartende Entladung wird ausdrücklich angezeigt. Die Darstellung verändert keine Warenbestände.
+- **Bauen öffnet eine horizontale Wischpalette**, während die Welt sichtbar bleibt. Kategorien für Produktion, Stadt, Versorgung und Wege. Ein kurzer Tipp beginnt die reale Vorschau; Wischen kauft nichts. Ausrichtung und Position lassen sich vor Bestätigung zurücknehmen. Der vollständige Katalog bleibt zusätzlich erreichbar.
+- **Straßen in einer Fingergeste zeichnen**, Kurven wechseln, Preis prüfen und bestätigen. Die letzte unbenutzte selbst gebaute Strecke lässt sich mit exakt erstatteten Baukosten zurücknehmen. Aktive Fahrzeuge, Bewohnerwege, Haltestellen und Buslinien bleiben geschützt; wiederholtes Rücknehmen erzeugt kein Geld.
+- **Viertel aufziehen, benennen und gemeinsam ausbauen**. Ein Viertel umfasst die tatsächlichen Gebäude innerhalb seines Bereichs. Der Ausbauplan zeigt sämtliche Kosten und Materialien vor der Bestätigung; ein veränderter Preis oder zu wenig Geld startet keinen Teilauftrag. Neue Aufträge warten weiterhin auf reale LKW-Lieferungen; freie Bauarbeiter wechseln automatisch zum nächsten Viertelauftrag. Das Entfernen der Markierung entfernt keine Gebäude.
+- **Antippbare Übersichtskarte** für Betriebe, Häuser, Baustellen, freie Grundstücke, Waldregionen, Lieferwege und gesperrte Stadtviertel. Regionen zeigen ihre wirklichen bestehenden Erschließungsvoraussetzungen und Kosten. Die Weltgröße und bestehenden wirtschaftlichen Freischaltungen bleiben erhalten.
+- **Ruhige Ereigniszentrale** statt zusätzlicher Pflichtfenster: Bauabschlüsse, fehlende Materialien, fehlendes Personal, volle Ausgänge und laufende Stadtdienste. Tatsächliche Bauabschlüsse werden auch während der Offline-Simulation gespeichert. Benno reagiert auf konkrete fertige Gebäude und verlinkt bei Problemen zu passenden Aktionen.
+- **Rückmeldung und Lesbarkeit**: kurze Lieferanzeigen bei tatsächlicher Entladung, vorhandene Baufeiern, UI-Sounds, optional abschaltbare Vibration, größere Schrift, starker Kontrast und reduzierte Effekte. Zahlen, Symbole und Zustandstexte ergänzen Farben. Stadtbeschriftungen werden in der weiten Übersicht zurückgenommen. Einstellungen überstehen Speichern und Prestige.
+- Gleiches Paket, gleicher Testschlüssel, gleicher Speicherpfad und Schema 1; Android-Code **1900**. Ausschließlich `android.permission.VIBRATE` für die freiwillig einschaltbare Vibration. Keine Netzwerk- oder Speicherberechtigungen. **Als Update installieren, vorher nicht deinstallieren.** Echte Android-Touch-, Vibrations- und Leistungstests dieser Version stehen aus.
+
+Die vollständige Zuordnung der zwölf UX-Wünsche steht in [UX-Prüfliste](docs/UX-CHECKLIST.md). Weitere Sand-/Metall-/Betonketten und die übrigen offenen Master-Phasen stehen weiterhin im [Industrie-Masterplan](docs/INDUSTRY-ROADMAP.md).
+
+![Tatsächliche Stadtmodelle mit Hochhaus, Hotel und Einsatzgebäuden; aufgebautes Demonstrationsprofil](docs/preview-cityux-skyline.png)
+
+![Gebäudekarte am tatsächlichen Hochhaus; aufgebautes Demonstrationsprofil](docs/preview-cityux-building.png)
+
+![Eigene 3D-Architekturvorschau; aufgebautes Demonstrationsprofil](docs/preview-cityux-evolution.png)
 
 ## Korrektur 0.18 — Material kommt wirklich auf der Baustelle an
 
