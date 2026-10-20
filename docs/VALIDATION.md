@@ -18,6 +18,8 @@
 - Gleiches Zertifikat wie 0.19.2: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Paket `com.whiskymitschuss.timberloot`, Code 2000, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-Ausrichtung, Hochformat und erlaubte Vibration geprüft. Neue Modell-/Material-/Straßenressourcen sind im APK enthalten; Tests, Dokumentation, Releases und Hilfsskripte ausgeschlossen.
 - Frische unabhängige GitHub-Kopie: **4.397 Headless-Prüfungen** (Szene, Landschaft und neue Geometrie), **14 Desktop-OpenGL-Prüfungen** mit echten Renderings, sauberer Quell-Checkout. Kein Nutzerspielstand für Tests verwendet.
 
+APK, passende Quell-ZIP und alle fünf neuen Vorschauen wurden vom festen Tag `v0.20.0-waldstadt` vollständig per HTTPS mit HTTP 200 zurückgeladen. Größen und SHA256 stimmen mit gebautem Original und unabhängiger GitHub-Wiederherstellung überein. [Download-Prüfbericht](download-verification-20.json).
+
 ## Historischer Prüfbericht 0.19.2
 
 # Prüfung 0.19.2 — Begrenzte Gebäudekarte

@@ -12,6 +12,8 @@ Erster Abschnitt der 3D-Erneuerung: gerundete Baukörper und Grundstücke, einge
 
 APK-Quellstand `f19ab74fe973d7586a5506749dd85f8f8d42865c`. Quell-ZIP: 282 Dateien, jede gegen ihren Git-Blob geprüft. APK: 58,422,147 Bytes, SHA256 `0b1928681b8d58b9720eedd97094d6b1d895a62702d8adb1d3d2d44c81cdaa86`. Quell-ZIP: 15,270,924 Bytes, SHA256 `bd5d6961c54522d8d2388294609ae4ac816c62198e065c3af834255e0f4d0231`. Signatur und Paketdaten in `.apk.json`, Hashes in `SHA256SUMS.txt`.
 
+APK, passende Quell-ZIP und alle fünf neuen Vorschauen wurden vom festen Tag `v0.20.0-waldstadt` vollständig per HTTPS mit HTTP 200 zurückgeladen. Größen und SHA256 stimmen mit gebautem Original und unabhängiger GitHub-Wiederherstellung überein. [Download-Prüfbericht](../docs/download-verification-20.json).
+
 ## Historischer Stand 0.19.2
 
 # Timber Loot Tycoon 0.19.2 — Gebäudekarte korrigiert

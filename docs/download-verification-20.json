@@ -1,0 +1,55 @@
+{
+  "checked_utc": "2026-10-20T10:33:56.344888+00:00",
+  "tag": "v0.20.0-waldstadt",
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.20-test.apk",
+      "bytes": 58422147,
+      "http_status": 200,
+      "sha256": "0b1928681b8d58b9720eedd97094d6b1d895a62702d8adb1d3d2d44c81cdaa86",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/releases/Timber-Loot-Tycoon-v0.20-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.20-source.zip",
+      "bytes": 15270924,
+      "http_status": 200,
+      "sha256": "bd5d6961c54522d8d2388294609ae4ac816c62198e065c3af834255e0f4d0231",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/releases/Timber-Loot-Tycoon-v0.20-source.zip"
+    },
+    {
+      "file": "preview-crafted-start.png",
+      "bytes": 339250,
+      "http_status": 200,
+      "sha256": "98fb83f3b213a8377fe49139ca2107539148664fc4a236909c4e1a0f04095554",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/docs/preview-crafted-start.png"
+    },
+    {
+      "file": "preview-crafted-town.png",
+      "bytes": 413056,
+      "http_status": 200,
+      "sha256": "449bd42962ad9033a69469b58aff73663b298fdfc9d2b60bb5f35934abee010c",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/docs/preview-crafted-town.png"
+    },
+    {
+      "file": "preview-crafted-night.png",
+      "bytes": 384898,
+      "http_status": 200,
+      "sha256": "09738069b4b25cc94720eb9919e2cbc02b9622dd61a80ceb44be96ee38236305",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/docs/preview-crafted-night.png"
+    },
+    {
+      "file": "preview-crafted-house.png",
+      "bytes": 378831,
+      "http_status": 200,
+      "sha256": "a6f3cd2f7bb5adde9820d8ae03884bae224d17c44f63474c65e15157931a31e8",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/docs/preview-crafted-house.png"
+    },
+    {
+      "file": "preview-crafted-forest.png",
+      "bytes": 404338,
+      "http_status": 200,
+      "sha256": "ffd24b04925ca9e267275a5840f285d47e9fd119a3cdfc6b6473c209b9b873eb",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/docs/preview-crafted-forest.png"
+    }
+  ]
+}
