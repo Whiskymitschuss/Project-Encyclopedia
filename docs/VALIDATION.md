@@ -20,6 +20,8 @@
 
 Eine unabhängige frische GitHub-Kopie bestätigt die vollständigen **18.785 Headless-Prüfungen**, den unveränderten ersten-Haus-Verlauf, den Hauptszenenstart und die **40 neuen Desktop-OpenGL-/Touch-Prüfungen** erneut. Der Quell-Checkout bleibt dabei sauber. Die übrigen 183 Grafikprüfungen gehören zum ursprünglichen Gesamtprüflauf.
 
+APK, passende Quell-ZIP und alle fünf neuen Vorschauen wurden vom festen Tag `v0.19.1-journey` vollständig per HTTPS mit HTTP 200 zurückgeladen. Größen und SHA256 stimmen mit Original und unabhängiger Wiederherstellung überein. [Download-Prüfbericht](download-verification-191.json).
+
 ## Historischer Prüfbericht 0.19
 
 # Prüfung 0.19 — Stadtgefühl und zehn echte Architekturstadien

@@ -1,0 +1,62 @@
+{
+  "version": "0.19.1-test",
+  "source_commit": "cae1e85f08e2346ae490179dd2161fce587a8855",
+  "release_commit": "18d86b46f52a4d7b21d3636090864acbef591e2a",
+  "tag": "v0.19.1-journey",
+  "fresh_restore_headless_checks": 18785,
+  "fresh_restore_new_opengl_checks": 40,
+  "original_total_opengl_checks": 223,
+  "source_zip_verified_entries": 256,
+  "device_install_or_launch_tested": false,
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.19.1-test.apk",
+      "bytes": 58396701,
+      "http_status": 200,
+      "sha256": "bd9fd6e2f1f9597f52eb965fbdeb24799eac8117dc3dfde56d867418ae98773a",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/releases/Timber-Loot-Tycoon-v0.19.1-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.19.1-source.zip",
+      "bytes": 12981993,
+      "http_status": 200,
+      "sha256": "5d58bf9f18af538d6fd488d183a9ff9decb134f0ea6abb9e2343558d3d4446a2",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/releases/Timber-Loot-Tycoon-v0.19.1-source.zip"
+    },
+    {
+      "file": "preview-journey-chapters.png",
+      "bytes": 166051,
+      "http_status": 200,
+      "sha256": "30551a5da775c8d916b5669c4c85e31184912321110ae45d4a5aca85a4ab8fc0",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/docs/preview-journey-chapters.png"
+    },
+    {
+      "file": "preview-journey-townhall.png",
+      "bytes": 188974,
+      "http_status": 200,
+      "sha256": "0ac0dc9563628f4054753d08a14135402a9ae0aa0fabaaedb79d71a97b1955af",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/docs/preview-journey-townhall.png"
+    },
+    {
+      "file": "preview-journey-trophy.png",
+      "bytes": 151424,
+      "http_status": 200,
+      "sha256": "5dcd561add82fb4039f21eedf92a253f78353db7946d13a52dcd615f69e34980",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/docs/preview-journey-trophy.png"
+    },
+    {
+      "file": "preview-journey-return.png",
+      "bytes": 176157,
+      "http_status": 200,
+      "sha256": "a9ba0cce69fd94d49ed5b1bebc62feb6f9aa6b61315b89163e36ba8c68f86e19",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/docs/preview-journey-return.png"
+    },
+    {
+      "file": "preview-journey-orders.png",
+      "bytes": 180688,
+      "http_status": 200,
+      "sha256": "245d5ba281cf48ac80e54e93032f577bdb49b34c75586e8f87fec94825baface",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/docs/preview-journey-orders.png"
+    }
+  ]
+}

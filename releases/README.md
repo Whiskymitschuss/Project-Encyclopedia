@@ -14,6 +14,8 @@ APK-Quellstand `cae1e85f08e2346ae490179dd2161fce587a8855`. Quell-ZIP: 256 Dateie
 
 Ein optionales Einnahmemodell über hochwertige Kosmetik und ein einmaliges Unterstützerpaket ist als [Vorschlag](../docs/MONETIZATION.md) dokumentiert. Die APK enthält keine echten Käufe oder Werbung.
 
+Auch eine unabhängige Wiederherstellung besteht alle 18.785 Headless-Prüfungen und die 40 neuen OpenGL-Prüfungen. Alle sieben Download-Dateien wurden vollständig vom festen Tag geladen und mit beiden Projektkopien verglichen. [Download-Prüfbericht](../docs/download-verification-191.json).
+
 ## Historischer Stand 0.19
 
 # Timber Loot Tycoon 0.19 — Stadtgefühl
