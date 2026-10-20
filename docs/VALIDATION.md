@@ -19,6 +19,9 @@
 - Gleiches Zertifikat wie 0.18: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1900, Speicherformat 1, unveränderter Paket-/Speichername, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat und GL Compatibility geprüft. Die einzige deklarierte Berechtigung ist VIBRATE; sie unterstützt die optionale, anfangs ausgeschaltete Vibration.
 - Neue Laufzeitmodule für Architektur, Stadt-UX, Übersicht, Vorschau, Palette und Routenmarkierung sind im APK enthalten. Tests, Build-Helfer, Release-Dateien und Dokumentationsbilder sind ausgeschlossen.
 
+- Unabhängige frische GitHub-Kopie `/workspace/timber-restore-19`: alle **18.518 Headless- und 183 Desktop-OpenGL-Prüfungen**, erster-Haus-Verlauf und Hauptszenenstart erneut bestanden. Beide Arbeitskopien waren vor dieser Dokumentation sauber und auf demselben vollständigen Release-Commit.
+- APK, passende Quell-ZIP und alle sieben neuen Vorschauen vom festen Tag `v0.19.0-cityux` vollständig per HTTPS mit HTTP 200 heruntergeladen. Größen und SHA256 stimmen mit Original und unabhängiger Wiederherstellung überein. Bericht: [download-verification-19.json](download-verification-19.json).
+
 ## Historischer Prüfbericht 0.18
 
 # Prüfung 0.18 — Direkte Baustellenversorgung und stabile Materialanzeigen

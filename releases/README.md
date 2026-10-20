@@ -14,6 +14,8 @@ Unten **Bauen** öffnet die neue Wischpalette, **Welt** die Übersicht. Gebäude
 
 18.518 Headless- und 183 Desktop-OpenGL-Prüfungen bestanden. APK-Quellstand `81e784afb4c28fda17a315ad3287a7d061225930`. Die passende Quell-ZIP enthält 239 einzeln gegen Git geprüfte Dateien. APK: 58,363,391 Bytes, SHA256 `6ae401c2656db11618360565d25661983aa19947393d30954319ee7bb2372c68`. Quell-ZIP: 12,099,048 Bytes, SHA256 `9cbda93ae25d2073babc5640ef73c4363081eb4a9d55ad37252dee1ffc4674b8`. Signatur und Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
 
+Auch in einer unabhängigen frischen GitHub-Kopie bestehen alle 18.518 Headless- und 183 Desktop-OpenGL-Prüfungen. APK, Quellarchiv und alle sieben Vorschauen wurden vom festen Versionstag vollständig per HTTPS zurückgeladen und mit beiden Kopien verglichen. [Download-Prüfbericht](../docs/download-verification-19.json).
+
 ## Historischer Stand 0.18
 
 # Timber Loot Tycoon 0.18 — Baulogistik

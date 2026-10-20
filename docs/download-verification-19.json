@@ -1,0 +1,81 @@
+{
+  "release_tag": "v0.19.0-cityux",
+  "published_commit": "6b13fd9e823d4bd98ab591d16bc0d013da457f96",
+  "source_commit": "81e784afb4c28fda17a315ad3287a7d061225930",
+  "verified_original_and_fresh_github_clone": true,
+  "headless_checks_each": 18518,
+  "desktop_opengl_checks_each": 183,
+  "architectural_models_checked": 140,
+  "city_building_types": 14,
+  "first_home_simulated_seconds": 1682,
+  "synthetic_engine_touch_and_key_input_tested": true,
+  "android_permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "device_install_or_launch_tested": false,
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.19-test.apk",
+      "bytes": 58363391,
+      "http_status": 200,
+      "sha256": "6ae401c2656db11618360565d25661983aa19947393d30954319ee7bb2372c68",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/releases/Timber-Loot-Tycoon-v0.19-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.19-source.zip",
+      "bytes": 12099048,
+      "http_status": 200,
+      "sha256": "9cbda93ae25d2073babc5640ef73c4363081eb4a9d55ad37252dee1ffc4674b8",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/releases/Timber-Loot-Tycoon-v0.19-source.zip"
+    },
+    {
+      "file": "preview-cityux-skyline.png",
+      "bytes": 358869,
+      "http_status": 200,
+      "sha256": "6cc4acbde2ddd21075b2b68433d55457bd6445a643798be300378286ea0b3a41",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-skyline.png"
+    },
+    {
+      "file": "preview-cityux-building.png",
+      "bytes": 258478,
+      "http_status": 200,
+      "sha256": "b8ee981cbc299bf0423c2e7c9aec65c23875aa490b2d0a4a7e3281374c6e64ba",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-building.png"
+    },
+    {
+      "file": "preview-cityux-evolution.png",
+      "bytes": 167613,
+      "http_status": 200,
+      "sha256": "30dd13c5b57b4430d5a3dfd89281b43cd177793f4a5b8d97361897fe289e6780",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-evolution.png"
+    },
+    {
+      "file": "preview-cityux-palette.png",
+      "bytes": 261862,
+      "http_status": 200,
+      "sha256": "5030e3bb43f4cb693f3bef61c0b270bb5391d3614c4fe6f3655cd23cf537e380",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-palette.png"
+    },
+    {
+      "file": "preview-cityux-map.png",
+      "bytes": 149459,
+      "http_status": 200,
+      "sha256": "384b170163041c14e0f4d8375f8ec32f632855f0e982becb540f0fd87b1a533a",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-map.png"
+    },
+    {
+      "file": "preview-cityux-districts.png",
+      "bytes": 168795,
+      "http_status": 200,
+      "sha256": "3a69c774aad337491b735d61a5dbd1f85f46567b430903e68d89d0cd2a80410b",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-districts.png"
+    },
+    {
+      "file": "preview-cityux-materials.png",
+      "bytes": 162808,
+      "http_status": 200,
+      "sha256": "e545d232c2423895154bf3f6521455476a55afd602a4a766846cef3f2346f743",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/docs/preview-cityux-materials.png"
+    }
+  ]
+}
