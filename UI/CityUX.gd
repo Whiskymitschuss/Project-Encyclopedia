@@ -53,7 +53,7 @@ func _ready() -> void:
  palette_body.add_theme_constant_override("separation",5)
  palette.add_child(palette_body)
  palette.hide()
- event_button=hud.button(self,"Hinweise",func(): hud.open_menu("events"))
+ event_button=hud.button(self,"Hinweise",func(): hud.open_menu("return" if not Game.return_report.is_empty() else "events"))
  event_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
  event_button.offset_left=14
  event_button.offset_right=238
@@ -221,6 +221,7 @@ func refresh() -> void:
  for event in Game.state.ux.events:
   if not event.read: count+=1
  event_button.text="! %s Hinweise & Ereignisse" % count if count>0 else "✓ Stadt im Blick"
+ if not Game.return_report.is_empty(): event_button.text="Willkommen zurück · Bilanz ›"
  if sheet.visible and not sheet_gesture and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): render_sheet()
 func _process(delta: float) -> void:
  refresh_clock+=delta
@@ -281,7 +282,7 @@ func open_palette() -> void:
    if not city and ((palette_category=="Versorgung")!=(key in ["station","cabin","warehouse","market","research","garage"])): continue
    var definition=definitions[key]
    var price=float(definition.cost)*Game.difficulty() if city else Game.cost_for(key)
-   var enabled=Game.level("prefab")>0 and Game.next_city_plot()>=0 if city else Game.available(key)
+   var enabled=Game.home_available(key) and (key=="townhall" or Game.next_city_plot()>=0) if city else Game.available(key)
    var name_value=TownEvolution.title(key,1) if city else str(definition.name)
    var tile=hud.button(tiles,"%s\n%s Münzen\n%s" % [name_value,Catalog.number(price),"Platzieren" if enabled else "Noch gesperrt"],func():
     palette.hide()
@@ -398,8 +399,10 @@ func events_menu() -> void:
   var box=hud.card(("✓ " if event.read else "● ")+str(event.text))
   hud.button(box,"ZUM ORT",func():
    event.read=true
-   hud.focus_requested.emit(Vector3(float(item.position[0]),0,float(item.position[1])))
-   hud.close_menu()
+   if not str(item.menu).is_empty(): hud.open_menu(item.menu)
+   else:
+    hud.focus_requested.emit(Vector3(float(item.position[0]),0,float(item.position[1])))
+    hud.close_menu()
    Game.save(true)
    refresh())
  hud.button(hud.contents,"ALLE ALS GELESEN MARKIEREN",func():

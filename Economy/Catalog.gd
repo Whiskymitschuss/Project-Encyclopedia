@@ -43,7 +43,8 @@ const HOMES = {
  "clinic":{"name":"Gesundheitszentrum","cost":9000,"materials":{"walls":10.0,"roofs":5.0,"parts":6.0},"rent":0.0,"people":0,"color":"93c6b5"},
  "landhouse":{"name":"Landhaus","cost":4800,"materials":{"walls":6.0,"roofs":4.0,"furniture":4.0},"rent":6.0,"people":6,"color":"b5cc87"},
  "nightclub":{"name":"Nachtclub","cost":16000,"materials":{"walls":12.0,"roofs":5.0,"parts":8.0,"design":3.0},"rent":22.0,"people":8,"color":"9c80c9"},
- "fire":{"name":"Feuerwehr","cost":11000,"materials":{"walls":10.0,"roofs":6.0,"parts":8.0},"rent":0.0,"people":0,"color":"c96e5a"}}
+ "fire":{"name":"Feuerwehr","cost":11000,"materials":{"walls":10.0,"roofs":6.0,"parts":8.0},"rent":0.0,"people":0,"color":"c96e5a"},
+ "townhall":{"name":"Rathaus","cost":200,"materials":{"wood":12.0,"boards":8.0},"rent":0.0,"people":0,"color":"6caeba"}}
 const BIOMES = [
  {"name":"Starter-Wald","cost":0,"nuts":"Muttern", "screws":"Schrauben", "wood":"Holz","ground":"70d675","tree":"289f62"},
  {"name":"Eichenwald","cost":1500,"wood":"Eichenholz","ground":"c8ce68","tree":"6eae41"},

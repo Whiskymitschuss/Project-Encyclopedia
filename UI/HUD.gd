@@ -41,6 +41,8 @@ var companion: Control
 var route_selection: Array = []
 var placement_undo: Button
 var placement_rotate: Button
+var journey_ui
+var edition: Label
 
 func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxTexture:
  return Surface.create(color,radius,pressed)
@@ -75,7 +77,7 @@ func _ready() -> void:
  var title = text(brand,"TIMBER LOOT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- var edition = text(brand,"STADTGEFÜHL / 19",11,GOLD)
+ edition = text(brand,"DEINE STADT / 19.1",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
@@ -83,7 +85,7 @@ func _ready() -> void:
  diamonds=resource_counter(counters,"gem",17)
  loot_counter=resource_counter(counters,"more",17)
  subtitle = text(top,"",12,MUTED)
- mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<5 else "missions"))
+ mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<4 else "journey"))
  mission_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  mission_button.offset_left = 14
  mission_button.offset_right = -14
@@ -178,6 +180,8 @@ func _ready() -> void:
  toast.add_theme_constant_override("shadow_offset_y",2)
  build_overlay()
  build_placement_bar()
+ journey_ui=load("res://UI/JourneyUI.gd").new()
+ journey_ui.hud=self
  companion=load("res://UI/Companion.gd").new()
  companion.hud=self
  add_child(companion)
@@ -293,6 +297,9 @@ func show_notice(message: String) -> void:
  toast_left = 5.0
 
 func update_stats() -> void:
+ edition.text="DEINE STADT / 19.1"
+ for chapter in Journey.CHAPTERS:
+  if chapter.id==Game.state.journey.selected: edition.text=chapter.title.to_upper()
  money.text = "%s Münzen" % Catalog.number(Game.state.coins)
  diamonds.text=Catalog.number(Game.state.diamonds)
  loot_counter.text=Catalog.number(Game.state.tickets)
@@ -309,8 +316,15 @@ func update_stats() -> void:
   if not Game.state.missions_claimed.has(m.id):
    mission_button.text = "%s · %s/%s %s" % [m.name,Catalog.number(m.value),Catalog.number(m.target),"ABHOLEN" if m.value >= m.target else "›"]
    break
- if int(Game.state.tutorial)<5:
+ if int(Game.state.tutorial)<4:
   mission_button.text = ["WILLKOMMEN · Dein Waldimperium wartet","ANLEITUNG 1/4 · Fälle fünf Bäume","ANLEITUNG 2/4 · Holz abliefern","ANLEITUNG 3/4 · Erste Rohstoffe verkaufen","ANLEITUNG 4/4 · Erstes Gebäude platzieren"][int(Game.state.tutorial)]
+ else:
+  var goal=Journey.current(Game.state)
+  if not goal.is_empty():
+   mission_button.text="K%s · %s %s" % [int(goal.chapter)+1,goal.name,"✓ ABHOLEN" if goal.ready else "%s/%s ›" % [Catalog.number(goal.value),Catalog.number(goal.target)]]
+  else: mission_button.text="DEIN IMPERIUM · Alle zehn Kapitel geschafft!"
+ mission_button.clip_text=true
+ mission_button.add_theme_font_size_override("font_size",12 if mission_button.text.length()>60 else 14)
 
 func _process(delta: float) -> void:
  toast_left -= delta
@@ -323,7 +337,9 @@ func _process(delta: float) -> void:
  if refresh_clock >= 1.0:
   refresh_clock = 0
   for item in live_labels:
-   if is_instance_valid(item.label): item.label.text = item.callback.call()
+   if is_instance_valid(item.label):
+    if item.has("update"): item.update.call()
+    else: item.label.text = item.callback.call()
 
 func _unhandled_key_input(event: InputEvent) -> void:
  if event.is_action_pressed("ui_cancel") and ux!=null and ux.panels_visible():
@@ -377,6 +393,7 @@ func render_menu() -> void:
   child.queue_free()
  live_labels.clear()
  match current:
+  "journey","commissions","trophies","return","townhall": journey_ui.populate(current)
   "stone": stone_menu()
   "delivery": delivery_menu()
   "construction": construction_menu()
@@ -503,7 +520,7 @@ func catalog_menu() -> void:
   if not city and ((build_category=="Versorgung")!=(kind in ["station","cabin","warehouse","market","research","garage"])): continue
   var key=str(kind)
   var d=definitions[kind]
-  var enabled=(Game.level("prefab")>0 and Game.next_city_plot()>=0) if city else Game.available(kind)
+  var enabled=(Game.home_available(kind) and (kind=="townhall" or Game.next_city_plot()>=0)) if city else Game.available(kind)
   var price=float(d.cost)*Game.difficulty() if city else Game.cost_for(kind)
   var caption="%s\n%s Münzen\n%s" % [d.name,Catalog.number(price),"PLATZIEREN" if enabled else "AB LEVEL 5" if kind in StoneIndustry.KINDS else "GESPERRT"]
   var tile=button(grid,caption,func(): request_placement({"kind":key,"city":city,"index":-1,"plot":-1}),enabled)
@@ -595,7 +612,7 @@ func plot_menu() -> void:
  var plot = current_index
  modal_title.text = "GRUNDSTÜCK %s" % (plot+1)
  button(contents,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Game.plot_position(plot)); close_menu())
- if plot >= Game.city_plot_count():
+ if plot >= Game.city_plot_count() and not (plot==Journey.HALL_PLOT and Journey.townhall_index(Game.state)>=0):
   card("Neue Region benötigt","Erweitere dein Unternehmen, um weitere Grundstücke zu erschließen.")
   button(contents,"REGIONEN",func(): open_menu("empire"))
   return
@@ -612,15 +629,17 @@ func plot_menu() -> void:
     button(box,"MIETE ABHOLEN",func(): action(func(): Game.collect_rent(index)))
    var materials = {}
    for key in d.materials: materials[key] = ceilf(float(d.materials[key])*0.5*int(h.level))
-   text(box,"Ausbau: %s Münzen\n%s" % [Catalog.number(float(d.cost)*pow(1.4,int(h.level))*Game.difficulty()),materials_text(materials)],15,GOLD)
-   button(box,"GEBÄUDE AUSBAUEN",func(): action(func(): Game.upgrade_home(index)),not Game.job_for("home_upgrade",index) and h.level < 10)
+   if h.kind=="townhall": button(box,"RATHAUS & KAPITELFORTSCHRITT",func(): open_menu("townhall"))
+   else:
+    text(box,"Ausbau: %s Münzen\n%s" % [Catalog.number(float(d.cost)*pow(1.4,int(h.level))*Game.difficulty()),materials_text(materials)],15,GOLD)
+    button(box,"GEBÄUDE AUSBAUEN",func(): action(func(): Game.upgrade_home(index)),not Game.job_for("home_upgrade",index) and h.level < 10)
    button(box,"GEBÄUDE VERSCHIEBEN",func(): request_placement({"kind":h.kind,"city":true,"index":index,"plot":plot}))
    return
  for j in Game.state.jobs:
   if j.type == "home" and int(j.plot) == plot:
    card("Bau läuft bereits","Das Grundstück wird nach Fertigstellung nutzbar.")
    return
- if Game.level("prefab") < 1:
+ if Game.level("prefab") < 1 and not Game.home_available("townhall"):
   card("Fertighauswerk benötigt","Baue zuerst Möbelfabrik und Fertighauswerk im Industriemenü.")
   return
  for kind in Catalog.HOMES:
@@ -629,11 +648,14 @@ func plot_menu() -> void:
   var public_effect = {"park":"Unternehmensweit +4 % Miete pro Stufe (zusammen maximal +100 %)","school":"+4 % Produktionsleistung pro Stufe (maximal +50 %)","clinic":"Unternehmensweit +4 % Miete pro Stufe (zusammen maximal +100 %)","fire":"+5 % Baugeschwindigkeit pro Stufe (maximal +50 %)"}.get(kind,"")
   var box = card(d.name,public_effect if not public_effect.is_empty() else "Miete %s/s · %s Bewohner" % [d.rent,d.people])
   text(box,"%s Münzen\n%s" % [Catalog.number(float(d.cost)*Game.difficulty()),materials_text(d.materials)],15,GOLD)
-  button(box,"STANDORT AUSWÄHLEN",func(): request_placement({"kind":key,"city":true,"index":-1,"plot":plot}))
-  button(box,"ALS BAUZIEL VORMERKEN",func(): Game.set_plan(key,plot); open_menu("planner"))
+  button(box,"STANDORT AUSWÄHLEN",func(): request_placement({"kind":key,"city":true,"index":-1,"plot":plot}),Game.home_available(key))
+  if kind=="townhall": button(box,"KAPITEL & RATHAUSAUSBAU",func(): open_menu("townhall"))
+  else: button(box,"ALS BAUZIEL VORMERKEN",func(): Game.set_plan(key,plot); open_menu("planner"))
 
 func contracts_menu() -> void:
  modal_title.text = "AUFTRÄGE & LIEFERUNGEN"
+ button(contents,"FREIWILLIGE KURZAUFTRÄGE · DEIN NÄCHSTES VORHABEN",func(): open_menu("commissions"))
+ button(contents,"KAPITEL 1–10 & RATHAUS",func(): open_menu("journey"))
  var line = card("Dein Laden · echte Lieferkette","Holz → Bretter → Möbel. Holz-, Bretter- und Möbellieferungen fahren mit deinen Fahrzeugen über Straßen. Pünktliche Aufträge bringen einen Bonus.")
  if Game.state.delivery.active: dynamic_text(line,func(): return delivery_order_text())
  button(line,"LIEFERKETTE ÖFFNEN",func(): open_menu("delivery"))
@@ -664,6 +686,8 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
+ button(contents,"KAPITEL 1–10 & RATHAUS",func(): open_menu("journey"))
+ button(contents,"DEINE AUSZEICHNUNGEN",func(): open_menu("trophies"))
  for entry in [["Stadtkarte & Bauflächen","overview"],["Viertel & gemeinsame Ausbaupläne","districts"],["Hinweise & Ereignisse","events"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
   var key = str(entry[1])
   button(contents,str(entry[0]),func(): open_menu(key))
@@ -779,7 +803,7 @@ func settings_menu() -> void:
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
  if ux!=null: ux.settings_controls(box)
- text(contents,"Version 0.19.0 · Stadtgefühl\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.19.1 · Zehn Kapitel\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -827,7 +851,7 @@ func show_placement(request: Dictionary) -> void:
  var price=0.0 if moving else float(definition.cost)*Game.difficulty() if city else Game.cost_for(request.kind)
  placement_title.text="%s · %s" % [definition.name,"kostenlos verschieben" if moving else Catalog.number(price)+" Münzen"]
  var materials={} if moving else definition.materials if city else Game.build_materials(request.kind) if Game.company_level()>=4 else {}
- placement_materials.text="" if materials.is_empty() else ("Später per LKW: " if Game.company_level()>=4 else "Beim Bau bezahlen: ")+materials_text(materials)
+ placement_materials.text="" if materials.is_empty() else ("Später per LKW: " if Game.company_level()>=4 or request.kind=="townhall" else "Beim Bau bezahlen: ")+materials_text(materials)
  placement_confirm.text="SETZEN" if moving else "BAUEN"
  placement_panel.show()
 
@@ -856,6 +880,7 @@ func welcome_menu() -> void:
  illustration.mouse_filter=Control.MOUSE_FILTER_IGNORE
  contents.add_child(illustration)
  var box=card("Dein erstes Holz. Dein eigenes Imperium.","Aus einer kleinen Forststation wird deine lebendige Industriestadt. Du bestimmst, wo neue Gebäude stehen und wie dein Betrieb wächst.")
+ text(box,"Zehn Kapitel begleiten dich. Erfülle Aufgaben und entwickle dein Rathaus vom Waldbüro zum Stadtpalais.",16,MUTED)
  text(box,"1  Bäume fällen und Holz abliefern\n2  Bretter und Möbel herstellen und liefern\n3  Gebäude platzieren, Baumaterial liefern und ausbauen\n4  Häuser bauen und neue Regionen erschließen",18,CREAM)
  button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.state.tutorial=1; Game.save(true); update_stats(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
  button(box,"Ich kenne mich aus · überspringen",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
@@ -863,6 +888,7 @@ func welcome_menu() -> void:
 func guide_menu() -> void:
  if int(Game.state.tutorial)==0: welcome_menu(); return
  modal_title.text="DEIN WEG ZUM IMPERIUM"
+ button(contents,"KAPITEL 1–10 · DEIN RATHAUS AUFBAUEN",func(): open_menu("journey"))
  var step=mini(int(Game.state.tutorial),4)
  var box=card("Schritt %s / 4" % step,["","Tippe auf Fällen oder auf Bäume. Nach fünf gefällten Bäumen geht es weiter.","Tippe auf Abliefern. Dein Rucksack wird in das Holzlager geleert; Helfer liefern zusätzlich automatisch.","Öffne Verkaufen und verkaufe etwas Holz oder Bretter. Missionsprämien helfen beim ersten Ausbau.","Öffne Bauen, wähle ein Gebäude und platziere es in der Welt. Grün bedeutet frei; Rot zeigt Straßen oder belegte Flächen."][step])
  button(box,"WEITER SPIELEN",func(): close_menu())
@@ -983,9 +1009,9 @@ func construction_menu() -> void:
  card("Erst Material. Dann Richtfest.","Lieferungen starten automatisch: direkt vom Sägewerk, Steinwerk oder Lager zur Baustelle. Jede Bauphase wartet auf ihre tatsächlichen Materialien. Alle Transporte teilen sich deine LKWs; mehr Fahrzeuge gibt es in der Garage.")
  if Game.state.jobs.is_empty(): card("Keine offenen Baustellen","Im Baukatalog ein Gebäude platzieren oder auf einen Betrieb tippen und Ausbauen wählen.")
  else: jobs_cards()
- var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Ab Unternehmenslevel 4 arbeiten bis zu fünf zugewiesene Bauarbeiter pro Baustelle. Weitere Kollegen kosten Spielmünzen.")
+ var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Dein erstes Rathaus erklärt die Materialbaustellen. Ab Unternehmenslevel 4 gilt das System auch für weitere Gebäude; bis zu fünf Bauarbeiter arbeiten je Baustelle.")
  button(crew,"BAUARBEITER EINSTELLEN · %s" % Catalog.number(150*pow(1.6,int(Game.state.builders)-2)*Game.difficulty()),func(): action(func(): Game.hire_builder()),Game.company_level()>=4 and int(Game.state.builders)<8)
- if Game.company_level()<4: text(crew,"Dein Level: %s/4 · Neue Betriebe und Upgrades benötigen bis dahin nur Geld." % Game.company_level(),15,MUTED)
+ if Game.company_level()<4: text(crew,"Dein Level: %s/4 · Neue Industriebetriebe benötigen bis dahin nur Geld. Dein Rathaus erhält schon echte Lieferungen." % Game.company_level(),15,MUTED)
  var depot = card("Materialdepot · nur Spielmünzen","Muttern und Schrauben werden hier mit erspielten Münzen gekauft. Holz und Bretter liefert deine Produktion.")
  for key in ConstructionRules.HARDWARE:
   var id = str(key)

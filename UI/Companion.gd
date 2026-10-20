@@ -90,13 +90,14 @@ func progress() -> Dictionary:
  var levels=0
  for home in Game.state.homes: levels+=int(home.level)
  for building in Game.state.buildings: levels+=int(building.level)
- return {"buildings":Game.state.buildings.size(),"homes":Game.state.homes.size(),"levels":levels,"unlocked":int(Game.state.unlocked),"prestige":int(Game.state.prestige),"trees":int(Game.state.trees)}
+ return {"buildings":Game.state.buildings.size(),"homes":Game.state.homes.size(),"levels":levels,"unlocked":int(Game.state.unlocked),"prestige":int(Game.state.prestige),"trees":int(Game.state.trees),"chapters":Game.state.journey.trophies.size()}
 
 func observe() -> void:
  var now=progress()
  var tree_target=25*(int(Game.state.prestige)+1)
  if not previous.is_empty():
   if now.prestige>previous.prestige: queue_message("Ein neues Kapitel! Ich bin wieder an deiner Seite. Lass uns etwas Schönes aufbauen.",true)
+  elif now.chapters>previous.get("chapters",0): queue_message("Kapitel geschafft! Dein Rathaus wächst und deine neue Auszeichnung bleibt dir. Darauf bin ich stolz!",true,"journey")
   elif now.homes>previous.homes: queue_message(TownEvolution.title(str(Game.state.homes.back().kind),int(Game.state.homes.back().level))+" ist fertig! Unser Wald wächst zu einer Stadt.",true,"city")
   elif now.buildings>previous.buildings: queue_message(str(Catalog.BUILDINGS[Game.state.buildings.back().kind].name)+" ist fertig! Das Team hat ganze Arbeit geleistet.",true,"industry")
   elif now.levels>previous.levels: queue_message("Ausbau geschafft! Ich mag es, wenn aus kleinen Anfängen etwas Großes wächst.",true)
@@ -141,6 +142,8 @@ func hint() -> Dictionary:
   var next=hints[0]
   return {"id":next.id,"text":next.text+". Ich zeige dir, was gebraucht wird.","menu":"events"}
  if Game.level("kiln")==0 and float(Game.state.resources.boards)>5: return {"id":"kiln","text":"Aus Brettern wird in der Trockenkammer Trockenholz. Damit können wir später Möbel fertigen.","menu":"catalog"}
+ var goal=Journey.current(Game.state)
+ if not goal.is_empty(): return {"id":"journey:"+goal.id,"text":"Unser nächster Schritt: %s. %s" % [goal.name,"Die Belohnung liegt schon bereit!" if goal.ready else "Ich zeige dir, wie es weitergeht."],"menu":"journey"}
  if not Game.state.homes.is_empty(): return {"id":"city","text":"Ich mag unsere kleine Stadt. Jedes neue Zuhause macht aus dem Betrieb ein Stück Heimat.","menu":"city"}
  return {"id":"forest","text":"Ein guter Moment, einfach mal zuzuschauen. Unser Wald sieht heute besonders schön aus.","menu":""}
 

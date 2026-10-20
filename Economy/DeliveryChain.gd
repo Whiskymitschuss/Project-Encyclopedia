@@ -46,7 +46,7 @@ static func reserved(data: Dictionary, kind: String, key: String) -> float:
  return result
 
 static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonus: float = 1.0) -> Dictionary:
- var report = {"coins":0.0,"sold":0,"tickets":0,"sawdust":0.0,"flow":{}}
+ var report = {"coins":0.0,"sold":0,"tickets":0,"sawdust":0.0,"produced":{},"orders":0,"flow":{}}
  var data = state.delivery
  if not data.active or data.paused: return report
  # Freeze this line while one of its selected buildings is paused.
@@ -87,6 +87,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    if cycles>0:
     buf[key] -= cycles*2
     buf[product] += cycles
+    report.produced[product]=cycles
     data.progress[kind] = maxf(0,float(data.progress[kind])-cycles*duration)
     if kind=="sawmill": report.sawdust += cycles
    report.flow["building:%s" % index] = 1.0/duration
@@ -113,6 +114,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    data.late_orders += 1
    data.last_receipt = "Spät geliefert · 70 % Verkaufspreis, nächster Auftrag"
   data.orders += 1
+  report.orders+=1
   data.order = next_order(state,data)
  else:
   order.left = maxf(0,float(order.left)-delta)

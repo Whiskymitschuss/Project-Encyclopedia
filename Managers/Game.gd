@@ -16,6 +16,10 @@ var tick_clock = 0.0
 var save_clock = 0.0
 var rng = RandomNumberGenerator.new()
 var offline_report = ""
+var return_report: Dictionary = {}
+var paused_at = 0.0
+var pause_capture: Dictionary = {}
+var skip_resume_delta = false
 var last_save_ok = true
 var town_route_cache: Dictionary = {}
 var city_route_cache: Dictionary = {}
@@ -30,7 +34,7 @@ func initial_state() -> Dictionary:
  for kind in ["station","sawmill","warehouse","cabin","market"]:
   buildings.append({"kind":kind,"level":1,"paused":false})
  return {
-  "schema":1, "ux":UXRules.initial(), "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
+  "schema":1, "ux":UXRules.initial(), "journey":Journey.initial(), "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
@@ -45,14 +49,17 @@ func initial_state() -> Dictionary:
 
 func _ready() -> void:
  rng.randomize()
+ changed.connect(func(): Journey.refresh(state))
  state = initial_state()
  var saved = Store.load_game()
  if not saved.is_empty():
   restore(saved)
   var offline = clampf(Time.get_unix_time_from_system() - float(state.last_seen),0.0,28800.0)
-  var before = float(state.coins)
+  var before = Journey.resume_capture(state)
   simulate(offline)
-  if offline > 60: offline_report = "%s Min. offline · +%s Münzen" % [int(offline/60),Catalog.number(state.coins-before)]
+  if offline > 60:
+   return_report=Journey.resume_report(state,before,offline)
+   offline_report = "%s Min. offline · +%s Münzen" % [int(offline/60),Catalog.number(state.coins-float(before.coins))]
  process_mode = Node.PROCESS_MODE_ALWAYS
 
 func restore(saved: Dictionary) -> void:
@@ -91,6 +98,8 @@ func restore(saved: Dictionary) -> void:
  for key in StoneIndustry.initial():
   if not state.stone.has(key): state.stone[key]=StoneIndustry.initial()[key]
  StoneIndustry.synchronize(state)
+ Journey.migrate(state,saved)
+ Journey.refresh(state)
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -103,10 +112,36 @@ func save(silent: bool = false) -> bool:
  return last_save_ok
 
 func _notification(what: int) -> void:
+ if what == NOTIFICATION_APPLICATION_PAUSED:
+  paused_at=Time.get_unix_time_from_system()
+  pause_capture=Journey.resume_capture(state)
+ if what == NOTIFICATION_APPLICATION_RESUMED and paused_at>0:
+  resume_company(Time.get_unix_time_from_system())
  if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
   save(true)
 
+func resume_company(now: float) -> void:
+ if paused_at<=0 or pause_capture.is_empty(): return
+ var gap=maxf(0,now-paused_at)
+ # Some platforms continue processing briefly in the background. Subtract
+ # those already simulated seconds instead of paying them a second time.
+ var remaining=clampf(gap-(float(state.elapsed)-float(pause_capture.elapsed)),0,28800)
+ simulate(remaining)
+ if gap>60:
+  return_report=Journey.resume_report(state,pause_capture,minf(gap,28800))
+  offline_report="%s Min. offline · +%s Münzen" % [int(gap/60),Catalog.number(return_report.coins)]
+ paused_at=0.0
+ pause_capture={}
+ skip_resume_delta=true
+ changed.emit()
+ save(true)
+
 func _process(delta: float) -> void:
+ if skip_resume_delta:
+  # The OS may report the whole background interval as this frame's delta.
+  # resume_company has already simulated it from the saved wall-clock gap.
+  skip_resume_delta=false
+  delta=0.0
  tick_clock += minf(delta,5.0)
  save_clock += delta
  if tick_clock >= 1.0:
@@ -208,6 +243,9 @@ func production_status(index: int) -> String:
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
 func step(delta: float) -> void:
+ var stone_before=float(state.stone.delivered)
+ var services_before=0
+ for total in state.city_services.completed.values(): services_before+=int(total)
  var awaiting=[]
  for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments:
   if not shipment.arrived: awaiting.append(shipment)
@@ -223,6 +261,7 @@ func step(delta: float) -> void:
  var accepted = minf(harvest,capacity()-float(state.resources.wood))
  add_resource("wood",accepted)
  state.gathered += accepted
+ Journey.add(state,"gathered",accepted)
  flow = {"harvest":accepted/maxf(delta,0.001)}
  flow.merge(StoneIndustry.tick(state,delta,(1+research_level("production")*0.12)*multiplier()*boost("processing")),true)
  state.stone.ready=not StoneIndustry.requests(state,stone_route_cache).is_empty()
@@ -261,6 +300,7 @@ func step(delta: float) -> void:
   var amount = float(produced[key])
   var excess = maxf(0.0,amount-maxf(0.0,capacity()-float(state.resources[key])))
   add_resource(key,amount)
+  Journey.add(state,key,amount-excess)
   # Sawdust is a recoverable by-product, never a reason to stop sawing.
   # Sell only overflow; keep all existing stock for pellets and paper.
   if key == "sawdust" and excess > 0:
@@ -273,6 +313,7 @@ func step(delta: float) -> void:
   var exported = minf(maxf(0,float(state.resources.furniture)-export_reserve),maxi(0,int(state.trucks)-(int(state.trucks) if state.delivery.active else 0)-state.construction_shipments.size()-state.stone.shipments.size())*maxi(0,level("market")-(int(state.buildings[int(state.delivery.nodes.market)].level) if state.delivery.active else 0))*(1+int(state.vehicle)*0.2)*(1+research_level("logistics")*0.12)*0.25*delta)
   state.resources.furniture -= exported
   state.exported += exported
+  Journey.add(state,"exported",exported)
   flow["export"] = exported/maxf(delta,0.001)
   earn(exported*float(Catalog.PRICES.furniture)*multiplier()*boost("money"))
  var old_dispatch=int(state.delivery.next_id)
@@ -280,12 +321,14 @@ func step(delta: float) -> void:
  if int(state.delivery.next_id)>old_dispatch: state.stone.turn="stone"
  ConstructionRules.dispatch(state)
  StoneIndustry.dispatch(state,stone_route_cache)
- var public_bonus = 1.0
+ var public_bonus = 1.0+Journey.townhall_level(state)*0.02
  for h in state.homes:
   if h.kind in ["park","clinic"]: public_bonus += 0.04*int(h.level)
  for h in state.homes:
   var rent = float(Catalog.HOMES[h.kind].rent)*int(h.level)*minf(public_bonus,2.0)*delta*multiplier()*boost("money")
-  if state.town.rent_auto: earn(rent)
+  if state.town.rent_auto:
+   earn(rent)
+   Journey.add(state,"rent",rent)
   else: h.rent_bank = float(h.get("rent_bank",0.0))+rent
  step_transit(delta)
  for project_index in Catalog.PROJECTS.size():
@@ -317,7 +360,14 @@ func step(delta: float) -> void:
    if order_home(plan.kind,int(plan.plot)): state.plan = {}
 
  for shipment in awaiting:
-  if shipment.arrived and not shipment.path.is_empty(): shipment_delivered.emit(LogisticsRoutes.vector(shipment.path.back()),str(shipment.key),float(shipment.amount))
+  if shipment.arrived and not shipment.path.is_empty():
+   Journey.add(state,"shipments")
+   shipment_delivered.emit(LogisticsRoutes.vector(shipment.path.back()),str(shipment.key),float(shipment.amount))
+ Journey.add(state,"stone_delivered",float(state.stone.delivered)-stone_before)
+ var services_after=0
+ for total in state.city_services.completed.values(): services_after+=int(total)
+ Journey.add(state,"services",services_after-services_before)
+ Journey.refresh(state)
 
 func chop() -> void:
  if state.bag >= bag_capacity():
@@ -327,6 +377,8 @@ func chop() -> void:
  state.bag += amount
  state.gathered += amount
  state.trees += 1
+ Journey.add(state,"trees")
+ Journey.add(state,"gathered",amount)
  add_company_xp(2)
  if state.tutorial == 1 and state.trees >= 5: state.tutorial = 2
  harvested.emit(int(state.biome),amount)
@@ -339,6 +391,7 @@ func deposit() -> void:
  var amount = minf(float(state.bag),capacity()-float(state.resources.wood))
  add_resource("wood",amount)
  state.bag -= amount
+ Journey.add(state,"deposited",amount)
  if state.tutorial == 2 and amount > 0: state.tutorial = 3
  notice.emit("%s Holz abgeliefert" % Catalog.number(amount))
  changed.emit()
@@ -347,9 +400,12 @@ func sell(key: String, fraction: float = 1.0) -> void:
  if not Catalog.PRICES.has(key): return
  var amount = float(state.resources[key])*clampf(fraction,0,1)
  state.resources[key] -= amount
+ if amount>0: Journey.add(state,"sales")
  earn(amount*float(Catalog.PRICES[key])*0.5 if ConstructionRules.HARDWARE.has(key) else amount*float(Catalog.PRICES[key])*multiplier()*boost("money"))
  if state.tutorial == 3 and amount > 0: state.tutorial = 4
- if key == "furniture": state.exported += amount
+ if key == "furniture":
+  state.exported += amount
+  Journey.add(state,"exported",amount)
  notice.emit("%s %s verkauft" % [Catalog.number(amount),Catalog.RESOURCES[key]])
  changed.emit()
 
@@ -504,23 +560,35 @@ func upgrade(index: int, batch: bool = false) -> bool:
   save(true)
  return true
 
+func home_available(kind: String) -> bool:
+ if not Catalog.HOMES.has(kind): return false
+ if kind!="townhall": return level("prefab")>0
+ if Journey.townhall_index(state)>=0 or not Journey.hall_unlocked(state,1): return false
+ for job in state.jobs:
+  if job.type=="home" and job.kind=="townhall": return false
+ return true
+
 func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 0) -> bool:
- if not Catalog.HOMES.has(kind) or plot < 0 or plot >= city_plot_count() or level("prefab") < 1: return false
+ if not home_available(kind): return false
+ if kind=="townhall": plot=Journey.HALL_PLOT
+ elif plot < 0 or plot >= city_plot_count(): return false
  for h in state.homes:
   if int(h.plot) == plot: return false
  for j in state.jobs:
   if j.type == "home" and int(j.plot) == plot: return false
- var position_value = free_position(Catalog.home_position(plot),rotation) if point==null else Placement.snap(point)
+ var position_value = free_position(Catalog.home_position(0 if kind=="townhall" else plot),rotation) if point==null else Placement.snap(point)
  var reason = placement_reason(position_value,rotation)
  if not reason.is_empty(): notice.emit(reason); return false
  var definition = Catalog.HOMES[kind]
- if not pay(float(definition.cost)*difficulty(),{} if company_level()>=4 else definition.materials): return false
+ var phased=company_level()>=4 or kind=="townhall"
+ if not pay(float(definition.cost)*difficulty(),{} if phased else definition.materials): return false
  state.jobs.append({"type":"home","kind":kind,"plot":plot,"left":60.0,"total":60.0,"position":[position_value.x,position_value.z],"rotation":rotation})
- if company_level()>=4:
+ if phased:
   state.jobs.back().merge({"id":state.next_job,"materials":definition.materials.duplicate(true),"delivered":{}})
   ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
   state.next_job+=1
- if not state.plan.is_empty() and int(state.plan.plot)==plot: state.plan = {}
+ if state.tutorial==4: state.tutorial=5
+ if not state.plan.is_empty() and (int(state.plan.plot)==plot or (kind=="townhall" and state.plan.kind==kind)): state.plan = {}
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -530,12 +598,20 @@ func upgrade_home(index: int, batch: bool = false) -> bool:
  if index < 0 or index >= state.homes.size() or job_for("home_upgrade",index): return false
  var h = state.homes[index]
  if int(h.level) >= 10: return false
+ if h.kind=="townhall" and not Journey.hall_unlocked(state,int(h.level)+1):
+  notice.emit("Zuerst die Aufgaben im passenden Kapitel abschließen und abholen")
+  return false
  var definition = Catalog.HOMES[h.kind]
  var materials = {}
  for key in definition.materials: materials[key] = ceilf(float(definition.materials[key])*0.5*int(h.level))
- if not pay(float(definition.cost)*pow(1.4,int(h.level))*difficulty(),{} if company_level()>=4 else materials): return false
+ var coins=float(definition.cost)*pow(1.4,int(h.level))*difficulty()
+ if h.kind=="townhall":
+  materials=Journey.hall_materials(int(h.level)+1)
+  coins=Journey.hall_cost(int(h.level)+1)*difficulty()
+ var phased=company_level()>=4 or h.kind=="townhall"
+ if not pay(coins,{} if phased else materials): return false
  state.jobs.append({"type":"home_upgrade","kind":h.kind,"index":index,"plot":h.plot,"left":45.0,"total":45.0})
- if company_level()>=4:
+ if phased:
   state.jobs.back().merge({"id":state.next_job,"materials":materials.duplicate(true),"delivered":{}})
   ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
   state.next_job+=1
@@ -546,6 +622,7 @@ func upgrade_home(index: int, batch: bool = false) -> bool:
  return true
 
 func finish_job(job: Dictionary) -> void:
+ Journey.add(state,"completed")
  add_company_xp(25 if job.type=="home" else 15 if job.type=="building" else 8)
  match job.type:
   "building": state.buildings.append({"kind":job.kind,"level":1,"paused":false,"slot":job.slot})
@@ -769,7 +846,7 @@ func mission_definitions() -> Array:
  {"id":"team","name":"Stelle fünf Arbeiter ein","value":state.workers,"target":5,"reward":700*tier},
  {"id":"mill","name":"Erreiche Sägewerk-Stufe 10","value":level("sawmill"),"target":10,"reward":1800*tier},
  {"id":"export","name":"Exportiere %s Möbel" % (100*tier),"value":state.exported,"target":100*tier,"reward":2500*tier},
- {"id":"city","name":"Baue dein erstes Stadthaus","value":state.homes.size(),"target":1,"reward":3500*tier},
+ {"id":"city","name":"Baue dein erstes Stadthaus","value":Journey.value(state,"homes"),"target":1,"reward":3500*tier},
  {"id":"roads","name":"Baue deine erste eigene Straße oder einen Weg","value":state.town.roads.size(),"target":1,"reward":600*tier},
  {"id":"rent","name":"Hole 100 Münzen Miete ab","value":state.town.rent_collected,"target":100,"reward":700*tier},
  {"id":"bus","name":"Beende drei Bus-Rundfahrten","value":state.town.trips_total,"target":3,"reward":1200*tier},
@@ -788,6 +865,61 @@ func claim_mission(id: String) -> bool:
    changed.emit()
    return true
  return false
+
+func claim_journey(id: String) -> bool:
+ Journey.refresh(state)
+ var goal=Journey.current(state)
+ if goal.is_empty() or goal.id!=id or not goal.ready: return false
+ # Mark before signals/save so repeated taps or reopening never pay twice.
+ state.journey.claimed[id]=true
+ earn(float(goal.coins))
+ var completed=int(goal.index)==-1
+ if completed:
+  var chapter=Journey.CHAPTERS[int(goal.chapter)]
+  if chapter.id not in state.journey.trophies: state.journey.trophies.append(chapter.id)
+  state.journey.selected=chapter.id
+  state.diamonds+=3
+  state.tickets+=1
+  UXRules.push_event(state,"journey:"+chapter.id,"Kapitel geschafft · "+chapter.name,Vector3.ZERO,"journey")
+ notice.emit("%s · +%s Münzen%s" % ["Kapitel geschafft!" if completed else "Ziel geschafft!",goal.coins," · neue Auszeichnung" if completed else ""])
+ changed.emit()
+ save(true)
+ return true
+
+func accept_commission(key: String) -> bool:
+ if not state.journey.active.is_empty() or key not in Journey.choices(state): return false
+ var order=Journey.COMMISSIONS[key].duplicate(true)
+ order.key=key
+ order.baseline=float(state.journey.stats.get(order.metric,0))
+ state.journey.active=order
+ changed.emit()
+ save(true)
+ return true
+
+func claim_commission() -> bool:
+ var order=state.journey.active
+ if order.is_empty() or Journey.order_progress(state)+0.00001<float(order.target): return false
+ state.journey.active={}
+ state.journey.completed_orders=int(state.journey.completed_orders)+1
+ earn(float(order.reward))
+ # One deterministic ticket per three jobs; the payout is shown beforehand.
+ if int(state.journey.completed_orders)%3==0: state.tickets+=1
+ notice.emit("Auftrag erfüllt · +%s Münzen" % order.reward)
+ changed.emit()
+ save(true)
+ return true
+
+func cancel_commission() -> void:
+ state.journey.active={}
+ changed.emit()
+ save(true)
+
+func select_trophy(id: String) -> bool:
+ if id!="" and id not in state.journey.trophies: return false
+ state.journey.selected=id
+ changed.emit()
+ save(true)
+ return true
 
 func contract() -> Dictionary:
  var tier = int(state.contracts)
@@ -820,7 +952,8 @@ func prestige() -> bool:
  town_route_cache.clear()
  delivery_route_cache.clear()
  delivery_route_signature = 0
- for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled","muted","quality"]: state[key] = old[key]
+ for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled","muted","quality","journey"]: state[key] = old[key]
+ state.journey.active={}
  for preference in ["vibration","large_text","high_contrast","motion"]: state.ux[preference]=old.ux[preference]
  stone_route_cache.clear()
  state.city_services.enabled=bool(old.city_services.enabled)
@@ -869,6 +1002,7 @@ func collect_rent(index: int = -1) -> float:
   state.homes[i].rent_bank = 0.0
  if amount>0:
   state.town.rent_collected=float(state.town.rent_collected)+amount
+  Journey.add(state,"rent",amount)
   earn(amount)
   changed.emit()
   save(true)
@@ -1121,6 +1255,9 @@ func step_delivery(delta: float) -> void:
  var report = DeliveryChain.tick(state,delta,delivery_routes(),(1+research_level("production")*0.12)*multiplier()*boost("processing"))
  earn(float(report.coins)*multiplier()*boost("money"))
  state.exported += int(report.sold)
+ Journey.add(state,"exported",int(report.sold))
+ Journey.add(state,"shop_orders",int(report.orders))
+ for key in report.produced: Journey.add(state,key,float(report.produced[key]))
  state.tickets += int(report.tickets)
  if float(report.sawdust)>0:
   var excess = maxf(0,float(report.sawdust)-(capacity()-float(state.resources.sawdust)))
@@ -1347,8 +1484,12 @@ func upgrade_group(id: int,quoted_price: float=-1) -> bool:
   if bill.targets.is_empty(): notice.emit("Alle Gebäude sind ausgebaut oder haben bereits einen Bauauftrag"); return false
   if state.coins<float(bill.coins): notice.emit("Für den ganzen Auftrag fehlen Münzen"); return false
   if company_level()<4:
-   for key in bill.materials:
-    if float(state.resources[key])<float(bill.materials[key]): notice.emit("Für den ganzen Auftrag fehlt %s" % Catalog.RESOURCES[key]); return false
+   var upfront={}
+   for target in bill.targets:
+    if target.city and state.homes[int(target.index)].kind=="townhall": continue
+    for key in target.materials: upfront[key]=float(upfront.get(key,0))+float(target.materials[key])
+   for key in upfront:
+    if float(state.resources[key])<float(upfront[key]): notice.emit("Für den ganzen Auftrag fehlt %s" % Catalog.RESOURCES[key]); return false
   for target in bill.targets:
    if target.city: upgrade_home(int(target.index),true)
    else: upgrade(int(target.index),true)

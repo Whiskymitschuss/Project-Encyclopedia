@@ -692,6 +692,7 @@ func begin_placement(request: Dictionary) -> void:
   return
  var city = bool(placement.get("city",false))
  var index = int(placement.get("index",-1))
+ if city and index<0 and placement.kind=="townhall": placement.plot=Journey.HALL_PLOT
  if city and index<0 and int(placement.get("plot",-1))<0: placement.plot = Game.next_city_plot()
  if city and index<0 and int(placement.get("plot",-1))<0:
   Game.notice.emit("Keine freien Stadtgrundstücke · Region erweitern")
@@ -741,7 +742,7 @@ func update_ghost() -> void:
   var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[placement.kind]
   var price=float(definition.cost)*Game.difficulty() if city else Game.cost_for(placement.kind)
   if float(Game.state.coins)<price: reason="Es fehlen %s Münzen" % Catalog.number(price-float(Game.state.coins))
-  elif city and Game.company_level()<4:
+  elif city and Game.company_level()<4 and placement.kind!="townhall":
    for key in definition.materials:
     if float(Game.state.resources[key])<float(definition.materials[key]): reason="Es fehlt: %s" % Catalog.RESOURCES[key]; break
  ghost_plate.material_override=Models.material(Color("43e69a") if reason.is_empty() else Color("f16c5d"))

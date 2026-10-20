@@ -20,9 +20,13 @@ static func upgrade_bill(state: Dictionary,city: bool,index: int) -> Dictionary:
  var coins=0.0
  var difficulty=pow(1.6,int(state.prestige))
  if city:
+  if b.kind=="townhall" and not Journey.hall_unlocked(state,int(b.level)+1): return {}
   var d=Catalog.HOMES[b.kind]
   coins=float(d.cost)*pow(1.4,int(b.level))*difficulty
   for key in d.materials: materials[key]=ceilf(float(d.materials[key])*0.5*int(b.level))
+  if b.kind=="townhall":
+   coins=Journey.hall_cost(int(b.level)+1)*difficulty
+   materials=Journey.hall_materials(int(b.level)+1)
  else:
   var copies=0
   for other in state.buildings:

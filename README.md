@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Stadtgefühl 0.19
+# Timber Loot Tycoon — Zehn Kapitel 0.19.1
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.19-test.apk](releases/Timber-Loot-Tycoon-v0.19-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.19.1-test.apk](releases/Timber-Loot-Tycoon-v0.19-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -18,6 +18,21 @@ python3 scripts/backup.py
 ```
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
+
+## Neu in 0.19.1 — Zehn Kapitel, ein wachsendes Rathaus
+
+- **Zehn spielbare Kapitel mit 30 Aufgaben und zehn echten Rathaus-Bauabschlüssen** führen vom ersten Holzverkauf zur Industriestadt. Die Zielanzeige oben zeigt den nächsten konkreten Schritt; fehlende Produktionsquellen und die passende Verwaltung sind direkt erreichbar.
+- **Rathaus mit zehn eigenständigen Architekturstadien**, vom Waldbüro zum Timber-Stadtpalais. Kapitelaufgaben schalten den nächsten Ausbau frei. Holz, Bretter und später Möbel, Module sowie Baustoffe werden durch die vorhandenen LKWs geliefert; Bauarbeiter errichten das Gebäude phasenweise. Ein Verwaltungsgrundstück verbraucht keinen Wohnplatz. Jede fertige Stufe verbessert die Grundmiete um zwei Prozentpunkte innerhalb der bestehenden Bonusgrenze.
+- **Bleibende Kapitel-Auszeichnungen**, tatsächliche 3D-Pokale und wählbare Titel; Münzen, Diamanten und Tickets werden genau einmal ausgezahlt. Bestehende Ziele werden berücksichtigt; unbekannte historische Produktionsmengen werden nicht erfunden. Prestige erhält Auszeichnungen und abgeholte Ziele.
+- **Wählbare Kurzaufträge** für echte neue Produktion, Lieferungen und Bauabschlüsse. Keine tägliche Pflichtserie, kein Ablaufdatum, keine Echtgeldkosten. Fortschritt und Annahmezeitpunkt überstehen Speichern und Offline-Arbeit.
+- **Rückkehrbilanz** mit tatsächlich erwirtschafteten Münzen, Produktion, angekommenen LKW-Lieferungen, fertigen Bauprojekten und neuer Miete. Bereits verbuchte Erträge werden beim Ansehen nicht erneut ausgezahlt. Fortsetzen der laufenden App zieht bereits simulierte Hintergrundzeit ab.
+- Gleiches Android-Paket, gleicher Testschlüssel und Schema 1; Versionscode **1910**. **Als Update installieren, vorher nicht deinstallieren.** Echte Geräte- und Langzeitprüfungen bleiben separat notwendig.
+
+Alle Kapitel, Preise, Abhängigkeiten und Grenzen: [Kapitel & Rathaus](docs/CHAPTERS.md).
+
+![Tatsächlich gerenderte Kapitelreise aus isoliertem Testprofil](docs/preview-journey-chapters.png)
+
+![Rathausvorschau vor dem tatsächlichen Bau](docs/preview-journey-townhall.png)
 
 ## Neu in 0.19 — Stadtgefühl und zehn Architekturstadien
 

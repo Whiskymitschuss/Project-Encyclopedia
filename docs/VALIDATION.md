@@ -1,3 +1,17 @@
+# Prüfung 0.19.1 — Zehn Kapitel und Rathaus
+
+- Gesamter Prüfumfang: **18.785 Headless-Prüfungen**. Vollständige bisherige Suite plus abschließende gezielte Läufe für die betroffenen Kapitel- und Stadtregeln. Der erste gewöhnliche Hausbau bleibt bei 1.682 simulierten Sekunden ohne Ressourcen-Geschenke. Alle fünfzehn Stadttypen auf Stufe 1–10: 150 echte Modelle, unterscheidbare Meshes/Namen und unveränderte Grundstücksgrenzen.
+- **215 neue Kapitel-/Rathaus-Prüfungen**: zehn Kapitel mit drei Zielen und Rathausabschluss; echte Ereigniszähler für globale sowie physische lokale Produktion; angekommene Ladungen genau einmal; volle Ausgänge und Pause; Annahme-Baselines; kein Fortschritt durch alte/gekaufte Vorräte; keine doppelten Prämien; Speichern und Prestige; kein vorgezogener Rathausausbau.
+- Neue Startprogression ohne Münz-/Material-Geschenke: erstes Rathaus nach **393 simulierten Sekunden**, zweite Rathausstufe bei **855 Sekunden**. Bestehende Hilfsarbeiter, Produktion, LKWs, echte Verkäufe, Sägewerksausbau und Neueinstellungen werden verwendet. Keine gemessene Spielerdauer oder Aussage zur Spielerbindung.
+- Ein ausdrücklich vorbereitetes fortgeschrittenes Profil prüft alle zehn tatsächlichen Rathaus-Baustellen nacheinander durch normale LKW-Anlieferungen und Bauarbeiter. Material-/Preisangebot und tatsächlicher Ausbau stimmen überein. Eine Zwischenstufe wird per JSON während des Bauauftrags gespeichert und fortgesetzt. Der Rathausstand verändert das Modell erst bei tatsächlicher Fertigstellung.
+- Eigenes Verwaltungsgrundstück erlaubt das Rathaus auch bei vollständig belegten Wohnbauplätzen und null Einwohnern; kein zirkulärer Regionszwang. Ein Rathaus zählt nicht als Wohnhaus/Hochhaus und erfüllt nicht die entsprechende Zielbedingung. Mietbonus anhand tatsächlicher Hauskonten geprüft.
+- Rückkehrbilanz verändert keine Bestände. Wiederholtes Ansehen und Resume-Meldungen zahlen nicht doppelt; bereits simulierte Hintergrundsekunden sowie ein veraltetes erstes Frame-Delta werden nicht erneut gerechnet. Alte Profile bekommen keine erfundenen Produktionsmengen oder heimlichen Auszahlungen.
+- **223 Desktop-OpenGL-Prüfungen**: bisherige 183 plus 40 neue Kapitelprüfungen. Synthetische ScreenTouch-Ereignisse durch die tatsächliche Engine-GUI wählen Ziele, holen Prämien ab, öffnen Rathausvorschau, platzieren und bezahlen den realen Bau und nehmen Kurzaufträge an/ab. Laufender Fortschritt aktiviert dieselben Controls, ohne den Touch-Zielknoten während des Drückens auszutauschen.
+- Kapitel, Rathaus, Auszeichnungen, Kurzaufträge und Rückkehrbilanz mit großer Schrift/Kontrast bei 540×960 und 360×640. Tatsächlich gerenderter 3D-Pokal mit einzeiliger Seitenanzeige. Fünf neue Vorschauen stammen aus dem isolierten Kapitel-Testprofil, nicht aus einem Nutzerspielstand.
+- Android-Installation, Hardware-Touch, Vibration, Framerate, Akku, reale Spielerbindung und Langzeit-Balancing sind hier **nicht** durch Gerätetests belegt. Keine neuen Werbe-/Analyseanbieter oder Netzwerkberechtigungen. Details und alle Anforderungen: [Kapitel 1–10](CHAPTERS.md).
+
+## Historischer Prüfbericht 0.19
+
 # Prüfung 0.19 — Stadtgefühl und zehn echte Architekturstadien
 
 - **18.518 Headless-Prüfungen**: bisherige 17.771 plus 747 neue Stadt-/UX-Prüfungen. Vollständiges `bash scripts/test.sh` bestanden, einschließlich Import, erster Hausbau nach unveränderten 1.682 simulierten Sekunden ohne Geschenke und Hauptszenenstart. Nutzerprofile werden nicht für Tests oder Aufnahmen benutzt.
