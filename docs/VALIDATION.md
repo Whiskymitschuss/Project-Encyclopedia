@@ -10,6 +10,14 @@
 - Im gleichen Desktop-Renderprofil sank die gemeldete Grafikmenge nach Sichtweitenauswahl und vereinfachten entfernten Baumformen am Start von **1.507.858 auf 685.674 Primitiven**, im Stadtbild von **1.559.568 auf 684.272**. Das sind Renderer-Zähler einschließlich Schatten, keine Smartphone-Framerate. Die finalen fünf Ansichten melden 253–457 Zeichenaufrufe und 587.556–738.394 Primitiven. Akkumodus, feste Instanzbudgets und sechs Vegetations-Batches bleiben aktiv.
 - Android-Installation, Leistung, Akkulaufzeit und thermisches Verhalten dieser Version sind noch nicht auf echter Hardware geprüft. Der vorhandene Straßengraph bleibt rechtwinklig; frei gezeichnete Straßenbögen und die übrige vollständige Biom-Erneuerung sind weitere Schritte. [Umfang und Bedienung](WALDSTADT.md).
 
+## Auslieferung 0.20
+
+- APK-Quellstand: `f19ab74fe973d7586a5506749dd85f8f8d42865c`.
+- APK: 58,422,147 Bytes; SHA256 `0b1928681b8d58b9720eedd97094d6b1d895a62702d8adb1d3d2d44c81cdaa86`.
+- Quell-ZIP: 282 Dateien, 15,270,924 Bytes; SHA256 `bd5d6961c54522d8d2388294609ae4ac816c62198e065c3af834255e0f4d0231`. Alle Einträge gegen die Git-Blobs des APK-Quellstands geprüft. Das vollständige Git-Bundle ist ebenfalls verifiziert.
+- Gleiches Zertifikat wie 0.19.2: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Paket `com.whiskymitschuss.timberloot`, Code 2000, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-Ausrichtung, Hochformat und erlaubte Vibration geprüft. Neue Modell-/Material-/Straßenressourcen sind im APK enthalten; Tests, Dokumentation, Releases und Hilfsskripte ausgeschlossen.
+- Frische unabhängige GitHub-Kopie: **4.397 Headless-Prüfungen** (Szene, Landschaft und neue Geometrie), **14 Desktop-OpenGL-Prüfungen** mit echten Renderings, sauberer Quell-Checkout. Kein Nutzerspielstand für Tests verwendet.
+
 ## Historischer Prüfbericht 0.19.2
 
 # Prüfung 0.19.2 — Begrenzte Gebäudekarte

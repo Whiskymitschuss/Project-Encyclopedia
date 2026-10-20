@@ -1,3 +1,19 @@
+# Timber Loot Tycoon 0.20 — Waldstadt
+
+**[Android-Update 0.20 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/releases/Timber-Loot-Tycoon-v0.20-test.apk)**
+
+**[Passendes Godot-Quellprojekt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/releases/Timber-Loot-Tycoon-v0.20-source.zip)**
+
+Erster Abschnitt der 3D-Erneuerung: gerundete Baukörper und Grundstücke, eingerahmte Fenster, gestaltete Dächer, Eingänge und Vorgärten. Offene Holzfabriken erhalten ausgearbeitete Werkstatt-Rückseiten und Ladebereiche. Gehwege besitzen Bordsteine und gerundete Kreuzungsecken; LKWs und Busse nehmen sichtbare Kurven auf Grundlage ihrer echten Liefer-/Fahrwege. Wärmere Nachtfenster, weichere Baumkronen und bewachsene freie Bauflächen. Nahe Pflanzen werden gezielt instanziert und entfernte Bäume vereinfacht. [Umfang und weitere Schritte](../docs/WALDSTADT.md).
+
+**Als Update installieren, vorher nicht deinstallieren und keine App-Daten löschen.** Gleiches Paket, gleicher Testschlüssel und Speicherformat 1; Versionscode 2000. Bestehende Firmen und zehn Kapitel bleiben spielbar. Android 7.0+, ARM64/ARMv7 und OpenGL ES 3.0. Die einzige Berechtigung bleibt die optionale Vibration. Keine Werbung oder echten Käufe. Ein Android-Geräte- und Leistungstest dieser Version steht aus.
+
+19.350 Headless-Prüfungen, danach 4.397 gezielte Headless-Prüfungen der Sichtweitenoptimierung und 155 gezielte Desktop-OpenGL-/Touch-Prüfungen bestanden. Eine frische GitHub-Kopie bestätigt 4.397 relevante Headless- und 14 neue grafische Prüfungen. Gemeldete Renderer-Last am Start gegenüber dem ersten unoptimierten neuen Modellstand um rund 55 % reduziert; keine gemessene Smartphone-Framerate. [Prüfbericht](../docs/VALIDATION.md).
+
+APK-Quellstand `f19ab74fe973d7586a5506749dd85f8f8d42865c`. Quell-ZIP: 282 Dateien, jede gegen ihren Git-Blob geprüft. APK: 58,422,147 Bytes, SHA256 `0b1928681b8d58b9720eedd97094d6b1d895a62702d8adb1d3d2d44c81cdaa86`. Quell-ZIP: 15,270,924 Bytes, SHA256 `bd5d6961c54522d8d2388294609ae4ac816c62198e065c3af834255e0f4d0231`. Signatur und Paketdaten in `.apk.json`, Hashes in `SHA256SUMS.txt`.
+
+## Historischer Stand 0.19.2
+
 # Timber Loot Tycoon 0.19.2 — Gebäudekarte korrigiert
 
 **[Android-Update 0.19.2 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.2-cardfix/releases/Timber-Loot-Tycoon-v0.19.2-test.apk)**
