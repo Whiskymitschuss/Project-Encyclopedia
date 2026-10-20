@@ -1,10 +1,10 @@
-# Timber Loot Tycoon — Gebäudekarte 0.19.2
+# Timber Loot Tycoon — Waldstadt 0.20
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.19.2-test.apk](releases/Timber-Loot-Tycoon-v0.19.2-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.20-test.apk](releases/Timber-Loot-Tycoon-v0.20-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 58 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 
@@ -18,6 +18,18 @@ python3 scripts/backup.py
 ```
 
 Der Android-Helfer lädt offizielle, fest versionierte und per Prüfsumme verifizierte Exportvorlagen und SDK-Pakete. Java mit `keytool` und Godot müssen bereits vorhanden sein. Cache, Editor-Konfiguration und Testsignaturschlüssel liegen außerhalb des Quellprojekts unter `/workspace/.timber-runtime`. Alternative Laufzeitpfade können über die im Skript dokumentierten Umgebungsvariablen gesetzt werden. Keine Gradle-Abhängigkeiten oder Benutzer-Zugangsdaten erforderlich.
+
+## Neu in 0.20 — Die Waldstadt wird plastischer
+
+- Gerundete Baukörper, eingerahmte Fenster, Fensterbänke, Dachränder und Lüftung. Vorgärten, Eingänge und passende kleine Grundstücksdetails ergänzen alle vorhandenen Stadtstufen 1–10.
+- Eigene Oberflächen für Holz, Putz, Dach, Pflaster und lackierte Maschinen. Fenster reagieren mit warmem Licht auf die tatsächliche Nacht. Offene Holzbetriebe erhalten ausgearbeitete Werkstatt-Rückseiten und Ladebereiche.
+- Gehwege mit Bordsteinen, Querungen und geschwungenen Ecken. Grundstücke und Haltestellen werden beim Ausschmücken berücksichtigt. LKWs, Einsatzfahrzeuge und Busse nehmen sichtbare Kurven; gespeicherte Transportaufträge und der echte Straßengraph bleiben ihre Grundlage.
+- Weichere Baumkronen und bepflanzte freie Bauflächen. Weiterhin 1.000 nutzbare Bäume und ein festes, instanziertes Dekorationsbudget; beim Bauen werden Pflanzen automatisch entfernt.
+- Android-Code 2000, gleiches Paket, gleicher Testschlüssel und Speicherformat 1. **Als Update installieren, vorher nicht deinstallieren.** Umfang, weitere Schritte und Unterschiede zwischen Simulation und Gestaltung: [Waldstadt](docs/WALDSTADT.md).
+
+![Echter Starter-Spielstand mit überarbeitetem Holzplatz](docs/preview-crafted-start.png)
+
+![Aufgebautes Testviertel mit überarbeiteter Architektur](docs/preview-crafted-town.png)
 
 ## Korrektur 0.19.2 — Gebäudekarte bleibt auf dem Bildschirm
 

@@ -1,14 +1,14 @@
-# Android-Test 0.19.2
+# Android-Test 0.20
 
-Die Test-App heißt **Timber Loot**, Paket `com.whiskymitschuss.timberloot`. Sie benötigt Android 7.0 oder neuer und ein ARM64-/ARMv7-Gerät mit OpenGL ES 3.0. Die Version ist `0.19.2-test`, Versionscode 1920. Die einzige Android-Berechtigung ist `android.permission.VIBRATE` für optionale Vibration, standardmäßig ausgeschaltet. Keine Werbung und keine Kontenpflicht.
+Die Test-App heißt **Timber Loot**, Paket `com.whiskymitschuss.timberloot`. Sie benötigt Android 7.0 oder neuer und ein ARM64-/ARMv7-Gerät mit OpenGL ES 3.0. Die Version ist `0.20-test`, Versionscode 2000. Die einzige Android-Berechtigung ist `android.permission.VIBRATE` für optionale Vibration, standardmäßig ausgeschaltet. Keine Werbung und keine Kontenpflicht.
 
 ## Update von 0.7 bis 0.19
 
-Die Paketkennung, der lokale Testsignaturschlüssel und der Speicherpfad bleiben gleich. Die neue APK als Update über die vorhandene App installieren; nicht deinstallieren und keine App-Daten löschen. Schema-1-Spielstände bleiben kompatibel. Alte Materialbaustellen bestellen ihre Lieferungen jetzt automatisch; explizite Pausen und bereits geladene Fahrzeuge bleiben erhalten. Alte Profile behalten automatische Miete; neue Profile sammeln sie am Haus. Straßen und Buslinien werden in derselben Speicherdatei ergänzt. Vor Auslieferung wird die Signatur mit der bisherigen 0.19.1-APK verglichen. Ein echter Update-Installationsversuch auf einem Telefon bleibt offen.
+Die Paketkennung, der lokale Testsignaturschlüssel und der Speicherpfad bleiben gleich. Die neue APK als Update über die vorhandene App installieren; nicht deinstallieren und keine App-Daten löschen. Schema-1-Spielstände bleiben kompatibel. Alte Materialbaustellen bestellen ihre Lieferungen jetzt automatisch; explizite Pausen und bereits geladene Fahrzeuge bleiben erhalten. Alte Profile behalten automatische Miete; neue Profile sammeln sie am Haus. Straßen und Buslinien werden in derselben Speicherdatei ergänzt. Vor Auslieferung wird die Signatur mit der bisherigen 0.19.2-APK verglichen. Ein echter Update-Installationsversuch auf einem Telefon bleibt offen.
 
 ## Installation nur mit dem Handy
 
-1. Auf GitHub `releases/Timber-Loot-Tycoon-v0.19.2-test.apk` öffnen. Bei einem privaten Repository mit dem berechtigten GitHub-Konto anmelden.
+1. Auf GitHub `releases/Timber-Loot-Tycoon-v0.20-test.apk` öffnen. Bei einem privaten Repository mit dem berechtigten GitHub-Konto anmelden.
 2. **Download raw file** bzw. das Download-Symbol wählen. Die APK vollständig herunterladen.
 3. Im Handy-Dateimanager **Downloads** öffnen und die APK antippen.
 4. Falls Android nachfragt, dem Browser/Dateimanager **Installation aus dieser Quelle** erlauben; danach **Installieren → Öffnen**.

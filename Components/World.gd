@@ -49,6 +49,8 @@ var base_streets: Node3D
 var town_name_labels: Array = []
 var biome_labels: Array = []
 var boss_labels: Array = []
+var street_context: Dictionary={}
+var forest_detail_key=Vector4(INF,INF,INF,INF)
 
 func _ready() -> void:
  RenderingServer.set_default_clear_color(Color("53bbd3"))
@@ -60,7 +62,8 @@ func _ready() -> void:
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
  env.ambient_light_color = Color("e5efff")
  env.ambient_light_energy = 0.65
- env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+ env.tonemap_mode = Environment.TONE_MAPPER_REINHARDT
+ env.tonemap_white=2.0
  environment_node.environment = env
  add_child(environment_node)
  sun = DirectionalLight3D.new()
@@ -70,6 +73,7 @@ func _ready() -> void:
  sun.directional_shadow_mode=DirectionalLight3D.SHADOW_ORTHOGONAL
  sun.directional_shadow_max_distance=160
  sun.shadow_bias=0.04
+ sun.light_angular_distance=2.2
  add_child(sun)
  camera = Camera3D.new()
  camera.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -80,6 +84,8 @@ func _ready() -> void:
  add_child(scenery)
  build_landscape()
  build_forest()
+ forest_detail_key=Vector4(INF,INF,INF,INF)
+ update_forest_detail()
  world_buildings = Node3D.new()
  add_child(world_buildings)
  town_layer = TownWorld.new()
@@ -137,6 +143,7 @@ func build_landscape() -> void:
 
 func rebuild_streets() -> void:
  clear_children(base_streets)
+ street_context=StreetScape.context(Game.state)
  for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
  for z in Placement.ROADS:
   var paved=z in [-28,68,164]
@@ -183,15 +190,11 @@ func rebuild_streets() -> void:
    Models.cylinder(base_streets,0.18,2.5,Vector3(x,1.9,z),Color("a48152"))
    var crown=Models.cylinder(base_streets,1.35,3.2,Vector3(x,4,z),Color("78aa5a"),0.45)
    crown.mesh.radial_segments=8
+ StreetScape.junctions(base_streets,street_context)
  Models.bake(base_streets)
 
 func road(at: Vector3, size: Vector3, vertical: bool, paved: bool = true) -> void:
- Models.box(base_streets,size+Vector3(1.5,-0.05,1.5),at-Vector3(0,0.1,0),Color("bdc1a0") if paved else Color("a9b88a"))
- Models.box(base_streets,size,at,Color("697f80") if paved else Color("b9af8b"))
- if not paved: return
- var length = size.z if vertical else size.x
- for i in range(-int(length/2)+3,int(length/2)-2,9):
-  Models.box(base_streets,Vector3(0.22,0.03,2.7) if vertical else Vector3(2.7,0.03,0.22),at+Vector3(0,0.15,i) if vertical else at+Vector3(i,0.15,0),Color("f2e4b5"))
+ StreetScape.strip(base_streets,at,size,paved,street_context)
 
 func build_forest() -> void:
  var random = RandomNumberGenerator.new()
@@ -204,19 +207,20 @@ func build_forest() -> void:
    var mesh: Mesh
    if part>0 and biome in [1,4,6,8]:
     var crown=SphereMesh.new()
-    crown.radial_segments=7
-    crown.rings=3
+    crown.radial_segments=10
+    crown.rings=5
     crown.radius=2.7 if part==1 else 2.0
     crown.height=4.6
     mesh=crown
    else:
-    var pine=CylinderMesh.new()
-    pine.radial_segments=7
-    pine.rings=1
-    pine.bottom_radius=0.45 if part==0 else (2.5 if part==1 else 1.9)
-    pine.top_radius=0.32 if part==0 else 0.12
-    pine.height=3.0 if part==0 else 4.5
-    mesh=pine
+    if part==0:
+     var trunk=CylinderMesh.new()
+     trunk.radial_segments=8
+     trunk.bottom_radius=0.45
+     trunk.top_radius=0.32
+     trunk.height=3.0
+     mesh=trunk
+    else: mesh=CraftedGeometry.pine_crown(2.5 if part==1 else 1.9,4.5)
    var mm = MultiMesh.new()
    mm.transform_format = MultiMesh.TRANSFORM_3D
    mm.use_colors = true
@@ -227,6 +231,18 @@ func build_forest() -> void:
    node.material_override = Models.material(Color("ad8556") if part == 0 else Color(Catalog.BIOMES[biome].tree))
    node.material_override = node.material_override.duplicate()
    node.material_override.vertex_color_use_as_albedo = true
+   node.set_meta("near_mesh",mesh)
+   var far_mesh: Mesh=mesh
+   if part>0:
+    if biome in [1,4,6,8]:
+     var low=SphereMesh.new()
+     low.radial_segments=7; low.rings=3; low.radius=2.7 if part==1 else 2.0; low.height=4.6
+     far_mesh=low
+    else:
+     var low=CylinderMesh.new()
+     low.bottom_radius=2.5 if part==1 else 1.9; low.top_radius=0.12; low.height=4.5; low.radial_segments=7
+     far_mesh=low
+   node.set_meta("far_mesh",far_mesh)
    add_child(node)
    batch_nodes.append(node)
   for i in 100:
@@ -458,11 +474,13 @@ func _process(delta: float) -> void:
   if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
  sync_actors()
  sun.shadow_enabled=Game.state.quality>0
+ update_forest_detail()
  sun.directional_shadow_max_distance=maxf(180,zoom*1.8)
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- sun.light_energy = 0.24+daylight*0.58
+ sun.light_energy = 0.20+daylight*0.55
  sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
  environment_resource.ambient_light_energy = 0.34+daylight*0.12
+ SurfaceLibrary.daylight(daylight)
  for label in town_name_labels: label.visible=zoom<135
  for label in biome_labels: label.visible=zoom<300
  for label in boss_labels: label.visible=zoom<180
@@ -551,6 +569,19 @@ func set_camera() -> void:
  camera.size = zoom
  camera.position = focus+Vector3(90,120,130).normalized()*maxf(198.5,zoom*1.4)
  camera.look_at(focus)
+ if landscape!=null: landscape.update_view()
+ update_forest_detail()
+
+func update_forest_detail() -> void:
+ var key=Vector4(snappedf(focus.x,16),snappedf(focus.z,16),snappedf(zoom,12),float(Game.state.quality))
+ if key==forest_detail_key: return
+ forest_detail_key=key
+ for i in tree_batches.size():
+  var distance=Catalog.biome_position(i).distance_to(focus)
+  var near=zoom<180 and Game.state.quality>0 and distance<zoom*0.8+65
+  for node in tree_batches[i]:
+   node.multimesh.mesh=node.get_meta("near_mesh" if near else "far_mesh")
+   node.visible=distance<zoom*1.3+60
 
 func focus_at(point: Vector3) -> void:
  focus = point

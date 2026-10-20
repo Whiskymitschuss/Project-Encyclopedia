@@ -1,6 +1,46 @@
 class_name LogisticsRoutes
 extends RefCounted
 
+static var curve_cache: Dictionary={}
+
+static func driving_path(points: Array) -> Array:
+ # Keep authoritative saved checkpoints intact: reservations, road protection,
+ # online/offline clocks and old deliveries continue to use the same graph.
+ # The derived driving line rounds only orthogonal road corners, within asphalt.
+ var key=hash(points)
+ if curve_cache.has(key) and curve_cache[key].source==points: return curve_cache[key].line
+ var compact=[]
+ for p in points:
+  var b=vector(p)
+  if not compact.is_empty() and b.distance_to(compact.back())<0.0001: continue
+  if compact.size()>=2:
+   var a: Vector3=compact[-2]
+   var c: Vector3=compact[-1]
+   if (c-a).normalized().dot((b-c).normalized())>0.9999: compact.pop_back()
+  compact.append(b)
+ if compact.size()<2: return points
+ var result=[points[0].duplicate()]
+ for i in range(1,compact.size()-1):
+  var a: Vector3=compact[i-1]
+  var b: Vector3=compact[i]
+  var c: Vector3=compact[i+1]
+  var incoming=(b-a).normalized()
+  var outgoing=(c-b).normalized()
+  var axis_a=absf(incoming.x)<0.001 or absf(incoming.z)<0.001
+  var axis_b=absf(outgoing.x)<0.001 or absf(outgoing.z)<0.001
+  if not axis_a or not axis_b or absf(incoming.dot(outgoing))>0.01:
+   result.append([b.x,b.y,b.z]); continue
+  var radius=minf(1.6,minf(a.distance_to(b),c.distance_to(b))*0.35)
+  var start=b-incoming*radius
+  var end=b+outgoing*radius
+  for step in 7:
+   var t=step/6.0
+   var p=start.lerp(b,t).lerp(b.lerp(end,t),t)
+   result.append([p.x,p.y,p.z])
+ result.append(points[-1].duplicate())
+ if curve_cache.size()>=128: curve_cache.clear()
+ curve_cache[key]={"source":points.duplicate(true),"line":result}
+ return result
 
 static func building_position(state: Dictionary, index: int) -> Vector3:
  var b = state.buildings[index]
@@ -48,6 +88,7 @@ static func vector(p: Array) -> Vector3:
 
 static func sample(points: Array, fraction: float) -> Dictionary:
  if points.size()<2: return {"position":Vector3.ZERO,"direction":Vector3.FORWARD}
+ points=driving_path(points)
  var along = length(points)*clampf(fraction,0,1)
  for i in range(1,points.size()):
   var a = vector(points[i-1])

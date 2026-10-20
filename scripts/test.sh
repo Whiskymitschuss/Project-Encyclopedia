@@ -21,6 +21,7 @@ check --script res://Tests/Companion.gd
 check --script res://Tests/WorldLife.gd
 check --script res://Tests/Town.gd
 check --script res://Tests/Valley.gd
+check --script res://Tests/Crafted.gd
 check --script res://Tests/Delivery.gd
 check --script res://Tests/Construction.gd
 check --script res://Tests/LogisticsFix.gd

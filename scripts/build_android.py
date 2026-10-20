@@ -15,7 +15,7 @@ RUNTIME = Path(os.environ.get('TIMBER_RUNTIME', '/workspace/.timber-runtime'))
 SDK = RUNTIME / 'android-sdk'
 TOOLS = SDK / 'build-tools/36.0.0'
 parser = argparse.ArgumentParser()
-parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.19.2-test.apk')
+parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.20-test.apk')
 parser.add_argument('--verify-only', action='store_true')
 args = parser.parse_args()
 output = args.output.resolve()
@@ -67,7 +67,7 @@ run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.19.2-test'", "versionCode='1920'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
+for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.20-test'", "versionCode='2000'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
@@ -84,7 +84,7 @@ with zipfile.ZipFile(output) as apk:
     assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'version':'0.19.2-test','package':'com.whiskymitschuss.timberloot',
+    'version':'0.20-test','package':'com.whiskymitschuss.timberloot',
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
     'debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],
     'source_commit':source_commit,

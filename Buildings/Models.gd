@@ -37,6 +37,22 @@ static func box(parent: Node3D, size: Vector3, at: Vector3, color: Color) -> Mes
  parent.add_child(node)
  return node
 
+static func crafted_box(parent: Node3D,size: Vector3,at: Vector3,color: Color,finish: String="plaster",radius: float=0.16) -> MeshInstance3D:
+ var node=MeshInstance3D.new()
+ node.mesh=CraftedGeometry.rounded_box(size,radius)
+ node.material_override=SurfaceLibrary.material(color,finish)
+ node.position=at
+ parent.add_child(node)
+ return node
+
+static func paving_box(parent: Node3D,size: Vector3,at: Vector3,color: Color,finish: String="paving",radius: float=0.65) -> MeshInstance3D:
+ var node=MeshInstance3D.new()
+ node.mesh=CraftedGeometry.rounded_slab(size,radius)
+ node.material_override=SurfaceLibrary.material(color,finish)
+ node.position=at
+ parent.add_child(node)
+ return node
+
 static func cylinder(parent: Node3D, radius: float, height: float, at: Vector3, color: Color, top: float = -1.0) -> MeshInstance3D:
  var node = MeshInstance3D.new()
  var mesh = CylinderMesh.new()
@@ -67,7 +83,7 @@ static func label(parent: Node3D, title: String, at: Vector3, size: int = 32) ->
 
 static func roof(parent: Node3D, width: float, depth: float, y: float, color: Color) -> void:
  for side in [-1,1]:
-  var p = box(parent,Vector3(width*0.58,0.5,depth+1.3),Vector3(side*width*0.24,y,0),color)
+  var p = crafted_box(parent,Vector3(width*0.58,0.5,depth+1.3),Vector3(side*width*0.24,y,0),color,"roof",0.1)
   p.rotation.z = side * -0.43
   for z in range(-int(depth/2),int(depth/2)+1,2):
    var strip = box(parent,Vector3(width*0.58,0.10,0.10),Vector3(side*width*0.24,y+0.26,z),color.lightened(0.1))
@@ -110,7 +126,7 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   bake(root)
   return root
  box(root,Vector3(width,0.7,depth),Vector3(0,0.65,0),Color("91a59c"))
- box(root,Vector3(width,height,depth),Vector3(0,height/2+0.9,0),Color("f0dfb7") if city else tone.lightened(0.23))
+ crafted_box(root,Vector3(width,height,depth),Vector3(0,height/2+0.9,0),Color("f0dfb7") if city else tone.lightened(0.23))
  for x in [-5.9,5.9]:
   box(root,Vector3(0.5,height+0.4,depth+0.2),Vector3(x,height/2+0.9,0),tone)
  for floor_id in floors:
@@ -185,6 +201,7 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   if kind == "clinic":
    box(root,Vector3(2.8,0.6,0.2),Vector3(0,height+0.1,5.8),Color("e37e73"))
    box(root,Vector3(0.6,2.8,0.2),Vector3(0,height+0.1,5.9),Color("e37e73"))
+ CraftedFrontage.decorate(root,kind,level,false)
  bake(root)
  return root
 

@@ -14,6 +14,7 @@ var spans: Array = []
 var landmarks: Node3D
 var quality = -1
 var water: MeshInstance3D
+var view_key=Vector3(INF,INF,INF)
 
 func _init() -> void:
  noise.seed=140718
@@ -43,14 +44,14 @@ func height_at(point: Vector2) -> float:
  return height
 
 func ground_color(point: Vector2) -> Color:
- var tone=Color("518c50")
+ var tone=Color("659954")
  var total=0.0
  var blend=Color(0,0,0,1)
  for i in 10:
   var p=Catalog.biome_position(i)
   var distance=Vector2((point.x-p.x)/49.0,(point.y-p.z)/44.0).length()
   var weight=pow(maxf(0,1.0-distance/1.5),2)
-  blend+=Color(Catalog.BIOMES[i].ground).darkened(0.15)*weight
+  blend+=Color(Catalog.BIOMES[i].ground).darkened(0.11)*weight
   total+=weight
  if total>0.001:
   blend/=total
@@ -173,6 +174,12 @@ func seed_decor() -> void:
   var kind=["bush","flowers","rock","leaf"][i%4]
   var color=Color("8caf63") if kind=="bush" else Color("e9bc70") if kind=="flowers" else Color("a4aaa0") if kind=="rock" else Color("4d9565")
   records.append({"point":p,"kind":kind,"scale":rng.randf_range(0.6,1.0),"angle":rng.randf_range(0,TAU),"color":color,"blocked":false})
+ # Empty building lots remain meadow, with low plants instead of empty plates.
+ # These share the existing fixed instance pool and disappear when built on.
+ for i in 160:
+  var p=Vector2(rng.randf_range(-66,66),rng.randf_range(-147,151))
+  var kind="bush" if i%5==0 else "flowers"
+  records.append({"point":p,"kind":kind,"scale":rng.randf_range(0.45,0.8),"angle":rng.randf_range(0,TAU),"color":Color("6a9b5c") if kind=="bush" else Color("f5d58a") if i%2==0 else Color("dda8a0"),"blocked":false})
  var attempts=0
  while records.size()<DECOR_LIMIT and attempts<22000:
   attempts+=1
@@ -218,10 +225,11 @@ func seed_decor() -> void:
   mat.vertex_color_is_srgb=true
   mat.roughness=0.9
   view.material_override=mat
+  if kind in ["flowers","bush"]: view.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
   add_child(view)
-  batches[kind]={"mesh":multi,"entries":entries,"view":view}
+  batches[kind]={"mesh":multi,"entries":entries,"view":view,"near":mesh,"far":decor_mesh(kind,true)}
 
-func decor_mesh(kind: String) -> ArrayMesh:
+func decor_mesh(kind: String,far: bool=false) -> ArrayMesh:
  var surface=SurfaceTool.new()
  surface.begin(Mesh.PRIMITIVE_TRIANGLES)
  if kind=="trunk":
@@ -230,12 +238,14 @@ func decor_mesh(kind: String) -> ArrayMesh:
   append_mesh(surface,trunk,Vector3(0,1.6,0),Color("b28b5b"))
  if kind=="pine":
   for i in 2:
-   var crown=CylinderMesh.new()
-   crown.bottom_radius=2.7-i*0.6; crown.top_radius=0.15; crown.height=4.8; crown.radial_segments=7
-   append_mesh(surface,crown,Vector3(0,4.8+i*2.4,0),Color.WHITE.lightened(i*0.05))
+   if far:
+    var crown=CylinderMesh.new()
+    crown.bottom_radius=2.7-i*0.6; crown.top_radius=0.15; crown.height=4.8; crown.radial_segments=7
+    append_mesh(surface,crown,Vector3(0,4.8+i*2.4,0),Color.WHITE.lightened(i*0.05))
+   else: append_mesh(surface,CraftedGeometry.pine_crown(2.7-i*0.6,4.8),Vector3(0,4.8+i*2.4,0),Color.WHITE.lightened(i*0.05))
  elif kind in ["leaf","bush","rock"]:
   var crown=SphereMesh.new()
-  crown.radial_segments=7; crown.rings=3
+  crown.radial_segments=7 if far else 10; crown.rings=3 if far else 5
   crown.radius=2.8 if kind=="leaf" else 1.5 if kind=="rock" else 1.1
   crown.height=5.5 if kind=="leaf" else 1.8 if kind=="rock" else 1.7
   append_mesh(surface,crown,Vector3(0,5.1 if kind=="leaf" else 0.9,0),Color.WHITE)
@@ -326,6 +336,27 @@ func refresh() -> void:
    var basis=Basis(Vector3.UP,float(entry.angle)).scaled(Vector3.ONE*size)
    data.mesh.set_instance_transform(i,Transform3D(basis,Vector3(entry.point.x,height_at(entry.point),entry.point.y)))
    data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else entry.color)
+ update_view(true)
+
+func update_view(force: bool=false) -> void:
+ if world==null: return
+ var key=Vector3(snappedf(world.focus.x,16),snappedf(world.focus.z,16),snappedf(world.zoom,12))
+ if not force and key==view_key: return
+ view_key=key
+ var center=Vector2(world.focus.x,world.focus.z)
+ var radius=maxf(65,world.zoom*0.95+35)
+ for kind in batches:
+  var data=batches[kind]
+  data.entries.sort_custom(func(a,b): return a.point.distance_squared_to(center)<b.point.distance_squared_to(center))
+  var visible_count=0
+  for i in data.entries.size():
+   var entry=data.entries[i]
+   if entry.point.distance_to(center)<=radius: visible_count+=1
+   var size=0.001 if entry.blocked else float(entry.scale)
+   data.mesh.set_instance_transform(i,Transform3D(Basis(Vector3.UP,float(entry.angle)).scaled(Vector3.ONE*size),Vector3(entry.point.x,height_at(entry.point),entry.point.y)))
+   data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else entry.color)
+  data.mesh.mesh=data.near if world.zoom<180 and quality>0 else data.far
+  data.mesh.visible_instance_count=mini(visible_count,ceili(data.entries.size()*0.45)) if quality==0 else visible_count
 
 func _process(_delta: float) -> void:
  if quality!=int(Game.state.quality): refresh()

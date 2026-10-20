@@ -108,12 +108,8 @@ static func bus_sample(plan: Dictionary, phase: float) -> Dictionary:
   if local<4.0:
    var direction = points[1]-points[0]
    return {"position":Vector3(points[0].x,0.95,points[0].y),"direction":Vector3(direction.x,0,direction.y),"waiting":true}
-  var along = (local-4.0)*12.0
-  for i in range(1,points.size()):
-   var length = points[i-1].distance_to(points[i])
-   if along<=length:
-    var p = points[i-1].lerp(points[i],along/maxf(length,0.001))
-    var direction = points[i]-points[i-1]
-    return {"position":Vector3(p.x,0.95,p.y),"direction":Vector3(direction.x,0,direction.y),"waiting":false}
-   along -= length
+  var encoded=[]
+  for p in points: encoded.append([p.x,0.95,p.y])
+  var sample=LogisticsRoutes.sample(encoded,(local-4.0)/maxf(float(leg.travel),0.001))
+  return {"position":sample.position,"direction":sample.direction,"waiting":false}
  return bus_sample(plan,0)

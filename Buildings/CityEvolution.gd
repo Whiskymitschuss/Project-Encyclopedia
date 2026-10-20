@@ -1,14 +1,16 @@
 class_name CityEvolution
 extends RefCounted
 
-const CREAM=Color("fff0cc")
+const CREAM=Color("e8d9b9")
 const GLASS=Color("63cce0")
 const DARK=Color("2b5267")
 const GREEN=Color("73b86c")
 const Props=preload("res://Buildings/CozyProps.gd")
 
 static func box(root: Node3D,size: Vector3,at: Vector3,color: Color) -> void:
- Models.box(root,size,at,color)
+ if minf(size.x,minf(size.y,size.z))>=0.22:
+  Models.crafted_box(root,size,at,color,"paint" if color==GLASS or color==DARK else "plaster",0.3)
+ else: Models.box(root,size,at,color)
 static func slab(root: Node3D,width: float,depth: float,height: float,color: Color,x: float=0,z: float=-1) -> void:
  box(root,Vector3(width,height,depth),Vector3(x,0.8+height/2,z),color)
  box(root,Vector3(width+0.4,0.25,depth+0.4),Vector3(x,height+0.95,z),CREAM)
@@ -19,12 +21,16 @@ static func facade(root: Node3D,width: float,depth: float,count: int,color: Colo
   for col in 3:
    var at_x=x+(col-1)*width*0.27
    box(root,Vector3(1.7,1.5,0.18),Vector3(at_x,y,z+depth/2+0.08),DARK)
-   box(root,Vector3(1.4,1.23,0.20),Vector3(at_x,y,z+depth/2+0.1),GLASS)
+   Models.crafted_box(root,Vector3(1.4,1.23,0.20),Vector3(at_x,y,z+depth/2+0.16),GLASS,"glass",0.04)
+   box(root,Vector3(1.95,0.15,0.45),Vector3(at_x,y-0.82,z+depth/2+0.2),CREAM)
+   box(root,Vector3(0.09,1.3,0.23),Vector3(at_x,y,z+depth/2+0.22),CREAM)
    if balconies and floor_id>0:
     box(root,Vector3(2.3,0.18,1),Vector3(at_x,y-0.85,z+depth/2+0.5),CREAM)
     box(root,Vector3(2.3,0.55,0.1),Vector3(at_x,y-0.5,z+depth/2+1),DARK)
   for side in [-1,1]:
-   box(root,Vector3(0.18,1.5,depth*0.67),Vector3(x+side*(width/2+0.05),y,z),GLASS)
+   for col in [-1,1]:
+    box(root,Vector3(0.18,1.6,1.8),Vector3(x+side*(width/2+0.05),y,z+col*depth*0.25),DARK)
+    Models.crafted_box(root,Vector3(0.20,1.25,1.5),Vector3(x+side*(width/2+0.1),y,z+col*depth*0.25),GLASS,"glass",0.035)
 static func door(root: Node3D,x: float,z: float,color: Color) -> void:
  box(root,Vector3(1.8,2.5,0.2),Vector3(x,2,z),DARK)
  box(root,Vector3(1.5,1.8,0.23),Vector3(x,2.2,z+0.03),GLASS)
@@ -53,7 +59,9 @@ static func create(kind: String,level: int,skin: String = "Rustikal") -> Node3D:
  root.set_meta("stage_name",TownEvolution.title(kind,n))
  var tone=Color("e65d4b") if kind=="fire" else Color(Catalog.HOMES[kind].color)
  if skin=="Modern": tone=tone.lerp(GLASS,0.2)
- box(root,Vector3(19,0.32,23),Vector3(0,0.16,0),Color("dccdaa"))
+ Models.paving_box(root,Vector3(19,0.24,23),Vector3(0,0.48,0),Color("bcbba3"),"paving",0.7)
+ if kind in ["house","landhouse","villa","park"]:
+  Models.paving_box(root,Vector3(17.8,0.08,21.8),Vector3(0,0.63,0),Color("6f9d60"),"plaster",0.8)
  var f=TownEvolution.floors(kind,n)
  var h=f*2.7
  var top=6.0
@@ -224,9 +232,20 @@ static func create(kind: String,level: int,skin: String = "Rustikal") -> Node3D:
   if i%2==0: Models.cylinder(root,0.3,0.35,Vector3(x,0.92,z),Color("edbe63"),0.18)
  if kind not in ["park","house","landhouse","villa","townhall"]:
   var roof_y=(4.0+n*0.08 if kind in ["fire","taxi","police"] else h)+1.1
+  if kind in ["apartments","office","hotel","clinic","school"]:
+   # Recessed roof, parapet and ventilation give flat-roof buildings a finished
+   # silhouette even before rooftop solar panels unlock.
+   Models.paving_box(root,Vector3(8.5,0.12,7),Vector3(-1,roof_y+0.12,-2),Color("557b83"),"paint",0.4)
+   for x in [-4.9,2.9]: box(root,Vector3(0.2,0.5,7.1),Vector3(x,roof_y+0.33,-2),CREAM)
+   for z in [-5.4,1.4]: box(root,Vector3(8,0.5,0.2),Vector3(-1,roof_y+0.33,z),CREAM)
+   box(root,Vector3(1.5,0.7,2),Vector3(0.8,roof_y+0.5,-3.5),Color("8da6a3"))
+   Models.cylinder(root,0.35,0.35,Vector3(0.8,roof_y+1,-3.5),DARK)
+  elif kind in ["fire","taxi","police"]:
+   Models.paving_box(root,Vector3(12.5,0.12,8.4),Vector3(-0.5,roof_y+0.12,-1.5),Color("627c78"),"roof",0.4)
   for i in int(n/2.0):
    box(root,Vector3(1.3,0.13,1.3),Vector3(-3+(i%3)*2,roof_y,-4+int(i/3.0)*2),Color("487d9a"))
  root.set_meta("height",top)
  root.set_meta("floors",f)
+ CraftedFrontage.decorate(root,kind,n,true)
  Models.bake(root)
  return root

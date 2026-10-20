@@ -11,6 +11,7 @@ func rebuild() -> void:
   node.queue_free()
  rent_labels.clear()
  var roads=Node3D.new()
+ roads.set_meta("street_context",world.street_context)
  add_child(roads)
  for i in int(Game.state.town.districts):
   var side=1 if i==0 else -1
@@ -68,6 +69,9 @@ func rebuild() -> void:
  refresh_rents()
 
 static func draw_strip(parent: Node3D, at: Vector3, size: Vector3, kind: String) -> void:
+ if kind=="asphalt":
+  StreetScape.strip(parent,at,size,true,parent.get_meta("street_context",{}))
+  return
  var tone=Color(TownRules.TYPES[kind].color)
  Models.box(parent,size+Vector3(0.8,-0.05,0.8),at-Vector3(0,0.08,0),Color("c8d0b4"))
  Models.box(parent,size,at,tone)
