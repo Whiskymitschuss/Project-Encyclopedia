@@ -10,6 +10,16 @@
 - Kapitel, Rathaus, Auszeichnungen, Kurzaufträge und Rückkehrbilanz mit großer Schrift/Kontrast bei 540×960 und 360×640. Tatsächlich gerenderter 3D-Pokal mit einzeiliger Seitenanzeige. Fünf neue Vorschauen stammen aus dem isolierten Kapitel-Testprofil, nicht aus einem Nutzerspielstand.
 - Android-Installation, Hardware-Touch, Vibration, Framerate, Akku, reale Spielerbindung und Langzeit-Balancing sind hier **nicht** durch Gerätetests belegt. Keine neuen Werbe-/Analyseanbieter oder Netzwerkberechtigungen. Details und alle Anforderungen: [Kapitel 1–10](CHAPTERS.md).
 
+## Auslieferung 0.19.1
+
+- APK-Quellstand: `cae1e85f08e2346ae490179dd2161fce587a8855`.
+- APK: 58,396,701 Bytes; SHA256 `bd9fd6e2f1f9597f52eb965fbdeb24799eac8117dc3dfde56d867418ae98773a`.
+- Quell-ZIP: 256 Dateien, 12,981,993 Bytes; SHA256 `5d58bf9f18af538d6fd488d183a9ff9decb134f0ea6abb9e2343558d3d4446a2`. Alle Einträge stimmen mit den Git-Blobs des APK-Quellstands überein.
+- Gleiches Zertifikat wie 0.19: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Paket `com.whiskymitschuss.timberloot`, Code 1910, API 24+, ARM64/ARMv7, v2-Signatur und 16-KB-Ausrichtung geprüft. Runtime-Kapitel-, Rathaus- und Pokalressourcen enthalten; Tests, Hilfsskripte, Dokumentation und Releases aus dem APK ausgeschlossen.
+- Monetarisierung bleibt ausdrücklich ein Plan. Keine Kaufabwicklung, Werbung oder neue Netzwerkberechtigung in dieser Test-App.
+
+Eine unabhängige frische GitHub-Kopie bestätigt die vollständigen **18.785 Headless-Prüfungen**, den unveränderten ersten-Haus-Verlauf, den Hauptszenenstart und die **40 neuen Desktop-OpenGL-/Touch-Prüfungen** erneut. Der Quell-Checkout bleibt dabei sauber. Die übrigen 183 Grafikprüfungen gehören zum ursprünglichen Gesamtprüflauf.
+
 ## Historischer Prüfbericht 0.19
 
 # Prüfung 0.19 — Stadtgefühl und zehn echte Architekturstadien

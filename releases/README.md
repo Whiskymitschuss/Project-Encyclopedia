@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.19.1 — Zehn Kapitel & Rathaus
+
+**[Android-Update 0.19.1 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/releases/Timber-Loot-Tycoon-v0.19.1-test.apk)**
+
+**[Passendes Godot-Quellprojekt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/releases/Timber-Loot-Tycoon-v0.19.1-source.zip)**
+
+Zehn Kapitel mit 30 konkreten Aufgaben und zehn wirklichen Rathaus-Bauabschlüssen. Das Rathaus wächst vom Waldbüro zum Stadtpalais, wird mit tatsächlichen LKW-Lieferungen gebaut und verbessert die Grundmiete. Eigenes Verwaltungsgrundstück ohne Verlust von Wohnbauplätzen. Kapitelpokale und Titel bleiben über Prestige hinaus erhalten. Freiwillige Kurzaufträge zählen neue Produktion und echte Ankünfte; die Rückkehrbilanz zahlt vorhandene Erträge nicht erneut aus. [Alle Kapitel und Voraussetzungen](../docs/CHAPTERS.md).
+
+**Als Update installieren, vorher nicht deinstallieren.** Gleiches Paket, gleiche Testsignatur und Schema 1; Android-Code 1910. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Ausschließlich optionale Vibration als Berechtigung. Kein echter Android-Gerätetest dieser Version; mobile Leistung und reale Spielerbindung bleiben zu prüfen.
+
+18.785 Headless-Prüfungen und 223 Desktop-OpenGL-/Eingabeprüfungen im gesamten Prüfumfang. Erste zwei Kapitel ohne Münz-/Materialgeschenke: Rathaus 1 nach 393 simulierten Sekunden, Rathaus 2 bei 855 Sekunden. Späte Kapitel und alle zehn Bauausbauten mit ausdrücklich vorbereitetem Testprofil geprüft, keine nachgewiesene reale Gesamtspieldauer.
+
+APK-Quellstand `cae1e85f08e2346ae490179dd2161fce587a8855`. Quell-ZIP: 256 Dateien, jede gegen ihren Git-Blob geprüft. APK: 58,396,701 Bytes, SHA256 `bd9fd6e2f1f9597f52eb965fbdeb24799eac8117dc3dfde56d867418ae98773a`. Quell-ZIP: 12,981,993 Bytes, SHA256 `5d58bf9f18af538d6fd488d183a9ff9decb134f0ea6abb9e2343558d3d4446a2`. Paket-/Signaturdaten in `.apk.json`, Hashes in `SHA256SUMS.txt`.
+
+Ein optionales Einnahmemodell über hochwertige Kosmetik und ein einmaliges Unterstützerpaket ist als [Vorschlag](../docs/MONETIZATION.md) dokumentiert. Die APK enthält keine echten Käufe oder Werbung.
+
+## Historischer Stand 0.19
+
 # Timber Loot Tycoon 0.19 — Stadtgefühl
 
 **[Android-Update 0.19 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/releases/Timber-Loot-Tycoon-v0.19-test.apk)**

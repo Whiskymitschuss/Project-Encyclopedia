@@ -1,0 +1,35 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.19.1-test.apk",
+  "bytes": 58396701,
+  "sha256": "bd9fd6e2f1f9597f52eb965fbdeb24799eac8117dc3dfde56d867418ae98773a",
+  "version": "0.19.1-test",
+  "package": "com.whiskymitschuss.timberloot",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "cae1e85f08e2346ae490179dd2161fce587a8855",
+  "device_install_or_launch_tested": false,
+  "version_code": 1910,
+  "save_schema": 1,
+  "same_signer_as_0_19": true,
+  "construction_logistics_version": 1,
+  "certificate_sha256": "08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005",
+  "desktop_opengl_ui_checks": 23,
+  "headless_checks": 18785,
+  "desktop_opengl_cityux_checks": 45,
+  "desktop_opengl_journey_checks": 40,
+  "desktop_opengl_checks": 223,
+  "desktop_opengl_logistics_checks": 30,
+  "desktop_opengl_landscape_checks": 9,
+  "desktop_opengl_delivery_checks": 22,
+  "desktop_opengl_traffic_checks": 27,
+  "desktop_opengl_stone_checks": 27,
+  "source_zip_files": 256
+}
