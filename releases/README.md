@@ -1,3 +1,19 @@
+# Timber Loot Tycoon 0.18 — Baulogistik
+
+**[Android-Update 0.18 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/releases/Timber-Loot-Tycoon-v0.18-test.apk)**
+
+**[Passendes Godot-Quellprojekt 0.18 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/releases/Timber-Loot-Tycoon-v0.18-source.zip)**
+
+Behebt wartende Baustellen bei aktiver Holzlinie: LKWs laden benötigte Bretter direkt am Sägewerk, fertige Möbel am Möbelwerk und Bausteine/Kies am Steinwerk. Neue und schon angefangene alte Materialbaustellen bestellen automatisch ab Unternehmenslevel 4. Keine manuelle Entnahme aus der Holzlinie und keine zusätzliche Level-10-Freischaltung nötig. Bestände werden beim Beladen entnommen und erst beim tatsächlichen Entladen an der Baustelle verbucht.
+
+Ein Ladefehler mit als Fließkommazahlen gespeicherten Gebäudereferenzen konnte die alte Produktion zusätzlich zur Holzlinie laufen lassen. Diese doppelte Zuordnung ist korrigiert. Eingangs- und Ausgangsware besitzen feste getrennte Materialanzeigen; leere Rückfahrten sind ausdrücklich markiert. Das Baustellenmenü zeigt tatsächlich ankommende Mengen und Lieferursprünge. Unterschiedliche Lieferbereiche teilen sich auch bei gleicher numerischer ID kein Fahrzeugmodell.
+
+**Als Update installieren. Vorher nicht deinstallieren und keine App-Daten löschen.** Paket, Testsignatur und Speicherformat 1 bleiben gleich; Versionscode 1800. Oben rechts steht **BAULOGISTIK / 18**. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, keine Berechtigungen. Geräteinstallation und Leistung der neuen Version wurden hier nicht auf Hardware geprüft.
+
+17.771 Headless- und 138 Desktop-OpenGL-Prüfungen bestanden. APK-Quellstand `7ea1dfd7643fe95228d0d696d14ff3cb3c149fd7`. Die passende Quell-ZIP enthält 210 einzeln gegen Git geprüfte Dateien; Release-Dateien sind aus ihr ausgeschlossen. APK: 58,300,624 Bytes, SHA256 `279d5dcadd02f56b53c9b93ac2304fd743765fa3f348aa70444eed9b86c859a8`. Quell-ZIP: 10,537,974 Bytes, SHA256 `3313f02c382d64e3a853b0c8333ac6d2017d773e0d54555280039e5939fa57fd`. Signatur und Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
+
+## Historischer Stand 0.17
+
 # Timber Loot Tycoon 0.17 — Stein & Holz
 
 **[Android-Update 0.17 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/releases/Timber-Loot-Tycoon-v0.17-test.apk)**

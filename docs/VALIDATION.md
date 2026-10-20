@@ -9,6 +9,13 @@
 - Sägewerk und Möbelwerk besitzen dauerhaft getrennte Ein-/Ausgangssymbole und Zähler; volle und abgeholte Bretter wechseln nicht mehr die Holz-Identität. Ausgangszeilen passen bei 540×960 und 360×640 in ihre Weltanzeigen. Im Baustellenmenü stehen tatsächlicher Ursprung und bereits reservierte ankommende Mengen. Zwei Vorschauen stammen ausschließlich aus aufgebauten Demonstrationsprofilen.
 - Android-Installation, Touch-Hardware und mobile Leistung der neuen Version wurden hier nicht auf einem realen Gerät geprüft. Das Update enthält keine vollständige neue Logistiksimulation für sämtliche alten fortgeschrittenen Fabriken oder eine Kollisions-/Ampelsteuerung.
 
+## Auslieferung 0.18
+
+- APK-Quellstand: `7ea1dfd7643fe95228d0d696d14ff3cb3c149fd7`.
+- APK: 58,300,624 Bytes, SHA256 `279d5dcadd02f56b53c9b93ac2304fd743765fa3f348aa70444eed9b86c859a8`.
+- Quell-ZIP: 210 Dateien, 10,537,974 Bytes, SHA256 `3313f02c382d64e3a853b0c8333ac6d2017d773e0d54555280039e5939fa57fd`. Jede Datei gegen den Git-Blob des APK-Quellstands geprüft.
+- Gleiches Zertifikat wie 0.17: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1800, Schema 1, zusätzlich versionierte Baustellenmigration 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Neue Laufzeitlogik ist enthalten; Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
+
 ## Historischer Prüfbericht 0.17
 
 # Prüfung 0.17 — Steinrevier und Materialvorschau
