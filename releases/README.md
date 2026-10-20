@@ -1,3 +1,19 @@
+# Timber Loot Tycoon 0.19.2 — Gebäudekarte korrigiert
+
+**[Android-Update 0.19.2 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.2-cardfix/releases/Timber-Loot-Tycoon-v0.19.2-test.apk)**
+
+**[Passendes Godot-Quellprojekt herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.2-cardfix/releases/Timber-Loot-Tycoon-v0.19.2-source.zip)**
+
+Die Gebäudekarte bleibt auch bei wechselnden Textgrößen auf den verfügbaren Bereich begrenzt. Titel und Schließen bleiben sichtbar; längere Inhalte scrollen mit dem Finger. Aktualisierungen erhalten die Leseposition und das gedrückte Touch-Ziel. Welt-Materialanzeigen überdecken weder Gebäudekarte noch Baupalette.
+
+**Als Update installieren, vorher nicht deinstallieren und keine App-Daten löschen.** Gleiches Paket, gleicher Testschlüssel und Speicherformat 1; Android-Code 1920. Zehn Kapitel und alle bisherigen Produktions-/Bausysteme bleiben erhalten. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Die einzige Berechtigung bleibt die optionale Vibration. Kein echter Android-Gerätetest dieser Korrektur.
+
+19.222 Headless-Prüfungen und 569 gezielte Desktop-OpenGL-Prüfungen bestanden, einschließlich wiederholter Touch-Auswahl, vorübergehend überhohem Inhalt, großer Schrift, geringer logischer Bildschirmhöhe, Finger-Scrollen und sichtbarem Schließen. Die frische GitHub-Wiederherstellung bestätigt zusätzlich 437 Layout- und 87 Touch-Prüfungen. Die normale Wiederholung allein stellte den Handyfehler in der Cloud nicht nach; der gezielte Höhen-Stress schlug vor der Korrektur fehl und besteht danach. [Prüfbericht](../docs/VALIDATION.md).
+
+APK-Quellstand `226519915f46e3f8e883190f6670422b8cbab86f`. Quell-ZIP: 263 Dateien, jede gegen ihren Git-Blob geprüft. APK: 58,396,802 Bytes, SHA256 `ad54a55a0b35d5370603c6e13f41f1eafedeb0639659c6800d52c150935198e3`. Quell-ZIP: 13,333,293 Bytes, SHA256 `a82d0385b2aa4bc943abd13fa582a2014cfecfee8ce9515083fb3a956f57c4da`. Signatur/Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
+
+## Historischer Stand 0.19.1
+
 # Timber Loot Tycoon 0.19.1 — Zehn Kapitel & Rathaus
 
 **[Android-Update 0.19.1 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.1-journey/releases/Timber-Loot-Tycoon-v0.19.1-test.apk)**

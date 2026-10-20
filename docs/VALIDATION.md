@@ -9,6 +9,14 @@
 - Welt-Materialanzeigen werden bei Überschneidung mit Gebäudekarte oder Baupalette verborgen und bleiben außerhalb dieser Flächen weiterhin bedienbar. Ein tatsächliches Rendering aus dem isolierten Testprofil liegt in [Vorschau](preview-card-fixed.png); es verwendet keinen Nutzerspielstand.
 - Android-Version 0.19.2-test, Code 1920. Paket, Speicherpfad, Schema 1 und Testschlüssel bleiben erhalten. Ein echter Android-Hardwaretest des Updates steht weiterhin aus; Desktop-Eingabe und provozierte Layoutbedingungen belegen keine gerätespezifische Fehlerfreiheit.
 
+## Auslieferung 0.19.2
+
+- APK-Quellstand: `226519915f46e3f8e883190f6670422b8cbab86f`.
+- APK: 58,396,802 Bytes; SHA256 `ad54a55a0b35d5370603c6e13f41f1eafedeb0639659c6800d52c150935198e3`.
+- Quell-ZIP: 263 Dateien, 13,333,293 Bytes; SHA256 `a82d0385b2aa4bc943abd13fa582a2014cfecfee8ce9515083fb3a956f57c4da`. Alle Einträge gegen die Git-Blobs des APK-Quellstands geprüft. Das vollständige Git-Bundle wurde ebenfalls verifiziert.
+- Zertifikat identisch mit 0.19.1: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Paket `com.whiskymitschuss.timberloot`, Code 1920, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-Ausrichtung und Hochformat geprüft. Keine neuen Berechtigungen. Tests, Dokumentation, Skripte und Release-Dateien sind aus dem APK ausgeschlossen.
+- Eine unabhängige frische GitHub-Kopie importiert das Projekt und besteht die **437 Layout- sowie 87 neuen Desktop-OpenGL-/Touch-Prüfungen** erneut. Ihr Quell-Checkout bleibt sauber. Die vollständige Headless-Suite und die übrigen gezielten Grafikprüfungen wurden im ursprünglichen Checkout ausgeführt.
+
 ## Historischer Prüfbericht 0.19.1
 
 # Prüfung 0.19.1 — Zehn Kapitel und Rathaus
