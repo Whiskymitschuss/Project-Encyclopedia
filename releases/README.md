@@ -1,3 +1,21 @@
+# Timber Loot Tycoon 0.19 — Stadtgefühl
+
+**[Android-Update 0.19 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/releases/Timber-Loot-Tycoon-v0.19-test.apk)**
+
+**[Passendes Godot-Quellprojekt 0.19 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.19.0-cityux/releases/Timber-Loot-Tycoon-v0.19-source.zip)**
+
+Alle zwölf beschriebenen UX-Bereiche sind verbunden: Gebäudekarten mit Wischgeste, Materialhilfe und Liefermengen, auswählbare LKWs mit echten Straßenwegen, horizontale Baupalette, Straßenzeichnen und geschützte Rücknahme, benannte Viertel mit gemeinsamen Ausbauplänen, antippbare Übersicht und Regionsinformationen, ruhige Ereignisse, Benno-Hinweise sowie Rückmeldungen und Zugänglichkeit. [Bedienung und Prüfliste](../docs/UX-CHECKLIST.md).
+
+Vierzehn Stadtgebäudetypen erhalten jeweils zehn tatsächliche Architekturstadien: 140 Modelle. Wohnhaus → Hochhaus, Hotel → Resort, Feuerwache → zentrale Hauptfeuerwache, Rettungsstation → Krankenhaus/Klinikum. Auch alle anderen Stadtgebäude wachsen sichtbar. Erst fertig gebaute Ausbaustufen ändern das gespeicherte Haus. Die tatsächlichen Modelle lassen sich beim Haus unter **Stufen 1–10** ansehen.
+
+Unten **Bauen** öffnet die neue Wischpalette, **Welt** die Übersicht. Gebäude und Liefer-LKWs direkt antippen. Für Viertel **Bauen → Wege → Viertel markieren** wählen. Der bestätigte Ausbauplan bezahlt normale Aufträge; ein frei werdendes begrenztes Bauteam übernimmt automatisch die nächste Baustelle. Bestände, Anlieferung, Bauarbeit und manuelle Eingriffe bleiben wirkungsvoll.
+
+**Als Update installieren, vorher nicht deinstallieren und keine App-Daten löschen.** Paket, Testsignatur, Speicherpfad und Schema 1 bleiben gleich; Versionscode 1900. Oben rechts steht **STADTGEFÜHL / 19**. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Einzige Android-Berechtigung ist `android.permission.VIBRATE` für optionale, anfangs ausgeschaltete Vibration. Reale Geräteinstallation, Touch, Vibration und Leistung der neuen Version wurden hier nicht auf Hardware geprüft.
+
+18.518 Headless- und 183 Desktop-OpenGL-Prüfungen bestanden. APK-Quellstand `81e784afb4c28fda17a315ad3287a7d061225930`. Die passende Quell-ZIP enthält 239 einzeln gegen Git geprüfte Dateien. APK: 58,363,391 Bytes, SHA256 `6ae401c2656db11618360565d25661983aa19947393d30954319ee7bb2372c68`. Quell-ZIP: 12,099,048 Bytes, SHA256 `9cbda93ae25d2073babc5640ef73c4363081eb4a9d55ad37252dee1ffc4674b8`. Signatur und Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
+
+## Historischer Stand 0.18
+
 # Timber Loot Tycoon 0.18 — Baulogistik
 
 **[Android-Update 0.18 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.18.0-logistics/releases/Timber-Loot-Tycoon-v0.18-test.apk)**

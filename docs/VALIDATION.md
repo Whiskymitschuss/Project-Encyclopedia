@@ -11,6 +11,14 @@
 - Physische Eingabepfade der Engine mit synthetischen ScreenTouch-/ScreenDrag-/Key-Ereignissen: horizontale Baupalette, kurzer Baukarten-Tipp, keine Kosten beim Wischen oder vor Bestätigung, Straßenzeichnen mit einem Finger, Bestätigung und Rücknahme, antippbare Übersicht, Fokus und Tastatureingabe am Viertelnamen, echte Regionsauswahl, Materialquelle und fahrender LKW mit markierter gespeicherter Straßenroute. Große Schrift und 540×960/360×640 getestet.
 - Sieben gerenderte Vorschauen aus ausdrücklich aufgebauten Demonstrationsprofilen. Die reale Android-Eingabehardware, Vibration, Framerate, Akku und thermische Leistung wurden hier nicht geprüft. Die vorhandene Weltgröße und übrigen fortgeschrittenen gemeinsamen Produktionspuffer werden durch diese UX-Erweiterung nicht als neu erfundene Gameplay-Systeme ausgegeben. [Vollständige UX-Zuordnung](UX-CHECKLIST.md).
 
+## Auslieferung 0.19
+
+- APK-Quellstand: `81e784afb4c28fda17a315ad3287a7d061225930`.
+- APK: 58,363,391 Bytes, SHA256 `6ae401c2656db11618360565d25661983aa19947393d30954319ee7bb2372c68`.
+- Quell-ZIP: 239 Dateien, 12,099,048 Bytes, SHA256 `9cbda93ae25d2073babc5640ef73c4363081eb4a9d55ad37252dee1ffc4674b8`. Jede Datei gegen den Git-Blob des APK-Quellstands geprüft.
+- Gleiches Zertifikat wie 0.18: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1900, Speicherformat 1, unveränderter Paket-/Speichername, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat und GL Compatibility geprüft. Die einzige deklarierte Berechtigung ist VIBRATE; sie unterstützt die optionale, anfangs ausgeschaltete Vibration.
+- Neue Laufzeitmodule für Architektur, Stadt-UX, Übersicht, Vorschau, Palette und Routenmarkierung sind im APK enthalten. Tests, Build-Helfer, Release-Dateien und Dokumentationsbilder sind ausgeschlossen.
+
 ## Historischer Prüfbericht 0.18
 
 # Prüfung 0.18 — Direkte Baustellenversorgung und stabile Materialanzeigen
