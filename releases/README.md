@@ -16,6 +16,8 @@ Unter **Bauen → Steinbruch & Baustoffe** oder **Mehr → Steinbruch & Baustoff
 
 Die weiteren Sand-, Metall- und Betonketten sowie vollständige Fahrzeugidentitäten und Kollisionsverkehr bleiben offen. Der [Industrie-Masterplan](../docs/INDUSTRY-ROADMAP.md) beschreibt den tatsächlichen Stand.
 
+Auch alle 108 OpenGL-Prüfungen wurden in der frischen GitHub-Kopie bestanden. Die APK, das Quellarchiv und alle vier neuen Vorschauen wurden über die feste Version vollständig per HTTPS heruntergeladen und mit beiden Projektkopien verglichen. [Download-Prüfbericht](../docs/download-verification-17.json).
+
 ## Historischer Stand 0.16
 
 # Timber Loot Tycoon 0.16 — Stadtverkehr

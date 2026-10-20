@@ -19,6 +19,9 @@
 - Gleiches Zertifikat wie 0.16: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1700, Speicherformat 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Neue Skripte, SVG-Rohstofficons und `Economy/stone_industry.json` sind enthalten. Die Produktionsdaten wurden direkt aus dem APK gelesen und geprüft. Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
 - Frische unabhängige GitHub-Kopie unter `/workspace/timber-restore-17`: Erstimport, alle **17.337 Headless-Prüfungen**, erster-Haus-Verlauf und Hauptszenenstart bestanden.
 
+- Auch alle **108 OpenGL-Prüfungen** bestehen in der unabhängigen GitHub-Kopie. Die Wiederherstellung ist sauber; Änderungen nach dem APK-Quellstand betreffen ausschließlich Auslieferungsdateien und Dokumentation.
+- APK, passende Quell-ZIP und vier neue Vorschauen vom festen Tag `v0.17.0-stone` vollständig per HTTPS mit HTTP 200 heruntergeladen. Alle Dateigrößen und SHA256 stimmen mit Original und unabhängiger GitHub-Wiederherstellung überein. Bericht: [download-verification-17.json](download-verification-17.json).
+
 ## Historischer Prüfbericht 0.16
 
 # Prüfung 0.16 — Straßenfracht, Stadtdienste und Finger-Scrollen

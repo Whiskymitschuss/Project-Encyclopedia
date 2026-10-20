@@ -1,0 +1,55 @@
+{
+  "tag": "v0.17.0-stone",
+  "published_commit": "3949aaa8c16f9d626f97aa8dab610c40e4e755b5",
+  "source_commit": "662573b23cb9b3781b2f07085a314161070c4cb8",
+  "full_https_downloads_verified": true,
+  "all_hashes_match_independent_github_restore": true,
+  "headless_checks_in_fresh_clone": 17337,
+  "opengl_checks_in_fresh_clone": 108,
+  "device_install_or_launch_tested": false,
+  "touch_gestures_simulated_on_desktop": true,
+  "files": [
+    {
+      "file": "Timber-Loot-Tycoon-v0.17-test.apk",
+      "bytes": 58296429,
+      "http_status": 200,
+      "sha256": "c0885fa3e9b514e54e04d5765891910262b792af78cf12bf00a37b3799f22c3f",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/releases/Timber-Loot-Tycoon-v0.17-test.apk"
+    },
+    {
+      "file": "Timber-Loot-Tycoon-v0.17-source.zip",
+      "bytes": 9994951,
+      "http_status": 200,
+      "sha256": "163898d035ef3437979e0f899eb10b0d880fc4c4d507f1aba29fa867006911bc",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/releases/Timber-Loot-Tycoon-v0.17-source.zip"
+    },
+    {
+      "file": "preview-stone-industry.png",
+      "bytes": 337636,
+      "http_status": 200,
+      "sha256": "e554b26f3da50edbba641b57fb1eb9a70e08d8dfc0b5e36bf3f156b137970d63",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/docs/preview-stone-industry.png"
+    },
+    {
+      "file": "preview-stone-quarry.png",
+      "bytes": 285555,
+      "http_status": 200,
+      "sha256": "1ad122ed394123065395f475a9aeecefc0597c6a87bc7a02f4774033588cf613",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/docs/preview-stone-quarry.png"
+    },
+    {
+      "file": "preview-stone-menu.png",
+      "bytes": 184528,
+      "http_status": 200,
+      "sha256": "2df43eae1691045b57451a8eb14e114a92f2af8dafc645a5f0432e4885e6e119",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/docs/preview-stone-menu.png"
+    },
+    {
+      "file": "preview-stone-preview.png",
+      "bytes": 271261,
+      "http_status": 200,
+      "sha256": "379583bf73bd40ded828f516a64825f1952481d6e02bdd31700f7ca61082362a",
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/docs/preview-stone-preview.png"
+    }
+  ]
+}
