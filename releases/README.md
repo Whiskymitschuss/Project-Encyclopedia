@@ -1,3 +1,23 @@
+# Timber Loot Tycoon 0.17 — Stein & Holz
+
+**[Android-Update 0.17 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/releases/Timber-Loot-Tycoon-v0.17-test.apk)**
+
+**[Passendes Godot-Quellprojekt 0.17 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.17.0-stone/releases/Timber-Loot-Tycoon-v0.17-source.zip)**
+
+Ab Unternehmenslevel 5: **Steinbruch → Muldenkipper → Steinwerk → Bausteine oder Kies → LKW-Lieferung ins Lager → Fundament und Betriebsausbau**. Bau zuerst Steinbruch und Steinwerk; ihre ersten Baustellen benötigen noch keine eigenen Steinprodukte. Die gesamte Branche bleibt neben deinem bisherigen Holzgeschäft erhalten.
+
+Bagger lösen tatsächliches Gestein aus begrenzten Vorkommen, bewegen die geladene Schaufel und entladen in eine Abholmulde. Steinwerke besitzen auswählbare Rezepte und eigene Vorräte. Volle Lager und fehlende Rohstoffe stoppen die passenden Vorgänge. Fahrer bringen Material über echte Straßen; Ware gehört erst nach Entladung zum Ziel. Holz, Stein und Baustellen teilen die gekaufte Flotte. Selbst ein einzelner LKW kann beide Branchen abwechselnd bedienen.
+
+Unter **Bauen → Steinbruch & Baustoffe** oder **Mehr → Steinbruch & Baustoffe**: Standorte errichten, Produkt auswählen, Vorkommen erschließen und Betriebe bis Stufe 10 ausbauen. Bausteine und Kies werden für größere Ausbauten verwendet; ein Notmaterialhändler verhindert Sackgassen. Die Bauvorschau zeigt die konkrete spätere Materialrechnung vor dem Bezahlen. Stadtbaustellen ab Level 4 lassen sich auch starten, bevor ihr Material per LKW ankommt.
+
+**Als Update installieren, vorher nicht deinstallieren und keine App-Daten löschen.** Gleiches Paket und gleicher Testschlüssel wie 0.16, Schema 1, Versionscode 1700. Oben rechts steht **STEIN & HOLZ / 17**. Android 7.0+, ARM64/ARMv7 und OpenGL ES 3.0; rund 58 MB, keine Berechtigungen. Der neue Android-Geräte- und Leistungstest steht noch aus.
+
+17.337 Headless- und 108 Desktop-OpenGL-Prüfungen bestanden. Auch eine frische GitHub-Kopie besteht die gesamte Headless-Suite. APK-Quellstand `662573b23cb9b3781b2f07085a314161070c4cb8`; das passende Archiv enthält 203 einzeln gegen Git geprüfte Dateien. Die Rezept-/Material-JSON ist im APK ausdrücklich enthalten und geprüft. Paketdaten in `.apk.json`, Prüfsummen in `SHA256SUMS.txt`.
+
+Die weiteren Sand-, Metall- und Betonketten sowie vollständige Fahrzeugidentitäten und Kollisionsverkehr bleiben offen. Der [Industrie-Masterplan](../docs/INDUSTRY-ROADMAP.md) beschreibt den tatsächlichen Stand.
+
+## Historischer Stand 0.16
+
 # Timber Loot Tycoon 0.16 — Stadtverkehr
 
 **[Android-Update 0.16 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.16.0-traffic/releases/Timber-Loot-Tycoon-v0.16-test.apk)**

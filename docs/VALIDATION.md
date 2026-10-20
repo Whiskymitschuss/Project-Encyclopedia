@@ -11,6 +11,14 @@
 - Gerenderte Prüfung: geladene Schaufel, bewegter Oberwagen, unterschiedliche Kipper-/Paletten-Auflieger, echte Füllstände und mobile Produktionswahl. Ein beladener LKW am vollen Lager bleibt auch bei interpolierter Darstellung am Dock stehen. Bauvorschau zeigt die spätere Materialrechnung oberhalb der Bestätigung; Stadtbaustellen ab Level 4 werden bei gültigem Platz nicht mehr durch erst später anzuliefernde Materialien blockiert. Kleines Hochformatfenster geprüft. Touchgesten bleiben synthetische Desktop-Tests; reale Android-Hardware wurde hier nicht verwendet.
 - Offen bleiben direkte Schaufelübergabe an einen wartenden Kipper, Steinplatten und zusätzliche Sand-/Metall-/Betonketten, vollständige Fahrzeugidentitäten/Kollisionen und echte mobile Leistungs- und Updateprüfungen. Siehe [Industrie-Masterplan](INDUSTRY-ROADMAP.md).
 
+## Auslieferung 0.17
+
+- APK-Quellstand: `662573b23cb9b3781b2f07085a314161070c4cb8`.
+- APK: 58,296,429 Bytes, SHA256 `c0885fa3e9b514e54e04d5765891910262b792af78cf12bf00a37b3799f22c3f`.
+- Quell-ZIP: 203 Dateien, 9,994,951 Bytes, SHA256 `163898d035ef3437979e0f899eb10b0d880fc4c4d507f1aba29fa867006911bc`. Jede Datei gegen den Git-Blob des APK-Quellstands geprüft; Release-Dateien sind aus dem Quellarchiv ausgeschlossen.
+- Gleiches Zertifikat wie 0.16: `08b5b5b8d6edb6590545fe77f6f14248f6f14256c9edc781989ac41100ff1005`. Versionscode 1700, Speicherformat 1, API 24+, ARM64/ARMv7, v2-Signatur, 16-KB-ZIP-Ausrichtung, Hochformat, GL Compatibility und keine Berechtigungen geprüft. Neue Skripte, SVG-Rohstofficons und `Economy/stone_industry.json` sind enthalten. Die Produktionsdaten wurden direkt aus dem APK gelesen und geprüft. Tests, Build-Helfer und Release-Dateien sind ausgeschlossen.
+- Frische unabhängige GitHub-Kopie unter `/workspace/timber-restore-17`: Erstimport, alle **17.337 Headless-Prüfungen**, erster-Haus-Verlauf und Hauptszenenstart bestanden.
+
 ## Historischer Prüfbericht 0.16
 
 # Prüfung 0.16 — Straßenfracht, Stadtdienste und Finger-Scrollen
