@@ -64,6 +64,7 @@ var camera_transition=false
 var pan_velocity=Vector3.ZERO
 var last_pan_time=0
 var photo: CanvasLayer
+var trade_world: Node3D
 var production_alerts: Node
 var falling_trees=[]
 var next_fall=0
@@ -159,6 +160,9 @@ func _ready() -> void:
  production_alerts=load("res://UI/ProductionAlerts.gd").new()
  production_alerts.world=self
  add_child(production_alerts)
+ trade_world=load("res://Components/TradeWorld.gd").new()
+ trade_world.world=self
+ add_child(trade_world)
 
 func build_landscape() -> void:
  landscape=ValleyLandscape.new()
@@ -406,17 +410,15 @@ func rebuild() -> void:
  if delivery_world!=null: delivery_world.rebuild()
 
 func add_approach(point: Vector3, rotation: int) -> void:
- var path = Placement.approach(point,rotation)
- if absf(point.x)>190:
-  var direction=Basis(Vector3.UP,deg_to_rad(rotation))*Vector3(0,0,1)
-  path=PackedVector3Array([point+direction*(Placement.size_for(rotation).y/2)+Vector3(0,0.68,0),point+direction*(Placement.size_for(rotation).y/2+2)+Vector3(0,0.68,0)])
+ var path = Placement.approach(point,rotation,Game.state.town)
+ if path.size()<2: return
  var length = path[0].distance_to(path[1])
  if length>0.1:
   var strip=Models.box(world_buildings,Vector3(3.0,0.12,length),(path[0]+path[1])/2,Color("efe2ae"))
   strip.rotation.y=atan2(path[1].x-path[0].x,path[1].z-path[0].z)
 
 func refresh_forest_clearance() -> void:
- var rectangles = []
+ var rectangles = [WorldAccess.HIGHWAY_SITE.grow(3),Rect2(316,70,30,142)]
  for i in Game.state.buildings.size(): rectangles.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))).grow(3))
  for i in Game.state.homes.size(): rectangles.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).grow(3))
  for job in Game.state.jobs:
@@ -674,7 +676,7 @@ func make_chip_pool() -> void:
   chip_pool.append(effect)
 
 func clamp_camera() -> void:
- focus.x=clampf(focus.x,-300,300)
+ focus.x=clampf(focus.x,-350,350)
  focus.z=clampf(focus.z,-245,245)
  focus.y=0
  zoom=clampf(zoom,40,650)
@@ -866,6 +868,9 @@ func tap_world(screen: Vector2) -> void:
   if Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).has_point(Vector2(point.x,point.z)):
    hud.ux.select_building(i,true)
    return
+ if WorldAccess.HIGHWAY_SITE.has_point(Vector2(point.x,point.z)):
+  hud.open_menu("export")
+  return
  for i in 10:
   if point.distance_to(Catalog.biome_position(i)) < 46:
    if i < Game.state.unlocked:
@@ -884,6 +889,10 @@ func begin_placement(request: Dictionary) -> void:
  preview_history.clear()
  placement = request.duplicate(true)
  if placement.get("network",false):
+  if placement.has("overview"):
+   focus=Vector3(float(placement.overview[0]),0,float(placement.overview[1]))
+   zoom=float(placement.get("zoom",zoom))
+   set_camera()
   road_anchor=null
   road_endpoint=null
   road_horizontal=true

@@ -578,6 +578,7 @@ func render_menu() -> void:
   "boosters": boosters_menu()
   "prestige": prestige_menu()
   "market": market_menu()
+  "export": export_menu()
   "settings": settings_menu()
   "empire": empire_menu()
   "planner": planner_menu()
@@ -763,21 +764,16 @@ func city_menu() -> void:
  button(rents,"ALLE MIETEN ABHOLEN",func(): action(func(): Game.collect_rent()))
  button(rents,"Hausverwaltung: AUTOMATISCH" if Game.state.town.rent_auto else "Hausverwaltung einschalten"+(" · %s Münzen" % Catalog.number(2500*Game.difficulty()) if not Game.state.town.rent_manager else ""),func(): action(func(): Game.set_rent_auto(not Game.state.town.rent_auto)))
  jobs_cards()
- for i in Game.city_plot_count():
-  var index = i
-  var title = "Freies Grundstück %s" % (i+1)
-  for h in Game.state.homes:
-   if int(h.plot) == i: title = "%s · Stufe %s" % [Catalog.HOMES[h.kind].name,h.level]
-  button(contents,title,func(): show_plot(index))
+ button(contents,"NEUES GEBÄUDE FREI PLATZIEREN",func(): build_category="Stadt"; open_menu("catalog"))
+ text(contents,"Baue auf freiem Festland. Nur gesperrte Biome, Gewässer, Straßen und belegte Flächen bleiben geschützt. Es gibt keine feste Zahl an Bauplätzen.",15,MUTED)
+ for home in Game.state.homes:
+  var plot=int(home.plot)
+  button(contents,"%s · Stufe %s" % [Catalog.HOMES[home.kind].name,home.level],func(): show_plot(plot))
 
 func plot_menu() -> void:
  var plot = current_index
  modal_title.text = "GRUNDSTÜCK %s" % (plot+1)
  button(contents,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Game.plot_position(plot)); close_menu())
- if plot >= Game.city_plot_count() and not (plot==Journey.HALL_PLOT and Journey.townhall_index(Game.state)>=0):
-  card("Neue Region benötigt","Erweitere dein Unternehmen, um weitere Grundstücke zu erschließen.")
-  button(contents,"REGIONEN",func(): open_menu("empire"))
-  return
  for i in Game.state.homes.size():
   var index = i
   var h = Game.state.homes[i]
@@ -850,7 +846,7 @@ func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
  var groups=[
   ["Stadt & Sicherheit",[["Einsatzzentrale & Feuerwehr","services"],["Stadtkarte & freie Grundstücke","overview"],["Stadt & Häuser","city"],["Viertel & Ausbaupläne","districts"],["Hinweise & Ereignisse","events"]]],
-  ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Spänebox","sawdust"]]],
+  ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Autobahn & Exporthandel","export"],["Spänebox","sawdust"]]],
   ["Wege & Team",[["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"]]],
   ["Deine Entwicklung",[["Kapitel 1–10 & Rathaus","journey"],["Auszeichnungen","trophies"],["Regionen & Großprojekte","empire"],["Forschung","research"],["Loot & Inventar","loot"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"]]],
   ["Hilfe & Einstellungen",[["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
@@ -884,11 +880,11 @@ func loot_menu() -> void:
 
 func empire_menu() -> void:
  modal_title.text = "KONZERN & REGIONEN"
- var region = card(["Waldquartier","Seenregion","Stadtregion"][int(Game.state.region)],"%s Stadtgrundstücke verfügbar · %s Bewohner" % [Game.city_plot_count(),Game.residents()])
+ var region = card(["Waldquartier","Seenregion","Stadtregion"][int(Game.state.region)],"Freie Standortwahl auf dem Festland · %s Bewohner" % Game.residents())
  if Game.state.region < 2:
   text(region,"Nächste Region: %s Münzen · %s Bewohner" % [Catalog.number(6000*pow(5,int(Game.state.region))*Game.difficulty()),4 if Game.state.region==0 else 20],16,GOLD)
   button(region,"REGION ERSCHLIESSEN",func(): action(func(): Game.expand_region()))
- var district=card("Stadtviertel · %s/2" % Game.state.town.districts,"Ost- und Westviertel bieten je zwölf zusätzliche Bauplätze und acht weitere Industriebetriebe. Eine Zufahrt verbindet sie mit deinem Netz; die Straßen im Viertel legst du selbst an.")
+ var district=card("Stadtviertel · %s/2" % Game.state.town.districts,"Optionaler Ausbau der Infrastruktur: Ost- und Westzufahrt erweitern das Straßennetz. Auf freiem Festland darfst du schon vorher bauen; gesperrte Biome müssen weiterhin erschlossen werden.")
  if int(Game.state.town.districts)<2:
   text(district,"%s Münzen · drei Regionen und 20 Bewohner" % Catalog.number(Game.district_cost()),15,GOLD)
   button(district,"NEUES STADTVIERTEL ERSCHLIESSEN",func(): action(func(): Game.expand_district()))
@@ -953,7 +949,8 @@ func market_menu() -> void:
  modal_title.text = "LAGER & VERKAUF"
  var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Die Baureserve schützt Material für neue Häuser. Die Spänebox lässt sich direkt unten oder am Sägewerk öffnen; ihr voller Behälter stoppt nie die Bretterproduktion.")
  button(box,"Baureserve: AN" if Game.state.reserve else "Baureserve: AUS",func(): action(func(): Game.state.reserve = not Game.state.reserve))
- button(box,"Auto-Export: AN" if Game.state.auto_export else "Auto-Export: AUS",func(): action(func(): Game.state.auto_export = not Game.state.auto_export))
+ button(box,"AUTOBAHN & EXPORTHANDEL",func(): open_menu("export"))
+ text(box,"Hier verkaufst du direkt am lokalen Markt. Autobahnexport benötigt eine Straßenverbindung und bezahlt erst bei Ankunft.",15,MUTED)
  for key in Catalog.RESOURCES:
   if ConstructionRules.HARDWARE.has(key): continue
   var id = str(key)
@@ -962,6 +959,29 @@ func market_menu() -> void:
   var choices = row(resource_box)
   button(choices,"25 % verkaufen",func(): action(func(): Game.sell(id,0.25)))
   button(choices,"Alles verkaufen",func(): action(func(): Game.sell(id)))
+
+func export_menu() -> void:
+ modal_title.text="AUTOBAHN & EXPORT"
+ var box=card("LKW-Fernhandel","Baue eine durchgehende Straße vom aktiven Markt bis zum markierten Anschluss bei 300 / 176. Zum Beispiel vom südlichen Straßenende bei 80 / 176 gerade nach Osten. Fußwege zählen nicht als LKW-Zufahrt.")
+ dynamic_text(box,func(): return ExportTrade.status(Game.state))
+ button(box,"ANSCHLUSS ANSEHEN",func(): focus_requested.emit(Vector3(288,0,176)); close_menu())
+ button(box,"STRASSE ZUM ANSCHLUSS BAUEN",func(): request_placement({"network":true,"kind":"asphalt","overview":[220,245],"zoom":420}))
+ button(box,"Neue Fahrten: AN" if Game.state.auto_export else "Neue Fahrten: AUS",func(): action(func(): Game.state.auto_export=not Game.state.auto_export))
+ var key=str(Game.state.trade.material)
+ var goods=card("Exportware · "+str(Catalog.RESOURCES.get(key,key)),"Geladen wird nur freie Lagerware nach Baureserve. Holz-, Stein- und Baustellenlieferungen teilen sich dieselben LKW und werden zuerst bedient. Die leere Rückfahrt belegt den LKW weiter.")
+ dynamic_text(goods,func(): return "%s freie LKW · %s Exportfahrten
+Bezahlt: %s Waren · %s Münzen" % [ExportTrade.available_trucks(Game.state),Game.state.trade.shipments.size(),Catalog.number(Game.state.trade.sold),Catalog.number(Game.state.trade.revenue)])
+ text(goods,"Exportpreis: %.1f Münzen/Stück · 15 %% Fernhandelsbonus
+Abrechnung erst nach Ankunft. Der beim Beladen vereinbarte Preis bleibt für diese Fahrt gültig." % (float(Catalog.PRICES[key])*ExportTrade.PREMIUM*Game.multiplier()*Game.boost("money")),15,GOLD)
+ for material in ExportTrade.GOODS:
+  var id=str(material)
+  button(goods,("✓ " if id==key else "")+str(Catalog.RESOURCES[id]),func(): action(func(): Game.state.trade.material=id))
+ for shipment in Game.state.trade.shipments:
+  var trip=shipment
+  var freight=card("%s %s · %s" % [int(trip.amount),Catalog.RESOURCES[trip.key],"Leere Rückfahrt" if trip.arrived else "Exportlieferung"])
+  dynamic_text(freight,func(): return "%s in ca. %s s" % ["Zurück am Markt" if trip.arrived else "Bezahlung",ceili(maxf(0,float(trip.total if trip.arrived else trip.travel)-float(trip.age)))])
+  button(freight,"LKW & ROUTE ANSEHEN",func(): close_menu(); ux.select_truck({"kind":"truck","domain":"export","id":int(trip.id)},true))
+ card("Als Nächstes: Hafen & Flughafen","See- und Luftfracht sind geplant. Der Autobahnhandel nutzt bereits gespeicherte Frachtaufträge und getrennte Abrechnungen je Frachtweg. Das bestehende Hafen-Großprojekt erzielt weiterhin Projektertrag; Schiffs- und Flugexport sind noch nicht aktiv.")
 
 func settings_menu() -> void:
  modal_title.text = "EINSTELLUNGEN"
@@ -972,7 +992,7 @@ func settings_menu() -> void:
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
  if ux!=null: ux.settings_controls(box)
- text(contents,"Version 0.20 · Waldstadt\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Version 0.27 · Freie Welt & Handel\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -1061,7 +1081,7 @@ func guide_menu() -> void:
  var step=mini(int(Game.state.tutorial),4)
  var box=card("Schritt %s / 4" % step,["","Tippe auf Fällen oder auf Bäume. Nach fünf gefällten Bäumen geht es weiter.","Tippe auf Abliefern. Dein Rucksack wird in das Holzlager geleert; Helfer liefern zusätzlich automatisch.","Öffne Verkaufen und verkaufe etwas Holz oder Bretter. Missionsprämien helfen beim ersten Ausbau.","Öffne Bauen, wähle ein Gebäude und platziere es in der Welt. Grün bedeutet frei; Rot zeigt Straßen oder belegte Flächen."][step])
  button(box,"WEITER SPIELEN",func(): close_menu())
- var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. LKWs verkaufen Möbel automatisch. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. LKWs verbinden die Betriebe über das Straßennetz.")
+ var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. Der lokale Laden verkauft seine Lieferware; Fernexporte fahren über den verbundenen Autobahnanschluss. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. LKWs verbinden die Betriebe über das Straßennetz.")
  text(help,"Spänebox: regelmäßig leeren und verkaufen. Bei Störungen zeigt das Betriebsfenster den konkreten Grund. Mit einem Finger die Welt bewegen, mit zwei Fingern zoomen. Im Baumodus bewegt ein Finger das Bauwerk; zwei Finger bewegen die Kamera.",15,MUTED)
  button(help,"LIEFERKETTE & LADENAUFTRÄGE",func(): open_menu("delivery"))
  button(help,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
@@ -1075,6 +1095,7 @@ func networks_menu() -> void:
  var links=row(contents)
  button(links,"Stadt",func(): open_menu("city"))
  button(links,"Buslinien",func(): open_menu("transit"))
+ button(contents,"AUTOBAHNANSCHLUSS & EXPORTHANDEL",func(): open_menu("export"))
  button(contents,"LETZTE UNBENUTZTE STRASSE ZURÜCKNEHMEN",func(): action(func(): Game.undo_road()),not Game.state.ux.road_undo.is_empty())
  for kind in TownRules.TYPES:
   var key=str(kind)

@@ -173,7 +173,7 @@ static func transport_tick(state: Dictionary, delta: float) -> void:
  for s in done: state.construction_shipments.erase(s)
 
 static func dispatch(state: Dictionary, only_job: int = -1) -> float:
- var busy = state.construction_shipments.size()+state.stone.shipments.size()
+ var busy = state.construction_shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
  var free = maxi(0,int(state.trucks)-busy)

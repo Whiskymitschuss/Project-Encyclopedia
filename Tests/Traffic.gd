@@ -97,6 +97,7 @@ func run() -> void:
  fresh()
  game.state.coins=10000
  game.state.homes=[{"kind":"house","level":1,"plot":0,"position":[-116,-120]}]
+ game.state.unlocked=2
  check(game.build_road("asphalt",TownRules.path(Vector2i(-80,-140),Vector2i(-116,-140))),"A real access road connects the resident to town")
  check(game.request_city_service("police"),"Municipal service uses the new access road")
  check(not game.remove_road(0),"A road used by an active service trip cannot disappear under its vehicle")

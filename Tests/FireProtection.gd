@@ -107,6 +107,7 @@ func run() -> void:
  s=fresh()
  s.homes[0].position=[-116,-120]
  s.homes[1].position=[-80,-120]
+ game.state.unlocked=2
  check(game.build_road("asphalt",TownRules.path(Vector2i(-80,-140),Vector2i(-116,-140))),"Actual road extension can serve the hydrant")
  game.buy_fire_protection(0,"hydrant")
  CityServices.ignite(s,target)

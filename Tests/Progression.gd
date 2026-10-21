@@ -17,6 +17,10 @@ func run() -> void:
  var house_started = false
  for second in 7200:
   game.step(1)
+  if game.level("furniture")>0 and ExportTrade.route(game.state).is_empty():
+   var approach=TownRules.path(Vector2i(80,176),ExportTrade.GATE)
+   if game.state.coins>=game.road_cost("asphalt",approach): game.build_road("asphalt",approach)
+   elif second%20==0: game.sell("furniture",0.5)
   for job in game.state.jobs:
    for key in ConstructionRules.HARDWARE:
     var missing=ceili(ConstructionRules.remaining(job,key)-float(game.state.resources[key]))

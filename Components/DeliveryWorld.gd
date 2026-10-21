@@ -148,7 +148,7 @@ func _process(delta: float) -> void:
   b.button.position = p
  truck_visual_count = 0
  var present = {}
- var shipments = Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments
+ var shipments = Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments
  for shipment in shipments:
   var id = visual_key(shipment)
   present[id] = true
@@ -188,7 +188,7 @@ func _process(delta: float) -> void:
    visuals[id] = node
   var node: Node3D = visuals[id]
   var running = true
-  if shipment.target not in ["construction","mineral"]:
+  if shipment.target not in ["construction","mineral","export"]:
    running = not Game.state.delivery.paused
    for kind in DeliveryChain.KINDS:
     if Game.state.buildings[int(Game.state.delivery.nodes[kind])].get("paused",false): running=false
@@ -216,7 +216,7 @@ func _process(delta: float) -> void:
   var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
   cargo_label.visible=world.view_zoom<140
-  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else Catalog.BUILDINGS[shipment.target].name
+  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else Catalog.BUILDINGS[shipment.target].name
   cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
   if cargo_stage=="load": cargo_label.text="BELADEN · "+cargo_label.text
   elif cargo_stage=="unload": cargo_label.text="ENTLADEN · "+cargo_label.text
@@ -236,7 +236,7 @@ func _process(delta: float) -> void:
 func visual_key(shipment: Dictionary) -> String:
  # Saves retain their original IDs. Separate domains prevent two simultaneous
  # jobs with the same numeric ID from sharing a model or swapping cargo types.
- return "%s:%s" % ["construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "wood",int(shipment.id)]
+ return "%s:%s" % ["construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "export" if shipment.target=="export" else "wood",int(shipment.id)]
 
 func _exit_tree() -> void:
  if is_instance_valid(overlay): overlay.queue_free()

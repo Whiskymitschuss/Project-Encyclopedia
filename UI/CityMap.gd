@@ -22,8 +22,8 @@ func _draw() -> void:
   var b=map_point(Vector3(side*288,0,136))
   var rect=Rect2(Vector2(minf(a.x,b.x),a.y),Vector2(absf(b.x-a.x),b.y-a.y))
   if int(Game.state.town.districts)<=district:
-   draw_rect(rect,Color("334e58"))
-   draw_string(ThemeDB.fallback_font,rect.position+Vector2(3,18),"ZU",HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("fff0ca"))
+   draw_rect(rect,Color("c2d78c"),false,1)
+   draw_string(ThemeDB.fallback_font,rect.position+Vector2(3,18),"Zufahrt",HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("fff0ca"))
   else: draw_rect(rect,Color("c2d78c"),false,1)
   markers.append({"kind":"district","index":district,"point":rect.get_center(),"rect":rect})
  for x in [-80,0,80]: draw_line(map_point(Vector3(x,0,-172)),map_point(Vector3(x,0,180)),Color("b2beb0"),2)
@@ -36,6 +36,13 @@ func _draw() -> void:
   for i in 10:
    var p=map_point(Catalog.biome_position(i))
    var opened=i<int(Game.state.unlocked)
+   if not opened:
+    var boundary=PackedVector2Array()
+    for step in 49:
+     var angle=TAU*step/48.0
+     boundary.append(map_point(Catalog.biome_position(i)+Vector3(cos(angle)*WorldAccess.BIOME_RADIUS.x,0,sin(angle)*WorldAccess.BIOME_RADIUS.y)))
+    draw_colored_polygon(boundary,Color(0.16,0.24,0.25,0.52))
+    draw_polyline(boundary,Color("e8b56b"),1,true)
    draw_circle(p,6,Color("c5da85") if opened else Color("304f5b"))
    draw_string(ThemeDB.fallback_font,p+Vector2(-3,4),str(i+1),HORIZONTAL_ALIGNMENT_LEFT,-1,10,Color("fff2ce"))
    markers.append({"kind":"biome","index":i,"point":p})
@@ -57,10 +64,13 @@ func _draw() -> void:
   draw_line(p-Vector2(3,3),p+Vector2(3,3),Color("483f38"),2)
   markers.append({"kind":"job","index":i,"point":p})
  if filter=="Logistik":
-  for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments:
+  for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
    var points=PackedVector2Array()
    for p in s.path: points.append(map_point(LogisticsRoutes.vector(p)))
    if points.size()>1: draw_polyline(points,Color("fff6cf"),1,true)
+ var gateway=map_point(TownRules.point(ExportTrade.GATE))
+ draw_rect(Rect2(gateway-Vector2(5,5),Vector2(10,10)),Color("85d6e4"))
+ markers.append({"kind":"gateway","index":0,"point":gateway})
  for group in Game.state.ux.groups:
   var a=map_point(Vector3(float(group.bounds[0]),0,float(group.bounds[1])))
   var b=map_point(Vector3(float(group.bounds[0])+float(group.bounds[2]),0,float(group.bounds[1])+float(group.bounds[3])))

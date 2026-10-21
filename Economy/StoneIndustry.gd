@@ -163,7 +163,7 @@ static func requests(state: Dictionary, cache: Dictionary) -> Array:
  return result
 
 static func busy(state: Dictionary) -> int:
- return state.construction_shipments.size()+state.delivery.shipments.size()+state.stone.shipments.size()
+ return state.construction_shipments.size()+state.delivery.shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
 
 static func dispatch(state: Dictionary, cache: Dictionary) -> int:
  var free=maxi(0,int(state.trucks)-busy(state))

@@ -98,7 +98,7 @@ func run() -> void:
  fresh()
  for i in 3: game.state.journey.claimed[Journey.goal_id(0,i)]=true
  for i in 4: game.state.homes.append({"kind":"park","level":1,"plot":i})
- check(game.next_city_plot()<0 and game.home_available("townhall"),"Even a full existing zero-population town can start its civic project")
+ check(game.next_city_plot()>=4 and game.home_available("townhall"),"Old plot occupancy cannot block new housing or the separate civic project")
  check(game.order_home("townhall",-1),"Dedicated civic slot prevents a blocked region/population dependency")
 
  # The physically transported line reports newly created output too.

@@ -1,3 +1,48 @@
+# Prüfung 0.27 — freie Welt und Autobahnhandel
+
+- **19.595 Prüfungen in 23 Headless-Suiten**, keine Fehler. Vollständiger Lauf mit
+  `bash scripts/test.sh`; zusätzlich Ersthaus-Progression in **2.592 simulierten
+  Sekunden** ohne geschenkte Ressourcen, mit bezahlter Autobahnzufahrt und lokalen
+  Übergangsverkäufen. Hauptwelt- und Intro-Starttests bestehen.
+- **406 Prüfungen in zehn OpenGL-Suiten**: die neun bisherigen Grafik-Suiten
+  (361 Prüfungen) sowie `VisualWorldTrade27` (45 Prüfungen). Die neue Suite wurde
+  nach der Korrektur des Straßenausschnitts erneut vollständig geprüft.
+- Neue Gebäudeflächen außerhalb der alten Bezirke, Häuser über der früheren
+  Grundstücksgrenze, mehr als 24 Betriebe, Drehung, Biomrand, echte Freischaltkosten,
+  Gewässer, private Autobahnteile und Erhalt alter bezahlter Aufträge geprüft.
+- Straßen und neue Haltestellen dürfen geschützte Biome nicht überbauen. Bereits
+  vorhandene Straßen bleiben erhalten. Straßen auf dem ganzen ebenen Festland,
+  exakter Autobahn-Endpunkt, isolierte und unterbrochene Netzteile geprüft.
+- Reale Warenentnahme, Baureserve, Markt- und Forschungsbonus, keine Vorauszahlung,
+  gespeicherter Stückpreis, einmalige Abrechnung, leere Rückfahrt und getrennte
+  Frachtwegbücher. Gespeicherte Fracht ergibt online/offline dieselben wirtschaftlichen
+  Ergebnisse; lokale Verkäufe erzeugen keinen Autobahnumsatz.
+- Tatsächlich wartende Baustoff- und Steinaufträge können Export-LKW nicht doppelt
+  belegen. Normale Disposition bedient Bauaufträge zuerst. Benutzte Straßen und
+  Markt bleiben bis zur Rückkehr reserviert, danach wieder veränderbar.
+- Neuer Exportbildschirm über echten Touch geöffnet; Straßenbau bezahlt nach
+  physischer Fingergeste für die ganzen 220 m exakt 1.540 Münzen. Bauleiste verdeckt
+  keinen der Endpunkte. Sichtbarer LKW, Frachtwechsel, Weltkarte, Routenmarkierung,
+  Bauvorschau vor/nach Biomfreischaltung und Fokus bis zur Autobahn geprüft.
+- Exportmenü mit echten logischen Viewports **360×640, 540×960, 800×1280 und
+  1100×700**, jeweils normaler und großer Schrift. Keine gestreckte Darstellung.
+  Nach der erweiterten Kameragrenze besteht die Kamera-/Präsentationssuite erneut.
+
+Grafikprüfungen laufen mit Mesa/llvmpipe unter Xvfb, Ton über den Dummy-Treiber.
+Gelegentliche ObjectDB-Hinweise beim Beenden bleiben als offene Diagnose dokumentiert;
+sie ersetzen weder ein Speicherprofil noch belegen sie laufendes Speicherwachstum.
+**Kein echter Android-Gerätetest, keine mobile Framerate-, Wärme- oder Akkumessung.**
+Die längeren realen Exportfahrten sind eine bewusste Wirtschaftsänderung; langfristige
+Balance ist mit der automatisierten Ersthaus-Progression nicht abschließend geprüft.
+
+Vorschauen aus isolierten Testprofilen: [Autobahn](preview-world27-highway.png),
+[Frachtfahrt](preview-world27-freight.png), [kleines Exportmenü](preview-world27-menu.png),
+[Zeichenbereich der Zufahrt](preview-world27-road-preview.png).
+[Aufgaben, Gründe, Spielernutzen und Qualitätseinschätzung](WORLD-TRADE27.md).
+Hafen und Flughafen sind noch inaktive nächste Frachtwege, keine spielbaren Exporte.
+
+## Historische Prüfung 0.26
+
 # Prüfung 0.26 — zehn Präsentationsideen
 
 - `bash scripts/test.sh`: **19.502 Prüfungen in 22 Headless-Suiten**, keine Fehler.

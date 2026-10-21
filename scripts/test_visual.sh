@@ -24,7 +24,7 @@ if [ -z "${DISPLAY:-}" ]; then
  if [ ! -s "$test_data/display" ]; then cat "$test_data/x11.log"; exit 1; fi
  export DISPLAY=":$(cat "$test_data/display")"
 fi
-targets=(VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI VisualFireProtection VisualCrafted VisualQuality VisualPresentation26)
+targets=(VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI VisualFireProtection VisualCrafted VisualQuality VisualPresentation26 VisualWorldTrade27)
 if [ "$#" -gt 0 ]; then targets=("$@"); fi
 for target in "${targets[@]}"; do
  status=0

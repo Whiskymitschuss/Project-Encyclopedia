@@ -57,6 +57,7 @@ func run() -> void:
  game.state.coins=10000
  var locations=[]
  for i in game.state.buildings.size(): locations.append(game.building_position(i))
+ game.state.unlocked=2
  check(game.build_road("asphalt",TownRules.path(Vector2i(-80,-128),Vector2i(-120,-128))),"Player roads still construct in the natural landscape")
  var road_clear=true
  for kind in ["pine","leaf"]:

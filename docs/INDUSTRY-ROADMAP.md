@@ -2,6 +2,16 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Erweiterung 0.27 — umgesetzt
+
+Freies Bauen auf dem ebenen Festland mit echten Biomgrenzen, ohne feste Haus- oder
+Industrieplatzgrenzen. Sichtbarer Autobahnanschluss und vom Spieler bezahlte
+Straßenverbindung. Gespeicherte LKW-Fracht mit Warenentnahme beim Beladen,
+Abrechnung bei Ankunft, geschützter Rückfahrt und gemeinsamem Fuhrpark.
+[Einzeldokumentation und nächste Schritte für Hafen/Flughafen](WORLD-TRADE27.md).
+Schiffs- und Luftfracht bleiben geplant; das bestehende Hafen-Großprojekt ist
+weiter ein Projekt mit Ertrag, kein bereits aktiver Seeexport.
+
 ## Erweiterung 0.26 — umgesetzt
 
 Zehn ergänzende Präsentationsideen: gemeinsamer Wind, räumlicher Einsatzklang,
@@ -38,7 +48,7 @@ Tablet. Details und bewusst offene nächste Ideen: [Brandschutz](FIRE-SAFETY.md)
 
 Vollständiges beschriebenes UX-Paket: kontextuelle Gebäudekarten, Materialhilfe, echte auswählbare Lieferungen und markierte Straßenwege, horizontale Baupalette, Straßenzeichnen mit geschützter Rücknahme, benannte Viertel mit tatsächlichen gemeinsamen Ausbauplänen, antippbare Übersicht und bestehende Regionsfreischaltungen, persistente Bauereignisse, konkrete Benno-Hinweise und Zugänglichkeitseinstellungen. Alle 14 Stadtgebäudetypen erhalten zehn echte Geometrie-/Architekturstadien; fertiggestellte Gebäude wechseln erst nach dem echten Bauabschluss. Grundrisse, Wirtschaft, Baustellen und Spielstände bleiben verbunden.
 
-Die Übersichtskarte organisiert die vorhandene Welt. Zusätzliche Landkäufe außerhalb der bestehenden Gebiete, komplexe Schadens-/Reparatursysteme, Hafen-/Schiffslogistik und Flughäfen sind eigene künftige Gameplay-Kapitel; die vorhandenen Feuerwehr-/Rettungsdienstfahrten bleiben echte Gemeindedienste. Die [UX-Prüfliste](UX-CHECKLIST.md) beschreibt die konkrete Bedienung dieser Version.
+Die Übersichtskarte organisiert die vorhandene Welt. Freie Standortwahl und Straßenexport sind seit 0.27 umgesetzt. Komplexe Schadens-/Reparatursysteme, Hafen-/Schiffslogistik und Flughäfen sind künftige Gameplay-Kapitel; die vorhandenen Feuerwehr-/Rettungsdienstfahrten bleiben echte Gemeindedienste. Die [UX-Prüfliste](UX-CHECKLIST.md) beschreibt die konkrete Bedienung dieser Version.
 
 ## Korrektur 0.18 — umgesetzt
 

@@ -15,9 +15,9 @@ func choose(value: Dictionary) -> void:
  signature=""
  refresh()
 func trip_domain(s: Dictionary) -> String:
- return "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "wood"
+ return "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
 func trips() -> Array:
- return Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments
+ return Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments
 func matches(s: Dictionary) -> bool:
  if selection.is_empty(): return false
  match str(selection.get("kind","")):

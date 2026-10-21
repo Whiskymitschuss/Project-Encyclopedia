@@ -1,3 +1,23 @@
+# Android-Test 0.27 — freie Welt & Handel
+
+**Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,
+Version `0.27-test`, Code 2700. Als Update über die Versionen ab 0.23 installieren;
+**nicht vorher deinstallieren**. Testsignatur und Speicherbereich bleiben gleich.
+
+APK: `releases/Timber-Loot-Tycoon-v0.27-test.apk`. Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0 und nur optionale Vibration. Freies Bauen und Straßenexport benötigen
+keine zusätzlichen Android-Berechtigungen und keine Internetverbindung im Spiel.
+
+[Änderungen und Bedienung](WORLD-TRADE27.md), [Prüfbericht](VALIDATION.md).
+0.27 ist eine Debug-signierte Testfassung. Echter Android-Gerätetest sowie mobile
+Framerate, Wärme und Akkuverhalten dieser Version stehen aus.
+
+Build mit `python3 scripts/build_android.py`; derselbe vorhandene Testschlüssel wird
+verwendet und sein öffentlicher Zertifikatsfingerabdruck geprüft. Kein Ersatzschlüssel.
+Private Schlüssel, Fotos und Spielstände werden nicht veröffentlicht.
+
+## Historische Dokumentation 0.26
+
 # Android-Test 0.26 — Detailwelt
 
 **Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,

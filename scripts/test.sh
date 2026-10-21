@@ -15,6 +15,7 @@ check --editor --import --quit
 check --script res://Tests/Rules.gd
 check --script res://Tests/Progression.gd
 check --script res://Tests/Scene.gd
+check --script res://Tests/WorldTrade27.gd
 check --script res://Tests/Placement.gd
 check --script res://Tests/Workshop.gd
 check --script res://Tests/Companion.gd

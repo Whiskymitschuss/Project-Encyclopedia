@@ -119,7 +119,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  else:
   order.left = maxf(0,float(order.left)-delta)
   if order.left<=0: order.late = true
- var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-state.stone.shipments.size()-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
+ var truck_count = maxi(0,int(state.trucks)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
  # Deliver downstream first so one starter truck can serve the entire chain.
  for i in [2,1,0]:
   var source = LINKS[i][0]

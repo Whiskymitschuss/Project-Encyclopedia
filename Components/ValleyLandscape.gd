@@ -311,7 +311,7 @@ func clear_at(point: Vector2, radius: float, bounds: Array, routes: Array) -> bo
  return true
 
 func refresh() -> void:
- var bounds=[]
+ var bounds=[WorldAccess.HIGHWAY_SITE,Rect2(319,72,24,136)]
  for i in Game.state.buildings.size(): bounds.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))))
  for i in Game.state.homes.size(): bounds.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))))
  for job in Game.state.jobs:

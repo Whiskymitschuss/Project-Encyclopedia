@@ -19,24 +19,21 @@ static func bounds(point: Vector3, rotation: int) -> Rect2:
  var size_value = size_for(rotation)
  return Rect2(Vector2(point.x,point.z)-size_value/2,size_value)
 
-static func terrain_reason(point: Vector3, rotation: int, districts: int = 0) -> String:
+static func terrain_reason(point: Vector3, rotation: int, _districts: int = 0) -> String:
+ # Geographic access is owned by WorldAccess. This helper protects actual roads,
+ # rather than projecting every central road infinitely across the whole island.
  if not is_finite(point.x) or not is_finite(point.z): return "Ungültiger Standort"
- if absf(point.x)>68 or point.z < -146 or point.z>152:
-  var side_unlocked = (point.x>0 and districts>=1) or (point.x<0 and districts>=2)
-  if side_unlocked and absf(point.x)>=212 and absf(point.x)<=288 and point.z>=-144 and point.z<=136:
-   if absf(absf(point.x)-200)<size_for(rotation).x/2+4: return "Zufahrt zum Stadtviertel freihalten"
-   return ""
-  return "Im Baugebiet platzieren · neue Stadtviertel unter Stadt erschließen"
- var size_value = size_for(rotation)/2
- for road_x in [-80,0,80]:
-  if absf(point.x-road_x)<size_value.x+3.5: return "Straße freihalten"
- for road_z in ROADS:
-  if absf(point.z-road_z)<size_value.y+3.5: return "Straße freihalten"
+ var rectangle=bounds(point,rotation).grow(3.5)
+ for c in TownRules.base_cells(_districts):
+  if rectangle.has_point(Vector2(c)): return "Straße freihalten"
  return ""
 
-static func approach(point: Vector3, rotation: int) -> PackedVector3Array:
- var nearest = float(ROADS[0])
- for road in ROADS:
-  if absf(point.z-float(road))<absf(point.z-nearest): nearest = float(road)
- var side = signf(nearest-point.z)
- return PackedVector3Array([point+Vector3(0,0.68,side*size_for(rotation).y/2),Vector3(point.x,0.68,nearest-side*3.5)])
+static func approach(point: Vector3, rotation: int, town: Dictionary = {}) -> PackedVector3Array:
+ var cells=TownRules.base_cells() if town.is_empty() else TownRules.road_cells(town)
+ var nearest=TownRules.nearest(point,cells,22)
+ if nearest==null: return PackedVector3Array()
+ var road=TownRules.point(nearest)
+ var direction=(road-point).normalized()
+ var half=size_for(rotation)/2
+ var edge=minf(half.x/maxf(absf(direction.x),0.001),half.y/maxf(absf(direction.z),0.001))
+ return PackedVector3Array([point+direction*edge+Vector3.UP*0.68,road-direction*3.5+Vector3.UP*0.68])

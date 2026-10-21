@@ -102,6 +102,8 @@ func run() -> void:
  check(close(Game.state.resources.sawdust,Game.capacity()-0.6),"Pellet consumption makes space before overflow is sold")
  check(close(Game.state.coins,350.0),"No overflow sale when downstream processing creates enough space")
  fresh()
+ Game.state.coins = 10000.0
+ check(Game.build_road("asphalt",TownRules.path(Vector2i(80,176),ExportTrade.GATE)),"Actual highway link can be paid for")
  Game.state.coins = 329.0
  Game.state.tool = 5
  Game.state.workers = 8
@@ -135,7 +137,13 @@ func run() -> void:
  check(close(Game.state.resources.furniture,0.2),"Furniture recipe runs")
  Game.state.auto_export = true
  Game.simulate(1)
- check(Game.state.exported>0 and Game.state.coins>350,"Trucks export real stock")
+ check(Game.state.exported==0 and Game.state.coins==350,"No invisible exports without a highway connection")
+ Game.state.coins=10000
+ Game.build_road("asphalt",TownRules.path(Vector2i(80,176),ExportTrade.GATE))
+ Game.state.resources.furniture=8
+ var export_coins=Game.state.coins
+ Game.simulate(70)
+ check(Game.state.exported>0 and Game.state.coins>export_coins,"Connected trucks export actual stock after arrival")
  fresh()
  Game.state.workers = 0
  Game.state.resources.boards = 10
@@ -226,10 +234,10 @@ func run() -> void:
  fresh()
  Game.state.coins = 1e7
  Game.state.buildings.append({"kind":"prefab","level":1,"paused":false})
- check(not Game.order_home("house",4),"Unopened city region is protected")
+ check(not Game.order_home("house",4),"Free site selection still requires real housing materials")
  check(not Game.expand_region(),"Region requires residents")
  Game.state.homes.append({"kind":"house","level":1,"plot":0})
- check(Game.expand_region() and Game.state.region==1,"Population and investment unlock more land")
+ check(Game.expand_region() and Game.state.region==1,"Population and investment advance the company region")
  Game.set_plan("house",1)
  check(not Game.state.plan.is_empty(),"A building goal can be saved")
  check(Game.reserve_for("furniture")==2,"Goal protects exactly its furniture need")

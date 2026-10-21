@@ -13,6 +13,7 @@ func _initialize() -> void:
 
 func fresh() -> void:
  Game.state=Game.initial_state()
+ Game.state.unlocked=10
  Game.state.buildings=[]
  Game.state.workers=0
  Game.state.trucks=0
@@ -60,7 +61,7 @@ func run() -> void:
  check(Game.expand_district(),"Twenty residents and all regions unlock east district")
  check(Game.city_plot_count()==24 and Game.state.coins==old_coins-35000,"East district adds twelve plots at stated price")
  check(Game.placement_reason(Catalog.home_position(12)).is_empty(),"New eastern plot is actually buildable")
- check(not Game.placement_reason(Catalog.home_position(24)).is_empty(),"Western land remains locked")
+ check(Game.placement_reason(Catalog.home_position(24)).is_empty(),"Western land is buildable before optional road expansion")
  Game.state.buildings.append({"kind":"prefab","level":1})
  for key in Game.state.resources: Game.state.resources[key]=1000
  check(Game.order_home("landhouse",12),"An eastern home can be paid for and constructed")
@@ -80,7 +81,7 @@ func run() -> void:
  var water=TownRules.path(Vector2i(-120,-160),Vector2i(-340,-160))
  check(not Game.build_road("asphalt",water) and Game.state.coins==old_coins,"Road into water is rejected without payment")
  check(not Game.build_road("asphalt",TownRules.path(Vector2i(-120,120),Vector2i(-120,152))),"Disconnected asphalt is rejected")
- check(not Game.build_road("asphalt",TownRules.path(Vector2i(184,-160),Vector2i(220,-160))),"Cannot road-build into locked district")
+ check(not Game.build_road("asphalt",TownRules.path(Vector2i(184,-160),Vector2i(220,-160))),"Disconnected district road still requires an actual network link")
  check(Game.build_road("path",TownRules.path(Vector2i(-120,120),Vector2i(-120,152))),"Independent garden path is allowed")
  Game.state.buildings.append({"kind":"sawmill","level":1,"position":[-44,-44]})
  old_coins=Game.state.coins

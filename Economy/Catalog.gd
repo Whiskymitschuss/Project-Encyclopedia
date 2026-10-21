@@ -12,7 +12,7 @@ const BUILDINGS = {
  "furniture":{"name":"Möbelfabrik","cost":900,"max":100,"color":"428dc2","desc":"2 Trockenholz + 1 Brett → 1 Möbel"},
  "warehouse":{"name":"Lagerhaus","cost":350,"max":50,"color":"e8b646","desc":"Vergrößert die Kapazität aller Materialpuffer."},
  "cabin":{"name":"Arbeiterhütte","cost":200,"max":25,"color":"f07e53","desc":"Wohnraum für jeweils fünf zusätzliche Helfer."},
- "market":{"name":"Verkaufsstelle","cost":450,"max":50,"color":"f1a33e","desc":"Mehr automatische Möbel-Exporte pro Lieferung."},
+ "market":{"name":"Verkaufsstelle","cost":450,"max":50,"color":"f1a33e","desc":"Lokaler Verkauf; jede Stufe erhöht die Ladung im Fernhandel."},
  "research":{"name":"Forschungszentrum","cost":1800,"max":25,"color":"4b9fcb","desc":"Ermöglicht Forschung für Produktion, Loot und Bauwirtschaft."},
  "garage":{"name":"Vehicle Garage","cost":1400,"max":25,"color":"4fae8a","desc":"Jede Stufe schafft Platz für zwei zusätzliche LKWs."},
  "prefab":{"name":"Fertighauswerk","cost":3500,"max":25,"color":"76a6a4","desc":"4 Trockenholz + 2 Bretter → Wand- und Dachmodul"},

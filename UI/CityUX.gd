@@ -149,8 +149,15 @@ func select_job(id: int,focus: bool=false) -> void:
   if world().get("selection_world")!=null: world().selection_world.choose(selection)
   render_sheet()
   return
-func select_truck(value: Dictionary) -> void:
+func select_truck(value: Dictionary,focus: bool=false) -> void:
  selection=value.duplicate(true)
+ if focus:
+  var trip=find_trip()
+  if not trip.is_empty():
+   var fraction=clampf((float(trip.age)-float(trip.load))/maxf(0.001,float(trip.drive)),0,1)
+   if trip.arrived: fraction=1-clampf((float(trip.age)-float(trip.travel))/maxf(0.001,float(trip.drive)),0,1)
+   hud.focus_requested.emit(LogisticsRoutes.sample(trip.path,fraction).position)
+  if world().get("selection_world")!=null: world().selection_world.show_routes=true
  hud.close_menu()
  palette.hide()
  sheet_scroll.scroll_vertical=0
@@ -162,8 +169,8 @@ func find_job() -> Dictionary:
   if int(job.get("id",-1))==int(selection.get("id",-2)): return job
  return {}
 func find_trip() -> Dictionary:
- for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments:
-  var domain="construction" if s.target=="construction" else "stone" if s.target=="mineral" else "wood"
+ for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
+  var domain="construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
   if domain==selection.get("domain","") and int(s.id)==int(selection.get("id",-1)): return s
  return {}
 func clear_box(box: Node) -> void:
@@ -240,7 +247,7 @@ func render_sheet() -> void:
   title.text="Lieferfahrzeug"
   if s.is_empty(): hud.text(sheet_body,"Fahrt abgeschlossen · Fahrzeug wieder verfügbar",15,hud.INK)
   else:
-   var target="Baustelle" if s.target=="construction" else ("Lager" if int(s.destination)<0 else UXRules.title(Game.state,false,int(s.destination))) if s.target=="mineral" else Catalog.BUILDINGS[s.target].name
+   var target="Baustelle" if s.target=="construction" else ("Lager" if int(s.destination)<0 else UXRules.title(Game.state,false,int(s.destination))) if s.target=="mineral" else "Autobahnexport" if s.target=="export" else Catalog.BUILDINGS[s.target].name
    var stage="Leere Rückfahrt" if s.arrived else "Beladen" if float(s.age)<float(s.load) else "Entladen" if float(s.age)>=float(s.load)+float(s.drive) else "Unterwegs"
    if not s.arrived and float(s.age)>=float(s.travel): stage="Wartet auf freien Entladeplatz"
    var source=UXRules.title(Game.state,false,int(s.origin)) if int(s.get("origin",-1))>=0 else ConstructionRules.source_name(s)
@@ -259,7 +266,7 @@ func expand_selection() -> void:
   "building": hud.show_building(int(selection.index))
   "home": hud.show_plot(int(Game.state.homes[int(selection.index)].plot))
   "job": hud.open_menu("construction")
-  "truck": hud.open_menu("delivery")
+  "truck": hud.open_menu("export" if selection.get("domain","")=="export" else "delivery")
 func toggle_routes() -> void:
  if world().get("selection_world")==null: return
  world().selection_world.show_routes=not world().selection_world.show_routes
@@ -375,10 +382,10 @@ func material_menu() -> void:
   hud.button(site,"BAUSTELLE ANSEHEN",func(): select_job(id,true))
  var cargo=hud.card("Tatsächlich unterwegs")
  var found=false
- for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments:
+ for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
   if s.key!=key or s.arrived: continue
   found=true
-  var selected={"kind":"truck","id":int(s.id),"domain":"construction" if s.target=="construction" else "stone" if s.target=="mineral" else "wood"}
+  var selected={"kind":"truck","id":int(s.id),"domain":"construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"}
   var at=LogisticsRoutes.sample(s.path,clampf((float(s.age)-float(s.load))/float(s.drive),0,1)).position
   hud.button(cargo,"%s %s · LKW ansehen" % [Catalog.number(s.amount),Catalog.RESOURCES[key]],func(): hud.focus_requested.emit(at); select_truck(selected))
  if not found: hud.text(cargo,"Momentan keine beladene Lieferung dieser Ware.",15,hud.MUTED)
@@ -407,7 +414,7 @@ func map_menu() -> void:
 func unlock_menu() -> void:
  hud.modal_title.text="OSTVIERTEL" if unlock_district==0 else "WESTVIERTEL"
  var open=int(Game.state.town.districts)>unlock_district
- var box=hud.card("Erschlossen" if open else "Neue Bauflächen erschließen","Zwölf weitere Stadtgrundstücke und acht Industrieplätze mit eigener Zufahrt. Danach sind Gebäude frei innerhalb des neuen Baugebiets platzierbar.")
+ var box=hud.card("Zufahrt vorhanden" if open else "Viertelzufahrt ausbauen","Optionaler Straßenausbau. Gebäude sind auf freiem Festland bereits frei platzierbar; gesperrte Biome bleiben geschützt.")
  if not open:
   hud.text(box,"Benötigt: drei Regionen und 20 Bewohner\nAktuell: %s Regionen · %s Bewohner\nKosten: %s Münzen" % [int(Game.state.region)+1,Game.residents(),Catalog.number(Game.district_cost())],16,hud.INK)
   hud.button(box,"VIERTEL ERSCHLIESSEN",func(): hud.action(func(): Game.expand_district()),int(Game.state.town.districts)==unlock_district and int(Game.state.region)>=2 and Game.residents()>=20)
@@ -507,6 +514,7 @@ func apply_fonts(node: Node) -> void:
 
 func on_map_choice(kind: String,index: int) -> void:
  match kind:
+  "gateway": hud.open_menu("export")
   "building": select_building(index,false,true)
   "home": select_building(index,true,true)
   "job": select_job(int(Game.state.jobs[index].get("id",-1)),true)

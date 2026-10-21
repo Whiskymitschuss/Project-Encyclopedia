@@ -91,14 +91,14 @@ func run() -> void:
   if source.kind=="kiln": shared=source.get("shared",false) and float(source.amount)==0
  check(shared,"A legacy producer does not pretend its shared warehouse goods are a second local stock")
  fresh()
- var path=TownRules.path(Vector2i(80,120),Vector2i(104,120))
+ var path=TownRules.path(Vector2i(80,176),Vector2i(104,176))
  coins=game.state.coins
  check(game.build_road("asphalt",path),"Undo scenario first constructs and pays for a valid real road")
  check(game.state.coins<coins and game.state.ux.road_undo.size()==1,"Only paid newly built roads enter the bounded undo history")
  check(game.undo_road() and game.state.town.roads.is_empty() and game.state.coins==coins,"Undo removes the unused road and returns exactly its original cost")
  check(not game.undo_road() and game.state.coins==coins,"Repeated road undo cannot generate money")
  check(game.build_road("asphalt",path),"Road can be rebuilt after undo")
- game.state.delivery.shipments=[{"path":[[80,0,120],[84,0,120],[104,0,120]]}]
+ game.state.delivery.shipments=[{"path":[[80,0,176],[84,0,176],[104,0,176]]}]
  check(not game.undo_road() and not game.state.town.roads.is_empty(),"Active saved cargo protects an otherwise undoable road")
  game.state.delivery.shipments.clear()
  check(game.undo_road(),"The road becomes undoable only when the active cargo has left")
