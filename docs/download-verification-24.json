@@ -1,0 +1,22 @@
+{
+  "verified_at_utc": "2026-10-21T06:40:03.208919+00:00",
+  "tag": "v0.24.0-brandschutz",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.24.0-brandschutz/releases/Timber-Loot-Tycoon-v0.24-test.apk",
+      "http_status": 200,
+      "bytes": 63070697,
+      "sha256": "657eae7c5d2e4dd1d3f548b12a7c95ecc6f143e9b04949b43471eb1a5d6b355e",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.24.0-brandschutz/releases/Timber-Loot-Tycoon-v0.24-source.zip",
+      "http_status": 200,
+      "bytes": 18516112,
+      "sha256": "41d2cffe7d7f9e0eccfbded0f03544e095b5f872076062cdbf84af4cdbf9fea6",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}

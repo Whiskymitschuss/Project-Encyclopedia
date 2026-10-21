@@ -38,6 +38,13 @@ neue Brandschutzklasse sind tatsächlich im Paket enthalten.
 Das passende Quell-ZIP enthält 312 Dateien, einzeln gegen den angegebenen
 Git-Commit geprüft. Kein privater Schlüssel und keine APK im Quell-ZIP.
 
+## Externer Download 0.24 geprüft
+
+APK und passendes Quell-ZIP wurden nach dem Push vom festen Tag
+`v0.24.0-brandschutz` vollständig über HTTPS zurückgeladen. Beide liefern HTTP 200;
+Größen und SHA256 stimmen mit den gebauten Originalen überein.
+[Download-Prüfbericht](download-verification-24.json). Dies ist kein Gerätetest.
+
 ## Historische Prüfung 0.23
 
 # Prüfung 0.23 — neues Logo und Startintro
