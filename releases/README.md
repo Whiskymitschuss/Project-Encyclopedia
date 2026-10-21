@@ -1,3 +1,35 @@
+# Alpha 1 — erste Fassung für Spieltests
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.0-alpha.1/releases/Timber-Loot-Tycoon-v0.28-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.0-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Testerpaket.zip)**
+
+**[Passender Quellcode](Timber-Loot-Tycoon-v0.28-source.zip)**
+
+Version **0.28-alpha.1**, Code **2801**, Launchername **Timber Loot Alpha**.
+Als Update über „Timber Loot Neu“ ab 0.23 installieren; vorher nicht deinstallieren.
+Gleiches Paket `com.whiskymitschuss.timberloot.reborn`, gleiches Testzertifikat und
+Speicherverzeichnis. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, nur optionale Vibration.
+
+Neues 3D-Intro, kurze fortsetzbare Anleitung durch Benno, echte erste Produktion
+und eigene Hütte, gesicherte Speicherdateien, korrigierte Touch-/Zurück-Bedienung
+und lesbarere kleine Displays. **Mehr → Alpha 1 · Testen & Feedback** enthält einen
+bearbeitbaren Bericht mit Kopieren und lokaler Sicherung. Es wird nichts automatisch
+versendet. [Änderungen](../docs/ALPHA1.md), [Testplan](../docs/alpha1/TESTPLAN.txt).
+
+Das Tester-ZIP enthält exakt diese APK, Installation, Testplan, Feedbackvorlage,
+Builddaten und Prüfsummen. Der Eigentümer kann es an ausgewählte Tester weitergeben.
+Der öffentliche GitHub-Link ist kein Zugang nur für eingeladene Personen.
+
+19.630 Headless- und 465 OpenGL-Prüfungen bestanden. Debug-signierte Alpha;
+echter Android-Gerätetest und mobile Leistungsprüfung stehen aus. Hafen und
+Flughafen bleiben geplant. Kein Cloud-Save; lokale Daten nicht löschen.
+
+APK-Quellstand `d14b53774d5505a93ee1e7b845b2b4753fd9b804`. Quell-ZIP: 397 Dateien einzeln gegen ihre
+Git-Blobs geprüft. Testerpaket: 6 Einträge, APK-Bytes und Texte geprüft.
+Hashes und Zertifikat im APK-Bericht und in `SHA256SUMS.txt`.
+Private Schlüssel, Spielerprofile und lokale Testberichte sind nicht enthalten.
+
+## Historische Veröffentlichung 0.27
+
 # Freie Welt & Handel 0.27
 
 **[APK 0.27 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.27.0-welthandel/releases/Timber-Loot-Tycoon-v0.27-test.apk)**

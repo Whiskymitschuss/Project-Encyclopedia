@@ -53,6 +53,21 @@ Diagnosegrenze. Keine Aussage über einen auf einem echten Handy gemessenen Spei
 realen Android-Geräten geprüft werden.** Langfristige Balance und vollständige
 Fehlerfreiheit sind damit nicht bewiesen. Hafen-/Schiffs- und Luftfracht bleiben geplant.
 
+## Auslieferung Alpha 1
+
+APK aus Quell-Commit `d14b53774d5505a93ee1e7b845b2b4753fd9b804`, 63172660 Bytes,
+SHA256 `e1f7ae4e6c3deb9e40d8af320e8b9fdc1b8562e5a640c0943718aa7954f5658d`. Version 0.28-alpha.1 / Code 2801, gleiches Paket und
+Testzertifikat wie ab 0.23. V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, beide
+ARM-Architekturen, OpenGL, Hochformat und ausschließlich optionale Vibration geprüft.
+Intro-, Tutorial-, Feedback- und Speicherskripte sind wirklich im APK enthalten;
+Tests, Werkzeuge, Dokumentation und Release-Dateien sind ausgeschlossen.
+
+Quell-ZIP: 397 Dateien, 22341825 Bytes,
+SHA256 `3eea79e5e40967d573e20f506c060f557d37f35b2f7face0a6f35ebedeb85b16`. Alle Dateien gegen Git-Blobs geprüft.
+Testerpaket: 62556949 Bytes,
+SHA256 `b177a26542bf01c3a2a5b6c2bb285afe767f27cad4fb49a6327b8d8b842badb7`. Alle 6 Einträge geprüft;
+die enthaltene APK stimmt bytegenau mit der signierten Einzeldatei überein.
+
 ## Historische Prüfung 0.27
 
 # Prüfung 0.27 — freie Welt und Autobahnhandel
