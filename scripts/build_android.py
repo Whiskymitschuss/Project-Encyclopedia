@@ -15,7 +15,7 @@ RUNTIME = Path(os.environ.get('TIMBER_RUNTIME', '/workspace/.timber-runtime'))
 SDK = RUNTIME / 'android-sdk'
 TOOLS = SDK / 'build-tools/36.0.0'
 parser = argparse.ArgumentParser()
-parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.22-test.apk')
+parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.23-test.apk')
 parser.add_argument('--verify-only', action='store_true')
 args = parser.parse_args()
 output = args.output.resolve()
@@ -30,9 +30,9 @@ elif output.with_suffix('.apk.json').exists():
     source_commit = json.loads(output.with_suffix('.apk.json').read_text()).get('source_commit')
 
 if not args.verify_only:
-    key = RUNTIME / 'android/TimberLoot-debug.keystore'
+    key = RUNTIME / 'android/TimberLoot-Reborn-debug.keystore'
     if not key.exists():
-        raise SystemExit('Existing TimberLoot-debug.keystore is required for compatible Android updates. Restore the previous key securely outside Git; no replacement key will be generated.')
+        raise SystemExit('New-line signing key is missing: restore TimberLoot-Reborn-debug.keystore securely outside Git. Never regenerate a key for an already distributed package.')
     subprocess.run([sys.executable, ROOT / 'scripts/setup_android.py'], check=True)
     java = Path(os.environ.get('JAVA_HOME', Path(shutil.which('java')).resolve().parents[1]))
     env = os.environ.copy()
@@ -44,7 +44,7 @@ if not args.verify_only:
     settings.parent.mkdir(parents=True, exist_ok=True)
     previous = settings.read_text() if settings.exists() else '[gd_resource type="EditorSettings" format=3]\n\n[resource]\n'
     values = {'export/android/java_sdk_path': str(java), 'export/android/android_sdk_path': str(SDK),
-              'export/android/debug_keystore': str(key), 'export/android/debug_keystore_user':'androiddebugkey',
+              'export/android/debug_keystore': str(key), 'export/android/debug_keystore_user':'timberreborn',
               'export/android/debug_keystore_pass':'android'}
     lines = [line for line in previous.splitlines() if line.split(' = ',1)[0] not in values]
     lines.extend(k+' = '+json.dumps(v) for k,v in values.items())
@@ -63,7 +63,7 @@ run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.22-test'", "versionCode='2200'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
+for required in ["package: name='com.whiskymitschuss.timberloot.reborn'", "versionName='0.23-test'", "versionCode='2300'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
@@ -77,11 +77,15 @@ with zipfile.ZipFile(output) as apk:
     data=json.loads(apk.read('assets/Economy/stone_industry.json'))
     assert data['recipes']['blocks']['in']['rock']==3 and data['recipes']['blocks']['out']['stone']==5
     assert any('Scenes/Main.tscn' in x for x in names)
+    assert any('Scenes/Boot.tscn' in x for x in names)
+    assert any('Brand/timber-icon' in x for x in names)
+    assert any('UI/Startup.gd' in x for x in names)
     assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'version':'0.22-test','package':'com.whiskymitschuss.timberloot',
+    'version':'0.23-test','package':'com.whiskymitschuss.timberloot.reborn',
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
+    'signer_sha256':re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',signature).group(1),
     'debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],
     'source_commit':source_commit,
     'device_install_or_launch_tested':False}

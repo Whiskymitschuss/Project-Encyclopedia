@@ -1,3 +1,20 @@
+# Prüfung 0.23 — neues Logo und Startintro
+
+- Vollständiger `bash scripts/test.sh`: **19.386 Prüfungen**, keine Fehler, dazu
+  Hauptszene und neue Startszene als eigene Headless-Smoke-Starts.
+- Zwölf neue Startprüfungen: Bildressource, Seitenverhältnis, drei Intro-Phasen,
+  zeitlicher Abschluss, unveränderte Spielzustände, reduzierte Bewegung,
+  Überspringen, Schutz vor doppeltem Start und tatsächlicher Szenenwechsel ins Spiel.
+- 28 zusätzliche OpenGL-Startprüfungen: vier Fensterformate, separate schmale
+  logische Ansicht, passende Inhalts-/Touchflächen, tatsächliches Rendering sowie
+  echte Touch-Ereignisse auf Überspringen und Spielen. Keine Geräteprüfung.
+- [Gerenderter Startbildschirm](preview-startup23.png).
+- Neue Paketkennung und neuer Testschlüssel sind auf ausdrücklichen Wunsch
+  eingerichtet. Die alte APK 0.20 bleibt unverändert; keine Update-Kompatibilität
+  zwischen den beiden Paketkennungen wird behauptet.
+
+## Historische Prüfung 0.21/0.22
+
 # Prüfung 0.21/0.22 — Brandschutz, Einsatzstadt und Oberfläche
 
 - Vollständiges `bash scripts/test.sh`: **19.374 Headless-Prüfungen**, keine Fehler,

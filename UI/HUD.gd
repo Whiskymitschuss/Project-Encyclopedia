@@ -96,7 +96,7 @@ func _ready() -> void:
  title.clip_text=true
  title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- edition = text(brand,"WALDSTADT / 22",11,GOLD)
+ edition = text(brand,"NEUBEGINN / 23",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  edition.custom_minimum_size.x=0
  edition.clip_text=true
@@ -360,7 +360,7 @@ func show_notice(message: String) -> void:
 func update_stats() -> void:
  emergency_button.visible=not Game.state.city_services.fires.is_empty()
  emergency_button.text="FEUERWEHR · %s\nEINSÄTZE ANSEHEN" % Game.state.city_services.fires.size()
- edition.text="WALDSTADT / 22"
+ edition.text="NEUBEGINN / 23"
  for chapter in Journey.CHAPTERS:
   if chapter.id==Game.state.journey.selected: edition.text=chapter.title.to_upper()
  money.text = "%s Münzen" % Catalog.number(Game.state.coins)
@@ -943,7 +943,7 @@ func sawdust_menu() -> void:
 func welcome_menu() -> void:
  modal_title.text="WILLKOMMEN IM WALD"
  var illustration=TextureRect.new()
- illustration.texture=load("res://Assets/Brand/timber-beaver.jpg")
+ illustration.texture=load("res://Assets/Brand/timber-icon.png")
  illustration.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
  illustration.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
  illustration.custom_minimum_size=Vector2(0,210)

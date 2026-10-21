@@ -24,7 +24,7 @@ if [ -z "${DISPLAY:-}" ]; then
  if [ ! -s "$test_data/display" ]; then cat "$test_data/x11.log"; exit 1; fi
  export DISPLAY=":$(cat "$test_data/display")"
 fi
-for target in VisualUI VisualBuildingCard VisualCityUX VisualFireUI; do
+for target in VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI; do
  status=0
  timeout 120s bash scripts/godot.sh --audio-driver Dummy --rendering-method gl_compatibility --script "res://Tests/$target.gd" >"$test_data/log" 2>&1 || status=$?
  cat "$test_data/log"
