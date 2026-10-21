@@ -13,6 +13,25 @@
   eingerichtet. Die alte APK 0.20 bleibt unverändert; keine Update-Kompatibilität
   zwischen den beiden Paketkennungen wird behauptet.
 
+## Abschließende Auslieferungsprüfung 0.23
+
+- Vollständiges `bash scripts/test_visual.sh`: **233 OpenGL-Prüfungen**, keine
+  Fehler: 23 bestehende UI-, 28 Startintro-, 87 Karten-/Touch-, 45 Stadt-UX- und
+  50 Brand-/Formatprüfungen. Software-OpenGL ersetzt keine Messung auf einem Handy.
+- APK gebaut und geprüft: Paket `com.whiskymitschuss.timberloot.reborn`,
+  Launchername `Timber Loot Neu`, Version 0.23-test, Code 2300, API 24+,
+  ARM64/ARMv7, v2-Signatur und 16-KB-Ausrichtung. Ausschließlich optionale Vibration.
+- `project.binary` in der APK enthält tatsächlich `res://Scenes/Boot.tscn` als
+  Startszene; Logo, Introskript und Spielszene sind enthalten. Test- und
+  Release-Verzeichnisse sind ausgeschlossen.
+- APK: 63062152 Bytes, SHA256 `c03b2c999342dcad08dd4eba626ca0b8fa057ba448da5baf1556b46342491110`.
+- Neuer Zertifikatsfingerabdruck: `a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9`.
+  Er unterscheidet sich ausdrücklich von der alten APK 0.20; die Paketkennung
+  ist ebenfalls verschieden. Kein automatischer Ersatzschlüssel im Build-Helfer.
+- Quell-ZIP: 303 Dateien, einzeln gegen den tatsächlichen APK-Quellcommit
+  `6906cc4f52ecac6d6149031545dfa36c226ce6b0` geprüft. Vollständige Archivdaten im
+  zugehörigen `.apk.json` und `releases/SHA256SUMS.txt`.
+
 ## Historische Prüfung 0.21/0.22
 
 # Prüfung 0.21/0.22 — Brandschutz, Einsatzstadt und Oberfläche

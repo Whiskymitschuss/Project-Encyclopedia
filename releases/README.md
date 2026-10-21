@@ -1,3 +1,26 @@
+# Neubeginn 0.23 — neue Test-App
+
+**[APK 0.23 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.23.0-neubeginn/releases/Timber-Loot-Tycoon-v0.23-test.apk)**
+
+**[Passender Quellcode](Timber-Loot-Tycoon-v0.23-source.zip)**
+
+Im Launcher **Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,
+Version `0.23-test`, Code 2300. Neues Biber-Logo, überspringbares Startintro und
+sämtliche Brand-/UI-Erweiterungen von 0.21/0.22. Separate Installation neben der
+bisherigen App. Neuer Testschlüssel auf ausdrücklichen Wunsch; keine Übernahme
+alter Daten und kein Update über das alte Paket.
+
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Nur optionale Vibration.
+Signatur v2, 16-KB-Ausrichtung, Paket/Version und verpackte Startszene geprüft.
+Keine echte Handy-Installation oder Leistungsmessung behauptet.
+
+APK-Quellstand: `6906cc4f52ecac6d6149031545dfa36c226ce6b0`. Das passende ZIP enthält 303 Dateien,
+jeweils gegen den Git-Blob dieses Quellstands geprüft. SHA256 und Zertifikatsdaten
+stehen in `Timber-Loot-Tycoon-v0.23-test.apk.json` und `SHA256SUMS.txt`.
+Der private Schlüssel ist weder im ZIP noch im Repository enthalten.
+
+## Historische Veröffentlichungen
+
 # Timber Loot Tycoon 0.20 — Waldstadt
 
 **[Android-Update 0.20 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.20.0-waldstadt/releases/Timber-Loot-Tycoon-v0.20-test.apk)**
