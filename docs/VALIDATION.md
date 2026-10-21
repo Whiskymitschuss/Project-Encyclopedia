@@ -68,6 +68,13 @@ Testerpaket: 62556949 Bytes,
 SHA256 `b177a26542bf01c3a2a5b6c2bb285afe767f27cad4fb49a6327b8d8b842badb7`. Alle 6 Einträge geprüft;
 die enthaltene APK stimmt bytegenau mit der signierten Einzeldatei überein.
 
+## Externe Alpha-Downloads geprüft
+
+APK, passendes Quell-ZIP und Testerpaket vom festen Tag `v0.28.0-alpha.1` vollständig
+per HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha1.json).
+Das ist kein echter Android-Gerätetest.
+
 ## Historische Prüfung 0.27
 
 # Prüfung 0.27 — freie Welt und Autobahnhandel
