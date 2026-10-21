@@ -4,9 +4,9 @@
   `bash scripts/test.sh`; zusätzlich Ersthaus-Progression in **2.592 simulierten
   Sekunden** ohne geschenkte Ressourcen, mit bezahlter Autobahnzufahrt und lokalen
   Übergangsverkäufen. Hauptwelt- und Intro-Starttests bestehen.
-- **406 Prüfungen in zehn OpenGL-Suiten**: die neun bisherigen Grafik-Suiten
-  (361 Prüfungen) sowie `VisualWorldTrade27` (45 Prüfungen). Die neue Suite wurde
-  nach der Korrektur des Straßenausschnitts erneut vollständig geprüft.
+- `bash scripts/test_visual.sh`: **406 Prüfungen in zehn OpenGL-Suiten**. Die neun bisherigen Grafik-Suiten
+  (361 Prüfungen) sowie `VisualWorldTrade27` (45 Prüfungen) bestehen auch zusammen
+  im abschließenden vollständigen Lauf nach der Korrektur des Straßenausschnitts.
 - Neue Gebäudeflächen außerhalb der alten Bezirke, Häuser über der früheren
   Grundstücksgrenze, mehr als 24 Betriebe, Drehung, Biomrand, echte Freischaltkosten,
   Gewässer, private Autobahnteile und Erhalt alter bezahlter Aufträge geprüft.
@@ -54,6 +54,13 @@ Tests, Dokumentation, Werkzeuge und Releases sind vom Export ausgeschlossen.
 Quell-ZIP: 372 Dateien, 21496750 Bytes,
 SHA256 `423340484818b1cdc3ce30bb677938de3874072b45242c11682bb5daaa7a6c61`.
 Jede Quelldatei gegen den Git-Blob des APK-Quellstands geprüft.
+
+## Externer Download 0.27 geprüft
+
+APK und Quell-ZIP vom festen Tag `v0.27.0-welthandel` vollständig per HTTPS
+zurückgeladen. Beide liefern HTTP 200; Größe und SHA256 stimmen mit den gebauten
+Dateien überein. [Download-Prüfbericht](download-verification-27.json).
+Dies ersetzt keinen Android-Gerätetest.
 
 ## Historische Prüfung 0.26
 
