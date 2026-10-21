@@ -32,6 +32,14 @@
   `6906cc4f52ecac6d6149031545dfa36c226ce6b0` geprüft. Vollständige Archivdaten im
   zugehörigen `.apk.json` und `releases/SHA256SUMS.txt`.
 
+## Externer Download geprüft
+
+APK und passendes Quell-ZIP wurden nach dem GitHub-Push vom festen Tag
+`v0.23.0-neubeginn` vollständig über HTTPS zurückgeladen: beide HTTP 200,
+Dateigrößen und SHA256 stimmen mit den gebauten Originalen überein.
+[Maschinenlesbarer Prüfbericht](download-verification-23.json).
+Dies bestätigt die ausgelieferten Dateien, keinen Start auf echter Android-Hardware.
+
 ## Historische Prüfung 0.21/0.22
 
 # Prüfung 0.21/0.22 — Brandschutz, Einsatzstadt und Oberfläche

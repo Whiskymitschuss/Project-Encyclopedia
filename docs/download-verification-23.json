@@ -1,0 +1,21 @@
+{
+  "verified_at_utc": "2026-10-21T05:33:59.426279+00:00",
+  "tag": "v0.23.0-neubeginn",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.23.0-neubeginn/releases/Timber-Loot-Tycoon-v0.23-test.apk",
+      "http_status": 200,
+      "bytes": 63062152,
+      "sha256": "c03b2c999342dcad08dd4eba626ca0b8fa057ba448da5baf1556b46342491110",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.23.0-neubeginn/releases/Timber-Loot-Tycoon-v0.23-source.zip",
+      "http_status": 200,
+      "bytes": 17994256,
+      "sha256": "a187a39064cc3791556cbffade995509116be9c4a28c21829dc31db7809acc29",
+      "matches_built_artifact": true
+    }
+  ],
+  "device_tested": false
+}
