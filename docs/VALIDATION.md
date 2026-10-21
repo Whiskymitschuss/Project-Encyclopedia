@@ -55,6 +55,13 @@ Quell-ZIP: 356 Dateien, 20607690 Bytes,
 SHA256 `da445603307f1a13ecadaac8b2305ef8262d11342370375a00068a4a3a172ba4`.
 Jede Datei gegen den Git-Blob des APK-Quellstands geprüft.
 
+## Externer Download 0.26 geprüft
+
+APK und Quell-ZIP unter dem festen Tag `v0.26.0-detailwelt` vollständig per HTTPS
+zurückgeladen. Beide liefern HTTP 200; Größe und SHA256 stimmen mit den lokal
+geprüften Dateien überein. [Download-Prüfbericht](download-verification-26.json).
+Dies ersetzt keinen Android-Gerätetest.
+
 ## Historische Prüfung 0.25
 
 # Prüfung 0.25 — Waldleben und Qualitätsüberarbeitung

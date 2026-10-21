@@ -1,0 +1,22 @@
+{
+  "verified_at_utc": "2026-10-21T09:39:13.074866+00:00",
+  "tag": "v0.26.0-detailwelt",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.26.0-detailwelt/releases/Timber-Loot-Tycoon-v0.26-test.apk",
+      "http_status": 200,
+      "bytes": 63130168,
+      "sha256": "6504014e3311d549de249d4c47def4b7baa6f944efe8ff863fca148ef664539e",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.26.0-detailwelt/releases/Timber-Loot-Tycoon-v0.26-source.zip",
+      "http_status": 200,
+      "bytes": 20607690,
+      "sha256": "da445603307f1a13ecadaac8b2305ef8262d11342370375a00068a4a3a172ba4",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}
