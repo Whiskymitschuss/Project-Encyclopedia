@@ -1,0 +1,29 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.24-test.apk",
+  "bytes": 63070697,
+  "sha256": "657eae7c5d2e4dd1d3f548b12a7c95ecc6f143e9b04949b43471eb1a5d6b355e",
+  "version": "0.24-test",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "34b5ee44807c827f022b95c805e8ba6690fe30e2",
+  "device_install_or_launch_tested": false,
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.24-source.zip",
+    "bytes": 18516112,
+    "sha256": "41d2cffe7d7f9e0eccfbded0f03544e095b5f872076062cdbf84af4cdbf9fea6",
+    "verified_files": 312
+  },
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "packaged_boot_scene_verified": true
+}

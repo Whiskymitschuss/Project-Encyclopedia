@@ -1,8 +1,8 @@
 # Prüfung 0.24 — Rauchmelder, Hydranten und Disposition
 
-- Vollständiges `bash scripts/test.sh`: **19.422 Headless-Prüfungen**, keine Fehler;
+- Vollständiges `bash scripts/test.sh`: **19.424 Headless-Prüfungen**, keine Fehler;
   Spielszene und Startszene schließen ebenfalls erfolgreich ab.
-- Darin **36 neue Brandschutzprüfungen**: exakte/zweifache/abgelehnte Käufe,
+- Darin **38 neue Brandschutzprüfungen**: exakte/zweifache/abgelehnte Käufe,
   keine Nebenwirkung reiner Abfragen, 44-m-Grenze, Straßenanbindung, tatsächliche
   Löschzeit, Quelle und Schlauchroute, gleichwertige Fortsetzung nach JSON-Laden,
   Detektion, manueller Alarm, unveränderte disponierte Zeiten, Altspielstände und
@@ -23,6 +23,20 @@
   abweichendem Signierer abgelehnt, ohne die historische Datei zu verändern.
 - Der Nutzer hat 0.23 im Chat als funktionierend bestätigt. Ein Handytest von 0.24,
   Temperatur/Akku und Langzeit-Balancing werden damit nicht vorweggenommen.
+
+## Auslieferung 0.24
+
+APK-Quellstand `34b5ee44807c827f022b95c805e8ba6690fe30e2`. Paket unverändert zur 0.23,
+Version 0.24-test / Code 2400. APK: 63070697 Bytes,
+SHA256 `657eae7c5d2e4dd1d3f548b12a7c95ecc6f143e9b04949b43471eb1a5d6b355e`.
+Der tatsächliche Zertifikatsfingerabdruck ist weiterhin
+`a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9`.
+V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, beide ARM-Architekturen,
+Hochformat/OpenGL und ausschließlich optionale Vibration geprüft. Startszene und
+neue Brandschutzklasse sind tatsächlich im Paket enthalten.
+
+Das passende Quell-ZIP enthält 312 Dateien, einzeln gegen den angegebenen
+Git-Commit geprüft. Kein privater Schlüssel und keine APK im Quell-ZIP.
 
 ## Historische Prüfung 0.23
 

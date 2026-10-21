@@ -1,3 +1,27 @@
+# Brandschutz 0.24 — Update für Timber Loot Neu
+
+**[APK 0.24 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.24.0-brandschutz/releases/Timber-Loot-Tycoon-v0.24-test.apk)**
+
+**[Passender Quellcode](Timber-Loot-Tycoon-v0.24-source.zip)**
+
+**Als Update über Timber Loot Neu 0.23 installieren; nicht vorher deinstallieren.**
+Paket `com.whiskymitschuss.timberloot.reborn`, Version `0.24-test`, Code 2400.
+Signatur identisch mit der vom Nutzer getesteten 0.23. Bestehende neue Spielstände
+bleiben im selben Speicherordner; die ursprüngliche App bis 0.20 ist ein anderes Paket.
+
+Neu: kaufbare Rauchmelder und Hydranten, echte Erkennungs-/Löschzeitvorteile,
+Straßenversorgung und sichtbare Schläuche, getrennte Einsatz-/Wartezustände sowie
+freie/belegte Feuerwehrkapazität. Keine laufenden Münzkosten und keine Gebäudeverluste.
+
+APK-Signatur v2, API 24+, ARM64/ARMv7, OpenGL, Hochformat und 16-KB-Ausrichtung
+geprüft. Nur optionale Vibration. Ein echter Handytest von 0.24 steht aus.
+
+APK-Quellstand `34b5ee44807c827f022b95c805e8ba6690fe30e2`. Quell-ZIP: 312 Dateien, einzeln gegen ihre
+Git-Blobs geprüft. Signatur- und Hashdaten in `.apk.json` und `SHA256SUMS.txt`.
+Der private Schlüssel bleibt außerhalb des Repositories und aller Quellarchive.
+
+## Historische Veröffentlichungen
+
 # Neubeginn 0.23 — neue Test-App
 
 **[APK 0.23 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.23.0-neubeginn/releases/Timber-Loot-Tycoon-v0.23-test.apk)**
