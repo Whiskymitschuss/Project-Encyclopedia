@@ -1,3 +1,30 @@
+# Freie Welt & Handel 0.27
+
+**[APK 0.27 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.27.0-welthandel/releases/Timber-Loot-Tycoon-v0.27-test.apk)**
+
+**[Passender Quellcode](Timber-Loot-Tycoon-v0.27-source.zip)**
+
+Als Update über **Timber Loot Neu ab 0.23** installieren; vorher nicht deinstallieren.
+Paket `com.whiskymitschuss.timberloot.reborn`, Version `0.27-test`, Code 2700.
+Testsignatur und Speicherbereich bleiben erhalten.
+
+Freies Bauen auf dem ebenen Festland ohne feste Haus-/Industrieplatzgrenzen.
+Sichtbar geschützte Biome müssen erschlossen werden. **Mehr → Autobahn &
+Exporthandel**: Markt mit Anschluss **300 / 176** über eigene Straßen verbinden.
+Echte Warenladungen, gemeinsame LKW-Flotte, Auszahlung bei Ankunft und reservierte
+Rückfahrt. Lokaler Verkauf bleibt verfügbar. Hafen und Flughafen sind nächste,
+noch inaktive Frachtwege. [Änderungen und Bedienung](../docs/WORLD-TRADE27.md).
+
+19.595 Headless- und 406 Grafikprüfungen bestanden. V2-Signatur,
+16-KB-Ausrichtung, API 24+, ARM64/ARMv7, OpenGL und Hochformat geprüft.
+Nur optionale Vibration. Echter Handytest und mobile Leistungsmessung stehen aus.
+
+Quellstand `d915a41aac101b7870a35005c29c9ca26e6cc13f`; Quell-ZIP: 372 Dateien gegen ihre Git-Blobs geprüft.
+Hashdaten und Zertifikat im APK-Bericht und in `SHA256SUMS.txt`.
+Private Schlüssel, Spielstände und Fotos sind nicht enthalten.
+
+## Historische Veröffentlichung 0.26
+
 # Detailwelt 0.26 — zehn Ideen umgesetzt
 
 **[APK 0.26 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.26.0-detailwelt/releases/Timber-Loot-Tycoon-v0.26-test.apk)**

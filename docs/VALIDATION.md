@@ -41,6 +41,20 @@ Vorschauen aus isolierten Testprofilen: [Autobahn](preview-world27-highway.png),
 [Aufgaben, Gründe, Spielernutzen und Qualitätseinschätzung](WORLD-TRADE27.md).
 Hafen und Flughafen sind noch inaktive nächste Frachtwege, keine spielbaren Exporte.
 
+## Auslieferung 0.27
+
+APK aus Quell-Commit `d915a41aac101b7870a35005c29c9ca26e6cc13f`, Version 0.27-test / Code 2700,
+63147126 Bytes. SHA256 `4c44af16dfc778eddebaa31317515c975fc248965031f65888786cc472a6c436`.
+Gleiches Paket und gleiches Testzertifikat wie die Versionen ab 0.23.
+V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, beide ARM-Architekturen,
+OpenGL, Hochformat und weiterhin nur optionale Vibration geprüft.
+Freiflächen-, Export- und Autobahnskripte sind tatsächlich im APK enthalten;
+Tests, Dokumentation, Werkzeuge und Releases sind vom Export ausgeschlossen.
+
+Quell-ZIP: 372 Dateien, 21496750 Bytes,
+SHA256 `423340484818b1cdc3ce30bb677938de3874072b45242c11682bb5daaa7a6c61`.
+Jede Quelldatei gegen den Git-Blob des APK-Quellstands geprüft.
+
 ## Historische Prüfung 0.26
 
 # Prüfung 0.26 — zehn Präsentationsideen
