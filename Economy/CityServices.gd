@@ -6,7 +6,7 @@ const BUILDINGS = {"taxi":"taxi","police":"police","fire":"fire","ambulance":"cl
 const NAMES = {"taxi":"Taxifahrt","police":"Nachbarschaftshilfe","fire":"Rauchmelder prüfen","ambulance":"Erste-Hilfe-Einsatz"}
 
 static func initial() -> Dictionary:
- return {"enabled":true,"missions":[],"walkers":[],"next_id":1,"clock":12.0,"walk_clock":4.0,"completed":{},"treasury":0.0,"collected":0.0,"walks":0,"auto_kind":0}
+ return {"enabled":true,"missions":[],"walkers":[],"next_id":1,"clock":12.0,"walk_clock":4.0,"completed":{},"treasury":0.0,"collected":0.0,"walks":0,"auto_kind":0,"fires":[],"fire_clock":0.0,"next_fire":1,"fires_extinguished":0}
 
 static func location(state: Dictionary, ref: Dictionary) -> Vector3:
  return LogisticsRoutes.home_position(state,int(ref.index)) if ref.type=="home" else LogisticsRoutes.building_position(state,int(ref.index)) if ref.type=="building" else Vector3(-80,0,-164)
@@ -27,7 +27,7 @@ static func route(state: Dictionary, a: Vector3, b: Vector3, cache: Dictionary) 
   cache[key]=LogisticsRoutes.between(state,a,b)
  return cache[key]
 
-static func dispatch(state: Dictionary, kind: String, cache: Dictionary) -> bool:
+static func dispatch(state: Dictionary, kind: String, cache: Dictionary, incident: Dictionary = {}) -> bool:
  if not kind in TYPES or state.city_services.missions.size()>=8: return false
  var data=state.city_services
  var station_ref={"type":"entry","index":-1}
@@ -43,7 +43,7 @@ static func dispatch(state: Dictionary, kind: String, cache: Dictionary) -> bool
  if busy>=capacity: return false
  var targets=destinations(state)
  if targets.is_empty(): return false
- var target_ref=targets[posmod(int(data.next_id)-1,targets.size())]
+ var target_ref=incident.target_ref if not incident.is_empty() else targets[posmod(int(data.next_id)-1,targets.size())]
  var a=location(state,station_ref)
  var b=location(state,target_ref)
  var outward=route(state,a,b,cache)
@@ -68,10 +68,13 @@ static func dispatch(state: Dictionary, kind: String, cache: Dictionary) -> bool
  var speed=14.0 if kind=="taxi" else 17.0
  var t1=maxf(2,LogisticsRoutes.length(outward)/speed)
  var t2=maxf(2,LogisticsRoutes.length(second)/speed) if kind=="taxi" else 0.0
- var work=4.0 if kind=="taxi" else 10.0
+ var work=36.0 if not incident.is_empty() else 4.0 if kind=="taxi" else 10.0
  var served=t1+work+t2+(3.0 if kind=="taxi" else 0.0)
  var total=served+maxf(2,LogisticsRoutes.length(back)/speed)
  data.missions.append({"id":data.next_id,"kind":kind,"source_ref":station_ref,"target_ref":target_ref,"destination_ref":destination_ref,"outward":outward.duplicate(true),"second":second.duplicate(true),"back":back.duplicate(true),"drive":t1,"second_drive":t2,"work":work,"served_at":served,"total":total,"age":0.0,"served":false,"reward":maxf(12,LogisticsRoutes.length(second)*0.25) if kind=="taxi" else 20.0,"external":station_ref.type=="entry"})
+ if not incident.is_empty():
+  data.missions[-1].fire_id=int(incident.id)
+  incident.mission_id=int(data.next_id)
  data.next_id+=1
  return true
 
@@ -96,11 +99,18 @@ static func create_walk(state: Dictionary, cache: Dictionary) -> bool:
 
 static func tick(state: Dictionary, delta: float, cache: Dictionary) -> void:
  var data=state.city_services
+ tick_fires(state,delta,cache)
  var done=[]
  for mission in data.missions:
   mission.age=float(mission.age)+delta
   if not mission.served and float(mission.age)>=float(mission.served_at):
    mission.served=true
+   if mission.has("fire_id"):
+    for incident in data.fires.duplicate():
+     if int(incident.id)==int(mission.fire_id):
+      data.fires.erase(incident)
+      data.fires_extinguished=int(data.fires_extinguished)+1
+      UXRules.push_event(state,"fire_done:%s" % incident.id,"Brand gelöscht · Gebäude gerettet",location(state,incident.target_ref),"services")
    data.completed[mission.kind]=int(data.completed.get(mission.kind,0))+1
    data.treasury+=float(mission.reward)
   if float(mission.age)>=float(mission.total): done.append(mission)
@@ -141,7 +151,7 @@ static func sample(mission: Dictionary, extra: float = 0.0) -> Dictionary:
   status="Fahrgast an Bord" if age<pickup+float(mission.second_drive) else "Aussteigen"
  elif age>=a:
   amount=1.0
-  status="Einsteigen" if mission.kind=="taxi" else "Hilfe vor Ort"
+  status="Löscharbeiten" if mission.has("fire_id") else "Einsteigen" if mission.kind=="taxi" else "Hilfe vor Ort"
  var value=LogisticsRoutes.sample(path,amount)
  value.status=status
  value.lights=lights
@@ -151,7 +161,50 @@ static func sample(mission: Dictionary, extra: float = 0.0) -> Dictionary:
 
 static func uses_building(state: Dictionary, index: int, city: bool) -> bool:
  var type_value="home" if city else "building"
+ for incident in state.city_services.get("fires",[]):
+  if incident.target_ref.type==type_value and int(incident.target_ref.index)==index: return true
  for mission in state.city_services.missions:
   for ref in [mission.source_ref,mission.target_ref,mission.destination_ref]:
    if ref.type==type_value and int(ref.index)==index: return true
  return false
+
+# Incidents share the existing bounded service fleet and saved road missions.
+static func ignite(state: Dictionary, target: Dictionary) -> bool:
+ var data=state.city_services
+ if data.fires.size()>=2 or target.get("type","")!="home": return false
+ var index=int(target.get("index",-1))
+ if index<0 or index>=state.homes.size(): return false
+ var home=state.homes[index]
+ if int(home.get("level",0))<1 or int(Catalog.HOMES[home.kind].people)<=0: return false
+ for incident in data.fires:
+  if int(incident.target_ref.index)==index: return false
+ var incident={"id":int(data.next_fire),"target_ref":target.duplicate(true),"age":0.0,"mission_id":-1,"progress":0.0}
+ data.next_fire=int(data.next_fire)+1
+ data.fires.append(incident)
+ UXRules.push_event(state,"fire:%s" % incident.id,"Brand gemeldet · Feuerwehr wird alarmiert",location(state,target),"services",1)
+ return true
+
+static func tick_fires(state: Dictionary, delta: float, cache: Dictionary) -> void:
+ var data=state.city_services
+ # Legacy saves are initialized without retroactive incidents.
+ for key in ["fires","fire_clock","next_fire","fires_extinguished"]:
+  if not data.has(key): data[key]=initial()[key]
+ for incident in data.fires:
+  incident.age=float(incident.age)+delta
+  var assigned=false
+  for mission in data.missions:
+   if int(mission.get("fire_id",-1))!=int(incident.id): continue
+   assigned=true
+   incident.progress=clampf((float(mission.age)+delta-float(mission.drive))/float(mission.work),0,1)
+   break
+  if not assigned:
+   incident.mission_id=-1
+   dispatch(state,"fire",cache,incident)
+ if not data.enabled: return
+ data.fire_clock=float(data.fire_clock)+delta
+ if float(data.fire_clock)>=420.0:
+  data.fire_clock=fposmod(float(data.fire_clock),420.0)
+  var targets=destinations(state)
+  if not targets.is_empty():
+   for offset in targets.size():
+    if ignite(state,targets[posmod(int(data.next_fire)-1+offset,targets.size())]): break

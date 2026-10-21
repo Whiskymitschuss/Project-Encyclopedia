@@ -1027,11 +1027,21 @@ func construction_menu() -> void:
 func services_menu() -> void:
  modal_title.text="LEBEN IN DEINER STADT"
  var data=Game.state.city_services
- var box=card("Deine Gemeindedienste","Polizei hilft in der Nachbarschaft, Feuerwehr prüft Rauchmelder und Rettungswagen leisten Erste Hilfe. Taxis holen Fahrgäste ab und bringen sie zu ihren Zielen. Ohne eigene Wache kommt die Gemeinde von der westlichen Zufahrt.")
+ var box=card("Deine Gemeindedienste","Polizei hilft in der Nachbarschaft, Feuerwehr löscht gemeldete Gebäudebrände und prüft Rauchmelder und Rettungswagen leisten Erste Hilfe. Taxis holen Fahrgäste ab und bringen sie zu ihren Zielen. Ohne eigene Wache kommt die Gemeinde von der westlichen Zufahrt.")
  button(box,"Neue Fahrten: AN" if data.enabled else "Neue Fahrten: AUS",func(): action(func(): data.enabled=not data.enabled))
  dynamic_text(box,func(): return "%s aktive Fahrten · %s Spaziergänger\nStadtkasse: %s Münzen" % [data.missions.size(),data.walkers.size(),Catalog.number(float(data.treasury)*Game.multiplier())])
  button(box,"STADTKASSE ABHOLEN",func(): action(func(): Game.collect_city_income()))
  text(box,"Fahrgeld und Gemeindebonus entstehen erst nach erledigter Fahrt beziehungsweise Hilfe vor Ort. Laufende Fahrten enden auch bei ausgeschalteten neuen Aufträgen. Offline bleibt die Simulation aktiv.",14,MUTED)
+ text(box,"Brandschutz: höchstens zwei Brände gleichzeitig, keine zerstörten Gebäude oder verlorenen Spielstände. Neue Ereignisse pausieren mit den Gemeindefahrten; laufende Rettungseinsätze gehen weiter.",14,MUTED)
+ dynamic_text(box,func(): return "Brände: %s aktiv · %s gelöscht" % [data.fires.size(),int(data.fires_extinguished)])
+ for incident in data.fires:
+  var fire=incident
+  var alert=card("BRANDEINSATZ")
+  dynamic_text(alert,func(): return "Gelöscht" if not fire in data.fires else "Löschfortschritt: %s %%" % int(float(fire.progress)*100) if float(fire.progress)>0 else "Anfahrt" if int(fire.mission_id)>=0 else "Wartet auf freie Feuerwehr / Straßenanschluss")
+  button(alert,"EINSATZORT ANSEHEN",func():
+   if fire in data.fires:
+    focus_requested.emit(CityServices.location(Game.state,fire.target_ref))
+    close_menu())
  for kind in CityServices.TYPES:
   var key=str(kind)
   var definition=Catalog.HOMES[CityServices.BUILDINGS[kind]]
@@ -1041,7 +1051,7 @@ func services_menu() -> void:
   button(card_box,"STANDORT BAUEN",func(): request_placement({"kind":CityServices.BUILDINGS[key],"city":true,"index":-1,"plot":-1}),Game.level("prefab")>0)
  for mission in data.missions:
   var job=mission
-  var entry=card(CityServices.NAMES[job.kind])
+  var entry=card("Gebäudebrand löschen" if job.has("fire_id") else CityServices.NAMES[job.kind])
   var focus_button=button(entry,"FAHRZEUG ANSEHEN",func():
    if not job in data.missions: return
    focus_requested.emit(CityServices.sample(job).position)

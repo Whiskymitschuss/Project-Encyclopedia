@@ -29,5 +29,6 @@ check --script res://Tests/CityUX.gd
 check --script res://Tests/BuildingCard.gd
 check --script res://Tests/Journey.gd
 check --script res://Tests/Traffic.gd
+check --script res://Tests/Fire.gd
 check --script res://Tests/Stone.gd
 check --quit-after 90
