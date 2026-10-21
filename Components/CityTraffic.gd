@@ -55,7 +55,7 @@ func _process(_delta: float) -> void:
   node.moving=sample.moving
   node.emergency=sample.lights
   node.passenger.visible=sample.passenger
-  node.visible=node.position.distance_to(world.focus)<world.zoom*1.2+25
+  node.visible=node.position.distance_to(world.view_focus)<world.view_zoom*1.2+25
   if node.moving: moving_vehicles+=1
   if mission.kind=="taxi" and float(mission.age)<float(mission.drive)+float(mission.work):
    var person_id=100000+id
@@ -76,7 +76,7 @@ func _process(_delta: float) -> void:
   person.route=trip.path
   person.travel_phase=clampf((float(trip.age)+extra)/float(trip.total),0,1)
   person.walking=true
-  person.visible=LogisticsRoutes.vector(trip.path[0]).distance_to(world.focus)<world.zoom*1.5+40
+  person.visible=LogisticsRoutes.vector(trip.path[0]).distance_to(world.view_focus)<world.view_zoom*1.5+40
   visible_people+=1
  recycle(vehicles,present)
  recycle(people,folk)

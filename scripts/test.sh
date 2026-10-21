@@ -33,6 +33,7 @@ check --script res://Tests/Fire.gd
 check --script res://Tests/FireProtection.gd
 check --script res://Tests/Stone.gd
 check --script res://Tests/Quality.gd
+check --script res://Tests/Presentation26.gd
 check --script res://Tests/Startup.gd
 check res://Scenes/Main.tscn --quit-after 90
 check --quit-after 90

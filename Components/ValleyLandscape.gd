@@ -340,11 +340,11 @@ func refresh() -> void:
 
 func update_view(force: bool=false) -> void:
  if world==null: return
- var key=Vector3(snappedf(world.focus.x,16),snappedf(world.focus.z,16),snappedf(world.zoom,12))
+ var key=Vector3(snappedf(world.view_focus.x,16),snappedf(world.view_focus.z,16),snappedf(world.view_zoom,12))
  if not force and key==view_key: return
  view_key=key
- var center=Vector2(world.focus.x,world.focus.z)
- var radius=maxf(65,world.zoom*0.95+35)
+ var center=Vector2(world.view_focus.x,world.view_focus.z)
+ var radius=maxf(65,world.view_zoom*0.95+35)
  for kind in batches:
   var data=batches[kind]
   data.entries.sort_custom(func(a,b): return a.point.distance_squared_to(center)<b.point.distance_squared_to(center))
@@ -355,7 +355,7 @@ func update_view(force: bool=false) -> void:
    var size=0.001 if entry.blocked else float(entry.scale)
    data.mesh.set_instance_transform(i,Transform3D(Basis(Vector3.UP,float(entry.angle)).scaled(Vector3.ONE*size),Vector3(entry.point.x,height_at(entry.point),entry.point.y)))
    data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else entry.color)
-  data.mesh.mesh=data.near if world.zoom<180 and quality>0 else data.far
+  data.mesh.mesh=data.near if world.view_zoom<180 and quality>0 else data.far
   data.mesh.visible_instance_count=mini(visible_count,ceili(data.entries.size()*0.45)) if quality==0 else visible_count
 
 func _process(_delta: float) -> void:

@@ -515,6 +515,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
   get_viewport().set_input_as_handled()
 
 func open_menu(tab: String) -> void:
+ if tab=="photo": camera_action.emit("photo"); return
  if ux!=null: ux.hide_panels()
  if placement_panel!=null and placement_panel.visible: placement_action.emit("cancel")
  current = tab
@@ -852,7 +853,7 @@ func more_menu() -> void:
   ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Spänebox","sawdust"]]],
   ["Wege & Team",[["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"]]],
   ["Deine Entwicklung",[["Kapitel 1–10 & Rathaus","journey"],["Auszeichnungen","trophies"],["Regionen & Großprojekte","empire"],["Forschung","research"],["Loot & Inventar","loot"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"]]],
-  ["Hilfe & Einstellungen",[["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
+  ["Hilfe & Einstellungen",[["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
  ]
  for group in groups:
   var section=card(group[0])

@@ -5,6 +5,7 @@ func _ready() -> void:
  smoke.name="ChimneyPuffs"
  add_child(smoke)
 func _process(_delta: float) -> void:
+ Atmosphere.drift(smoke,Game.state)
  var count=3 if Game.state.quality==0 else 7
  if smoke.amount!=count: smoke.amount=count
  smoke.emitting=FeedbackFX.allowed(self)

@@ -52,6 +52,19 @@ var boss_labels: Array = []
 var street_context: Dictionary={}
 var feedback: Node3D
 var wind_clock=0.0
+var wet_weather: Node3D
+var spatial_audio: Node3D
+var stump_batches=[]
+var fauna: Node3D
+var upgrade_reveal: Node3D
+var view_focus=Vector3(-21,0,-43)
+var view_zoom=96.0
+var camera_yaw=0.0
+var camera_transition=false
+var pan_velocity=Vector3.ZERO
+var last_pan_time=0
+var photo: CanvasLayer
+var production_alerts: Node
 var falling_trees=[]
 var next_fall=0
 var forest_detail_key=Vector4(INF,INF,INF,INF)
@@ -121,7 +134,9 @@ func _ready() -> void:
  make_chip_pool()
  audio = load("res://Audio/Sound.gd").new()
  add_child(audio)
- Game.harvested.connect(func(_b,_a): audio.play_tone(190,0.07))
+ spatial_audio=load("res://Audio/WorldAudio.gd").new()
+ spatial_audio.world=self
+ add_child(spatial_audio)
  Game.loot_found.connect(func(_r): audio.play_tone(780,0.22))
  life=load("res://Components/WorldLife.gd").new()
  life.world=self
@@ -129,6 +144,21 @@ func _ready() -> void:
  feedback=load("res://Components/WorldFeedback.gd").new()
  feedback.world=self
  add_child(feedback)
+ wet_weather=load("res://Components/WetWeather.gd").new()
+ wet_weather.world=self
+ add_child(wet_weather)
+ fauna=load("res://Components/ForestFauna.gd").new()
+ fauna.world=self
+ add_child(fauna)
+ upgrade_reveal=load("res://Components/UpgradeReveal.gd").new()
+ upgrade_reveal.world=self
+ add_child(upgrade_reveal)
+ photo=load("res://UI/PhotoMode.gd").new()
+ photo.world=self
+ add_child(photo)
+ production_alerts=load("res://UI/ProductionAlerts.gd").new()
+ production_alerts.world=self
+ add_child(production_alerts)
 
 func build_landscape() -> void:
  landscape=ValleyLandscape.new()
@@ -276,6 +306,21 @@ func build_forest() -> void:
     var transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*scale_value),point+Vector3(0,y,0))
     batch_nodes[part].multimesh.set_instance_transform(i,transform)
     batch_nodes[part].multimesh.set_instance_color(i,Color.WHITE.darkened(random.randf_range(0,0.13)))
+  var stumps=MultiMeshInstance3D.new()
+  var stump_mesh=CylinderMesh.new()
+  stump_mesh.top_radius=0.43
+  stump_mesh.bottom_radius=0.49
+  stump_mesh.height=0.7
+  stump_mesh.radial_segments=8
+  var stump_mm=MultiMesh.new()
+  stump_mm.transform_format=MultiMesh.TRANSFORM_3D
+  stump_mm.mesh=stump_mesh
+  stump_mm.instance_count=100
+  for i in 100: stump_mm.set_instance_transform(i,Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*0.001),records[i].point))
+  stumps.multimesh=stump_mm
+  stumps.material_override=Models.material(Color("cfab78"))
+  add_child(stumps)
+  stump_batches.append(stumps)
   trees.append(records)
   tree_batches.append(batch_nodes)
   var boss = Node3D.new()
@@ -482,11 +527,14 @@ func make_weather() -> void:
  add_child(weather)
 
 func _process(delta: float) -> void:
+ update_camera(delta)
  time += delta
  var animate=bool(Game.state.ux.motion) and bool(Game.state.ambient_enabled)
  if animate: wind_clock+=delta
  for batch in tree_batches:
   for part in [1,2]:
+   var wind=Atmosphere.wind(Game.state).normalized()
+   batch[part].material_override.set_shader_parameter("wind_direction",Vector2(wind.x,wind.z))
    batch[part].material_override.set_shader_parameter("wind_clock",wind_clock)
    batch[part].material_override.set_shader_parameter("wind_strength",1.0 if animate and Game.state.quality>0 else 0.0)
  for fall in falling_trees:
@@ -554,6 +602,9 @@ func set_tree_visible(biome: int, index: int, visible_tree: bool) -> void:
   var y = [1.8,4.7,7.1][part]*size_value
   tree_batches[biome][part].multimesh.set_instance_transform(index,Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*size_value),tree.point+Vector3(0,y,0)))
 
+ var stump_size=float(tree.scale) if not visible_tree and not tree.blocked and tree.regrow>0 else 0.001
+ stump_batches[biome].multimesh.set_instance_transform(index,Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*stump_size),tree.point+Vector3.UP*0.35*stump_size))
+
 func on_harvested(biome: int, _amount: float) -> void:
  var closest = -1
  var distance = INF
@@ -565,6 +616,7 @@ func on_harvested(biome: int, _amount: float) -> void:
    distance = d
  if closest >= 0:
   show_falling_tree(biome,closest)
+  if spatial_audio!=null: spatial_audio.cut(trees[biome][closest].point)
   trees[biome][closest].regrow = 20.0
   set_tree_visible(biome,closest,false)
   var effect = chip_pool[chip_index]
@@ -621,41 +673,87 @@ func make_chip_pool() -> void:
   add_child(effect)
   chip_pool.append(effect)
 
-func set_camera() -> void:
- focus.x = clampf(focus.x,-300,300)
- focus.z = clampf(focus.z,-245,245)
- camera.size = zoom
- camera.position = focus+Vector3(90,120,130).normalized()*maxf(198.5,zoom*1.4)
- camera.look_at(focus)
+func clamp_camera() -> void:
+ focus.x=clampf(focus.x,-300,300)
+ focus.z=clampf(focus.z,-245,245)
+ focus.y=0
+ zoom=clampf(zoom,40,650)
+
+func apply_camera() -> void:
+ camera.size=view_zoom
+ var offset=Basis(Vector3.UP,camera_yaw)*Vector3(90,120,130).normalized()
+ camera.position=view_focus+offset*maxf(198.5,view_zoom*1.4)
+ camera.look_at(view_focus)
  if landscape!=null: landscape.update_view()
  update_forest_detail()
 
+# Explicit placement/setup calls snap; navigation commands use ease_camera().
+func set_camera() -> void:
+ clamp_camera()
+ view_focus=focus
+ view_zoom=zoom
+ camera_transition=false
+ pan_velocity=Vector3.ZERO
+ apply_camera()
+
+func ease_camera() -> void:
+ clamp_camera()
+ pan_velocity=Vector3.ZERO
+ camera_transition=bool(Game.state.ux.motion)
+ if not camera_transition: set_camera()
+
+func update_camera(delta: float) -> void:
+ var blocked=hud!=null and (hud.overlay.visible or hud.ux.panels_visible())
+ if blocked or not placement.is_empty() or not Game.state.ux.motion: pan_velocity=Vector3.ZERO
+ if camera_transition and not Game.state.ux.motion: set_camera()
+ if camera_transition:
+  var weight=1-exp(-12*delta)
+  view_focus=view_focus.lerp(focus,weight)
+  view_zoom=lerpf(view_zoom,zoom,weight)
+  if view_focus.distance_to(focus)<0.02 and absf(view_zoom-zoom)<0.02:
+   view_focus=focus
+   view_zoom=zoom
+   camera_transition=false
+  apply_camera()
+ elif not dragging and not right_drag and touches.is_empty() and pan_velocity.length()>0.1:
+  focus+=pan_velocity*minf(delta,0.05)
+  clamp_camera()
+  pan_velocity*=exp(-9*delta)
+  view_focus=focus
+  view_zoom=zoom
+  apply_camera()
+
 func update_forest_detail() -> void:
- var key=Vector4(snappedf(focus.x,16),snappedf(focus.z,16),snappedf(zoom,12),float(Game.state.quality))
+ var key=Vector4(snappedf(view_focus.x,16),snappedf(view_focus.z,16),snappedf(view_zoom,12),float(Game.state.quality))
  if key==forest_detail_key: return
  forest_detail_key=key
  for i in tree_batches.size():
-  var distance=Catalog.biome_position(i).distance_to(focus)
-  var near=zoom<180 and Game.state.quality>0 and distance<zoom*0.8+65
+  var distance=Catalog.biome_position(i).distance_to(view_focus)
+  var near=view_zoom<180 and Game.state.quality>0 and distance<view_zoom*0.8+65
+  stump_batches[i].visible=distance<view_zoom*1.3+60
   for node in tree_batches[i]:
    node.multimesh.mesh=node.get_meta("near_mesh" if near else "far_mesh")
-   node.visible=distance<zoom*1.3+60
+   node.visible=distance<view_zoom*1.3+60
 
 func focus_at(point: Vector3) -> void:
  focus = point
  zoom = 86.0
- set_camera()
+ ease_camera()
 
 func camera_action(action: String) -> void:
+ if action=="photo":
+  if photo!=null: photo.enter()
+  return
  match action:
   "+": zoom = maxf(40,zoom*0.82)
   "−": zoom = minf(650,zoom*1.22)
   "home": focus = Game.building_position(mini(1,Game.state.buildings.size()-1)); zoom = 96
   "world": focus = Vector3(0,0,20); zoom = 390
- set_camera()
+ ease_camera()
 
 func _unhandled_input(event: InputEvent) -> void:
  if hud!=null and hud.overlay.visible: return
+ if photo!=null and photo.active and photo.gallery.visible: return
  if event is InputEventMouse and event.device==-1: return
  if event is InputEventMouseButton:
   if event.button_index == MOUSE_BUTTON_WHEEL_UP: camera_action("+")
@@ -684,6 +782,7 @@ func _unhandled_input(event: InputEvent) -> void:
   else:
    if touches.size() == 1 and drag_distance < 12 and not pinch_active and not event.canceled: tap_world(event.position)
    touches.erase(event.index)
+   if event.canceled: pan_velocity=Vector3.ZERO
    pinch_distance = 0
    if touches.is_empty(): pinch_active=false
  elif event is InputEventScreenDrag:
@@ -703,15 +802,30 @@ func _unhandled_input(event: InputEvent) -> void:
     place_at_screen(event.position)
 
 func pan(relative: Vector2) -> void:
+ if camera_transition:
+  focus=view_focus
+  zoom=view_zoom
+  camera_transition=false
+ var previous=focus
  drag_distance += relative.length()
  var ratio = zoom/get_viewport().get_visible_rect().size.y
  focus -= camera.global_basis.x*relative.x*ratio
  var forward = Vector3(camera.global_basis.z.x,0,camera.global_basis.z.z).normalized()
  focus -= forward*relative.y*ratio*1.3
  focus.y = 0
- set_camera()
+ clamp_camera()
+ var now=Time.get_ticks_msec()
+ var seconds=clampf(float(now-last_pan_time)/1000.0,0.016,0.06)
+ var velocity=(focus-previous)/seconds
+ if velocity.length()>180: velocity=velocity.normalized()*180
+ pan_velocity=pan_velocity.lerp(velocity,0.5) if Game.state.ux.motion else Vector3.ZERO
+ last_pan_time=now
+ view_focus=focus
+ view_zoom=zoom
+ apply_camera()
 
 func tap_world(screen: Vector2) -> void:
+ if photo!=null and photo.active: return
  var plane = Plane(Vector3.UP,0)
  var point = plane.intersects_ray(camera.project_ray_origin(screen),camera.project_ray_normal(screen))
  if point == null: return

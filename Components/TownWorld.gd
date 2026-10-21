@@ -106,7 +106,7 @@ func refresh_rents() -> void:
   var burning=false
   for incident in Game.state.city_services.fires:
    if int(incident.target_ref.index)==int(entry.index): burning=true; break
-  entry.label.visible=amount>=1 and world.zoom<135 and not burning
+  entry.label.visible=amount>=1 and world.view_zoom<135 and not burning
   entry.label.text="● %s · ABHOLEN" % Catalog.number(amount)
 
 func tap_rent(screen: Vector2) -> bool:

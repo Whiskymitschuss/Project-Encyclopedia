@@ -82,6 +82,7 @@ func create_incident(roof: float) -> Node3D:
    var jet=Models.cylinder(water,0.10,a.distance_to(b),(a+b)*0.5,Color("9bdef4"))
    jet.quaternion=Quaternion(Vector3.UP,(b-a).normalized())
  var label=Label3D.new()
+ label.layers=Models.WORLD_LABEL_LAYER
  label.name="Status"
  label.position=Vector3(0,roof+13,0)
  label.billboard=BaseMaterial3D.BILLBOARD_ENABLED
@@ -123,13 +124,14 @@ func _process(delta: float) -> void:
   node.get_node("Crew").visible=spraying
   node.get_node("Water").visible=spraying
   var motion=bool(Game.state.ux.motion)
-  var nearby=node.position.distance_to(world.focus)<world.zoom*1.6+40
+  var nearby=node.position.distance_to(world.view_focus)<world.view_zoom*1.6+40
   var particles_allowed=motion and Game.state.ambient_enabled and nearby
   var sparks=node.get_node("Sparks")
   var mist=node.get_node("WaterMist")
   var count=6 if Game.state.quality==0 else 18
   for emitter in [sparks,mist]:
    if emitter.amount!=count: emitter.amount=count
+  sparks.gravity=sparks.global_basis.inverse()*(Atmosphere.wind(Game.state)*0.8+Vector3.UP*0.3)
   sparks.emitting=particles_allowed and progress<0.9
   sparks.visible=sparks.emitting
   mist.emitting=particles_allowed and spraying
@@ -154,8 +156,10 @@ func _process(delta: float) -> void:
    var puff=node.get_node("Smoke").get_child(i)
    puff.scale=Vector3.ONE*(0.7+i*0.15)*maxf(0.2,1-progress)
    if motion:
-    puff.position.x=sin(clock*0.7+i)*1.5
-    puff.position.y=6+fposmod(clock*0.9+i*1.8,10)
+    var rise=fposmod(clock*0.9+i*1.8,10)
+    var drift=Atmosphere.wind(Game.state)*rise*0.32
+    drift=node.global_basis.inverse()*drift
+    puff.position=Vector3(drift.x+sin(clock*0.7+i)*0.3,6+rise,drift.z)
    puff.visible=Game.state.quality!=0 or i<2
   node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "BRAND · WARTET AUF FEUERWEHR"
   node.get_node("Status").text+="\nBRAND %s %% · GEBÄUDESCHADEN 0" % int((1-progress)*100)
@@ -219,7 +223,7 @@ func update_hydrants() -> void:
    Models.bake(node)
    hydrants[int(item[0])]=node
   protection_signature=signature.duplicate(true)
- for node in hydrants.values(): node.visible=node.position.distance_to(world.focus)<world.zoom*1.5+35
+ for node in hydrants.values(): node.visible=node.position.distance_to(world.view_focus)<world.view_zoom*1.5+35
 
 func update_supply_hose(node: Node3D, mission: Dictionary, spraying: bool) -> void:
  var hose=node.get_node_or_null("SupplyHose")

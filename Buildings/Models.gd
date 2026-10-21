@@ -1,6 +1,8 @@
 class_name Models
 extends RefCounted
 
+const WORLD_LABEL_LAYER=1<<19
+
 static var materials: Dictionary = {}
 static var grain: ImageTexture
 
@@ -69,6 +71,7 @@ static func cylinder(parent: Node3D, radius: float, height: float, at: Vector3, 
 
 static func label(parent: Node3D, title: String, at: Vector3, size: int = 32) -> Label3D:
  var node = Label3D.new()
+ node.layers=WORLD_LABEL_LAYER
  node.text = title
  node.position = at
  node.font_size = size

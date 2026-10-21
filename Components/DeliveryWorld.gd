@@ -135,7 +135,7 @@ func _process(delta: float) -> void:
   for control in [ux.event_button,ux.sheet,ux.palette]:
    if control.visible: occupied.append(control.get_global_rect())
  for b in badges:
-  b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.zoom<260 and not world.camera.is_position_behind(b.at)
+  b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.view_zoom<260 and not world.camera.is_position_behind(b.at)
   if not b.button.visible: continue
   var extent: Vector2=b.button.size
   var p = world.camera.unproject_position(b.at)-Vector2(extent.x/2,extent.y-4)
@@ -176,6 +176,7 @@ func _process(delta: float) -> void:
    add_child(node)
    node.set_meta("pool_key",signature)
    var cargo_label=Label3D.new()
+   cargo_label.layers=Models.WORLD_LABEL_LAYER
    cargo_label.name="RouteLabel"
    cargo_label.position=Vector3(0,7,0)
    cargo_label.billboard=BaseMaterial3D.BILLBOARD_ENABLED
@@ -212,10 +213,13 @@ func _process(delta: float) -> void:
   if running and progress>0 and progress<1:
    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
   if node.cargo!=null: node.cargo.visible = not shipment.arrived
+  var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
-  cargo_label.visible=world.zoom<140
+  cargo_label.visible=world.view_zoom<140
   var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else Catalog.BUILDINGS[shipment.target].name
   cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
+  if cargo_stage=="load": cargo_label.text="BELADEN · "+cargo_label.text
+  elif cargo_stage=="unload": cargo_label.text="ENTLADEN · "+cargo_label.text
   cargo_label.modulate=Color("c9e5dc") if shipment.arrived else Color("fff2bf")
   if node.get("bed")!=null:
    node.tipping=-0.55 if age>=float(shipment.load)+float(shipment.drive) and age<float(shipment.travel) and float(shipment.age)<float(shipment.travel) else 0.0

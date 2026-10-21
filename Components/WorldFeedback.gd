@@ -29,8 +29,8 @@ func _ready() -> void:
   root.hide()
  Game.sale_completed.connect(on_sale)
  Game.fire_extinguished.connect(on_rescue)
- Game.reward_claimed.connect(func(title,coins): start(world.focus,"%s +%s MÜNZEN" % [title,Catalog.number(coins)],false))
- Game.company_level_unlocked.connect(func(level): start(world.focus,"LEVEL %s · NEUE MÖGLICHKEITEN!" % level,false))
+ Game.reward_claimed.connect(func(title,coins): start(world.view_focus,"%s +%s MÜNZEN" % [title,Catalog.number(coins)],false))
+ Game.company_level_unlocked.connect(func(level): start(world.view_focus,"LEVEL %s · NEUE MÖGLICHKEITEN!" % level,false))
 
 func start(point: Vector3, caption: String, rescue: bool) -> void:
  if not Game.state.ambient_enabled: return
@@ -46,7 +46,7 @@ func start(point: Vector3, caption: String, rescue: bool) -> void:
  var p=e.mist if rescue else e.coins
  p.amount=(6 if Game.state.quality==0 else 12) if rescue else (8 if Game.state.quality==0 else 18)
  if FeedbackFX.allowed(e.root): p.restart(); p.emitting=true
- if rescue and point.distance_to(world.focus)<world.zoom*1.5: world.audio.play_chime()
+ if rescue and point.distance_to(world.view_focus)<world.view_zoom*1.5: world.audio.play_chime()
 
 func on_sale(_key: String, coins: float, point: Vector3) -> void:
  start(point,"+%s MÜNZEN" % Catalog.number(coins),false)
@@ -56,7 +56,7 @@ func on_rescue(point: Vector3) -> void:
 func _process(delta: float) -> void:
  for e in pool:
   e.left=maxf(0,float(e.left)-delta)
-  var visible_now=e.left>0 and Game.state.ambient_enabled and e.root.position.distance_to(world.focus)<world.zoom*1.6+40
+  var visible_now=e.left>0 and Game.state.ambient_enabled and e.root.position.distance_to(world.view_focus)<world.view_zoom*1.6+40
   e.root.visible=visible_now
   var motion=bool(Game.state.ux.motion)
   e.coins.visible=visible_now and motion

@@ -25,7 +25,7 @@ static func context(state: Dictionary) -> Dictionary:
 
 static func strip(parent: Node3D,at: Vector3,size: Vector3,paved: bool,ctx: Dictionary={}) -> void:
  Models.paving_box(parent,size+Vector3(1.0,-0.04,1.0),at-Vector3(0,0.09,0),Color("b0b79c"),"plaster",0.8)
- Models.paving_box(parent,size,at,ASPHALT if paved else Color("b5a78a"),"plaster",0.65)
+ Models.paving_box(parent,size,at,ASPHALT if paved else Color("b5a78a"),"asphalt" if paved else "plaster",0.65)
  if not paved: return
  var vertical=size.z>size.x
  var length=size.z if vertical else size.x
@@ -57,7 +57,7 @@ static func strip(parent: Node3D,at: Vector3,size: Vector3,paved: bool,ctx: Dict
 static func junctions(parent: Node3D,ctx: Dictionary) -> void:
  for p in ctx.junctions:
   # A single flush cap removes crossing lane dashes and rounds the corners.
-  Models.paving_box(parent,Vector3(7.3,0.10,7.3),Vector3(p.x,0.87,p.y),ASPHALT,"plaster",0.65)
+  Models.paving_box(parent,Vector3(7.3,0.10,7.3),Vector3(p.x,0.87,p.y),ASPHALT,"asphalt",0.65)
   for side in [-1,1]:
    if not ctx.cells.has(Vector2i(p)+Vector2i(0,side*4)): continue
    for i in 4:
@@ -73,7 +73,7 @@ static func junctions(parent: Node3D,ctx: Dictionary) -> void:
 
 static func corner(parent: Node3D,p: Vector2,side: Vector2) -> void:
  var center=p+side*5.1
- Models.paving_box(parent,Vector3(1.8,0.08,1.8),Vector3(p.x+side.x*4.2,0.91,p.y+side.y*4.2),ASPHALT,"plaster",0.05)
+ Models.paving_box(parent,Vector3(1.8,0.08,1.8),Vector3(p.x+side.x*4.2,0.91,p.y+side.y*4.2),ASPHALT,"asphalt",0.05)
  var surface=SurfaceTool.new()
  surface.begin(Mesh.PRIMITIVE_TRIANGLES)
  for i in 8:

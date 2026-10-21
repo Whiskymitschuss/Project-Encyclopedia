@@ -1,3 +1,25 @@
+# Android-Test 0.26 — Detailwelt
+
+**Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,
+Version `0.26-test`, Code 2600. Als Update über 0.23, 0.24 oder 0.25 installieren;
+**nicht vorher deinstallieren**. Testsignatur und Speicherordner bleiben erhalten.
+
+APK: `releases/Timber-Loot-Tycoon-v0.26-test.apk`. Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0, weiterhin ausschließlich die optionale Vibrationsberechtigung.
+Fotomodus und integrierte Galerie speichern PNGs im privaten App-Speicher, ohne
+zusätzliche Speicherberechtigung. Keine automatische Übertragung in die Android-
+Systemgalerie oder Teilen-Funktion. App-Daten löschen oder Deinstallation entfernt
+auch diese lokalen Fotos.
+
+[Zehn umgesetzte Ideen](DETAIL-PASS26.md), [Prüfbericht](VALIDATION.md).
+0.26 ist Debug-signiert. Android-Installation/Start, hörbarer Klang und mobile
+Framerate, Wärme und Akkuverhalten sind noch nicht auf einem Handy geprüft.
+Build weiterhin mit `python3 scripts/build_android.py`; der vorhandene Schlüssel
+bleibt unter `/workspace/.timber-runtime/android/TimberLoot-Reborn-debug.keystore`,
+außerhalb von Git und Quellarchiv. Der Helfer erzeugt keinen Ersatzschlüssel.
+
+## Historische Dokumentation 0.25
+
 # Android-Test 0.25 — Waldleben
 
 **Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,

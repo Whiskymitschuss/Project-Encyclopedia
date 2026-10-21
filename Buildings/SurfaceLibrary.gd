@@ -5,6 +5,8 @@ static var materials: Dictionary={}
 static var textures: Dictionary={}
 static var windows: Array=[]
 static var last_night=-1.0
+static var wetness=0.0
+static var wet_surfaces: Array=[]
 
 static func texture(kind: String) -> ImageTexture:
  if textures.has(kind): return textures[kind]
@@ -46,6 +48,9 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
   windows.append({"material":mat,"day":color})
  elif kind=="paint": mat.roughness=0.42; mat.metallic=0.08
  elif kind=="timber": mat.roughness=0.9
+ if kind in ["asphalt","roof","paving"]:
+  wet_surfaces.append({"material":mat,"color":mat.albedo_color,"roughness":mat.roughness})
+  apply_wet(wet_surfaces[-1])
  materials[key]=mat
  return mat
 
@@ -56,3 +61,13 @@ static func daylight(day: float) -> void:
  for entry in windows:
   entry.material.emission_energy_multiplier=0.04+night*0.55
   entry.material.albedo_color=entry.day.lerp(Color("cf9d64"),night*0.8)
+
+static func apply_wet(entry: Dictionary) -> void:
+ entry.material.albedo_color=entry.color.darkened(wetness*0.18)
+ entry.material.roughness=lerpf(float(entry.roughness),0.22,wetness)
+
+static func weather(amount: float) -> void:
+ var value=snappedf(clampf(amount,0,1),0.02)
+ if is_equal_approx(value,wetness): return
+ wetness=value
+ for entry in wet_surfaces: apply_wet(entry)

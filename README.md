@@ -1,6 +1,19 @@
-# Timber Loot Tycoon — Waldleben 0.25
+# Timber Loot Tycoon — Detailwelt 0.26
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+
+## Neu in 0.26 — zehn Details für eine lebendige Welt
+
+Gemeinsamer Wind für Rauch und Bäume, räumliche Feuerwehrgeräusche, Holzknacken und
+Aufschlag, sichtbare Baumstümpfe, nasse Oberflächen und Pfützen, Vögel und Hasen,
+Be-/Entladeanimationen, Ausbau-Enthüllung, kurze Produktionshinweise und weichere
+Kameranavigation. **Mehr → Fotomodus & Galerie** öffnet drei Kamerawinkel und eine
+PNG-Galerie im Spiel. Die Aufnahme enthält weder HUD noch Weltbeschriftungen.
+
+[Alle zehn Aufgaben mit Gründen, Spielernutzen und Qualitätswirkung](docs/DETAIL-PASS26.md).
+Wirtschaft, Bau- und Transportzeiten bleiben gültig. Keine zusätzlichen Berechtigungen.
+Fotos werden im App-Speicher auf diesem Gerät abgelegt; kein automatischer Export in
+die Systemgalerie. Die Test-App lässt sich über die bisherigen Versionen ab 0.23 updaten.
 
 ## Neu in 0.25 — Waldleben und Qualitätsüberarbeitung
 
@@ -69,7 +82,7 @@ Die alte signierte APK 0.20 bleibt unverändert erhalten.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.25-test.apk](releases/Timber-Loot-Tycoon-v0.25-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.26-test.apk](releases/Timber-Loot-Tycoon-v0.26-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 

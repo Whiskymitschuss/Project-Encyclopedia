@@ -26,6 +26,7 @@ func _process(delta: float) -> void:
  active=rate>0 and not Game.state.buildings[building_index].get("paused",false)
  var animate=active and bool(Game.state.ux.motion)
  if particles!=null:
+  if kind=="kiln": Atmosphere.drift(particles,Game.state)
   var enabled=active and FeedbackFX.allowed(self)
   var count=5 if Game.state.quality==0 else 12
   if particles.amount!=count: particles.amount=count

@@ -1,3 +1,48 @@
+# Prüfung 0.26 — zehn Präsentationsideen
+
+- `bash scripts/test.sh`: **19.502 Prüfungen in 22 Headless-Suiten**, keine Fehler.
+  Zusätzlich Ersthaus-Progression in 1.682 simulierten Sekunden ohne geschenkte
+  Ressourcen und Starttests für Hauptwelt und Intro.
+- `bash scripts/test_visual.sh`: **361 Prüfungen in neun OpenGL-Suiten**, keine
+  Fehler. Die neue Präsentationssuite enthält 46 Verhaltens- und 37 Grafikprüfungen.
+- Reale Transaktionen geprüft: Be-/Entladebewegung folgt einem tatsächlich
+  disponierten Auftrag; Ware bleibt während der Fahrt am Fahrzeug und verschwindet
+  erst nach tatsächlicher Lieferung. Darstellungsaufrufe ändern keinen Bestand.
+- Gemeinsame Windrichtung auch an gedrehten Kaminen; Baumstumpf an tatsächlicher
+  Fällposition und Entfernung beim Nachwachsen; Regen verändert reale Materialien
+  und trocknet sie wieder zurück. Neue Dächer übernehmen laufendes Wetter.
+- Tiere, Partikel, Stimmen, Gerüstenthüllungen und Hinweistafeln besitzen feste
+  Obergrenzen. Reduzierte Bewegung, Akkumodus und Stummschaltung geprüft.
+- Kamera: weicher Zielanflug, Erreichen des echten Zielpunkts, abklingende Trägheit,
+  sofortiges Umschalten bei reduzierter Bewegung. Straßenzeichnen mit echten
+  Fingergesten und Auswahl/Scrollen funktionieren weiterhin.
+- Fotomodus durch echten Touch im öffentlichen Menü geöffnet; drei Kamerawinkel,
+  ungestreckte Darstellung, Aufnahme ohne HUD/Beschriftungen, lesbare Galerie und
+  tatsächliche PNG-Datei geprüft. Kontrollen passen auch in einen **wirklich 360×640
+  logischen Viewport mit großer Schrift**. Verlassen stellt den Ausschnitt wieder her;
+  Fototipps lösen keine Holzernte, Miete oder Käufe aus.
+- Audio: wiederverwendete PCM-Daten, räumliche Stimmen, Sirene bei Anfahrt,
+  Abschaltung bei Ankunft, Wasser erst vor Ort, sofortige Stummschaltung. Der Hörer
+  sitzt am betrachteten Gelände, damit die hohe Kamera den Ton nicht abschneidet.
+
+Gerendert unter Mesa/llvmpipe und Xvfb; Audioausgabe im Test über den Dummy-Treiber.
+Keine Hörprobe auf einem echten Lautsprecher, kein Android-Gerätetest von 0.26,
+keine nachgewiesene mobile Bildrate, Akku-/Wärmemessung oder Store-Freigabe.
+Der bisher gelegentliche ObjectDB-Hinweis beim Beenden ist kein Nachweis eines
+laufenden Speicherwachstums; ein mobiles Speicherprofil bleibt offen.
+
+Vorschauen aus isolierten, inszenierten Testprofilen:
+[Wald mit Tieren](preview-detail26-forest.png),
+[nasse Straßen und Produktionshinweis](preview-detail26-rain.png),
+[Fotogalerie](preview-detail26-gallery.png).
+
+Alle zehn Aufgaben mit Änderungen, Gründen, Spielernutzen und geschätzter
+Qualitätswirkung: [Detailpass 0.26](DETAIL-PASS26.md).
+Fotos werden im App-Speicher gespeichert und sind in der Spielgalerie sichtbar;
+Systemgalerie-Export und Teilen sind nicht Bestandteil dieser Version.
+
+## Historische Prüfung 0.25
+
 # Prüfung 0.25 — Waldleben und Qualitätsüberarbeitung
 
 - Vollständiges `bash scripts/test.sh`: **19.456 Prüfungen in 21 Headless-Suiten**,
