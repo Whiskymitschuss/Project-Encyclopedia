@@ -99,7 +99,7 @@ func pick_truck(screen: Vector2) -> Dictionary:
   var key=world.delivery_world.visual_key(s)
   if not world.delivery_world.visuals.has(key): continue
   var node=world.delivery_world.visuals[key]
-  if world.camera.is_position_behind(node.global_position): continue
+  if not node.visible or world.camera.is_position_behind(node.global_position): continue
   var d=screen.distance_to(world.camera.unproject_position(node.global_position+Vector3(0,2,0)))
   if d<distance: distance=d; best={"kind":"truck","domain":trip_domain(s),"id":int(s.id)}
  return best

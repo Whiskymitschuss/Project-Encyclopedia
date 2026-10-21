@@ -8,6 +8,7 @@ var moving = false
 var waiting = true
 
 func _ready() -> void:
+ scale=Vector3.ONE*0.7
  var colors=[Color("ffd05b"),Color("ef8b77"),Color("83cbb5")]
  var tone=colors[line_index%3]
  Models.box(self,Vector3(3.5,2.7,8.2),Vector3(0,2.2,0),tone)
@@ -32,14 +33,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
  if line_index>=Game.state.town.lines.size(): return
  var line=Game.state.town.lines[line_index]
- var plan=Game.transit_plan(line.stops)
+ var plan=TrafficRules.bus_plan(Game.state,line)
  if plan.is_empty(): visible=false; return
- visible=true
- var sample=TownRules.bus_sample(plan,float(line.phase)+Game.tick_clock)
+ visible=not line.get("traffic_hidden",false)
+ var sample=TrafficRules.bus_sample(plan,TrafficRules.visual_age(line,Game.tick_clock,true,float(plan.duration)))
  var direction: Vector3=sample.direction.normalized()
- position=sample.position+Vector3(direction.z,0,-direction.x)*1.35
+ position=sample.position
  rotation.y=atan2(direction.x,direction.z)
- waiting=sample.waiting
+ waiting=not sample.moving or float(line.get("traffic_speed",1))<=0
  moving=not waiting
  for wheel in wheels:
   if moving: wheel.rotate_object_local(Vector3.UP,delta*12)

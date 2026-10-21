@@ -71,6 +71,7 @@ static func attach(job: Dictionary, workers: int = 1) -> void:
  # A paid site requests its phase materials immediately, including before
  # company level ten. Pausing remains the explicit way to stop new deliveries.
  job.requested = true
+ job.auto_crew = true
  job.phases = []
  for title in PHASES: job.phases.append({"name":title,"materials":{}})
  for key in job.materials:
@@ -152,7 +153,7 @@ static func logistics_status(state: Dictionary, job: Dictionary) -> String:
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done = []
  for s in state.construction_shipments:
-  s.age = float(s.age)+delta
+  s.age=float(s.age)+TrafficRules.advance(s,delta)
   if not s.arrived and float(s.age)>=float(s.travel):
    var found = false
    for job in state.jobs:
@@ -177,6 +178,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
  var free = maxi(0,int(state.trucks)-busy)
+ if free>0 and ForemanRules.hold_for_line(state): free=maxi(0,free-1)
  if free<=0: return 0
  var jobs = state.jobs.duplicate()
  jobs.sort_custom(func(a,b): return int(a.get("priority",false))>int(b.get("priority",false)))
@@ -184,7 +186,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  for job in jobs:
   var id = int(job.get("id",-1))
   if not job.has("phases") or job.get("paused",false) or (only_job>=0 and id!=only_job): continue
-  if job.has("district_group") and int(job.get("workers",0))<=0: continue
+  if (job.has("district_group") or state.get("foreman",{}).get("enabled",false)) and int(job.get("workers",0))<=0: continue
   if not state.construction_auto and not job.get("requested",false): continue
   var material_keys = job.materials.keys()
   material_keys.sort()
@@ -203,6 +205,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
     state.construction_shipments.append({"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
     state.next_shipment += 1
     free-=1
+    if state.has("foreman"): state.foreman.transport_turn="line"
     missing-=amount
     result+=amount
  return result

@@ -154,9 +154,7 @@ func select_truck(value: Dictionary,focus: bool=false) -> void:
  if focus:
   var trip=find_trip()
   if not trip.is_empty():
-   var fraction=clampf((float(trip.age)-float(trip.load))/maxf(0.001,float(trip.drive)),0,1)
-   if trip.arrived: fraction=1-clampf((float(trip.age)-float(trip.travel))/maxf(0.001,float(trip.drive)),0,1)
-   hud.focus_requested.emit(LogisticsRoutes.sample(trip.path,fraction).position)
+   hud.focus_requested.emit(TrafficRules.sample(trip,TrafficRules.visual_age(trip,Game.tick_clock)).position)
   if world().get("selection_world")!=null: world().selection_world.show_routes=true
  hud.close_menu()
  palette.hide()
@@ -250,6 +248,7 @@ func render_sheet() -> void:
    var target="Baustelle" if s.target=="construction" else ("Lager" if int(s.destination)<0 else UXRules.title(Game.state,false,int(s.destination))) if s.target=="mineral" else "Autobahnexport" if s.target=="export" else Catalog.BUILDINGS[s.target].name
    var stage="Leere Rückfahrt" if s.arrived else "Beladen" if float(s.age)<float(s.load) else "Entladen" if float(s.age)>=float(s.load)+float(s.drive) else "Unterwegs"
    if not s.arrived and float(s.age)>=float(s.travel): stage="Wartet auf freien Entladeplatz"
+   if not str(s.get("traffic_wait","")).is_empty(): stage=str(s.traffic_wait)
    var source=UXRules.title(Game.state,false,int(s.origin)) if int(s.get("origin",-1))>=0 else ConstructionRules.source_name(s)
    hud.text(sheet_body,"%s\n%s → %s\n%s" % [stage,source,target,"Leer" if s.arrived else "%s %s an Bord" % [Catalog.number(s.amount),Catalog.RESOURCES[s.key]]],15,hud.INK)
    var remaining=maxf(0,float(s.total if s.arrived else s.travel)-float(s.age))
@@ -386,7 +385,7 @@ func material_menu() -> void:
   if s.key!=key or s.arrived: continue
   found=true
   var selected={"kind":"truck","id":int(s.id),"domain":"construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"}
-  var at=LogisticsRoutes.sample(s.path,clampf((float(s.age)-float(s.load))/float(s.drive),0,1)).position
+  var at=TrafficRules.sample(s,TrafficRules.visual_age(s,Game.tick_clock)).position
   hud.button(cargo,"%s %s · LKW ansehen" % [Catalog.number(s.amount),Catalog.RESOURCES[key]],func(): hud.focus_requested.emit(at); select_truck(selected))
  if not found: hud.text(cargo,"Momentan keine beladene Lieferung dieser Ware.",15,hud.MUTED)
  if ConstructionRules.HARDWARE.has(key):

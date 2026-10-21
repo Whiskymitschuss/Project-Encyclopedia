@@ -74,3 +74,7 @@ static func raise_alarm(state: Dictionary, id: int) -> bool:
   UXRules.push_event(state,"fire_alarm:%s" % id,"Feuerwehr alarmiert",CityServices.location(state,incident.target_ref),"services",1)
   return true
  return false
+
+# Smouldering grows into a local roof fire, then contracts with real suppression.
+static func intensity(incident: Dictionary) -> float:
+ return clampf(0.25+float(incident.age)/35.0,0.25,1.0)*clampf(1-float(incident.progress),0,1)

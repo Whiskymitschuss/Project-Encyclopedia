@@ -8,6 +8,9 @@ var visible_people=0
 var fire_world
 
 func _ready() -> void:
+ var signals=load("res://Components/RoadSignals.gd").new()
+ signals.world=world
+ add_child(signals)
  fire_world=load("res://Components/FireWorld.gd").new()
  fire_world.world=world
  add_child(fire_world)
@@ -33,6 +36,7 @@ func obtain(key: String) -> Node3D:
  else:
   node=load("res://Vehicles/ServiceVehicle.gd").new()
   node.kind=key
+  node.scale=Vector3.ONE*0.85
  node.set_meta("pool",key)
  add_child(node)
  return node
@@ -50,12 +54,12 @@ func _process(_delta: float) -> void:
   if not vehicles.has(id): vehicles[id]=obtain(mission.kind)
   var node: Node3D=vehicles[id]
   var sample=CityServices.sample(mission,extra)
-  node.position=sample.position+Vector3(sample.direction.z,0,-sample.direction.x)*1.1
+  node.position=sample.position
   node.rotation.y=atan2(sample.direction.x,sample.direction.z)
   node.moving=sample.moving
   node.emergency=sample.lights
   node.passenger.visible=sample.passenger
-  node.visible=node.position.distance_to(world.view_focus)<world.view_zoom*1.2+25
+  node.visible=not mission.get("traffic_hidden",false) and node.position.distance_to(world.view_focus)<world.view_zoom*1.2+25
   if node.moving: moving_vehicles+=1
   if mission.kind=="taxi" and float(mission.age)<float(mission.drive)+float(mission.work):
    var person_id=100000+id

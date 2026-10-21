@@ -49,6 +49,8 @@ var base_streets: Node3D
 var town_name_labels: Array = []
 var biome_labels: Array = []
 var boss_labels: Array = []
+var forest_obstacles=[]
+var boss_trees=[]
 var street_context: Dictionary={}
 var feedback: Node3D
 var wind_clock=0.0
@@ -71,6 +73,10 @@ var next_fall=0
 var forest_detail_key=Vector4(INF,INF,INF,INF)
 
 func _ready() -> void:
+ var crew_world=load("res://Components/ConstructionCrews.gd").new()
+ crew_world.name="ConstructionCrews"
+ crew_world.world=self
+ add_child(crew_world)
  Game.live_world=true
  RenderingServer.set_default_clear_color(Color("53bbd3"))
  var environment_node = WorldEnvironment.new()
@@ -334,6 +340,7 @@ func build_forest() -> void:
   Models.cylinder(boss,1.5,7,Vector3(0,3.5,0),Color("99714b"))
   Models.cylinder(boss,6,11,Vector3(0,10,0),Color(Catalog.BIOMES[biome].tree).lightened(0.18),0.3)
   boss_labels.append(Models.label(boss,"BOSS",Vector3(0,17,0),35))
+  boss_trees.append(boss)
 
 func clear_children(parent: Node) -> void:
  for child in parent.get_children():
@@ -419,18 +426,13 @@ func add_approach(point: Vector3, rotation: int) -> void:
   strip.rotation.y=atan2(path[1].x-path[0].x,path[1].z-path[0].z)
 
 func refresh_forest_clearance() -> void:
- var rectangles = [WorldAccess.HIGHWAY_SITE.grow(3),Rect2(316,70,30,142)]
- for i in Game.state.buildings.size(): rectangles.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))).grow(3))
- for i in Game.state.homes.size(): rectangles.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).grow(3))
- for job in Game.state.jobs:
-  if job.type in ["home","building"]:
-   var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
-   rectangles.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(3))
- for road_record in Game.state.town.roads:
-  var radius=float(TownRules.TYPES[road_record.kind].width)/2+2
-  for c in road_record.cells:
-   var p=Vector2(TownRules.cell(c))
-   rectangles.append(Rect2(p-Vector2.ONE*radius,Vector2.ONE*radius*2))
+ forest_obstacles=ForestSites.obstacles(Game.state)
+ var rectangles=forest_obstacles.duplicate()
+ for biome in boss_trees.size():
+  var desired=Catalog.biome_position(biome)+Vector3(0,0,25)
+  if not ForestSites.clear_at(desired,forest_obstacles,6): desired=ForestSites.worksite(biome,0,forest_obstacles,[],6)
+  boss_trees[biome].visible=desired!=null
+  if desired!=null: boss_trees[biome].position=desired
  if actors!=null:
   for actor in actors.get_children():
    if actor.has_meta("forestry_tier"):
@@ -449,6 +451,8 @@ func sync_actors() -> void:
  if signature == actor_signature: return
  actor_signature = signature
  clear_children(actors)
+ forest_obstacles=ForestSites.obstacles(Game.state)
+ var used_sites=[]
  var staff = mini(int(Game.state.workers),8 if Game.state.quality == 0 else 16)
  var factories = []
  for i in Game.state.buildings.size():
@@ -468,14 +472,19 @@ func sync_actors() -> void:
   var neighbor = i==staff-operators-1 and staff>=4 and cabin_index>=0
   if int(Game.state.tool)>=10 and not neighbor:
    if i<mini(staff-operators,2 if Game.state.quality==0 else 4):
+    var site=ForestSites.worksite(int(Game.state.biome),i,forest_obstacles,used_sites)
+    if site==null: continue
+    used_sites.append(site)
     var machine=ForestryMachine.new()
     machine.tier=int(Game.state.tool)
-    machine.origin_point=Catalog.biome_position(int(Game.state.biome))+Vector3([-26,-10,10,26][i%4],0,-5)
+    machine.origin_point=site
     machine.phase=i*4.5
     actors.add_child(machine)
    continue
   var worker = TimberWorker.new()
-  worker.origin_point = Catalog.biome_position(int(Game.state.biome))+Vector3((i%4)*5-10,0,18)
+  var forest_site=ForestSites.worksite(int(Game.state.biome),i,forest_obstacles,[],2)
+  if forest_site==null and not neighbor: worker.free(); continue
+  worker.origin_point = forest_site if forest_site!=null else Vector3.ZERO
   worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1
@@ -490,6 +499,9 @@ func sync_actors() -> void:
    worker.facing=angle+PI
    worker.pace=0.85
    worker.phase=0
+  if not neighbor:
+   worker.walk_route=LogisticsRoutes.between(Game.state,worker.origin_point,Game.building_position(0))
+   if worker.walk_route.size()<2: worker.destination=worker.origin_point+Vector3(0,0,3)
   actors.add_child(worker)
  var inhabited=[]
  for i in Game.state.homes.size():
@@ -754,6 +766,12 @@ func camera_action(action: String) -> void:
   "world": focus = Vector3(0,0,20); zoom = 390
  ease_camera()
 
+func stop_camera_ease() -> void:
+ if not camera_transition: return
+ focus=view_focus
+ zoom=view_zoom
+ camera_transition=false
+
 func _unhandled_input(event: InputEvent) -> void:
  if hud!=null and hud.overlay.visible: return
  if photo!=null and photo.active and photo.gallery.visible: return
@@ -765,6 +783,7 @@ func _unhandled_input(event: InputEvent) -> void:
   elif event.button_index == MOUSE_BUTTON_LEFT:
    dragging = event.pressed
    if event.pressed:
+    stop_camera_ease()
     drag_distance = 0
     last_pointer = event.position
     start_network_drag(event.position)
@@ -776,6 +795,7 @@ func _unhandled_input(event: InputEvent) -> void:
   else: pan(event.relative)
  elif event is InputEventScreenTouch:
   if event.pressed:
+   stop_camera_ease()
    touches[event.index] = event.position
    if touches.size()>1: pinch_active=true
    else:

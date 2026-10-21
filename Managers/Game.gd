@@ -43,7 +43,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "foreman":ForemanRules.initial(), "traffic":TrafficRules.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "construction_logistics_version":1, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -96,6 +96,8 @@ func restore(saved: Dictionary) -> void:
  for key in DeliveryChain.initial():
   if not state.delivery.has(key): state.delivery[key] = DeliveryChain.initial()[key]
  DeliveryChain.migrate_belts(state)
+ for job in state.jobs:
+  if job.has("phases") and not job.has("auto_crew"): job.auto_crew=true
  if int(saved.get("construction_logistics_version",0))<1:
   for job in state.jobs:
    if job.has("phases"): job.requested=true
@@ -107,6 +109,10 @@ func restore(saved: Dictionary) -> void:
   if not state.stone.has(key): state.stone[key]=StoneIndustry.initial()[key]
  for key in ExportTrade.initial():
   if not state.trade.has(key): state.trade[key]=ExportTrade.initial()[key]
+ for key in ForemanRules.initial():
+  if not state.foreman.has(key): state.foreman[key]=ForemanRules.initial()[key]
+ for key in TrafficRules.initial():
+  if not state.traffic.has(key): state.traffic[key]=TrafficRules.initial()[key]
  ExportTrade.route_cache.clear()
  StoneIndustry.synchronize(state)
  Journey.migrate(state,saved)
@@ -267,7 +273,10 @@ func step(delta: float) -> void:
  var burning={}
  for incident in state.city_services.fires:
   burning[int(incident.id)]=CityServices.location(state,incident.target_ref)
+ TrafficRules.prepare(state,delta)
+ if ForemanRules.tick(state,delta): rebuild_world.emit()
  CityServices.tick(state,delta,city_route_cache)
+ TrafficRules.dispatch_repair(state,city_route_cache)
  for incident in state.city_services.fires: burning.erase(int(incident.id))
  for point in burning.values(): fire_extinguished.emit(point)
  ConstructionRules.transport_tick(state,delta)
@@ -377,7 +386,7 @@ func step(delta: float) -> void:
  for j in completed:
   state.jobs.erase(j)
   finish_job(j)
- if allocate_group_crews(): rebuild_world.emit()
+ if allocate_group_crews() or ForemanRules.tick(state,0): rebuild_world.emit()
  if not state.plan.is_empty() and state.plan.get("auto",false):
   var plan = state.plan.duplicate(true)
   var affordable = state.coins >= float(Catalog.HOMES[plan.kind].cost)*difficulty()
@@ -1261,7 +1270,7 @@ func step_transit(delta: float) -> void:
  for line in state.town.lines:
   var plan = transit_plan(line.stops)
   if plan.is_empty(): continue
-  var phase = float(line.phase)+delta
+  var phase = float(line.phase)+TrafficRules.advance(line,delta)
   var trips = floori(phase/float(plan.duration))
   line.phase = fposmod(phase,float(plan.duration))
   if trips>0:
@@ -1577,6 +1586,7 @@ func undo_road() -> bool:
 
 
 func allocate_group_crews() -> bool:
+ if state.foreman.enabled: return ForemanRules.tick(state,0)
  var assigned=false
  for queued in state.jobs:
   if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free_builders()>0:

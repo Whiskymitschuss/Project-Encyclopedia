@@ -4,7 +4,7 @@ extends RefCounted
 static func build(state: Dictionary, device: Dictionary, save_status: String) -> String:
  # A deliberately small allowlist: never include the save, paths, user/unique IDs,
  # clipboard content, screenshots, private keys or environment variables.
- return """TIMBER LOOT · ALPHA 1 · TESTBERICHT
+ return """TIMBER LOOT · ALPHA 2 · TESTBERICHT
 Version: %s
 System: %s · %s
 Gerät/Grafik: %s

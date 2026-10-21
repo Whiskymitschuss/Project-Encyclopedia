@@ -122,7 +122,9 @@ func run() -> void:
  ui.select_job(int(game.state.jobs.back().id))
  await settle()
  check(ui.sheet.visible and ui.sheet.size.y<=218,"Construction cards share the same safe height limit")
- game.simulate(30)
+ for i in 180:
+  game.step(1)
+  if not game.state.delivery.shipments.is_empty(): break
  check(not game.state.delivery.shipments.is_empty(),"Transport selection uses a real active shipment")
  ui.select_truck({"kind":"truck","domain":"wood","id":int(game.state.delivery.shipments[0].id)})
  await settle()

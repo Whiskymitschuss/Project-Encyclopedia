@@ -58,11 +58,6 @@ func _ready() -> void:
  Models.box(crane,Vector3(12,0.45,0.6),Vector3(-4,0,0),Color("f3c55d"))
  Models.box(crane,Vector3(0.1,5,0.1),Vector3(-8,-2.5,0),Color("47636d"))
  Models.bake(crane)
- for i in mini(int(job.get("workers",0)),2 if Game.state.quality==0 else 5):
-  var worker=load("res://NPCs/ConstructionWorker.gd").new()
-  worker.job_id=job_id
-  worker.work_index=i
-  add_child(worker)
  refresh()
 
 func current_job() -> Dictionary:

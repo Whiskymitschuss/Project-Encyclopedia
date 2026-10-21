@@ -1,6 +1,19 @@
-# Timber Loot Tycoon — Alpha 1
+# Timber Loot Tycoon — Alpha 2
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+
+## Alpha 2 — 0.29-alpha.2
+
+Rückmeldungen aus dem ersten Handytest: neue Flammen und weicher Rauch,
+kompakte Einsatzanzeige, geräumte Bauflächen einschließlich BOSS-Baum,
+versetzte Forstmaschinen und laufende Baustellenteams. Ampeln und Abstände
+steuern den tatsächlichen Fahrfortschritt von LKWs, Diensten und Bussen.
+Ein Techniker repariert ausgefallene Ampeln. Bauleiterin Mara verteilt Teams,
+wechselt Bau- und Ladenlieferungen bei knapper Flotte ab und erklärt Engpässe.
+
+[Änderungen und Spielernutzen](docs/ALPHA2.md),
+[Installation](docs/alpha2/START-HIER.txt), [Testplan](docs/alpha2/TESTPLAN.txt).
+Als Update über Alpha 1 installieren, **nicht deinstallieren**.
 
 ## Alpha 1 — 0.28-alpha.1
 

@@ -162,17 +162,20 @@ func run() -> void:
   if child.get("job_id")==int(job.id): site=child; break
  check(site!=null and site.pieces.size()==7,"Material construction has seven distinct visible geometry stages")
  var worker=null
- for child in site.get_children():
-  if child.get("role")=="construction": worker=child; break
+ for child in scene.get_node("ConstructionCrews").workers:
+  if child.job_id==int(job.id): worker=child; break
  check(worker!=null,"A hired and assigned construction worker exists at the actual site")
- worker._process(0)
+ worker.transfer.clear()
+ worker.animate_crew(0)
  check(worker.work_state=="waiting_material" and not worker.board.visible,"Worker waits without carrying phantom material")
  for key in job.materials: job.delivered[key]=float(job.materials[key])
  game.state.elapsed=1
- worker._process(0)
+ worker.transfer.clear()
+ worker.animate_crew(0)
  check(worker.work_state=="carrying" and worker.board.visible,"Arrived construction materials activate the worker carrying state")
  game.state.elapsed=5
- worker._process(0)
+ worker.transfer.clear()
+ worker.animate_crew(0)
  check(worker.hammer.visible,"Working crew visibly switches to its construction tool")
  job.phase=3
  job.phase_left=0.5

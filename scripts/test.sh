@@ -12,6 +12,11 @@ check() {
  if rg -q '^(SCRIPT ERROR|ERROR):' "$test_data/log"; then return 1; fi
 }
 check --editor --import --quit
+if [ "$#" -gt 0 ]; then
+ for target in "$@"; do check --script "res://Tests/$target.gd"; done
+ exit 0
+fi
+check --script res://Tests/TrafficMaintenance29.gd
 check --script res://Tests/Alpha28.gd
 check --script res://Tests/AlphaProgression.gd
 check --script res://Tests/Rules.gd

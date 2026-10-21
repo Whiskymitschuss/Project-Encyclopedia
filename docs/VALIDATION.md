@@ -1,3 +1,41 @@
+# Prüfung Alpha 2 — 0.29-alpha.2
+
+- `bash scripts/test.sh`: **20,125 Prüfungen in 25 Headless-Suiten**,
+  keine Prüf-, Skript- oder Ladefehler. Zusätzlich beide natürlichen
+  Fortschrittsläufe sowie Hauptwelt und Boot je 90 Frames.
+- `bash scripts/test_visual.sh` mit allen zwölf Zielen: **490 OpenGL-Prüfungen**,
+  keine Prüf-, Skript- oder Ladefehler. Die Ziele wurden auf zwei Durchläufe
+  verteilt: neun Darstellungs-Suiten sowie VisualCityUX, VisualWorldTrade27 und
+  VisualAlpha28. [Einzelergebnisse](alpha2/automated-checks.json).
+- Neue Verkehrs-/Techniker-Suite: 30 Prüfungen. Kreuzende und hintereinander
+  fahrende LKWs, tatsächliche verzögerte Warenankunft, freigegebene Rückfahrten,
+  echte Technikeranfahrt und Reparatur, JSON-Wiederaufnahme, manuelle und
+  automatische Bauteams sowie freie Forstflächen.
+- Neue OpenGL-Suite: 25 Prüfungen. Weiche Flammen-/Rauchgeometrie, unveränderte
+  Wirtschaft beim Rendern, kompakte Brandanzeige bei 360×640, 591×1280 und
+  1280×800, geräumter BOSS-Standort, versetzte Forstmaschinen, Techniker vor Ort,
+  Ampelbudget, Akkumodus, reduzierte Bewegung und dieselbe laufende Bauarbeiterfigur
+  beim Baustellenwechsel. Lagerbuttons lassen den Touch-Bereich von LKWs frei.
+- Geführter Einstieg: Hütte und erstes Rathaus nach **630 simulierten Sekunden**,
+  ohne geschenkte Mittel. Alter Ersthaus-Lauf: 3.562 simulierte Sekunden.
+  Acht Offline-Stunden werden nach JSON-Laden mit demselben wirtschaftlichen
+  Ergebnis wiedergegeben. Der Host benötigte dafür rund 13,2 Sekunden bei
+  gleichzeitig laufenden OpenGL-Prüfungen; keine Android-Leistungsangabe.
+- Physische Touch-Ereignisse prüfen Fahrzeugauswahl, Karten, Baustellen,
+  Scrollen, Dialoge und Intro. Straßen-/Haltestellenschutz sowie tatsächliche
+  Materialkonservierung und gemeinsam gekaufte Fahrzeuge bleiben geprüft.
+- Einige OpenGL-Testprozesse melden beim Beenden eine ObjectDB-Aufräumwarnung.
+  Die Suiten beenden sich erfolgreich, ohne Skript-/Ladefehler. Das ist kein
+  Nachweis für einen bestandenen Langzeit-Speicher- oder Leistungstest am Handy.
+- Die fünf Nutzerscreenshots bestätigen einen spielbaren Android-Lauf der
+  vorigen Alpha 1. **Alpha 2 wurde hier nicht auf einem echten Android-Gerät
+  installiert oder gestartet.** Speziell dichte Städte, lange Spielzeiten,
+  Akkuverbrauch und Straßenstaus sind weiter auf echten Geräten zu prüfen.
+
+[Änderungen, Gründe, Spielernutzen und geschätzte Qualitätswirkung](ALPHA2.md).
+
+## Historische Prüfung Alpha 1
+
 # Prüfung Alpha 1 — 0.28-alpha.1
 
 - `bash scripts/test.sh`: **19.630 Prüfungen in 24 Headless-Suiten**, keine Fehler.

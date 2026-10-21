@@ -65,7 +65,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  # into a downstream recipe in the same simulation tick.
  var finished = []
  for shipment in data.shipments:
-  shipment.age = float(shipment.age)+delta
+  shipment.age=float(shipment.age)+TrafficRules.advance(shipment,delta)
   if not shipment.arrived and float(shipment.age)>=float(shipment.travel):
    data.buffers[shipment.target][shipment.key] += float(shipment.amount)
    shipment.arrived = true
@@ -142,6 +142,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   data.buffers[source][key] -= batch
   data.shipments.append({"id":data.next_id,"source":source,"target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":total,"age":0.0,"arrived":false})
   data.next_id += 1
+  if state.has("foreman"): state.foreman.transport_turn="construction"
  return report
 
 static func status(state: Dictionary, kind: String) -> Dictionary:

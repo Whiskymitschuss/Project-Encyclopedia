@@ -82,7 +82,7 @@ static func tick(state: Dictionary, delta: float) -> Dictionary:
  var report={"coins":0.0,"amount":0.0,"receipts":[]}
  var done=[]
  for trip in state.trade.shipments:
-  trip.age=float(trip.age)+delta
+  trip.age=float(trip.age)+TrafficRules.advance(trip,delta)
   if not trip.arrived and float(trip.age)>=float(trip.travel):
    trip.arrived=true
    var coins=float(trip.amount)*float(trip.unit_price)
