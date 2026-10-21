@@ -41,6 +41,20 @@ Qualitätswirkung: [Detailpass 0.26](DETAIL-PASS26.md).
 Fotos werden im App-Speicher gespeichert und sind in der Spielgalerie sichtbar;
 Systemgalerie-Export und Teilen sind nicht Bestandteil dieser Version.
 
+## Auslieferung 0.26
+
+APK aus Quell-Commit `5897b95a116de9b1385e85e7b4a9573376c8a415`, Version 0.26-test / Code 2600,
+63130168 Bytes. SHA256 `6504014e3311d549de249d4c47def4b7baa6f944efe8ff863fca148ef664539e`.
+Gleiches Paket und gleiches Testzertifikat wie 0.23/0.24/0.25.
+V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, beide ARM-Architekturen,
+Hochformat, Startszene und unveränderte Berechtigungen geprüft.
+Alle neuen Audio-, Wetter-, Tier-, Transport-, Enthüllungs- und Fotoskripte sowie
+Windshader sind tatsächlich im APK enthalten; Tests, Docs und Releases sind ausgeschlossen.
+
+Quell-ZIP: 356 Dateien, 20607690 Bytes,
+SHA256 `da445603307f1a13ecadaac8b2305ef8262d11342370375a00068a4a3a172ba4`.
+Jede Datei gegen den Git-Blob des APK-Quellstands geprüft.
+
 ## Historische Prüfung 0.25
 
 # Prüfung 0.25 — Waldleben und Qualitätsüberarbeitung

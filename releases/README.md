@@ -1,3 +1,30 @@
+# Detailwelt 0.26 — zehn Ideen umgesetzt
+
+**[APK 0.26 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.26.0-detailwelt/releases/Timber-Loot-Tycoon-v0.26-test.apk)**
+
+**[Passender Quellcode](Timber-Loot-Tycoon-v0.26-source.zip)**
+
+Als Update über **Timber Loot Neu ab 0.23** installieren; vorher nicht deinstallieren.
+Paket `com.whiskymitschuss.timberloot.reborn`, Version `0.26-test`, Code 2600.
+Testsignatur und Speicherbereich bleiben erhalten.
+
+Gemeinsamer Wind, räumliche Feuerwehrgeräusche, Fällklang und Baumstümpfe, nasse
+Straßen/Dächer, Vögel und Hasen, sichtbare Ladeübergaben, Bau-Enthüllung,
+Produktionshinweise, weichere Kamera sowie **Mehr → Fotomodus & Galerie**.
+Fotos werden auf diesem Gerät in der Spielgalerie gespeichert; kein automatischer
+Export in die Android-Systemgalerie. [Alle zehn Aufgaben](../docs/DETAIL-PASS26.md).
+
+19.502 Headless- und 361 gerenderte Prüfungen bestanden. Signatur v2,
+16-KB-Ausrichtung, API 24+, ARM64/ARMv7, OpenGL und Hochformat geprüft.
+Weiterhin nur optionale Vibration. Handytest, Hörprobe und mobile Leistungsmessung
+von 0.26 stehen aus.
+
+Quellstand `5897b95a116de9b1385e85e7b4a9573376c8a415`; Quell-ZIP: 356 Dateien einzeln mit Git abgeglichen.
+Hashdaten und Zertifikat im APK-Bericht und in `SHA256SUMS.txt`.
+Private Schlüssel, Spielstände und Fotos sind nicht enthalten.
+
+## Historische Veröffentlichung 0.25
+
 # Waldleben 0.25 — Qualitätsüberarbeitung
 
 **[APK 0.25 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.25.0-waldleben/releases/Timber-Loot-Tycoon-v0.25-test.apk)**
