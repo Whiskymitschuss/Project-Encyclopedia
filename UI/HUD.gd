@@ -96,7 +96,7 @@ func _ready() -> void:
  title.clip_text=true
  title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- edition = text(brand,"NEUBEGINN / 23",11,GOLD)
+ edition = text(brand,"BRANDSCHUTZ / 24",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  edition.custom_minimum_size.x=0
  edition.clip_text=true
@@ -360,7 +360,7 @@ func show_notice(message: String) -> void:
 func update_stats() -> void:
  emergency_button.visible=not Game.state.city_services.fires.is_empty()
  emergency_button.text="FEUERWEHR · %s\nEINSÄTZE ANSEHEN" % Game.state.city_services.fires.size()
- edition.text="NEUBEGINN / 23"
+ edition.text="BRANDSCHUTZ / 24"
  for chapter in Journey.CHAPTERS:
   if chapter.id==Game.state.journey.selected: edition.text=chapter.title.to_upper()
  money.text = "%s Münzen" % Catalog.number(Game.state.coins)
@@ -469,6 +469,7 @@ func render_menu() -> void:
   "networks": networks_menu()
   "transit": transit_menu()
   "services": services_menu()
+  "fire_protection": fire_protection_menu()
   "plot": plot_menu()
   "contracts": contracts_menu()
   "world": world_menu()
@@ -1097,13 +1098,21 @@ func construction_menu() -> void:
 func services_menu() -> void:
  modal_title.text="EINSATZZENTRALE & STADTLEBEN"
  var data=Game.state.city_services
- var summary=card("Feuerwehr im Einsatz" if not data.fires.is_empty() else "Deine Stadt ist sicher")
+ var summary=card("Feuerwehr im Einsatz" if not data.fires.is_empty() else "Keine aktiven Brände")
  dynamic_text(summary,func(): return "%s aktive Brände · %s erfolgreich gelöscht" % [data.fires.size(),int(data.fires_extinguished)])
+ dynamic_text(summary,func():
+  var fleet=FireSafety.fleet(Game.state)
+  return "Löschfahrzeuge: %s/%s belegt · %s frei · %s" % [fleet.busy,fleet.capacity,fleet.free,"Gemeindehilfe" if fleet.external else "Eigene Wache"])
+ button(summary,"RAUCHMELDER & HYDRANTEN",func(): open_menu("fire_protection"))
  for incident in data.fires:
   var fire=incident
   var home=Game.state.homes[int(fire.target_ref.index)]
   var alert=card("BRAND · "+str(Catalog.HOMES[home.kind].name))
-  dynamic_text(alert,func(): return "Gelöscht" if not fire in data.fires else "Löschfortschritt: %s %%" % int(float(fire.progress)*100) if float(fire.progress)>0 else "Feuerwehr auf Anfahrt" if int(fire.mission_id)>=0 else "Wartet auf freie Feuerwehr / Straßenanschluss")
+  dynamic_text(alert,func(): return FireSafety.status(Game.state,fire) if fire in data.fires else "Brand gelöscht")
+  if FireSafety.alarm_left(fire)>0:
+   button(alert,"JETZT FEUERWEHR ALARMIEREN",func(): action(func(): Game.report_fire(int(fire.id))))
+  if fire.get("wait_reason","")=="route":
+   button(alert,"STRASSENANSCHLUSS PRÜFEN",func(): open_menu("networks"))
   button(alert,"EINSATZORT ANSEHEN",func():
    if fire in data.fires:
     focus_requested.emit(CityServices.location(Game.state,fire.target_ref))
@@ -1178,3 +1187,25 @@ func stone_menu() -> void:
   button(buttons,"1 KAUFEN",func(): action(func(): Game.buy_stone_material(id,1)),unlocked)
   button(buttons,"10 KAUFEN",func(): action(func(): Game.buy_stone_material(id,10)),unlocked)
  button(contents,"BAUSTELLEN & LIEFERUNGEN",func(): open_menu("construction"))
+
+func fire_protection_menu() -> void:
+ modal_title.text="BRANDSCHUTZ FÜR DEINE STADT"
+ card("Früh erkennen. Schneller löschen.","Rauchmelder: sofortige automatische Erkennung neuer Brände statt 12 Sekunden Wartezeit. Hydrant: versorgt angeschlossene Gebäude im Umkreis von 44 m; Löscharbeit 24 statt 36 Sekunden. Kein laufender Münzverbrauch.")
+ var found=false
+ for i in Game.state.homes.size():
+  if not FireSafety.eligible(Game.state,i): continue
+  found=true
+  var index=i
+  var home=Game.state.homes[index]
+  var box=card(str(Catalog.HOMES[home.kind].name)+" · Grundstück %s" % (int(home.plot)+1))
+  var water=FireSafety.water_source(Game.state,index,Game.city_route_cache)
+  text(box,"Löschwasserversorgung: Hydrant in Reichweite" if not water.is_empty() else "Löschwasserversorgung: Fahrzeugversorgung",14,MUTED)
+  for part in ["detector","hydrant"]:
+   var kind=str(part)
+   var installed=FireSafety.installed(Game.state,index,kind)
+   var title="RAUCHMELDER" if kind=="detector" else "HYDRANT"
+   button(box,title+" INSTALLIERT" if installed else title+" · %s MÜNZEN" % Game.fire_protection_cost(kind),func(): action(func(): Game.buy_fire_protection(index,kind)),not installed and float(Game.state.coins)>=Game.fire_protection_cost(kind))
+  button(box,"GEBÄUDE ANSEHEN",func(): focus_requested.emit(Game.home_position(index)); close_menu())
+ if not found: card("Zuerst Wohnraum bauen","Sobald das erste bewohnte Stadtgebäude fertig ist, kannst du dort Rauchmelder und Hydranten installieren.")
+ text(contents,"Neue Rauchmelder gelten für neue Brandereignisse. Hydranten werden bei der Disposition geprüft; bereits laufende Einsätze behalten ihre geplante Löschzeit. Die Wirkung wird vor dem Kauf angezeigt.",14,MUTED)
+ button(contents,"ZUR EINSATZZENTRALE",func(): open_menu("services"))

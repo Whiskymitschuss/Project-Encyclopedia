@@ -2,6 +2,14 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Erweiterung 0.24 — umgesetzt
+
+Kaufbare Rauchmelder mit echter kürzerer Alarmierungszeit, automatische und manuelle
+Meldung, sichtbare Hydranten mit begrenzter Straßen-/Flächenversorgung, verkürzte
+Löscharbeit, gespeicherte Wasserquelle und Schläuche. Die Einsatzzentrale zeigt
+Kapazität, Wartegründe und verbleibende Einsatzzeiten. Bestehende Zeitpläne und
+Spielstände bleiben gültig. Details: [Brandschutz](FIRE-SAFETY.md).
+
 ## Erweiterungen 0.21 und 0.22 — umgesetzt
 
 Gespeicherte Gebäudebrände und automatische Feuerwehrfahrten über echte Straßen,

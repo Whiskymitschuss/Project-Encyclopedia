@@ -1094,6 +1094,7 @@ func remove_road(index: int) -> bool:
  for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments: paths.append(shipment.path)
  for mission in state.city_services.missions:
   paths.append_array([mission.outward,mission.second,mission.back])
+  if not mission.get("water_route",[]).is_empty(): paths.append(mission.water_route)
  for walker in state.city_services.walkers: paths.append(walker.path)
  for path in paths:
   for point in path.slice(1,-1):
@@ -1526,3 +1527,24 @@ func allocate_group_crews() -> bool:
    queued.workers=1
    assigned=true
  return assigned
+
+func fire_protection_cost(kind: String) -> int:
+ return ceili(float(FireSafety.COSTS.get(kind,0))*difficulty())
+
+func buy_fire_protection(index: int, kind: String) -> bool:
+ if not FireSafety.COSTS.has(kind) or not FireSafety.eligible(state,index) or FireSafety.installed(state,index,kind): return false
+ var cost=fire_protection_cost(kind)
+ if float(state.coins)<cost:
+  notice.emit("Nicht genug Münzen für diesen Brandschutz")
+  return false
+ var protection=state.homes[index].get("fire_safety",{}).duplicate()
+ protection[kind]=true
+ state.coins-=cost
+ state.homes[index].fire_safety=protection
+ changed.emit()
+ return true
+
+func report_fire(id: int) -> bool:
+ var result=FireSafety.raise_alarm(state,id)
+ if result: changed.emit()
+ return result

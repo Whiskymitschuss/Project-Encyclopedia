@@ -1,3 +1,31 @@
+# Prüfung 0.24 — Rauchmelder, Hydranten und Disposition
+
+- Vollständiges `bash scripts/test.sh`: **19.422 Headless-Prüfungen**, keine Fehler;
+  Spielszene und Startszene schließen ebenfalls erfolgreich ab.
+- Darin **36 neue Brandschutzprüfungen**: exakte/zweifache/abgelehnte Käufe,
+  keine Nebenwirkung reiner Abfragen, 44-m-Grenze, Straßenanbindung, tatsächliche
+  Löschzeit, Quelle und Schlauchroute, gleichwertige Fortsetzung nach JSON-Laden,
+  Detektion, manueller Alarm, unveränderte disponierte Zeiten, Altspielstände und
+  Schutz einer ausschließlich von einer Schlauchleitung verwendeten Straße.
+- Vollständiges `bash scripts/test_visual.sh`: **269 OpenGL-Prüfungen**, keine Fehler:
+  23 UI-, 28 Start-, 87 Karten-/Touch-, 45 Stadt-UX-, 50 Brand-/Format- und 36 neue
+  Brandschutzprüfungen. Software-OpenGL ist kein Android-Leistungsnachweis.
+- Echte Touch-Ereignisse kaufen beide Einrichtungen und alarmieren einen Brand;
+  Preise, Münzabzug und deaktivierte Folgebestellung werden überprüft. Die gekaufte
+  Wasserquelle erscheint tatsächlich im Einsatz und hat eine begrenzte, statisch
+  zusammengefasste Schlauchdarstellung. Rendering verändert keine Spielwerte.
+- Vier Fensterformate einschließlich großer Schrift geprüft. Die neuen Bilder
+  zeigen ein eigens aufgebautes Testprofil: [Welt](preview-protection24-world.png),
+  [Einsatzzentrale](preview-protection24-services.png).
+- Paket und Datenordner bleiben in der 0.23-Linie. Der Build-Helfer prüft die
+  tatsächliche Zertifikatskontinuität gegen den öffentlichen 0.23-Fingerabdruck.
+  Ein Kontrolllauf mit der historischen 0.20-APK wurde erwartungsgemäß wegen
+  abweichendem Signierer abgelehnt, ohne die historische Datei zu verändern.
+- Der Nutzer hat 0.23 im Chat als funktionierend bestätigt. Ein Handytest von 0.24,
+  Temperatur/Akku und Langzeit-Balancing werden damit nicht vorweggenommen.
+
+## Historische Prüfung 0.23
+
 # Prüfung 0.23 — neues Logo und Startintro
 
 - Vollständiger `bash scripts/test.sh`: **19.386 Prüfungen**, keine Fehler, dazu

@@ -3,6 +3,8 @@ extends Node3D
 var world: Node3D
 var scenes={}
 var clock=0.0
+var hydrants={}
+var protection_signature=[]
 
 func create_incident(roof: float) -> Node3D:
  var node=Node3D.new()
@@ -60,6 +62,7 @@ func create_incident(roof: float) -> Node3D:
 
 func _process(delta: float) -> void:
  clock+=delta
+ update_hydrants()
  var present={}
  for incident in Game.state.city_services.get("fires",[]):
   var id=int(incident.id)
@@ -72,10 +75,18 @@ func _process(delta: float) -> void:
   var node=scenes[id]
   node.position=CityServices.location(Game.state,incident.target_ref)
   var spraying=false
+  var assigned={}
   var progress=float(incident.progress)
   for mission in Game.state.city_services.missions:
    if int(mission.get("fire_id",-1))==id:
+    assigned=mission
     spraying=float(mission.age)>=float(mission.drive) and not mission.served
+  if not assigned.is_empty():
+   var arrival=node.to_local(LogisticsRoutes.vector(assigned.outward[-1]))
+   var angle=atan2(arrival.x,arrival.z)
+   node.get_node("Crew").rotation.y=angle
+   node.get_node("Water").rotation.y=angle
+  update_supply_hose(node,assigned,spraying)
   node.get_node("Crew").visible=spraying
   node.get_node("Water").visible=spraying
   var motion=bool(Game.state.ux.motion)
@@ -89,7 +100,7 @@ func _process(delta: float) -> void:
     puff.position.x=sin(clock*0.7+i)*1.5
     puff.position.y=6+fposmod(clock*0.9+i*1.8,10)
    puff.visible=Game.state.quality!=0 or i<2
-  node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "BRAND · WARTET AUF FEUERWEHR"
+  node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "BRAND · WARTET AUF FEUERWEHR"
   var status=node.get_node("Status")
   var screen=world.camera.unproject_position(node.position+status.position)
   var viewport_size=world.get_viewport().get_visible_rect().size
@@ -112,3 +123,54 @@ func sphere(parent: Node3D, radius: float, at: Vector3, color: Color) -> MeshIns
  node.material_override=Models.material(color)
  parent.add_child(node)
  return node
+
+func update_hydrants() -> void:
+ var installations=[]
+ for i in Game.state.homes.size():
+  if FireSafety.installed(Game.state,i,"hydrant"): installations.append([i,LogisticsRoutes.home_position(Game.state,i),int(Game.state.homes[i].get("rotation",0))])
+ var signature=[installations,hash(Game.state.town.roads),int(Game.state.town.districts)]
+ if signature!=protection_signature:
+  for node in hydrants.values():
+   remove_child(node)
+   node.queue_free()
+  hydrants.clear()
+  var cells=TownRules.road_cells(Game.state.town)
+  for item in installations:
+   var node=Node3D.new()
+   node.name="Hydrant_%s" % item[0]
+   add_child(node)
+   node.position=FireSafety.hydrant_position(Game.state,int(item[0]),cells)
+   Models.cylinder(node,0.65,0.18,Vector3(0,0.05,0),Color("a3b1af"))
+   Models.cylinder(node,0.42,1.55,Vector3(0,0.9,0),Color("c84132"))
+   Models.cylinder(node,0.53,0.3,Vector3(0,1.75,0),Color("f0c269"))
+   Models.box(node,Vector3(1.5,0.35,0.4),Vector3(0,1.2,0),Color("c84132"))
+   for side in [-0.78,0.78]: Models.box(node,Vector3(0.16,0.42,0.45),Vector3(side,1.2,0),Color("d7dbcf"))
+   Models.bake(node)
+   hydrants[int(item[0])]=node
+  protection_signature=signature.duplicate(true)
+ for node in hydrants.values(): node.visible=node.position.distance_to(world.focus)<world.zoom*1.5+35
+
+func update_supply_hose(node: Node3D, mission: Dictionary, spraying: bool) -> void:
+ var hose=node.get_node_or_null("SupplyHose")
+ if mission.is_empty() or mission.get("water_source_ref",{}).is_empty():
+  if hose!=null: hose.hide()
+  return
+ if hose==null:
+  hose=Node3D.new()
+  hose.name="SupplyHose"
+  node.add_child(hose)
+  var ref=mission.water_source_ref
+  var points=[FireSafety.hydrant_position(Game.state,int(ref.index))+Vector3(0,0.9,0)]
+  for point in mission.get("water_route",[]):
+   var p=LogisticsRoutes.vector(point)
+   p.y=1.05
+   points.append(p)
+  points.append(LogisticsRoutes.vector(mission.outward[-1])+Vector3(0,0.5,0))
+  for i in mini(96,points.size()-1):
+   var a=node.to_local(points[i])
+   var b=node.to_local(points[i+1])
+   if a.distance_to(b)<0.01: continue
+   var tube=Models.cylinder(hose,0.12,a.distance_to(b),(a+b)*0.5,Color("e1c76d"))
+   tube.quaternion=Quaternion(Vector3.UP,(b-a).normalized())
+  Models.bake(hose)
+ hose.visible=spraying

@@ -14,8 +14,14 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = Path(os.environ.get('TIMBER_RUNTIME', '/workspace/.timber-runtime'))
 SDK = RUNTIME / 'android-sdk'
 TOOLS = SDK / 'build-tools/36.0.0'
+# Public certificate fingerprint of the user-tested 0.23 line; not a private key.
+EXPECTED_SIGNER = 'a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9'
+PRESET = (ROOT / 'export_presets.cfg').read_text()
+VERSION_NAME = re.search(r'^version/name="([^"]+)"', PRESET, re.M).group(1)
+VERSION_CODE = re.search(r'^version/code=(\d+)', PRESET, re.M).group(1)
+PACKAGE = re.search(r'^package/unique_name="([^"]+)"', PRESET, re.M).group(1)
 parser = argparse.ArgumentParser()
-parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.23-test.apk')
+parser.add_argument('--output', type=Path, default=ROOT / f'exports/Timber-Loot-Tycoon-v{VERSION_NAME}.apk')
 parser.add_argument('--verify-only', action='store_true')
 args = parser.parse_args()
 output = args.output.resolve()
@@ -59,11 +65,14 @@ if not args.verify_only:
 
 signature = run([TOOLS/'apksigner','verify','--verbose','--print-certs',output])
 assert 'Verified using v2 scheme (APK Signature Scheme v2): true' in signature
+actual_signer = re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',signature).group(1)
+if actual_signer != EXPECTED_SIGNER:
+    raise RuntimeError('Signing certificate differs from the installed 0.23 line; refusing an incompatible update.')
 run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in ["package: name='com.whiskymitschuss.timberloot.reborn'", "versionName='0.23-test'", "versionCode='2300'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
+for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", f"versionCode='{VERSION_CODE}'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
@@ -73,6 +82,7 @@ with zipfile.ZipFile(output) as apk:
     assert apk.testzip() is None
     names = apk.namelist()
     assert 'assets/project.binary' in names
+    assert b'res://Scenes/Boot.tscn' in apk.read('assets/project.binary')
     assert 'assets/Economy/stone_industry.json' in names
     data=json.loads(apk.read('assets/Economy/stone_industry.json'))
     assert data['recipes']['blocks']['in']['rock']==3 and data['recipes']['blocks']['out']['stone']==5
@@ -80,10 +90,11 @@ with zipfile.ZipFile(output) as apk:
     assert any('Scenes/Boot.tscn' in x for x in names)
     assert any('Brand/timber-icon' in x for x in names)
     assert any('UI/Startup.gd' in x for x in names)
+    assert any('Economy/FireSafety.gd' in x for x in names)
     assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'version':'0.23-test','package':'com.whiskymitschuss.timberloot.reborn',
+    'version':VERSION_NAME,'package':PACKAGE,
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
     'signer_sha256':re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',signature).group(1),
     'debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],

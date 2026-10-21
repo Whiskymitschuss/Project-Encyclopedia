@@ -1,3 +1,43 @@
+# 0.24 — Rauchmelder und Hydranten
+
+## Bedienung und Wirkung
+
+Öffne **Mehr → Einsatzzentrale → Rauchmelder & Hydranten**. An jedem fertiggestellten
+bewohnten Stadtgebäude können Rauchmelder und ein Hydrant installiert werden.
+Die Hauskarte führt ebenfalls zum Brandschutz.
+
+Ein Rauchmelder kostet anfangs 125 Münzen und erkennt neue automatische Brände
+sofort. Ohne Melder dauert die Erkennung zwölf simulierte Sekunden. Wer Rauch
+selbst bemerkt, kann in der Einsatzzentrale sofort alarmieren. Melder verhindern
+keine Brandereignisse und verändern bereits bestehende Alarme nicht nachträglich.
+
+Ein Hydrant kostet anfangs 350 Münzen. Sein sichtbarer Standort liegt am straßenseitigen Rand des
+Grundstücks; er versorgt bewohnte Gebäude im horizontalen Umkreis von 44 m, wenn
+auch eine Straßenverbindung existiert. Bei Disposition wird der nächste geeignete
+Hydrant gespeichert. Die eigentliche Löscharbeit dauert dann 24 statt 36 Sekunden.
+Kein laufender Münz- oder Warenverbrauch. Die Preise folgen der vorhandenen
+Unternehmensära; der vollständige Preis wird vor dem Kauf angezeigt.
+
+Neue Installationen ändern keine bereits laufenden Einsatzzeiten. Aktive Quellen
+und die Straßen der gespeicherten Wasserleitung sind bis zur Rückkehr geschützt.
+Die Schlauchdarstellung wird erst beim Löschen eingeblendet und beeinflusst die
+Simulation nicht. Die Versorgung bleibt nach dem Löschen als gekaufte Einrichtung
+bestehen. Kein Gebäudeschaden und keine Strafzahlung wurden hinzugefügt.
+
+## Einsatzzentrale
+
+Die Zentrale zeigt die tatsächliche Zahl freier/belegter Löschfahrzeuge, eigene
+Wache oder Gemeindehilfe, Erkennung, fehlende Straßenanbindung, Warteschlange,
+Ankunftszeit, Löschfortschritt und verbleibende Arbeitszeit samt Wasserquelle.
+Routinefahrten und Rückfahrten belegen denselben vorhandenen Feuerwehrpool.
+
+Alte Schema-1-Spielstände bleiben gültig: unbekaufte Häuser bekommen nichts
+berechnet, bestehende Brandalarme bleiben gemeldet, laufende alte Einsätze behalten
+ihre bisherigen Zeiten. Ausrüstung, Alarmzeit, Wasserquelle und Schlauchroute
+überstehen JSON-Speicherung und die bestehende Offline-Simulation.
+
+## Frühere Abschnitte
+
 # 0.21 — Brandschutz
 
 Ab dem ersten bewohnten Stadtgebäude können alle 420 simulierten Sekunden bis zu
@@ -48,7 +88,7 @@ Nachweis für Android-Framerate, Temperatur, Akku oder physische Touchbedienung.
 
 ## Weitere Ideen, bewusst noch nicht als vorhanden angeboten
 
-- Prävention durch Rauchmelder und Hydranten, mit offen angezeigtem Nutzen.
+- Weitere Präventionsmaßnahmen mit offen angezeigtem Nutzen; Rauchmelder und Hydranten sind seit 0.24 umgesetzt.
 - Drehleiter und abgestimmte Verstärkung bei Hochhäusern, später Verletztenrettung.
 - Eigene priorisierte Leitstellenansicht mit nachvollziehbaren Alarmursachen.
 - Kleine, reparierbare Gebäudeschäden nur mit klarer Spielerinformation und sicherer

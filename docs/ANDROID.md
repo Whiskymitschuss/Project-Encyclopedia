@@ -1,3 +1,30 @@
+# Android-Test 0.24 — Update der neuen App-Linie
+
+**Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,
+Version `0.24-test`, Code 2400. Paket, Testzertifikat und Godot-Datenordner
+`TimberLootReborn` bleiben wie bei 0.23. **Über die vorhandene 0.23 installieren,
+nicht deinstallieren und keine App-Daten löschen.** Neue Brandschutzeinrichtungen
+werden nur durch bewusste Käufe hinzugefügt; alte Profile bleiben gültig.
+
+Die Datei liegt unter `releases/Timber-Loot-Tycoon-v0.24-test.apk`.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, nur optionale Vibration. Das neue
+App-Symbol und Startintro aus 0.23 bleiben erhalten. Die ursprüngliche Linie
+`com.whiskymitschuss.timberloot` bis 0.20 ist weiterhin ein anderes Paket.
+
+Der Nutzer hat Installation, Intro und Spielstart von 0.23 im Chat bestätigt.
+Ein entsprechender Gerätetest von 0.24 steht bis zur Rückmeldung weiterhin aus.
+Automatisierte Tests ersetzen keine Messungen von Framerate, Temperatur und Akku.
+
+`python3 scripts/build_android.py` verwendet Version und Paket direkt aus dem
+Export-Preset. Nach dem Signieren muss der Zertifikatsfingerabdruck mit der
+veröffentlichten 0.23 übereinstimmen; ein abweichender Signierer wird abgelehnt.
+Der vorhandene Schlüssel unter
+`/workspace/.timber-runtime/android/TimberLoot-Reborn-debug.keystore` bleibt
+unverändert, außerhalb von Git. Fehlt er, bricht der Helfer ab und erzeugt keinen
+Ersatz. APK-Bericht, ZIP-Ausrichtung und verpackte Startszene werden geprüft.
+
+## Historische Dokumentation 0.23
+
 # Android-Test 0.23 — neue App-Linie
 
 Die neue Test-App heißt **Timber Loot Neu**, Paket

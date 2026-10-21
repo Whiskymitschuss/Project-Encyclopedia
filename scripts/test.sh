@@ -30,6 +30,7 @@ check --script res://Tests/BuildingCard.gd
 check --script res://Tests/Journey.gd
 check --script res://Tests/Traffic.gd
 check --script res://Tests/Fire.gd
+check --script res://Tests/FireProtection.gd
 check --script res://Tests/Stone.gd
 check --script res://Tests/Startup.gd
 check res://Scenes/Main.tscn --quit-after 90

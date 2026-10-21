@@ -28,26 +28,33 @@ static func route(state: Dictionary, a: Vector3, b: Vector3, cache: Dictionary) 
  return cache[key]
 
 static func dispatch(state: Dictionary, kind: String, cache: Dictionary, incident: Dictionary = {}) -> bool:
- if not kind in TYPES or state.city_services.missions.size()>=8: return false
+ if not kind in TYPES: return false
+ if state.city_services.missions.size()>=8:
+  if not incident.is_empty(): incident.wait_reason="fleet"
+  return false
  var data=state.city_services
  var station_ref={"type":"entry","index":-1}
  var capacity=1
  for i in state.homes.size():
-  if state.homes[i].kind==BUILDINGS[kind]:
+  if state.homes[i].kind==BUILDINGS[kind] and int(state.homes[i].level)>0:
    station_ref={"type":"home","index":i}
    capacity=mini(3,1+int(state.homes[i].level)/3)
    break
  var busy=0
  for mission in data.missions:
   if mission.kind==kind: busy+=1
- if busy>=capacity: return false
+ if busy>=capacity:
+  if not incident.is_empty(): incident.wait_reason="fleet"
+  return false
  var targets=destinations(state)
  if targets.is_empty(): return false
  var target_ref=incident.target_ref if not incident.is_empty() else targets[posmod(int(data.next_id)-1,targets.size())]
  var a=location(state,station_ref)
  var b=location(state,target_ref)
  var outward=route(state,a,b,cache)
- if outward.size()<2: return false
+ if outward.size()<2:
+  if not incident.is_empty(): incident.wait_reason="route"
+  return false
  var back: Array = outward.duplicate(true)
  back.reverse()
  var destination_ref=target_ref
@@ -68,13 +75,17 @@ static func dispatch(state: Dictionary, kind: String, cache: Dictionary, inciden
  var speed=14.0 if kind=="taxi" else 17.0
  var t1=maxf(2,LogisticsRoutes.length(outward)/speed)
  var t2=maxf(2,LogisticsRoutes.length(second)/speed) if kind=="taxi" else 0.0
- var work=36.0 if not incident.is_empty() else 4.0 if kind=="taxi" else 10.0
+ var water_ref=FireSafety.water_source(state,int(target_ref.index),cache) if not incident.is_empty() else {}
+ var work=(FireSafety.WATER_WORK if not water_ref.is_empty() else FireSafety.BASE_WORK) if not incident.is_empty() else 4.0 if kind=="taxi" else 10.0
  var served=t1+work+t2+(3.0 if kind=="taxi" else 0.0)
  var total=served+maxf(2,LogisticsRoutes.length(back)/speed)
  data.missions.append({"id":data.next_id,"kind":kind,"source_ref":station_ref,"target_ref":target_ref,"destination_ref":destination_ref,"outward":outward.duplicate(true),"second":second.duplicate(true),"back":back.duplicate(true),"drive":t1,"second_drive":t2,"work":work,"served_at":served,"total":total,"age":0.0,"served":false,"reward":maxf(12,LogisticsRoutes.length(second)*0.25) if kind=="taxi" else 20.0,"external":station_ref.type=="entry"})
  if not incident.is_empty():
   data.missions[-1].fire_id=int(incident.id)
   incident.mission_id=int(data.next_id)
+  incident.wait_reason=""
+  data.missions[-1].water_source_ref=water_ref.duplicate(true)
+  data.missions[-1].water_route=route(state,location(state,water_ref),b,cache).duplicate(true) if not water_ref.is_empty() else []
  data.next_id+=1
  return true
 
@@ -164,12 +175,12 @@ static func uses_building(state: Dictionary, index: int, city: bool) -> bool:
  for incident in state.city_services.get("fires",[]):
   if incident.target_ref.type==type_value and int(incident.target_ref.index)==index: return true
  for mission in state.city_services.missions:
-  for ref in [mission.source_ref,mission.target_ref,mission.destination_ref]:
-   if ref.type==type_value and int(ref.index)==index: return true
+  for ref in [mission.source_ref,mission.target_ref,mission.destination_ref,mission.get("water_source_ref",{})]:
+   if ref.get("type","")==type_value and int(ref.index)==index: return true
  return false
 
 # Incidents share the existing bounded service fleet and saved road missions.
-static func ignite(state: Dictionary, target: Dictionary) -> bool:
+static func ignite(state: Dictionary, target: Dictionary, reported: bool = true) -> bool:
  var data=state.city_services
  if data.fires.size()>=2 or target.get("type","")!="home": return false
  var index=int(target.get("index",-1))
@@ -178,10 +189,10 @@ static func ignite(state: Dictionary, target: Dictionary) -> bool:
  if int(home.get("level",0))<1 or int(Catalog.HOMES[home.kind].people)<=0: return false
  for incident in data.fires:
   if int(incident.target_ref.index)==index: return false
- var incident={"id":int(data.next_fire),"target_ref":target.duplicate(true),"age":0.0,"mission_id":-1,"progress":0.0}
+ var incident={"id":int(data.next_fire),"target_ref":target.duplicate(true),"age":0.0,"mission_id":-1,"progress":0.0,"alarm_after":0.0 if reported or FireSafety.installed(state,index,"detector") else FireSafety.ALARM_DELAY,"wait_reason":""}
  data.next_fire=int(data.next_fire)+1
  data.fires.append(incident)
- UXRules.push_event(state,"fire:%s" % incident.id,"Brand gemeldet · Feuerwehr wird alarmiert",location(state,target),"services",1)
+ UXRules.push_event(state,"fire:%s" % incident.id,("Rauchentwicklung · Alarmierung steht aus" if FireSafety.alarm_left(incident)>0 else "Brand gemeldet · Feuerwehr wird alarmiert"),location(state,target),"services",1)
  return true
 
 static func tick_fires(state: Dictionary, delta: float, cache: Dictionary) -> void:
@@ -199,7 +210,7 @@ static func tick_fires(state: Dictionary, delta: float, cache: Dictionary) -> vo
    break
   if not assigned:
    incident.mission_id=-1
-   dispatch(state,"fire",cache,incident)
+   if FireSafety.alarm_left(incident)<=0: dispatch(state,"fire",cache,incident)
  if not data.enabled: return
  data.fire_clock=float(data.fire_clock)+delta
  if float(data.fire_clock)>=420.0:
@@ -207,4 +218,4 @@ static func tick_fires(state: Dictionary, delta: float, cache: Dictionary) -> vo
   var targets=destinations(state)
   if not targets.is_empty():
    for offset in targets.size():
-    if ignite(state,targets[posmod(int(data.next_fire)-1+offset,targets.size())]): break
+    if ignite(state,targets[posmod(int(data.next_fire)-1+offset,targets.size())],false): break

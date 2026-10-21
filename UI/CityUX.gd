@@ -211,6 +211,8 @@ func render_sheet() -> void:
    refresh(),not bill.is_empty())
   if city and float(Catalog.HOMES[b.kind].rent)>0: hud.button(actions,"Miete abholen",func(): Game.collect_rent(index); refresh())
   else: hud.button(actions,"Wege ausblenden" if world().get("selection_world")!=null and world().selection_world.show_routes else "Wege anzeigen",func(): toggle_routes())
+  if city and FireSafety.eligible(Game.state,index):
+   hud.button(sheet_body,"BRANDSCHUTZ · RAUCHMELDER & HYDRANT",func(): hud.open_menu("fire_protection"))
   var other=sheet_actions()
   hud.button(other,"Details ↑",func(): expand_selection())
   hud.button(other,"Stufen 1–10" if city else "Verschieben",func():
