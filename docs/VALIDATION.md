@@ -40,6 +40,19 @@ keine neue Langzeit-Balancing- oder Store-Freigabe. 0.23 wurde vom Nutzer bestä
 Änderungen, Gründe, Spielernutzen und geschätzte Qualitätswirkung für jede Aufgabe:
 [QUALITY-PASS.md](QUALITY-PASS.md).
 
+## Auslieferung 0.25
+
+APK aus Quell-Commit `f5de63c1166300e6083e6a4834c660929968ce52`, Version 0.25-test / Code 2500.
+63091750 Bytes, SHA256 `b22b55074ce9dd1a675e83bd066cd3cd92458e30f0f1e6ef5e4f154f12c20e9a`.
+Signatur wie 0.23/0.24, Paket unverändert. V2-Signatur, 16-KB-ZIP-Ausrichtung,
+beide ARM-Architekturen, API 24+, Hochformat, Berechtigungen und Startszene geprüft.
+Neue Feedbackskripte und Windshader sind tatsächlich im APK enthalten.
+
+Passende Quell-ZIP: 329 Dateien, 19534243 Bytes,
+SHA256 `ef3ba247f9effd276bdb8d5107f8f27634f4c79537cbccad7f916bcc5a2f1a04`.
+Jede Datei gegen den Git-Blob des APK-Quellstands geprüft; keine Schlüssel,
+Spielstände oder alten Release-Artefakte im Quellarchiv.
+
 ## Historische Prüfung 0.24
 
 # Prüfung 0.24 — Rauchmelder, Hydranten und Disposition

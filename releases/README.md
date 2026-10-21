@@ -1,3 +1,28 @@
+# Waldleben 0.25 — Qualitätsüberarbeitung
+
+**[APK 0.25 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.25.0-waldleben/releases/Timber-Loot-Tycoon-v0.25-test.apk)**
+
+**[Passender Quellcode](Timber-Loot-Tycoon-v0.25-source.zip)**
+
+Als Update über **Timber Loot Neu 0.23/0.24** installieren; nicht deinstallieren.
+Paket `com.whiskymitschuss.timberloot.reborn`, Version `0.25-test`, Code 2500.
+Bestehende Testsignatur und Speicherbereich bleiben erhalten.
+
+Neues HUD mit Währungskarten, Zielbalken und Mitteilungseingang; Wind und Baumfällen,
+Kaminrauch und echte Produktionspartikel; Funken, Wasser und Löschfortschritt;
+erkennbare Ausbaustufen und Belohnungsfeedback. Alle sieben Aufgaben samt
+Spielernutzen: [Qualitätsdokumentation](../docs/QUALITY-PASS.md).
+
+19.456 Headless- und 324 gerenderte Prüfungen bestanden. Signatur v2, 16-KB-Ausrichtung,
+API 24+, ARM64/ARMv7, OpenGL und Hochformat geprüft. Nur optionale Vibration.
+Ein echter Handytest von 0.25 und mobile Leistungs-/Akkumessungen stehen aus.
+
+Quellstand `f5de63c1166300e6083e6a4834c660929968ce52`; Quell-ZIP: 329 Dateien einzeln mit Git abgeglichen.
+Hashdaten und Zertifikat im APK-Bericht und in `SHA256SUMS.txt`.
+Private Schlüssel und Spielstände sind nicht enthalten.
+
+## Historische Veröffentlichung 0.24
+
 # Brandschutz 0.24 — Update für Timber Loot Neu
 
 **[APK 0.24 herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.24.0-brandschutz/releases/Timber-Loot-Tycoon-v0.24-test.apk)**
