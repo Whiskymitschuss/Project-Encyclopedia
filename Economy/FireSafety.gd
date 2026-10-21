@@ -16,6 +16,9 @@ static func installed(state: Dictionary, index: int, kind: String) -> bool:
 static func hydrant_position(state: Dictionary, index: int, cells: Dictionary = {}) -> Vector3:
  var home=state.homes[index]
  var center=LogisticsRoutes.home_position(state,index)
+ var saved=home.get("fire_safety",{}).get("hydrant_offset",[])
+ if saved is Array and saved.size()==3:
+  return center+LogisticsRoutes.vector(saved).rotated(Vector3.UP,deg_to_rad(float(home.get("rotation",0))))
  if cells.is_empty(): cells=TownRules.road_cells(state.town)
  var road=TownRules.nearest(center,cells,32.0)
  if road!=null:

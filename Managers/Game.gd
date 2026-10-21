@@ -1538,6 +1538,10 @@ func buy_fire_protection(index: int, kind: String) -> bool:
   notice.emit("Nicht genug Münzen für diesen Brandschutz")
   return false
  var protection=state.homes[index].get("fire_safety",{}).duplicate()
+ if kind=="hydrant":
+  var offset=FireSafety.hydrant_position(state,index)-LogisticsRoutes.home_position(state,index)
+  offset=offset.rotated(Vector3.UP,-deg_to_rad(float(state.homes[index].get("rotation",0))))
+  protection.hydrant_offset=[offset.x,offset.y,offset.z]
  protection[kind]=true
  state.coins-=cost
  state.homes[index].fire_safety=protection

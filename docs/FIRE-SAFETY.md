@@ -18,7 +18,9 @@ Hydrant gespeichert. Die eigentliche Löscharbeit dauert dann 24 statt 36 Sekund
 Kein laufender Münz- oder Warenverbrauch. Die Preise folgen der vorhandenen
 Unternehmensära; der vollständige Preis wird vor dem Kauf angezeigt.
 
-Neue Installationen ändern keine bereits laufenden Einsatzzeiten. Aktive Quellen
+Der gewählte Hydrantstandort wird beim Kauf relativ zum Gebäude gespeichert.
+Neue Straßen versetzen ihn nicht; nach einem erlaubten Gebäudeumzug folgt er
+dem Grundstück. Neue Installationen ändern keine bereits laufenden Einsatzzeiten. Aktive Quellen
 und die Straßen der gespeicherten Wasserleitung sind bis zur Rückkehr geschützt.
 Die Schlauchdarstellung wird erst beim Löschen eingeblendet und beeinflusst die
 Simulation nicht. Die Versorgung bleibt nach dem Löschen als gekaufte Einrichtung
