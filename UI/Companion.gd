@@ -165,7 +165,7 @@ func _process(delta: float) -> void:
   pending={}
  elif not enabled_before: greeted=false
  enabled_before=enabled
- var available=enabled and not hud.overlay.visible and not hud.placement_panel.visible and (hud.get("ux")==null or not hud.ux.panels_visible())
+ var available=enabled and not Game.state.get("onboarding",{}).get("active",false) and not hud.overlay.visible and not hud.placement_panel.visible and (hud.get("ux")==null or not hud.ux.panels_visible())
  avatar.visible=available
  portrait.running=available
  if not available:

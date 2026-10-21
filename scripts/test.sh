@@ -12,6 +12,8 @@ check() {
  if rg -q '^(SCRIPT ERROR|ERROR):' "$test_data/log"; then return 1; fi
 }
 check --editor --import --quit
+check --script res://Tests/Alpha28.gd
+check --script res://Tests/AlphaProgression.gd
 check --script res://Tests/Rules.gd
 check --script res://Tests/Progression.gd
 check --script res://Tests/Scene.gd

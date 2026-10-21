@@ -2,25 +2,82 @@ extends Node
 
 const PATH = "user://timber_rebuild.json"
 var last_error = ""
+var load_status="new"
+var recovery_required=false
+
+func valid_shape(data: Variant) -> bool:
+ if not data is Dictionary or not data.get("schema") is float and not data.get("schema") is int: return false
+ if int(data.schema)!=1: return false
+ for key in ["resources","ux","onboarding","journey","town","trade","stone","city_services","research","boosters","delivery","inventory","projects","plan","missions_claimed"]:
+  if data.has(key) and not data[key] is Dictionary: return false
+ for key in ["buildings","homes","jobs","construction_shipments"]:
+  if data.has(key) and not data[key] is Array: return false
+ for key in ["coins","diamonds","tickets","tokens","cash","bag","workers","trucks","vehicle","tool","biome","unlocked","tutorial","elapsed","last_seen"]:
+  if data.has(key) and (not data[key] is float and not data[key] is int or not is_finite(float(data[key])) or float(data[key])<0): return false
+ for key in data.get("resources",{}):
+  var amount=data.resources[key]
+  if not amount is float and not amount is int or not is_finite(float(amount)) or float(amount)<0: return false
+ for group in ["buildings","homes"]:
+  var definitions=Catalog.BUILDINGS if group=="buildings" else Catalog.HOMES
+  for record in data.get(group,[]):
+   if not record is Dictionary or not record.get("kind") is String: return false
+   if not definitions.has(record.kind): return false
+   if not record.get("level",1) is float and not record.get("level",1) is int: return false
+   if not is_finite(float(record.get("level",1))) or float(record.get("level",1))<1: return false
+   if record.has("position"):
+    if not record.position is Array or record.position.size()!=2: return false
+    for coordinate in record.position:
+     if not coordinate is float and not coordinate is int or not is_finite(float(coordinate)): return false
+ for pair in [["town","roads"],["town","stops"],["town","lines"],["trade","shipments"],["stone","shipments"],["delivery","shipments"],["city_services","missions"],["city_services","walkers"],["city_services","fires"]]:
+  if data.get(pair[0],{}).has(pair[1]) and not data[pair[0]][pair[1]] is Array: return false
+ return true
 
 func read_file(path: String) -> Dictionary:
  if not FileAccess.file_exists(path): return {}
  var file = FileAccess.open(path, FileAccess.READ)
- if file == null: return {}
+ if file == null or file.get_length()>16*1024*1024: return {}
  var parser = JSON.new()
  if parser.parse(file.get_as_text()) != OK: return {}
- var parsed = parser.data
- if parsed is Dictionary and int(parsed.get("schema",0)) == 1:
-  return parsed
- return {}
+ return parser.data if valid_shape(parser.data) else {}
 
 func load_game() -> Dictionary:
- var result = read_file(PATH)
- if result.is_empty(): result = read_file(PATH + ".bak")
+ recovery_required=false
+ var result=read_file(PATH)
+ load_status="current"
+ if result.is_empty():
+  result=read_file(PATH+".bak")
+  load_status="backup"
+ if result.is_empty():
+  recovery_required=FileAccess.file_exists(PATH) or FileAccess.file_exists(PATH+".bak")
+  load_status="blocked" if recovery_required else "new"
  return result
+
+func archive_unreadable() -> bool:
+ last_error=""
+ var directory=ProjectSettings.globalize_path("user://recovery")
+ if DirAccess.make_dir_recursive_absolute(directory)!=OK:
+  last_error="Die bisherigen Dateien konnten nicht gesichert werden."
+  return false
+ var stamp=str(Time.get_unix_time_from_system()).replace(".","-")
+ for suffix in ["",".bak"]:
+  var source=ProjectSettings.globalize_path(PATH+suffix)
+  if not FileAccess.file_exists(source): continue
+  var target=directory+"/timber-"+stamp+suffix+".json"
+  if DirAccess.copy_absolute(source,target)!=OK or FileAccess.get_sha256(source)!=FileAccess.get_sha256(target):
+   last_error="Die bisherigen Dateien konnten nicht gesichert werden."
+   return false
+ recovery_required=false
+ load_status="archived"
+ return true
 
 func save_game(data: Dictionary) -> bool:
  last_error = ""
+ if recovery_required:
+  last_error="Beschädigter Spielstand · bitte zuerst die Wiederherstellung öffnen."
+  return false
+ if not valid_shape(data):
+  last_error="Spielstand enthält ungültige Werte und wurde nicht übernommen."
+  return false
  var tmp = PATH + ".tmp"
  var file = FileAccess.open(tmp, FileAccess.WRITE)
  if file == null:

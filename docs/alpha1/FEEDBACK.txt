@@ -1,0 +1,26 @@
+TIMBER LOOT – ALPHA-1-FEEDBACK
+
+Version: 0.28-alpha.1
+Handymodell:
+Android-Version:
+
+Was ist passiert / was ist unklar?
+
+Schritte zum Wiederholen:
+1.
+2.
+3.
+
+Was hattest du erwartet?
+
+Wie oft passiert es? Immer / manchmal / einmal
+
+Screenshot oder Video: optional separat beilegen
+
+Was hat dir gefallen?
+
+Was sollten wir als Erstes verbessern?
+
+Tipp: Mehr → Alpha 1 → Text kopieren erstellt einen Bericht mit Spielversion,
+Geräteangaben und einem kleinen Überblick zum Spielfortschritt. Er enthält
+keine komplette Spielstanddatei und wird nicht automatisch versendet.

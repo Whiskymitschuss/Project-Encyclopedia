@@ -1,3 +1,60 @@
+# Prüfung Alpha 1 — 0.28-alpha.1
+
+- `bash scripts/test.sh`: **19.630 Prüfungen in 24 Headless-Suiten**, keine Fehler.
+  Zusätzlich alter Ersthaus-Fortschritt, neuer geführter Alpha-Start und Hauptwelt-/
+  Intro-Starttests. Die neue Alpha-Suite enthält 35 Prüfungen.
+- `bash scripts/test_visual.sh`: **465 Prüfungen in elf OpenGL-Suiten**, keine
+  Skript-/Ladefehler. Die neue Alpha-Suite enthält 59 Prüfungen, mit physischen
+  Touch-Ereignissen, echter Tastatureingabe, Zwischenablage und lokalem Bericht.
+- Neuer Start ohne Ressourcen- oder Währungsgeschenke: fünf tatsächliche
+  Baumaktionen, Holz aus dem Rucksack, reale Bretterproduktion, bezahlter Verkauf,
+  erste bezahlte Hütte und danach das Rathaus. **Hütte und erstes Rathaus nach
+  444 simulierten Sekunden** bei regelmäßigem aktivem Spielen und Kapitelbelohnungen.
+  Acht Stunden Offline-Fortschritt werden nach JSON-Laden wirtschaftlich gleich
+  wiedergegeben. Das ist eine Simulation, keine echte achtstündige Gerätesitzung.
+- Der Titelbildschirm verändert keine Wirtschaftsbestände. Ein echter Play-Touch
+  öffnet die Welt, wiederholte Startaufrufe erzeugen keine doppelten Szenen.
+  Intro überspringen, reduzierte Bewegung, sofortiges Weiterspielen und gleichmäßige
+  Skalierung sind geprüft. Das Diorama besitzt eine eigene 3D-Welt und nativen Aspekt.
+- Tutorial nach Neuladen sowie nach „Später“ fortsetzbar. Tatsächlicher vierter
+  Schritt bleibt angezeigt. Ein bezahlter Bau wird nicht als fertig vorgetäuscht;
+  ein fehlender/abgebrochener Auftrag kann keinen Abschluss erfinden. Alte Spielstände
+  ergänzen die neuen Hilfedaten, ohne Firmenfortschritt zurückzusetzen.
+- Android-Zurück-Benachrichtigung schließt Menü/Bauvorschau oder öffnet Spielmenü.
+  Touch auf Speichern/Start, Zurückkehren zum Titel und erneutes Öffnen der Welt
+  gelingen ohne abgelösten Viewportzugriff. Nach wiederholten Welt-/Titelwechseln
+  entstehen keine zusätzlichen verwaisten Nodes. Das ersetzt kein mobiles Speicherprofil.
+- Testbericht per tatsächlichem Touch fokussiert und mit Unicode-Tastaturereignis
+  bearbeitet. Physisches Kopieren und Sichern behalten den gesamten Nutzertext;
+  Menüwechsel verlieren keinen bearbeiteten Entwurf. Eine feste Diagnose-Liste
+  übernimmt weder vollständigen Spielstand noch private Felder oder Gerätekennung.
+- Defekte JSON-Struktur, negative Werte, unbekannte Gebäudetypen und beschädigte
+  Haupt-/Sicherungsdateien geprüft. Backup-Fallback funktioniert. Autosave überschreibt
+  unlesbare Originale nicht; explizite Wiederherstellung bewahrt eine bytegleiche Kopie.
+  Die Prüfung ist kein vollständiger Validator für beliebig manipulierte Spielstände.
+- Ungültige Straßenraster-Endpunkte und unrealistische Längen werden sofort verworfen.
+  Bestehende Produktions-, Baustellen-, Stadt-, Brand-, Hydranten- und Exportprüfungen
+  bestehen weiter. Szenen- und Paketidentität bleiben updatefähig.
+- Tatsächliche logische Viewports **360×640, 540×960 und 1100×700**, normale und große
+  Schrift im neuen Feedbackmenü. Intro zusätzlich 591×1280 und 1280×800; Textfelder
+  verursachen keine horizontale Seitenverbreiterung. Kleine Displays behalten mindestens
+  140 Pixel Lesefläche und einen kürzeren Editor für erreichbare Seitengesten.
+
+Vorschauen aus isolierten Testprofilen: [Intro](alpha1/preview-intro.png),
+[Tutorial](alpha1/preview-tutorial.png), [erster Bauabschluss](alpha1/preview-success.png),
+[schmales Feedbackmenü](alpha1/preview-report.png).
+[Änderungen und Qualitätswirkung](ALPHA1.md), [Testerinstallation](alpha1/START-HIER.txt).
+
+Gerendert mit Mesa/llvmpipe unter Xvfb; Ton im Test über Dummy-Treiber.
+Ein zusätzlicher ausführlicher Startup-Lauf zeigte keinen ObjectDB-Abschlusshinweis;
+gelegentliche entsprechende Hinweise in bisherigen Desktop-Prüfläufen bleiben eine
+Diagnosegrenze. Keine Aussage über einen auf einem echten Handy gemessenen Speicherverlauf.
+**Installation, Tastatur/Zurück-Taste, Klang, Framerate, Wärme und Akku müssen noch auf
+realen Android-Geräten geprüft werden.** Langfristige Balance und vollständige
+Fehlerfreiheit sind damit nicht bewiesen. Hafen-/Schiffs- und Luftfracht bleiben geplant.
+
+## Historische Prüfung 0.27
+
 # Prüfung 0.27 — freie Welt und Autobahnhandel
 
 - **19.595 Prüfungen in 23 Headless-Suiten**, keine Fehler. Vollständiger Lauf mit

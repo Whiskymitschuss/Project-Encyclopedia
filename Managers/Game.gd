@@ -3,6 +3,7 @@ extends Node
 signal sale_completed(material: String, coins: float, point: Vector3)
 signal reward_claimed(title: String, coins: float)
 signal fire_extinguished(point: Vector3)
+signal back_requested
 signal changed
 signal shipment_delivered(point: Vector3, material: String, amount: float)
 signal notice(message: String)
@@ -13,6 +14,7 @@ signal construction_phase_completed(job_id: int, phase: int)
 signal company_level_unlocked(level: int)
 signal construction_finished(point: Vector3, job_type: String)
 
+var live_world=true
 var state: Dictionary
 var flow: Dictionary = {}
 var tick_clock = 0.0
@@ -37,7 +39,7 @@ func initial_state() -> Dictionary:
  for kind in ["station","sawmill","warehouse","cabin","market"]:
   buildings.append({"kind":kind,"level":1,"paused":false})
  return {
-  "schema":1, "ux":UXRules.initial(), "journey":Journey.initial(), "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
+  "schema":1, "onboarding":TutorialRules.initial(), "ux":UXRules.initial(), "journey":Journey.initial(), "coins":350.0, "diamonds":5, "tickets":0, "tokens":0, "cash":0,
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
@@ -63,6 +65,7 @@ func _ready() -> void:
   if offline > 60:
    return_report=Journey.resume_report(state,before,offline)
    offline_report = "%s Min. offline · +%s Münzen" % [int(offline/60),Catalog.number(state.coins-float(before.coins))]
+ get_tree().quit_on_go_back=false
  process_mode = Node.PROCESS_MODE_ALWAYS
 
 func restore(saved: Dictionary) -> void:
@@ -70,6 +73,8 @@ func restore(saved: Dictionary) -> void:
  for key in state:
   if saved.has(key):
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
+ for key in TutorialRules.initial():
+  if not state.onboarding.has(key): state.onboarding[key]=TutorialRules.initial()[key]
  for key in UXRules.initial():
   if not state.ux.has(key): state.ux[key]=UXRules.initial()[key]
  for key in Catalog.RESOURCES:
@@ -113,11 +118,14 @@ func snapshot() -> Dictionary:
  return data
 
 func save(silent: bool = false) -> bool:
+ var previously_ok=last_save_ok
  last_save_ok = Store.save_game(snapshot())
+ if silent and previously_ok and not last_save_ok: notice.emit("Speichern fehlgeschlagen · "+Store.last_error)
  if not silent: notice.emit("Spielstand gespeichert" if last_save_ok else Store.last_error)
  return last_save_ok
 
 func _notification(what: int) -> void:
+ if what==NOTIFICATION_WM_GO_BACK_REQUEST: back_requested.emit()
  if what == NOTIFICATION_APPLICATION_PAUSED:
   paused_at=Time.get_unix_time_from_system()
   pause_capture=Journey.resume_capture(state)
@@ -143,6 +151,7 @@ func resume_company(now: float) -> void:
  save(true)
 
 func _process(delta: float) -> void:
+ if not live_world: return
  if skip_resume_delta:
   # The OS may report the whole background interval as this frame's delta.
   # resume_company has already simulated it from the saved wall-clock gap.
@@ -398,7 +407,7 @@ func chop() -> void:
  Journey.add(state,"trees")
  Journey.add(state,"gathered",amount)
  add_company_xp(2)
- if state.tutorial == 1 and state.trees >= 5: state.tutorial = 2
+ if state.tutorial == 1 and int(state.trees)-int(state.onboarding.start_trees)>=5: state.tutorial = 2
  harvested.emit(int(state.biome),amount)
  if rng.randf() < 0.12*(1+research_level("loot")*0.08+int(state.permanent_loot)*0.1)*boost("loot")*multiplier():
   state.tickets += 1
@@ -564,7 +573,9 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0) -> b
  state.jobs.append({"id":state.next_job,"type":"building","kind":kind,"left":duration,"total":duration,"slot":state.buildings.size()+pending,"position":[position_value.x,position_value.z],"rotation":rotation,"materials":build_materials(kind) if company_level()>=4 else {},"delivered":{}})
  if company_level()>=4: ConstructionRules.attach(state.jobs.back(),1 if free_builders()>0 else 0)
  state.next_job += 1
- if state.tutorial == 4: state.tutorial = 5
+ if state.tutorial == 4 or TutorialRules.phase(state)=="build":
+  if state.onboarding.active: state.onboarding.job=int(state.jobs.back().id)
+  state.tutorial = 5
  rebuild_world.emit()
  changed.emit()
  save(true)
@@ -651,6 +662,7 @@ func upgrade_home(index: int, batch: bool = false) -> bool:
  return true
 
 func finish_job(job: Dictionary) -> void:
+ if int(job.get("id",-2))==int(state.onboarding.job): state.onboarding.finished=true
  Journey.add(state,"completed")
  add_company_xp(25 if job.type=="home" else 15 if job.type=="building" else 8)
  match job.type:
@@ -1596,3 +1608,27 @@ func report_fire(id: int) -> bool:
  var result=FireSafety.raise_alarm(state,id)
  if result: changed.emit()
  return result
+
+func begin_tutorial() -> void:
+ if not TutorialRules.can_resume(state): return
+ state.onboarding.active=true
+ state.onboarding.paused=false
+ if int(state.tutorial)==0:
+  state.onboarding.start_trees=int(state.trees)
+  state.tutorial=1
+ changed.emit()
+ save(true)
+
+func pause_tutorial() -> void:
+ state.onboarding.active=false
+ state.onboarding.paused=true
+ changed.emit()
+ save(true)
+
+func end_tutorial(completed: bool=false) -> void:
+ state.onboarding.active=false
+ state.onboarding.paused=false
+ state.onboarding.finished=completed
+ state.tutorial=5
+ changed.emit()
+ save(true)

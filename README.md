@@ -1,6 +1,23 @@
-# Timber Loot Tycoon — Freie Welt & Handel 0.27
+# Timber Loot Tycoon — Alpha 1
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+
+## Alpha 1 — 0.28-alpha.1
+
+Ein neuer 3D-Startbildschirm und Benno begleiten den ersten spielbaren Einstieg:
+fünf Bäume → Holz abliefern → echte Bretter → erster Verkauf → eigene Hütte.
+Die Anleitung bleibt klein, lässt sich pausieren und setzt gespeicherten Fortschritt fort.
+Erfahrene Spieler spielen direkt weiter.
+
+Fehler bei Tutorialfortschritt, Szenenwechseln per Touch, Android-Zurück,
+Texteingaben und beschädigten Speicherdateien sind abgesichert. Kleine Displays
+und große Schrift haben eine kompaktere Navigation. **Mehr → Alpha 1 · Testen &
+Feedback** bietet einen bearbeitbaren, kopierbaren Bericht ohne automatisches Senden.
+
+[Alpha-Änderungen und Spielernutzen](docs/ALPHA1.md),
+[Installation](docs/alpha1/START-HIER.txt), [Testplan](docs/alpha1/TESTPLAN.txt).
+Die Alpha aktualisiert dieselbe App ab 0.23. **Nicht vorher deinstallieren.**
+Die APK heißt im Launcher jetzt **Timber Loot Alpha**.
 
 ## Neu in 0.27 — freie Welt & Autobahnexport
 
@@ -99,7 +116,7 @@ Die alte signierte APK 0.20 bleibt unverändert erhalten.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.27-test.apk](releases/Timber-Loot-Tycoon-v0.27-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.28-alpha.1.apk](releases/Timber-Loot-Tycoon-v0.28-alpha.1.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 

@@ -34,6 +34,14 @@ var placement_title: Label
 var placement_hint: Label
 var placement_materials: Label
 var placement_confirm: Button
+var coach: Control
+var alpha_desk
+var market_all=false
+var narrow_layout=false
+var navigation_buttons=[]
+var chop_button: Button
+var deposit_button: Button
+var sell_button: Button
 var build_category = "Produktion"
 var spatial_icons: SubViewport
 var ux: Control
@@ -115,7 +123,7 @@ func _ready() -> void:
  diamonds=resource_counter(counters,"gem",17)
  loot_counter=resource_counter(counters,"more",17)
  subtitle = text(top,"",12,MUTED)
- mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<4 else "journey"))
+ mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<=4 and not Game.state.onboarding.paused else "journey"))
  mission_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  mission_button.offset_left = 14
  mission_button.offset_right = -14
@@ -186,10 +194,11 @@ func _ready() -> void:
  var chop = button(actions,"FÄLLEN",func():
   if Game.state.bag < Game.bag_capacity(): focus_requested.emit(Catalog.biome_position(int(Game.state.biome)))
   Game.chop())
+ chop_button=chop
  chop.add_theme_stylebox_override("normal",style(GOLD,14))
  chop.add_theme_color_override("font_color",INK)
- button(actions,"Abliefern",func(): Game.deposit(); camera_action.emit("home"))
- button(actions,"Verkaufen",func(): open_menu("market"))
+ deposit_button=button(actions,"Abliefern",func(): Game.deposit(); camera_action.emit("home"))
+ sell_button=button(actions,"Verkaufen",func(): open_menu("market"))
  for control in actions.get_children():
   control.custom_minimum_size.y=40
   compact_style(control,GOLD if control==chop else PANEL)
@@ -199,6 +208,7 @@ func _ready() -> void:
   var nav_button = button(navigation,str(entry[0]),func():
    if tab=="catalog" and ux!=null: ux.open_palette()
    else: open_menu("overview" if tab=="world" else tab))
+  navigation_buttons.append({"button":nav_button,"name":str(entry[0])})
   nav_button.text="\n\n"+str(entry[0])
   nav_button.custom_minimum_size.y=68
   nav_button.add_theme_font_size_override("font_size",12)
@@ -242,12 +252,18 @@ func _ready() -> void:
  build_placement_bar()
  journey_ui=load("res://UI/JourneyUI.gd").new()
  journey_ui.hud=self
+ alpha_desk=load("res://UI/AlphaDesk.gd").new()
+ alpha_desk.hud=self
  companion=load("res://UI/Companion.gd").new()
  companion.hud=self
  add_child(companion)
  ux=load("res://UI/CityUX.gd").new()
  ux.hud=self
  add_child(ux)
+ coach=load("res://UI/TutorialCoach.gd").new()
+ coach.hud=self
+ add_child(coach)
+ Game.back_requested.connect(back)
  ux.call_deferred("apply_accessibility")
  Game.changed.connect(update_stats)
  Game.notice.connect(show_notice)
@@ -267,6 +283,19 @@ func _ready() -> void:
 
 # Keep a consistent, centered reading width on tablets without stretching controls.
 func layout_interface() -> void:
+ var narrow=size.x<430
+ if narrow!=narrow_layout:
+  narrow_layout=narrow
+  update_stats()
+ for item in navigation_buttons:
+  var caption=str(item.name)
+  if narrow: caption={"Bauen":"Bau","Aufträge":"Jobs"}.get(caption,caption)
+  item.button.text="\n\n"+caption
+ for control in [chop_button,deposit_button,sell_button]:
+  if control==null: continue
+  control.add_theme_font_size_override("font_size",roundi((15 if narrow else 17)*(1.15 if Game.state.ux.large_text else 1.0)))
+  control.custom_minimum_size.y=44 if narrow else 40
+ if sell_button!=null: sell_button.text="Verkauf" if narrow else "Verkaufen"
  var inset=maxf(14,(size.x-760)/2)
  for panel in [header_panel,bottom_panel,mission_button,overlay]:
   if panel!=null:
@@ -452,15 +481,22 @@ func update_stats() -> void:
  if Game.state.delivery.active:
   var order = Game.state.delivery.order
   supply.text = "HOLZ → BRETTER → MÖBEL\nLADEN %s/%s · %s" % [int(order.delivered),int(order.amount),"SPÄT · 70 %" if order.late else "%02d:%02d" % [int(float(order.left)/60),int(order.left)%60]]
+ if narrow_layout and not Game.state.delivery.active:
+  supply.text="HOLZ %s · BRETTER %s\nMÖBEL %s · %s LKW" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks)]
  var fill = float(Game.state.resources.sawdust)/Game.capacity()
- sawdust_button.text="SPÄNEBOX\n%s %% · LEEREN" % int(fill*100)
+ sawdust_button.text=("SPÄNE\n%s %% leeren" if narrow_layout else "SPÄNEBOX\n%s %% · LEEREN") % int(fill*100)
  compact_style(sawdust_button,Color("e78a45") if fill>=0.8 else Color("258f8d"))
  mission_button.text = "MISSIONEN · Dein nächster Meilenstein"
  for m in Game.mission_definitions():
   if not Game.state.missions_claimed.has(m.id):
    mission_button.text = "%s · %s/%s %s" % [m.name,Catalog.number(m.value),Catalog.number(m.target),"ABHOLEN" if m.value >= m.target else "›"]
    break
- if int(Game.state.tutorial)<4:
+ if Game.state.onboarding.active:
+  var guide=TutorialRules.info(Game.state)
+  mission_button.text="DEIN START · %s/5 · %s" % [guide.step,guide.title]
+  var partial=float(guide.value)/maxf(1,float(guide.target)) if guide.phase in ["chop","done"] else 0.0
+  update_goal_progress({"id":"guided_start","value":float(guide.step)-1+partial,"target":5})
+ elif int(Game.state.tutorial)<=4 and not Game.state.onboarding.paused:
   mission_button.text = ["WILLKOMMEN · Dein Waldimperium wartet","ANLEITUNG 1/4 · Fälle fünf Bäume","ANLEITUNG 2/4 · Holz abliefern","ANLEITUNG 3/4 · Erste Rohstoffe verkaufen","ANLEITUNG 4/4 · Erstes Gebäude platzieren"][int(Game.state.tutorial)]
  else:
   var goal=Journey.current(Game.state)
@@ -468,7 +504,7 @@ func update_stats() -> void:
   if not goal.is_empty():
    mission_button.text="K%s · %s %s" % [int(goal.chapter)+1,goal.name,"✓ ABHOLEN" if goal.ready else "%s/%s ›" % [Catalog.number(goal.value),Catalog.number(goal.target)]]
   else: mission_button.text="DEIN IMPERIUM · Alle zehn Kapitel geschafft!"
- if int(Game.state.tutorial)<4:
+ if not Game.state.onboarding.active and int(Game.state.tutorial)<=4 and not Game.state.onboarding.paused:
   update_goal_progress({"id":"tutorial","value":Game.state.tutorial,"target":4})
  mission_button.clip_text=true
  mission_button.add_theme_font_size_override("font_size",12 if mission_button.text.length()>60 else 14)
@@ -501,20 +537,21 @@ func _process(delta: float) -> void:
     if item.has("update"): item.update.call()
     else: item.label.text = item.callback.call()
 
+func back() -> void:
+ var world=get_parent().get_parent()
+ if world.get("photo")!=null and world.photo.active: world.photo.leave(); return
+ if ux!=null and ux.panels_visible(): ux.hide_panels(true); return
+ if placement_panel.visible: placement_action.emit("cancel"); return
+ if overlay.visible: close_menu(); return
+ open_menu("game_menu")
+
 func _unhandled_key_input(event: InputEvent) -> void:
- if event.is_action_pressed("ui_cancel") and ux!=null and ux.panels_visible():
-  ux.hide_panels(true)
-  get_viewport().set_input_as_handled()
-  return
- if event.is_action_pressed("ui_cancel") and placement_panel.visible:
-  placement_action.emit("cancel")
-  get_viewport().set_input_as_handled()
-  return
- if event.is_action_pressed("ui_cancel") and overlay.visible:
-  close_menu()
+ if event.is_action_pressed("ui_cancel"):
+  back()
   get_viewport().set_input_as_handled()
 
 func open_menu(tab: String) -> void:
+ if current=="alpha" and alpha_desk!=null: alpha_desk.capture_draft()
  if tab=="photo": camera_action.emit("photo"); return
  if ux!=null: ux.hide_panels()
  if placement_panel!=null and placement_panel.visible: placement_action.emit("cancel")
@@ -525,6 +562,7 @@ func open_menu(tab: String) -> void:
  render_menu()
 
 func close_menu() -> void:
+ if current=="alpha" and alpha_desk!=null: alpha_desk.capture_draft()
  overlay.hide()
  live_labels.clear()
 
@@ -580,6 +618,8 @@ func render_menu() -> void:
   "market": market_menu()
   "export": export_menu()
   "settings": settings_menu()
+  "alpha": alpha_desk.populate()
+  "game_menu": game_menu()
   "empire": empire_menu()
   "planner": planner_menu()
   "sawdust": sawdust_menu()
@@ -849,7 +889,7 @@ func more_menu() -> void:
   ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Autobahn & Exporthandel","export"],["Spänebox","sawdust"]]],
   ["Wege & Team",[["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"]]],
   ["Deine Entwicklung",[["Kapitel 1–10 & Rathaus","journey"],["Auszeichnungen","trophies"],["Regionen & Großprojekte","empire"],["Forschung","research"],["Loot & Inventar","loot"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"]]],
-  ["Hilfe & Einstellungen",[["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
+  ["Hilfe & Einstellungen",[["Alpha 1 · Testen & Feedback","alpha"],["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
  ]
  for group in groups:
   var section=card(group[0])
@@ -951,14 +991,19 @@ func market_menu() -> void:
  button(box,"Baureserve: AN" if Game.state.reserve else "Baureserve: AUS",func(): action(func(): Game.state.reserve = not Game.state.reserve))
  button(box,"AUTOBAHN & EXPORTHANDEL",func(): open_menu("export"))
  text(box,"Hier verkaufst du direkt am lokalen Markt. Autobahnexport benötigt eine Straßenverbindung und bezahlt erst bei Ankunft.",15,MUTED)
+ button(contents,"ALLE WAREN ANZEIGEN" if not market_all else "NUR MEINE VORRÄTE",func(): market_all=not market_all; render_menu())
+ var has_stock=false
  for key in Catalog.RESOURCES:
   if ConstructionRules.HARDWARE.has(key): continue
+  if not market_all and float(Game.state.resources[key])<0.001: continue
+  has_stock=true
   var id = str(key)
   var resource_box = card(Catalog.RESOURCES[key])
   dynamic_text(resource_box,func(): return "%s im Lager · %.1f Münzen/Stück" % [Catalog.number(Game.state.resources[id]),float(Catalog.PRICES[id])*Game.multiplier()*Game.boost("money")])
   var choices = row(resource_box)
   button(choices,"25 % verkaufen",func(): action(func(): Game.sell(id,0.25)))
   button(choices,"Alles verkaufen",func(): action(func(): Game.sell(id)))
+ if not has_stock: card("Dein Lager ist noch leer","Fälle ein paar Bäume und liefere das Holz ab. Das Sägewerk verarbeitet es automatisch zu Brettern.")
 
 func export_menu() -> void:
  modal_title.text="AUTOBAHN & EXPORT"
@@ -987,12 +1032,13 @@ func settings_menu() -> void:
  modal_title.text = "EINSTELLUNGEN"
  var box = card("Lokaler Spielstand","Automatische Speicherung alle 20 Sekunden, beim Wechsel in den Hintergrund und nach Bauaufträgen. Eine Backup-Datei schützt den vorherigen gültigen Stand. Bis zu acht Stunden Offline-Wirtschaft.")
  button(box,"JETZT SPEICHERN",func(): Game.save())
+ button(box,"ALPHA 1 · TESTBERICHT & HILFE",func(): open_menu("alpha"))
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
  if ux!=null: ux.settings_controls(box)
- text(contents,"Version 0.27 · Freie Welt & Handel\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Alpha 1 · 0.28 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -1060,19 +1106,11 @@ func sawdust_menu() -> void:
  button(box,"Überlauf-Autoverkauf: AN" if Game.state.auto_sawdust else "Überlauf-Autoverkauf: AUS",func(): action(func(): Game.state.auto_sawdust=not Game.state.auto_sawdust))
 
 func welcome_menu() -> void:
- modal_title.text="WILLKOMMEN IM WALD"
- var illustration=TextureRect.new()
- illustration.texture=load("res://Assets/Brand/timber-icon.png")
- illustration.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
- illustration.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- illustration.custom_minimum_size=Vector2(0,210)
- illustration.mouse_filter=Control.MOUSE_FILTER_IGNORE
- contents.add_child(illustration)
- var box=card("Dein erstes Holz. Dein eigenes Imperium.","Aus einer kleinen Forststation wird deine lebendige Industriestadt. Du bestimmst, wo neue Gebäude stehen und wie dein Betrieb wächst.")
- text(box,"Zehn Kapitel begleiten dich. Erfülle Aufgaben und entwickle dein Rathaus vom Waldbüro zum Stadtpalais.",16,MUTED)
- text(box,"1  Bäume fällen und Holz abliefern\n2  Bretter und Möbel herstellen und liefern\n3  Gebäude platzieren, Baumaterial liefern und ausbauen\n4  Häuser bauen und neue Regionen erschließen",18,CREAM)
- button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.state.tutorial=1; Game.save(true); update_stats(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
- button(box,"Ich kenne mich aus · überspringen",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
+ modal_title.text="DEIN WALD WARTET"
+ var box=card("Hi, ich bin Benno!","Lass uns deine ersten Bretter machen und etwas Eigenes bauen.")
+ button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.begin_tutorial(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
+ button(box,"Direkt frei spielen",func(): Game.end_tutorial(); close_menu())
+ text(contents,"ALPHA 1 · Danke fürs Mittesten! Dein Fortschritt bleibt auf diesem Gerät. Feedback findest du unter Mehr → Alpha 1.",14,MUTED)
 
 func guide_menu() -> void:
  if int(Game.state.tutorial)==0: welcome_menu(); return
@@ -1086,7 +1124,9 @@ func guide_menu() -> void:
  button(help,"LIEFERKETTE & LADENAUFTRÄGE",func(): open_menu("delivery"))
  button(help,"BAUSTELLEN & MATERIALDEPOT",func(): open_menu("construction"))
  button(help,"BAUKATALOG ÖFFNEN",func(): open_menu("catalog"))
- if int(Game.state.tutorial)<5: button(help,"ANLEITUNG ÜBERSPRINGEN",func(): Game.state.tutorial=5; Game.save(true); update_stats(); close_menu())
+ if TutorialRules.can_resume(Game.state):
+  button(help,"BENNO ZEIGT MIR DEN NÄCHSTEN SCHRITT",func(): Game.begin_tutorial(); close_menu())
+  button(help,"ANLEITUNG ÜBERSPRINGEN",func(): Game.end_tutorial(); close_menu())
 
 
 func networks_menu() -> void:
@@ -1333,3 +1373,14 @@ func fire_protection_menu() -> void:
  if not found: card("Zuerst Wohnraum bauen","Sobald das erste bewohnte Stadtgebäude fertig ist, kannst du dort Rauchmelder und Hydranten installieren.")
  text(contents,"Neue Rauchmelder gelten für neue Brandereignisse. Hydranten werden bei der Disposition geprüft; bereits laufende Einsätze behalten ihre geplante Löschzeit. Die Wirkung wird vor dem Kauf angezeigt.",14,MUTED)
  button(contents,"ZUR EINSATZZENTRALE",func(): open_menu("services"))
+
+func game_menu() -> void:
+ modal_title.text="DEIN WALD · SPIELMENÜ"
+ button(contents,"WEITERSPIELEN",close_menu)
+ button(contents,"ANLEITUNG & HILFE",func(): open_menu("guide"))
+ button(contents,"ALPHA 1 · FEEDBACK",func(): open_menu("alpha"))
+ button(contents,"EINSTELLUNGEN",func(): open_menu("settings"))
+ button(contents,"SPEICHERN & ZUM STARTBILDSCHIRM",func():
+  if not Game.save(true): show_notice(Store.last_error); return
+  var error=get_tree().change_scene_to_file("res://Scenes/Boot.tscn")
+  if error!=OK: show_notice("Der Startbildschirm konnte nicht geöffnet werden"))

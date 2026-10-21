@@ -64,7 +64,7 @@ func end_gesture(point: Vector2, canceled: bool = false) -> void:
 func passes_to_child(node: Node,point: Vector2) -> bool:
  for child in node.get_children():
   if not child is Control or not child.is_visible_in_tree(): continue
-  if (child.get_meta("gesture_passthrough",false) or child is LineEdit) and child.get_global_rect().has_point(point): return true
+  if (child.get_meta("gesture_passthrough",false) or child is LineEdit or child is TextEdit) and child.get_global_rect().has_point(point): return true
   if passes_to_child(child,point): return true
  return false
 
@@ -82,8 +82,8 @@ func _input(event: InputEvent) -> void:
    begin_gesture(event.index,event.position)
    get_viewport().set_input_as_handled()
   elif event.index==pointer:
-   if not event.pressed: end_gesture(event.position,event.canceled)
    get_viewport().set_input_as_handled()
+   if not event.pressed: end_gesture(event.position,event.canceled)
  elif event is InputEventScreenDrag and event.index==pointer:
   move_gesture(event.position)
   get_viewport().set_input_as_handled()
@@ -96,8 +96,8 @@ func _input(event: InputEvent) -> void:
     begin_gesture(-1,event.position)
     get_viewport().set_input_as_handled()
    elif not event.pressed and pointer==-1:
-    end_gesture(event.position)
     get_viewport().set_input_as_handled()
+    end_gesture(event.position)
   elif event is InputEventMouseMotion and pointer==-1:
    move_gesture(event.position)
    get_viewport().set_input_as_handled()

@@ -2,6 +2,14 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Alpha 1 — umgesetzt
+
+3D-Startdiorama, kurze kontextuelle Anleitung mit echten Transaktionen und erstem
+Bauabschluss, fortsetzbare Hilfen, Spieler-/Testerbericht, geschützte beschädigte
+Speicherdateien und korrigierte Zurück-/Touch-Bedienung. Kleine Displays behalten
+mehr Lesefläche. [Einzelaufgaben und Grenzen](ALPHA1.md).
+Hafen- und Flughafenausbau werden dadurch nicht als fertig erklärt.
+
 ## Erweiterung 0.27 — umgesetzt
 
 Freies Bauen auf dem ebenen Festland mit echten Biomgrenzen, ohne feste Haus- oder

@@ -17,6 +17,8 @@ static func cell(value: Array) -> Vector2i:
  return Vector2i(int(value[0]),int(value[1]))
 
 static func path(a: Vector2i, b: Vector2i, horizontal_first: bool = true) -> Array:
+ if a.x%STEP!=0 or a.y%STEP!=0 or b.x%STEP!=0 or b.y%STEP!=0: return []
+ if absi(b.x-a.x)+absi(b.y-a.y)>STEP*1024: return []
  var result = [a]
  var corner = Vector2i(b.x,a.y) if horizontal_first else Vector2i(a.x,b.y)
  for end in [corner,b]:

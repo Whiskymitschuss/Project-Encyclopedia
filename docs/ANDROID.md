@@ -1,3 +1,27 @@
+# Android-Alpha 1 — 0.28-alpha.1
+
+Launchername **Timber Loot Alpha**, Paket `com.whiskymitschuss.timberloot.reborn`,
+Version `0.28-alpha.1`, Code **2801**. Als Update über die Testversionen ab 0.23
+installieren; **nicht vorher deinstallieren**. Testzertifikat und der Speicherordner
+`TimberLootReborn` bleiben erhalten. Die alte App bis 0.20 ist ein separates Paket.
+
+APK: `releases/Timber-Loot-Tycoon-v0.28-alpha.1.apk`. Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0 und nur optionale Vibration. Tutorial und lokale Testberichte benötigen
+keine zusätzlichen Berechtigungen. Es werden keine Fehlerberichte automatisch gesendet.
+
+[Kurze Testerinstallation](alpha1/START-HIER.txt), [Testplan](alpha1/TESTPLAN.txt),
+[Änderungen](ALPHA1.md), [Prüfbericht](VALIDATION.md).
+Der Download kann manuell an ausgewählte Tester weitergegeben werden. Ein öffentlicher
+GitHub-Link ist keine auf eingeladene Personen beschränkte Verteilung.
+
+Build mit `python3 scripts/build_android.py`. Der vorhandene Testschlüssel wird
+weiterverwendet, sein öffentlicher Zertifikatsfingerabdruck muss übereinstimmen.
+Kein Ersatzschlüssel, keine privaten Schlüssel im Quell- oder Testerpaket.
+Diese Alpha ist Debug-signiert. Echter Android-Gerätetest, Hörprobe und mobile
+Framerate-/Akku-/Wärmeprüfung stehen aus.
+
+## Historische Dokumentation 0.27
+
 # Android-Test 0.27 — freie Welt & Handel
 
 **Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,

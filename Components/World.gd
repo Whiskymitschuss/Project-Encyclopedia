@@ -71,6 +71,7 @@ var next_fall=0
 var forest_detail_key=Vector4(INF,INF,INF,INF)
 
 func _ready() -> void:
+ Game.live_world=true
  RenderingServer.set_default_clear_color(Color("53bbd3"))
  var environment_node = WorldEnvironment.new()
  var env = Environment.new()
