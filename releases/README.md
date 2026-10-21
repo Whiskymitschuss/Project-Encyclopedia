@@ -1,3 +1,30 @@
+# Alpha 2 — Feuer, Bauleitung und Verkehr
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.0-alpha.2/releases/Timber-Loot-Tycoon-v0.29-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.0-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.29-source.zip) · [Änderungen](../docs/ALPHA2.md) · [Testplan](../docs/alpha2/TESTPLAN.txt)
+
+Version **0.29-alpha.2**, Code **2902**, Launchername **Timber Loot Alpha**.
+Als Update über Alpha 1 oder „Timber Loot Neu“ ab 0.23 installieren; vorher nicht deinstallieren.
+Gleiches Paket `com.whiskymitschuss.timberloot.reborn`, gleiches Testzertifikat und
+Speicherverzeichnis. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, nur optionale Vibration.
+
+Animierte Flammen und weicher Rauch, kompakte Brandanzeige, geräumte Bauflächen,
+versetzte Forstmaschinen, wechselnde Bauteams, Ampeln mit Techniker-Reparaturen,
+passende Fahrzeuggrößen und echte Wartezeit für Lieferungen. Bauleiterin Mara
+koordiniert vorhandene Teams und erklärt Material- und Transportengpässe.
+
+20,125 Headless- und 490 OpenGL-Prüfungen bestanden.
+Debug-signierte Alpha. Für Alpha 2 stehen echte Android-Leistungstests noch aus.
+Deine Firma bleibt bei einer Update-Installation erhalten; Daten nicht löschen.
+
+APK-Quellstand `04d4f4210301848fd14041bcfb5ab940a52e978f`. Quell-ZIP: 420 Dateien einzeln gegen Git-Blobs geprüft.
+Testerpaket: 6 Einträge, identische APK und überprüfte Texte/Prüfsummen.
+Ein öffentlicher Download ist kein Zugang nur für eingeladene Tester.
+Private Schlüssel, Spielerprofile und Testberichte sind nicht enthalten.
+
+## Vorherige Veröffentlichung
+
 # Alpha 1 — erste Fassung für Spieltests
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.0-alpha.1/releases/Timber-Loot-Tycoon-v0.28-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.0-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Testerpaket.zip)**

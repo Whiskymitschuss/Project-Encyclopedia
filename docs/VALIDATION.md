@@ -1,3 +1,16 @@
+## Auslieferung Alpha 2
+
+APK aus Quell-Commit `04d4f4210301848fd14041bcfb5ab940a52e978f`, 63206319 Bytes,
+SHA256 `c59fe012d5fc190b2306dfdcd7bddb4cbfd00cbc7b699b608c6ab997a98f676c`. Version 0.29-alpha.2 / Code 2902; gleiches Paket und
+Testzertifikat wie Alpha 1. V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, ARM64/ARMv7,
+OpenGL, Hochformat und ausschließlich optionale Vibration geprüft.
+
+Neue Verkehrs-, Bauleitungs-, Forst-, Brand- und Rauchressourcen sind wirklich in
+der APK enthalten. Tests, Dokumentation und Release-Dateien sind ausgeschlossen.
+Quell-ZIP: 420 Git-Dateien, SHA256 `6e86afd2364b726543c47f142742f6952ba2c7a4bdc8b24ea2abd40530a1b9c2`.
+Tester-ZIP: 6 Einträge, SHA256 `acfbbe64a09733a3664a6b1a933b76391e9f311a31d7fe1df6ebc6405d9927d4`.
+Der private Testschlüssel wird nicht mitgeliefert. Downloads werden separat geprüft.
+
 # Prüfung Alpha 2 — 0.29-alpha.2
 
 - `bash scripts/test.sh`: **20,125 Prüfungen in 25 Headless-Suiten**,
