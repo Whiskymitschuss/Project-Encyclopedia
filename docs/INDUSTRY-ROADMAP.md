@@ -2,6 +2,13 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Erweiterung 0.25 — umgesetzt
+
+Sieben Qualitätsaufgaben: HUD und Mitteilungen, Weltanimationen, Feuerwehrpräsentation,
+Gebäudestufen, Atmosphäre, Produktionsfeedback und Belohnungsdarstellung. Alle Effekte
+folgen den bestehenden Spielwerten. Keine neuen Kernmechaniken. Einzelne Änderungen,
+Spielernutzen und geschätzter Qualitätseffekt: [Qualitätsüberarbeitung](QUALITY-PASS.md).
+
 ## Erweiterung 0.24 — umgesetzt
 
 Kaufbare Rauchmelder mit echter kürzerer Alarmierungszeit, automatische und manuelle

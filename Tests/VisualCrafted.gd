@@ -30,7 +30,7 @@ func run() -> void:
  scene._process(0)
  check(game.state==saved,"Rendering the new start quarter does not grant buildings or alter progress")
  check(scene.world_buildings.get_child_count()>=5,"The real starter economy still renders")
- check(scene.world_buildings.get_child(1).get_meta("crafted_version")==1,"The live sawmill uses the new architecture")
+ check(scene.world_buildings.get_child(1).get_meta("crafted_version")==2,"The live sawmill uses the new architecture")
  var visible_decor=0
  for data in scene.landscape.batches.values(): visible_decor+=data.mesh.visible_instance_count
  check(visible_decor<scene.landscape.records.size(),"Close view sends only nearby decoration instances to the renderer")

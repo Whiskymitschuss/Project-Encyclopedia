@@ -1,6 +1,23 @@
-# Timber Loot Tycoon — Brandschutz 0.24
+# Timber Loot Tycoon — Waldleben 0.25
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+
+## Neu in 0.25 — Waldleben und Qualitätsüberarbeitung
+
+- Ruhigeres HUD mit hervorgehobenen Währungen, echtem Zielfortschritt und einem
+  gemeinsamen Mitteilungseingang. Meldungen werden nacheinander lesbar angezeigt.
+- Dezenter Baumwind, gerichtete Fallanimationen und Rauch aus Schornsteinen.
+  Sägespäne, Baudunst und Trocknerdampf folgen dem tatsächlichen Arbeitszustand.
+- Brände mit Funken, warmem Licht, Wasserdunst und Fortschrittsanzeigen. Erfolgreiches
+  Löschen und reale Verkäufe bekommen eigene sichtbare Rückmeldungen.
+- Erkennbare Ausbaugestaltung bis zur Premiumstufe: Blumen, Lageranbauten, größere
+  Unterstände, Solardächer und Messingakzente. Bestehende höhere Stufen bleiben erhalten.
+- Begrenzte Effektpools, Akkumodus und reduzierte Bewegung. Wirtschaft und Spielstände
+  bleiben gültig; es wurden keine neuen Kernmechaniken eingeführt.
+
+[Dokumentation aller sieben Aufgaben](docs/QUALITY-PASS.md),
+[Prüfungen und Grenzen](docs/VALIDATION.md).
+Paket und Testsignatur bleiben wie bei 0.23/0.24: **als Update installieren**.
 
 ## Neu in 0.24 — Rauchmelder, Hydranten und Einsatzübersicht
 
@@ -52,7 +69,7 @@ Die alte signierte APK 0.20 bleibt unverändert erhalten.
 
 ## Auf dem Handy testen
 
-Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.24-test.apk](releases/Timber-Loot-Tycoon-v0.24-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
+Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loot-Tycoon-v0.25-test.apk](releases/Timber-Loot-Tycoon-v0.25-test.apk)**. Auf GitHub die Datei öffnen und **Download raw file** wählen. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; rund 63 MB. Die APK verwendet ausschließlich die Android-Berechtigung für optionale Vibration. Details: [Android-Test](docs/ANDROID.md).
 
 ## Spielen und entwickeln
 

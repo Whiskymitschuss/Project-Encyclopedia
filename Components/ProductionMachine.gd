@@ -8,6 +8,14 @@ var phase=0.0
 var active=false
 var animation_time=0.0
 var stock_clock=0.0
+var particles: CPUParticles3D
+
+func _ready() -> void:
+ particles=FeedbackFX.emitter("steam" if kind=="kiln" else "chips",12)
+ particles.name="ProductionFeedback"
+ particles.position=Vector3(1.8,8.6,-1) if kind=="kiln" else Vector3(0,2.7,0)
+ particles.spread=22 if kind=="kiln" else 70
+ add_child(particles)
 
 func _process(delta: float) -> void:
  if building_index<0 or building_index>=Game.state.buildings.size(): return
@@ -16,7 +24,14 @@ func _process(delta: float) -> void:
  var actual_input="boards" if local_line and kind=="furniture" else input_key
  var rate=float(Game.flow.get("building:%s" % building_index,0))
  active=rate>0 and not Game.state.buildings[building_index].get("paused",false)
- if active:
+ var animate=active and bool(Game.state.ux.motion)
+ if particles!=null:
+  var enabled=active and FeedbackFX.allowed(self)
+  var count=5 if Game.state.quality==0 else 12
+  if particles.amount!=count: particles.amount=count
+  particles.visible=enabled
+  particles.emitting=enabled
+ if animate:
   animation_time+=delta
   phase=fmod(phase+delta*clampf(rate*0.65,0.15,1.5),1.0)
  var feed=get_node_or_null("Feed")
@@ -28,7 +43,7 @@ func _process(delta: float) -> void:
   product.visible=phase>=0.56
   product.position=Vector3(0,1.9,lerpf(2.1,7.2,clampf((phase-0.56)/0.44,0,1)))
  var rotor=get_node_or_null("Rotor")
- if rotor!=null and active: rotor.rotation.x+=delta*12
+ if rotor!=null and animate: rotor.rotation.x+=delta*12
  var tool=get_node_or_null("ToolHead")
  if tool!=null:
   if kind=="kiln": tool.position.y=2.6+(1-cos(animation_time*1.8))*1.4

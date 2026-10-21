@@ -82,7 +82,7 @@ func _ready() -> void:
  event_button=hud.button(self,"Hinweise",func(): hud.open_menu("return" if not Game.return_report.is_empty() else "events"))
  event_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
  event_button.offset_left=14
- event_button.offset_right=238
+ event_button.offset_right=182
  event_button.offset_top=170
  event_button.offset_bottom=214
  event_button.custom_minimum_size.y=44
@@ -269,8 +269,8 @@ func refresh() -> void:
  var count=UXRules.current_hints(Game.state).size()
  for event in Game.state.ux.events:
   if not event.read: count+=1
- event_button.text="! %s Hinweise & Ereignisse" % count if count>0 else "✓ Stadt im Blick"
- if not Game.return_report.is_empty(): event_button.text="Willkommen zurück · Bilanz ›"
+ event_button.text="● Mitteilungen · %s" % count if count>0 else "✓ Mitteilungen"
+ if not Game.return_report.is_empty(): event_button.text="Rückkehrbilanz ›"
  var content_gesture=sheet_scroll.pointer!=-99 or absf(sheet_scroll.velocity)>=8
  if sheet.visible and not sheet_gesture and not content_gesture and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): render_sheet()
 func _process(delta: float) -> void:
@@ -432,6 +432,9 @@ func evolution_menu() -> void:
    if not bill.is_empty(): hud.button(box,"NÄCHSTEN AUSBAU STARTEN · %s" % Catalog.number(bill.coins),func(): hud.action(func(): Game.upgrade_home(index)))
 func events_menu() -> void:
  hud.modal_title.text="STADT IM BLICK"
+ if not hud.notice_history.is_empty():
+  var recent=hud.card("Zuletzt im Spiel","Die letzten Meldungen dieser Sitzung bleiben hier nachlesbar.")
+  for message in hud.notice_history: hud.text(recent,message,14,hud.INK)
  var hints=UXRules.current_hints(Game.state)
  if hints.is_empty(): hud.card("Alles im Blick","Aktuell kein gemeldeter Versorgungsengpass. Deine Wirtschaft läuft weiter.")
  for hint in hints:

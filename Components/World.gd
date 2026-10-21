@@ -50,6 +50,10 @@ var town_name_labels: Array = []
 var biome_labels: Array = []
 var boss_labels: Array = []
 var street_context: Dictionary={}
+var feedback: Node3D
+var wind_clock=0.0
+var falling_trees=[]
+var next_fall=0
 var forest_detail_key=Vector4(INF,INF,INF,INF)
 
 func _ready() -> void:
@@ -122,6 +126,9 @@ func _ready() -> void:
  life=load("res://Components/WorldLife.gd").new()
  life.world=self
  add_child(life)
+ feedback=load("res://Components/WorldFeedback.gd").new()
+ feedback.world=self
+ add_child(feedback)
 
 func build_landscape() -> void:
  landscape=ValleyLandscape.new()
@@ -231,6 +238,11 @@ func build_forest() -> void:
    node.material_override = Models.material(Color("ad8556") if part == 0 else Color(Catalog.BIOMES[biome].tree))
    node.material_override = node.material_override.duplicate()
    node.material_override.vertex_color_use_as_albedo = true
+   if part>0:
+    var wind=ShaderMaterial.new()
+    wind.shader=preload("res://Shaders/ForestWind.gdshader")
+    wind.set_shader_parameter("canopy_tone",Color(Catalog.BIOMES[biome].tree))
+    node.material_override=wind
    node.set_meta("near_mesh",mesh)
    var far_mesh: Mesh=mesh
    if part>0:
@@ -315,7 +327,9 @@ func rebuild() -> void:
   model.position = Game.home_position(home_index)
   model.rotation_degrees.y = int(h.get("rotation",0))
   world_buildings.add_child(model)
-  town_name_labels.append(Models.label(model,"%s · %s" % [TownEvolution.title(h.kind,int(h.level)),int(h.level)],Vector3(0,float(model.get_meta("height",10))+1,0),24))
+  var name_label=Models.label(model,"%s · %s" % [TownEvolution.title(h.kind,int(h.level)),int(h.level)],Vector3(0,float(model.get_meta("height",10))+1,0),24)
+  name_label.set_meta("home_index",home_index)
+  town_name_labels.append(name_label)
   add_approach(model.position,int(h.get("rotation",0)))
  for job in Game.state.jobs:
   if job.type in ["building","home","upgrade","home_upgrade","project"]:
@@ -469,6 +483,20 @@ func make_weather() -> void:
 
 func _process(delta: float) -> void:
  time += delta
+ var animate=bool(Game.state.ux.motion) and bool(Game.state.ambient_enabled)
+ if animate: wind_clock+=delta
+ for batch in tree_batches:
+  for part in [1,2]:
+   batch[part].material_override.set_shader_parameter("wind_clock",wind_clock)
+   batch[part].material_override.set_shader_parameter("wind_strength",1.0 if animate and Game.state.quality>0 else 0.0)
+ for fall in falling_trees:
+  if fall.left<=0: continue
+  fall.left=maxf(0,float(fall.left)-delta)
+  fall.node.visible=fall.left>0 and animate and fall.node.position.distance_to(focus)<zoom*1.6+40
+  var t=clampf((1.8-float(fall.left))/1.1,0,1)
+  var tipped=Vector3.UP.lerp(fall.direction,t*t).normalized()
+  fall.node.quaternion=Quaternion(Vector3.UP,tipped)
+  fall.node.scale=Vector3.ONE*float(fall.size)*minf(1,float(fall.left)*2)
  if not placement.is_empty():
   placement_check_clock+=delta
   if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
@@ -481,7 +509,9 @@ func _process(delta: float) -> void:
  sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
  environment_resource.ambient_light_energy = 0.34+daylight*0.12
  SurfaceLibrary.daylight(daylight)
- for label in town_name_labels: label.visible=zoom<135
+ var burning_homes={}
+ for incident in Game.state.city_services.fires: burning_homes[int(incident.target_ref.index)]=true
+ for label in town_name_labels: label.visible=zoom<135 and not burning_homes.has(label.get_meta("home_index",-1))
  for label in biome_labels: label.visible=zoom<300
  for label in boss_labels: label.visible=zoom<180
  environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
@@ -490,12 +520,12 @@ func _process(delta: float) -> void:
  environment_resource.fog_density = 0.0002
  sun.rotation_degrees.x = -25-daylight*40
  weather.position = focus+Vector3(0,36,0)
- weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0
+ weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0 and animate
  for machine in machines:
-  if float(Game.flow.get("building:%s" % machine.index,0))>0: machine.node.rotate_y(delta*8)
+  if animate and float(Game.flow.get("building:%s" % machine.index,0))>0: machine.node.rotate_y(delta*8)
  for crane in cranes:
   var job=crane.job
-  if not job.has("phases") or (not job.paused and int(job.workers)>0 and ConstructionRules.phase_ready(job)):
+  if animate and (not job.has("phases") or (not job.paused and int(job.workers)>0 and ConstructionRules.phase_ready(job))):
    crane.node.rotation.y = sin(time*0.45)*0.2
  for item in moving_goods:
   if float(Game.flow.get("building:%s" % item.index,0)) > 0:
@@ -534,15 +564,43 @@ func on_harvested(biome: int, _amount: float) -> void:
    closest = i
    distance = d
  if closest >= 0:
+  show_falling_tree(biome,closest)
   trees[biome][closest].regrow = 20.0
   set_tree_visible(biome,closest,false)
   var effect = chip_pool[chip_index]
   effect.position = trees[biome][closest].point+Vector3(0,3,0)
-  effect.restart()
-  effect.emitting = true
+  if Game.state.ux.motion and Game.state.ambient_enabled:
+   effect.restart()
+   effect.emitting = true
   chip_index = (chip_index+1)%chip_pool.size()
 
+func show_falling_tree(biome: int, index: int) -> void:
+ if not Game.state.ux.motion or not Game.state.ambient_enabled: return
+ var tree=trees[biome][index]
+ if tree.point.distance_to(focus)>zoom*1.6+40: return
+ var fall=falling_trees[next_fall]
+ next_fall=(next_fall+1)%falling_trees.size()
+ fall.node.position=tree.point
+ fall.node.quaternion=Quaternion.IDENTITY
+ fall.direction=(tree.point-focus+Vector3(0.1,0,0.1)).normalized()
+ fall.direction.y=0.08
+ fall.size=tree.scale
+ fall.left=1.8
+ fall.node.show()
+ for part in 3:
+  var piece=fall.node.get_child(part)
+  piece.mesh=tree_batches[biome][part].get_meta("near_mesh")
+  piece.material_override=Models.material(Color("ad8556") if part==0 else Color(Catalog.BIOMES[biome].tree))
+
 func make_chip_pool() -> void:
+ for i in 4:
+  var tree=Node3D.new()
+  add_child(tree)
+  Models.cylinder(tree,0.42,3,Vector3(0,1.8,0),Color("ad8556"))
+  Models.cylinder(tree,2.5,4.5,Vector3(0,4.7,0),Color("50975b"),0.1)
+  Models.cylinder(tree,1.9,4.5,Vector3(0,7.1,0),Color("50975b"),0.1)
+  tree.hide()
+  falling_trees.append({"node":tree,"left":0.0,"size":1.0,"direction":Vector3.RIGHT})
  for i in 6:
   var effect = CPUParticles3D.new()
   effect.emitting = false

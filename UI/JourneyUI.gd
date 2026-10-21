@@ -4,7 +4,7 @@ var trophy_page=0
 
 func meter(parent: Node,callback: Callable,target: float) -> void:
  var bar=ProgressBar.new()
- bar.custom_minimum_size=Vector2(0,18)
+ bar.custom_minimum_size=Vector2(0,10)
  bar.max_value=maxf(1,target)
  bar.value=callback.call()
  bar.show_percentage=false
@@ -13,6 +13,12 @@ func meter(parent: Node,callback: Callable,target: float) -> void:
  bar.add_theme_stylebox_override("fill",hud.style(Color("e4aa3c"),7))
  parent.add_child(bar)
  hud.live_labels.append({"label":bar,"update":func(): bar.value=callback.call()})
+
+func meter_style(color: Color) -> StyleBoxFlat:
+ var skin=StyleBoxFlat.new()
+ skin.bg_color=color
+ skin.set_corner_radius_all(5)
+ return skin
 
 func progress(goal: Dictionary) -> float:
  if Game.state.journey.reached.has(goal.id): return float(goal.target)

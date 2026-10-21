@@ -78,5 +78,6 @@ static func create(kind: String, level: int) -> Node3D:
  var controller=load("res://Components/StonePlant.gd").new()
  controller.name="StonePlant"
  root.add_child(controller)
+ CraftedFrontage.decorate(root,kind,level,false)
  Models.bake(root)
  return root

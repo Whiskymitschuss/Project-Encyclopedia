@@ -1,5 +1,5 @@
 extends Node3D
-# Two incidents maximum; pooled fixed meshes, no particle/light allocation per frame.
+# Two incidents maximum; fixed meshes and emitters are created once per incident.
 var world: Node3D
 var scenes={}
 var clock=0.0
@@ -24,6 +24,38 @@ func create_incident(roof: float) -> Node3D:
  node.add_child(smoke)
  for i in 5:
   sphere(smoke,2.0,Vector3(sin(i*2.0)*1.3,6+i*1.8,cos(i*2.0)),Color("626e78"))
+ var sparks=FeedbackFX.emitter("spark",18)
+ sparks.name="Sparks"
+ sparks.position.y=roof+2
+ node.add_child(sparks)
+ var steam=FeedbackFX.emitter("water",18)
+ steam.name="WaterMist"
+ steam.position.y=roof+1
+ node.add_child(steam)
+ # One shadowless, tightly bounded light per incident; disabled in battery mode.
+ var glow=OmniLight3D.new()
+ glow.name="FireGlow"
+ glow.position.y=roof
+ glow.light_color=Color("ff9d4d")
+ glow.omni_range=16
+ glow.shadow_enabled=false
+ node.add_child(glow)
+ var meters=Node3D.new()
+ meters.name="Meters"
+ meters.position.y=roof+10
+ meters.set_meta("roof",roof)
+ node.add_child(meters)
+ for row_id in 2:
+  Models.box(meters,Vector3(8,0.45,0.3),Vector3(0,-row_id*0.85,0),Color("273e42"))
+  var fill=Models.box(meters,Vector3(7.7,0.28,0.34),Vector3(0,-row_id*0.85,0),Color("f6a35d") if row_id==0 else Color("94dcd8"))
+  fill.name="Intensity" if row_id==0 else "Extinguishing"
+ for bar in meters.get_children():
+  bar.material_override=bar.material_override.duplicate()
+  bar.material_override.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
+  bar.material_override.no_depth_test=true
+  bar.material_override.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
+  bar.material_override.render_priority=2 if bar.name in ["Intensity","Extinguishing"] else 1
+  bar.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
  var crew=Node3D.new()
  crew.name="Crew"
  node.add_child(crew)
@@ -53,10 +85,11 @@ func create_incident(roof: float) -> Node3D:
  label.name="Status"
  label.position=Vector3(0,roof+13,0)
  label.billboard=BaseMaterial3D.BILLBOARD_ENABLED
- label.font_size=40
+ label.font_size=32
  label.pixel_size=0.035
  label.modulate=Color("fff1d5")
  label.outline_size=9
+ label.no_depth_test=true
  node.add_child(label)
  return node
 
@@ -90,6 +123,30 @@ func _process(delta: float) -> void:
   node.get_node("Crew").visible=spraying
   node.get_node("Water").visible=spraying
   var motion=bool(Game.state.ux.motion)
+  var nearby=node.position.distance_to(world.focus)<world.zoom*1.6+40
+  var particles_allowed=motion and Game.state.ambient_enabled and nearby
+  var sparks=node.get_node("Sparks")
+  var mist=node.get_node("WaterMist")
+  var count=6 if Game.state.quality==0 else 18
+  for emitter in [sparks,mist]:
+   if emitter.amount!=count: emitter.amount=count
+  sparks.emitting=particles_allowed and progress<0.9
+  sparks.visible=sparks.emitting
+  mist.emitting=particles_allowed and spraying
+  mist.visible=mist.emitting
+  var glow=node.get_node("FireGlow")
+  glow.visible=nearby and Game.state.quality>0
+  glow.light_energy=(1-progress)*(0.8+0.1*sin(clock*5) if motion else 0.8)
+  for jet in node.get_node("Water").get_children():
+   jet.scale.x=1+0.12*sin(clock*13) if motion else 1.0
+   jet.scale.z=jet.scale.x
+  var meters=node.get_node("Meters")
+  meters.get_node("Intensity").scale.x=maxf(0.001,1-progress)
+  meters.get_node("Intensity").position.x=-3.85*progress
+  meters.get_node("Extinguishing").scale.x=maxf(0.001,progress)
+  meters.get_node("Extinguishing").position.x=-3.85*(1-progress)
+  # Align the bars with the same camera-facing plane as their status caption.
+  meters.rotation.y=world.camera.global_rotation.y-node.rotation.y
   for i in node.get_node("Flames").get_child_count():
    var flame=node.get_node("Flames").get_child(i)
    flame.scale=Vector3.ONE*maxf(0.12,1-progress)*(1+0.12*sin(clock*7+i) if motion else 1.0)
@@ -101,11 +158,25 @@ func _process(delta: float) -> void:
     puff.position.y=6+fposmod(clock*0.9+i*1.8,10)
    puff.visible=Game.state.quality!=0 or i<2
   node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "BRAND · WARTET AUF FEUERWEHR"
+  node.get_node("Status").text+="\nBRAND %s %% · GEBÄUDESCHADEN 0" % int((1-progress)*100)
   var status=node.get_node("Status")
-  var screen=world.camera.unproject_position(node.position+status.position)
+  # Keep the compact incident caption below the HUD, even when its smoke column
+  # reaches the top of a narrow screen. The caption never changes incident state.
+  status.position=Vector3(0,float(meters.get_meta("roof"))+13,0)
+  var at=node.to_global(status.position)
+  var screen=world.camera.unproject_position(at)
   var viewport_size=world.get_viewport().get_visible_rect().size
-  status.visible=not world.camera.is_position_behind(node.position+status.position) and screen.y>280 and screen.y<viewport_size.y-210
-  node.visible=node.position.distance_to(world.focus)<world.zoom*1.6+40
+  var top=world.hud.mission_button.get_global_rect().end.y+132
+  var bottom=world.hud.bottom_panel.get_global_rect().position.y-46
+  var in_front=not world.camera.is_position_behind(at)
+  var on_screen=screen.x>0 and screen.x<viewport_size.x and screen.y>0 and screen.y<viewport_size.y
+  if in_front and on_screen and bottom>top:
+   screen.y=clampf(screen.y,top,bottom)
+   status.position=node.to_local(world.camera.project_position(screen,-world.camera.to_local(at).z))
+  status.visible=in_front and on_screen and bottom>top and not world.hud.overlay.visible
+  meters.position=status.position-Vector3(0,3,0)
+  meters.visible=status.visible
+  node.visible=nearby
  for id in scenes.keys():
   if not present.has(id):
    scenes[id].queue_free()

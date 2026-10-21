@@ -103,7 +103,10 @@ func refresh_rents() -> void:
  for entry in rent_labels:
   if int(entry.index)>=Game.state.homes.size(): entry.label.hide(); continue
   var amount=float(Game.state.homes[entry.index].get("rent_bank",0))
-  entry.label.visible=amount>=1 and world.zoom<135
+  var burning=false
+  for incident in Game.state.city_services.fires:
+   if int(incident.target_ref.index)==int(entry.index): burning=true; break
+  entry.label.visible=amount>=1 and world.zoom<135 and not burning
   entry.label.text="● %s · ABHOLEN" % Catalog.number(amount)
 
 func tap_rent(screen: Vector2) -> bool:

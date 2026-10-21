@@ -1,3 +1,47 @@
+# Prüfung 0.25 — Waldleben und Qualitätsüberarbeitung
+
+- Vollständiges `bash scripts/test.sh`: **19.456 Prüfungen in 21 Headless-Suiten**,
+  keine Fehler. Zusätzlich reale Ersthaus-Progression in 1.682 simulierten Sekunden
+  ohne geschenkte Ressourcen sowie Starttests für Hauptwelt und Intro.
+- **324 gerenderte Prüfungen in acht OpenGL-Suiten**: HUD, Intro, Gebäudekarte,
+  City-UX, Feuerwehr, Hydranten, Architektur und Qualitätsfeedback. Die beiden neuen
+  Suiten prüfen 32 Verhaltensfälle und 41 tatsächliche Grafik-/Layoutfälle.
+- Bei der Bildprüfung gefundene Probleme wurden behoben: zu hohe Zielspur, mehrzeilig
+  umbrechendes Münzfeedback und durch HUD/Rauch verdeckte Brandanzeigen. Betroffene
+  Tests danach gezielt erneut ausgeführt. Zielanimation ohne Tween-Neuanlagen pro Refresh.
+- 360×640, 540×960, 591×1280 und 1280×800; normale und große Schrift, gleichmäßige
+  Bildskalierung, echte Touch-Auswahl und Scrollen. Der Zielbalken bleibt im Button,
+  Währungen überschneiden sich nicht und Einnahmen bleiben innerhalb der Kopfkarte.
+- Neue Verhaltenstests: echte Verkaufserlöse, keine Belohnung bei leerem Verkauf,
+  genau ein Rettungssignal pro Abschluss, Pause/Materialfluss, reduzierte Bewegung,
+  feste Effektbudgets, Meldungsreihenfolge, begrenzte Historie und fünf Gebäudestufen.
+- Gerendert nachgewiesen: Baumwind verändert das OpenGL-Bild ohne Zustandsänderung;
+  Premiumausbau ändert die sichtbare Architektur; Funken/Dunst/Licht und Brandbalken
+  folgen dem tatsächlichen Einsatz. Wiederholtes Erfolgsfeedback wächst nicht über
+  vier Effektplätze hinaus und verschwindet nach Ablauf.
+- Vorschauen aus **inszenierten isolierten Testprofilen**, keine Handyaufnahmen:
+  [Feuerwehr und HUD](preview-quality25-fire.png),
+  [Premium-Sägewerk](preview-quality25-premium.png),
+  [Wald](preview-quality25-forest.png).
+
+Die Grafiktests verwenden Mesa/llvmpipe mit Xvfb. Startszene: 331 Draw Calls und
+694.984 Dreiecke; inszenierte Stadt tagsüber: 431 / 696.198, nachts 524 / 697.248.
+Das sind Desktop-Testwerte, kein Nachweis einer mobilen Bildrate. Sichtweite,
+gebündelte Architektur und Effektobergrenzen bleiben aktiv. Akkumodus reduziert
+Partikel, Wind und Brandlicht; reduzierte Bewegung unterdrückt dekorative Animationen.
+
+Ein gelegentlicher ObjectDB-Hinweis beim Prozessende wurde im gezielten ausführlichen
+Gebäudekarten-Nachlauf nicht reproduziert. Die Zielanimation erzeugt nun keine Tweens
+mehr. Die vorhandenen Hinweise zu V-Sync unter Xvfb und ADBs nicht beschreibbarem
+Heimverzeichnis betreffen den Testhost; Grafiktests und APK-Export sind davon getrennt.
+Kein echter Android-Test von 0.25, keine Mobil-Framerate-/Akku-/Temperaturmessung,
+keine neue Langzeit-Balancing- oder Store-Freigabe. 0.23 wurde vom Nutzer bestätigt.
+
+Änderungen, Gründe, Spielernutzen und geschätzte Qualitätswirkung für jede Aufgabe:
+[QUALITY-PASS.md](QUALITY-PASS.md).
+
+## Historische Prüfung 0.24
+
 # Prüfung 0.24 — Rauchmelder, Hydranten und Disposition
 
 - Vollständiges `bash scripts/test.sh`: **19.424 Headless-Prüfungen**, keine Fehler;

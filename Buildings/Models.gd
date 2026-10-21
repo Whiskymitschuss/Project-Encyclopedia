@@ -201,6 +201,7 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   if kind == "clinic":
    box(root,Vector3(2.8,0.6,0.2),Vector3(0,height+0.1,5.8),Color("e37e73"))
    box(root,Vector3(0.6,2.8,0.2),Vector3(0,height+0.1,5.9),Color("e37e73"))
+ root.set_meta("height",height+4.2)
  CraftedFrontage.decorate(root,kind,level,false)
  bake(root)
  return root

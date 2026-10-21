@@ -47,6 +47,13 @@ var header_panel: PanelContainer
 var bottom_panel: VBoxContainer
 var camera_controls: VBoxContainer
 var emergency_button: Button
+var quest_progress: ProgressBar
+var notice_queue: Array[String] = []
+var notice_history: Array[String] = []
+var income_label: Label
+var income_left=0.0
+var quest_target=0.0
+var last_goal=""
 
 func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxFlat:
  var skin=StyleBoxFlat.new()
@@ -91,19 +98,19 @@ func _ready() -> void:
  var top = VBoxContainer.new()
  header.add_child(top)
  var brand = row(top)
- var title = text(brand,"TIMBER · WALDSTADT",21)
+ var title = text(brand,"TIMBER · WALDSTADT",16)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
  title.clip_text=true
  title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- edition = text(brand,"BRANDSCHUTZ / 24",11,GOLD)
+ edition = text(brand,"WALDKONTO",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
  edition.custom_minimum_size.x=0
  edition.clip_text=true
  edition.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  edition.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
  var counters=row(top)
- money=resource_counter(counters,"coin",19)
+ money=resource_counter(counters,"coin",22)
  money.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  diamonds=resource_counter(counters,"gem",17)
  loot_counter=resource_counter(counters,"more",17)
@@ -114,9 +121,26 @@ func _ready() -> void:
  mission_button.offset_right = -14
  mission_button.offset_top = 122
  mission_button.offset_bottom = 162
- mission_button.custom_minimum_size.y=40
+ mission_button.custom_minimum_size.y=44
  mission_button.add_theme_font_size_override("font_size",14)
  compact_style(mission_button,PANEL)
+ quest_progress=ProgressBar.new()
+ mission_button.add_child(quest_progress)
+ quest_progress.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+ quest_progress.offset_left=14
+ quest_progress.offset_right=-14
+ quest_progress.offset_top=-5
+ quest_progress.offset_bottom=-2
+ quest_progress.show_percentage=false
+ quest_progress.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ var track_skin=StyleBoxFlat.new()
+ track_skin.bg_color=INK
+ track_skin.set_corner_radius_all(3)
+ quest_progress.add_theme_stylebox_override("background",track_skin)
+ var progress_skin=StyleBoxFlat.new()
+ progress_skin.bg_color=GOLD
+ progress_skin.set_corner_radius_all(3)
+ quest_progress.add_theme_stylebox_override("fill",progress_skin)
  var right = VBoxContainer.new()
  camera_controls=right
  add_child(right)
@@ -200,6 +224,8 @@ func _ready() -> void:
  toast.offset_top = -232
  toast.offset_bottom = -188
  toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ toast.add_theme_stylebox_override("normal",style(INK,14))
+ toast.visible=false
  toast.add_theme_color_override("font_shadow_color",INK)
  toast.add_theme_constant_override("shadow_offset_x",1)
  toast.add_theme_constant_override("shadow_offset_y",2)
@@ -225,6 +251,12 @@ func _ready() -> void:
  ux.call_deferred("apply_accessibility")
  Game.changed.connect(update_stats)
  Game.notice.connect(show_notice)
+ Game.sale_completed.connect(func(_key,coins,_point): show_income(coins))
+ Game.reward_claimed.connect(func(_title,coins): show_income(coins))
+ income_label=text(self,"",14,GOLD)
+ income_label.autowrap_mode=TextServer.AUTOWRAP_OFF
+ income_label.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ income_label.hide()
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
  header_panel.resized.connect(layout_interface)
  bottom_panel.resized.connect(layout_interface)
@@ -245,15 +277,26 @@ func layout_interface() -> void:
   camera_controls.offset_left=-inset-52
  bottom_panel.offset_top=-maxf(184,bottom_panel.get_combined_minimum_size().y+12)
  mission_button.offset_top=maxf(122,header_panel.get_global_rect().end.y+8)
- mission_button.offset_bottom=mission_button.offset_top+40
+ mission_button.offset_bottom=mission_button.offset_top+44
  overlay.offset_top=maxf(168,mission_button.offset_bottom+6) if current!="building" else maxf(168,size.y-574)
  overlay.offset_bottom=-maxf(192,bottom_panel.get_combined_minimum_size().y+20)
  if ux!=null:
+  ux.event_button.offset_left=inset
+  ux.event_button.offset_right=inset+168
   ux.event_button.offset_top=mission_button.offset_bottom+8
   ux.event_button.offset_bottom=ux.event_button.offset_top+44
   ux.layout_sheet()
   ux.palette.offset_left=inset
   ux.palette.offset_right=-inset
+ toast.offset_top=bottom_panel.offset_top-56
+ toast.offset_bottom=bottom_panel.offset_top-8
+ toast.offset_left=inset
+ toast.offset_right=-inset
+ camera_controls.offset_top=mission_button.offset_bottom+12
+ emergency_button.offset_top=mission_button.offset_bottom+64
+ emergency_button.offset_bottom=emergency_button.offset_top+50
+ emergency_button.offset_left=-inset-230
+ emergency_button.offset_right=-inset-62
 
 func build_overlay() -> void:
  overlay = PanelContainer.new()
@@ -305,15 +348,27 @@ func compact_style(control: Button, color: Color) -> void:
   control.add_theme_stylebox_override(entry[0],box)
 
 func resource_counter(parent: Control, key: String, font_size: int) -> Label:
+ var panel=PanelContainer.new()
+ panel.size_flags_horizontal=Control.SIZE_EXPAND_FILL if key=="coin" else Control.SIZE_FILL
+ var skin=style(Color("24433f"),12)
+ skin.content_margin_left=8
+ skin.content_margin_right=8
+ skin.content_margin_top=4
+ skin.content_margin_bottom=4
+ panel.add_theme_stylebox_override("panel",skin)
+ parent.add_child(panel)
+ var line=row(panel)
+ line.add_theme_constant_override("separation",4)
  var icon=TextureRect.new()
  icon.texture=spatial_icons.texture_for(key)
  icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- icon.custom_minimum_size=Vector2(28,28)
+ icon.custom_minimum_size=Vector2(24,28)
  icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
- parent.add_child(icon)
- var value=text(parent,"",font_size,GOLD)
+ line.add_child(icon)
+ var value=text(line,"",font_size,GOLD if key=="coin" else CREAM)
  value.autowrap_mode=TextServer.AUTOWRAP_OFF
+ value.tooltip_text={"coin":"Münzen","gem":"Diamanten","more":"Tickets"}[key]
  return value
 
 func row(parent: Node) -> HBoxContainer:
@@ -354,16 +409,42 @@ func action(callback: Callable) -> void:
  update_stats()
 
 func show_notice(message: String) -> void:
- toast.text = message
- toast_left = 5.0
+ if message.is_empty(): return
+ if notice_history.is_empty() or notice_history[0]!=message:
+  notice_history.push_front(message)
+  if notice_history.size()>12: notice_history.pop_back()
+ if message==toast.text and toast_left>0: return
+ if message not in notice_queue: notice_queue.append(message)
+ if notice_queue.size()>4: notice_queue.pop_front()
+ if toast_left<=0: next_notice()
+
+func next_notice() -> void:
+ if notice_queue.is_empty(): return
+ toast.text=notice_queue.pop_front()
+ toast_left=3.2
+ toast.visible=true
+
+func show_income(coins: float) -> void:
+ if coins<=0: return
+ income_label.text="+ %s Münzen" % Catalog.number(coins)
+ income_left=1.8
+ income_label.show()
+
+func update_goal_progress(goal: Dictionary) -> void:
+ var value=clampf(float(goal.get("value",0))/maxf(1,float(goal.get("target",1))),0,1)*100
+ var id=str(goal.get("id","tutorial"))
+ quest_target=value
+ if not Game.state.ux.motion or id!=last_goal: quest_progress.value=value
+ last_goal=id
+ compact_style(mission_button,Color("47694c") if goal.get("ready",false) else PANEL)
 
 func update_stats() -> void:
  emergency_button.visible=not Game.state.city_services.fires.is_empty()
  emergency_button.text="FEUERWEHR · %s\nEINSÄTZE ANSEHEN" % Game.state.city_services.fires.size()
- edition.text="BRANDSCHUTZ / 24"
+ edition.text="WALDKONTO"
  for chapter in Journey.CHAPTERS:
   if chapter.id==Game.state.journey.selected: edition.text=chapter.title.to_upper()
- money.text = "%s Münzen" % Catalog.number(Game.state.coins)
+ money.text = Catalog.number(Game.state.coins)
  diamonds.text=Catalog.number(Game.state.diamonds)
  loot_counter.text=Catalog.number(Game.state.tickets)
  subtitle.text = "%s · Rucksack %s/%s · Team %s · Lv. %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers),Game.company_level()]
@@ -383,15 +464,31 @@ func update_stats() -> void:
   mission_button.text = ["WILLKOMMEN · Dein Waldimperium wartet","ANLEITUNG 1/4 · Fälle fünf Bäume","ANLEITUNG 2/4 · Holz abliefern","ANLEITUNG 3/4 · Erste Rohstoffe verkaufen","ANLEITUNG 4/4 · Erstes Gebäude platzieren"][int(Game.state.tutorial)]
  else:
   var goal=Journey.current(Game.state)
+  update_goal_progress(goal)
   if not goal.is_empty():
    mission_button.text="K%s · %s %s" % [int(goal.chapter)+1,goal.name,"✓ ABHOLEN" if goal.ready else "%s/%s ›" % [Catalog.number(goal.value),Catalog.number(goal.target)]]
   else: mission_button.text="DEIN IMPERIUM · Alle zehn Kapitel geschafft!"
+ if int(Game.state.tutorial)<4:
+  update_goal_progress({"id":"tutorial","value":Game.state.tutorial,"target":4})
  mission_button.clip_text=true
  mission_button.add_theme_font_size_override("font_size",12 if mission_button.text.length()>60 else 14)
 
 func _process(delta: float) -> void:
+ # Smooth the one existing meter without allocating a new Tween on every refresh.
+ if Game.state.ux.motion:
+  quest_progress.value=lerpf(quest_progress.value,quest_target,minf(1,delta*12))
+  if absf(quest_progress.value-quest_target)<0.05: quest_progress.value=quest_target
+ else: quest_progress.value=quest_target
  toast_left -= delta
- toast.modulate.a = clampf(toast_left,0,1)
+ toast.modulate.a = clampf(toast_left*2,0,1)
+ if toast_left<=0:
+  toast.hide()
+  next_notice()
+ income_left=maxf(0,income_left-delta)
+ income_label.visible=income_left>0 and not overlay.visible
+ income_label.modulate.a=minf(1,income_left*2)
+ income_label.position=subtitle.global_position
+ subtitle.modulate.a=0 if income_left>0 and not overlay.visible else 1
  if Game.company_level()>=4 and not Game.state.construction_intro and not overlay.visible and not placement_panel.visible:
   Game.state.construction_intro=true
   Game.save(true)
@@ -1109,6 +1206,11 @@ func services_menu() -> void:
   var home=Game.state.homes[int(fire.target_ref.index)]
   var alert=card("BRAND · "+str(Catalog.HOMES[home.kind].name))
   dynamic_text(alert,func(): return FireSafety.status(Game.state,fire) if fire in data.fires else "Brand gelöscht")
+  text(alert,"Brandstärke (verbleibender Brand)",13,MUTED)
+  journey_ui.meter(alert,func(): return (1-float(fire.progress))*100 if fire in data.fires else 0,100)
+  text(alert,"Löschfortschritt",13,MUTED)
+  journey_ui.meter(alert,func(): return float(fire.progress)*100 if fire in data.fires else 100,100)
+  text(alert,"Gebäudeschaden: 0 · Gebäude und Ausbaustufe bleiben erhalten.",13,MUTED)
   if FireSafety.alarm_left(fire)>0:
    button(alert,"JETZT FEUERWEHR ALARMIEREN",func(): action(func(): Game.report_fire(int(fire.id))))
   if fire.get("wait_reason","")=="route":

@@ -1,5 +1,8 @@
 extends Node
 
+signal sale_completed(material: String, coins: float, point: Vector3)
+signal reward_claimed(title: String, coins: float)
+signal fire_extinguished(point: Vector3)
 signal changed
 signal shipment_delivered(point: Vector3, material: String, amount: float)
 signal notice(message: String)
@@ -249,7 +252,12 @@ func step(delta: float) -> void:
  var awaiting=[]
  for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments:
   if not shipment.arrived: awaiting.append(shipment)
+ var burning={}
+ for incident in state.city_services.fires:
+  burning[int(incident.id)]=CityServices.location(state,incident.target_ref)
  CityServices.tick(state,delta,city_route_cache)
+ for incident in state.city_services.fires: burning.erase(int(incident.id))
+ for point in burning.values(): fire_extinguished.emit(point)
  ConstructionRules.transport_tick(state,delta)
  state.elapsed += delta
  state.time = fmod(float(state.time) + delta / 60.0,24.0)
@@ -401,7 +409,13 @@ func sell(key: String, fraction: float = 1.0) -> void:
  var amount = float(state.resources[key])*clampf(fraction,0,1)
  state.resources[key] -= amount
  if amount>0: Journey.add(state,"sales")
- earn(amount*float(Catalog.PRICES[key])*0.5 if ConstructionRules.HARDWARE.has(key) else amount*float(Catalog.PRICES[key])*multiplier()*boost("money"))
+ var revenue=amount*float(Catalog.PRICES[key])*0.5 if ConstructionRules.HARDWARE.has(key) else amount*float(Catalog.PRICES[key])*multiplier()*boost("money")
+ earn(revenue)
+ if amount>0:
+  var point=Vector3.ZERO
+  for i in state.buildings.size():
+   if state.buildings[i].kind=="market": point=building_position(i); break
+  sale_completed.emit(key,revenue,point)
  if state.tutorial == 3 and amount > 0: state.tutorial = 4
  if key == "furniture":
   state.exported += amount
@@ -860,6 +874,7 @@ func claim_mission(id: String) -> bool:
   if m.id == id and m.value >= m.target:
    state.missions_claimed[id] = true
    earn(m.reward)
+   reward_claimed.emit("MISSION GESCHAFFT!",float(m.reward))
    state.diamonds += 5
    state.tickets += 2
    changed.emit()
@@ -881,6 +896,7 @@ func claim_journey(id: String) -> bool:
   state.diamonds+=3
   state.tickets+=1
   UXRules.push_event(state,"journey:"+chapter.id,"Kapitel geschafft · "+chapter.name,Vector3.ZERO,"journey")
+ reward_claimed.emit("KAPITEL GESCHAFFT!" if completed else "ZIEL GESCHAFFT!",float(goal.coins))
  notice.emit("%s · +%s Münzen%s" % ["Kapitel geschafft!" if completed else "Ziel geschafft!",goal.coins," · neue Auszeichnung" if completed else ""])
  changed.emit()
  save(true)
@@ -904,6 +920,7 @@ func claim_commission() -> bool:
  earn(float(order.reward))
  # One deterministic ticket per three jobs; the payout is shown beforehand.
  if int(state.journey.completed_orders)%3==0: state.tickets+=1
+ reward_claimed.emit("AUFTRAG ERFÜLLT!",float(order.reward))
  notice.emit("Auftrag erfüllt · +%s Münzen" % order.reward)
  changed.emit()
  save(true)
@@ -1254,7 +1271,9 @@ func start_delivery() -> bool:
 func step_delivery(delta: float) -> void:
  if not state.delivery.active: return
  var report = DeliveryChain.tick(state,delta,delivery_routes(),(1+research_level("production")*0.12)*multiplier()*boost("processing"))
- earn(float(report.coins)*multiplier()*boost("money"))
+ var revenue=float(report.coins)*multiplier()*boost("money")
+ earn(revenue)
+ if revenue>0: sale_completed.emit("furniture",revenue,building_position(int(state.delivery.nodes.market)))
  state.exported += int(report.sold)
  Journey.add(state,"exported",int(report.sold))
  Journey.add(state,"shop_orders",int(report.orders))

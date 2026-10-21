@@ -5,9 +5,15 @@ var stock: Node3D
 var sign_label: Label3D
 var clock = 0.0
 var visual_phase = -1
+var dust: CPUParticles3D
 
 func _ready() -> void:
  var job = current_job()
+ dust=FeedbackFX.emitter("dust",10)
+ dust.position=Vector3(0,1.5,1)
+ dust.emission_shape=CPUParticles3D.EMISSION_SHAPE_BOX
+ dust.emission_box_extents=Vector3(4,0.3,4)
+ add_child(dust)
  # Permanent delivery bay and perimeter remain inside the reserved footprint.
  Models.box(self,Vector3(18,0.1,4),Vector3(0,0.75,8.5),Color("d4bf83"))
  for x in [-8.5,8.5]:
@@ -82,5 +88,11 @@ func refresh() -> void:
  sign_label.text="%s · %s %%" % [ConstructionRules.PHASES[mini(6,visual_phase)],int((1-float(job.left)/float(job.total))*100)]
 
 func _process(delta: float) -> void:
+ var job=current_job()
+ var working=not job.is_empty() and not job.get("paused",false) and int(job.get("workers",0))>0 and ConstructionRules.phase_ready(job)
+ dust.emitting=working and FeedbackFX.allowed(self)
+ dust.visible=dust.emitting
+ var count=4 if Game.state.quality==0 else 10
+ if dust.amount!=count: dust.amount=count
  clock+=delta
  if clock>=0.25: clock=0; refresh()

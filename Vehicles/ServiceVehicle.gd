@@ -49,9 +49,9 @@ func _ready() -> void:
  Models.bake(self)
 
 func _process(delta: float) -> void:
- flash+=delta
+ if Game.state.ux.motion: flash+=delta
  for i in lights.size():
   var on=emergency and (int(flash*5)+i)%2==0
   lights[i].material_override=Models.material(Color("71d6ff") if on else Color("38788f"),on)
- if moving:
+ if moving and Game.state.ux.motion:
   for wheel in wheels: wheel.rotate_object_local(Vector3.UP,delta*8)

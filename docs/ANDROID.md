@@ -1,3 +1,24 @@
+# Android-Test 0.25 — Waldleben
+
+**Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,
+Version `0.25-test`, Code 2500. Als Update über 0.23 oder 0.24 installieren;
+**nicht vorher deinstallieren**. Testsignatur und Speicherordner bleiben gleich.
+Die sieben Qualitätsaufgaben sind in [QUALITY-PASS.md](QUALITY-PASS.md) dokumentiert.
+Logo, überspringbares Intro, Brandschutz und bestehende Spielstände bleiben erhalten.
+
+APK: `releases/Timber-Loot-Tycoon-v0.25-test.apk`. Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0. Nur optionale Vibration. Die App ist eine Debug-signierte Testfassung;
+Gerätetest, mobile Framerate, Wärmeentwicklung und Akkuverhalten von 0.25 stehen aus.
+Die Installation von 0.23 wurde vom Nutzer bestätigt.
+
+Reproduzierbarer Build: `python3 scripts/build_android.py`. Der Helfer verwendet die
+Versionswerte aus dem Export-Preset und lehnt ein anderes Zertifikat ab.
+Der private Testschlüssel liegt weiterhin ausschließlich unter
+`/workspace/.timber-runtime/android/TimberLoot-Reborn-debug.keystore`.
+Er wird weder neu erzeugt noch mit APK oder Quellcode veröffentlicht.
+
+## Historische Dokumentation 0.24
+
 # Android-Test 0.24 — Update der neuen App-Linie
 
 **Timber Loot Neu**, Paket `com.whiskymitschuss.timberloot.reborn`,
