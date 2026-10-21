@@ -1,0 +1,22 @@
+{
+  "verified_at_utc": "2026-10-21T07:54:03.028950+00:00",
+  "tag": "v0.25.0-waldleben",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.25.0-waldleben/releases/Timber-Loot-Tycoon-v0.25-test.apk",
+      "http_status": 200,
+      "bytes": 63091750,
+      "sha256": "b22b55074ce9dd1a675e83bd066cd3cd92458e30f0f1e6ef5e4f154f12c20e9a",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.25.0-waldleben/releases/Timber-Loot-Tycoon-v0.25-source.zip",
+      "http_status": 200,
+      "bytes": 19534243,
+      "sha256": "ef3ba247f9effd276bdb8d5107f8f27634f4c79537cbccad7f916bcc5a2f1a04",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}

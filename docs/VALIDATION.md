@@ -53,6 +53,13 @@ SHA256 `ef3ba247f9effd276bdb8d5107f8f27634f4c79537cbccad7f916bcc5a2f1a04`.
 Jede Datei gegen den Git-Blob des APK-Quellstands geprüft; keine Schlüssel,
 Spielstände oder alten Release-Artefakte im Quellarchiv.
 
+## Externer Download 0.25 geprüft
+
+APK und Quell-ZIP unter dem festen Tag `v0.25.0-waldleben` vollständig per HTTPS
+zurückgeladen. Beide liefern HTTP 200; Größe und SHA256 stimmen mit den lokal
+geprüften Dateien überein. [Download-Prüfbericht](download-verification-25.json).
+Das ist kein Android-Gerätetest.
+
 ## Historische Prüfung 0.24
 
 # Prüfung 0.24 — Rauchmelder, Hydranten und Disposition
