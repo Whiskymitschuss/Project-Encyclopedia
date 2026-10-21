@@ -47,6 +47,13 @@ Der private Testschlüssel wird nicht mitgeliefert. Downloads werden separat gep
 
 [Änderungen, Gründe, Spielernutzen und geschätzte Qualitätswirkung](ALPHA2.md).
 
+## Externe Downloads Alpha 2 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.0-alpha.2` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Historische Prüfung Alpha 1
 
 # Prüfung Alpha 1 — 0.28-alpha.1
