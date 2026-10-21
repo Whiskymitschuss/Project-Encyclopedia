@@ -2,11 +2,20 @@
 
 Der Master-Prompt vom 19. Oktober 2026 erweitert das vorhandene Projekt. Dieser erste Abschnitt **0.15 Lieferwerk** ist eine abgeschlossene spielbare Holz- und Baukette. Er ist nicht die vollständige Umsetzung aller 26 Kapitel. Bestehende Stadt, Wälder, Buslinien, Prestige, Loot und fortgeschrittene Holzrezepte bleiben erhalten.
 
+## Erweiterungen 0.21 und 0.22 — umgesetzt
+
+Gespeicherte Gebäudebrände und automatische Feuerwehrfahrten über echte Straßen,
+begrenzter Fuhrpark, Nachbarschaftshilfe, tatsächliche Löschzeit, Ereignismeldungen
+und eine Einsatzzentrale. Flammen, aufsteigender Rauch, Einsatzkräfte und Wasser
+folgen dem Einsatzfortschritt. Neues gemeinsames UI mit gruppierter Verwaltung,
+priorisierten Alarmen und geprüftem gleichmäßigem Seitenverhältnis auf Handy und
+Tablet. Details und bewusst offene nächste Ideen: [Brandschutz](FIRE-SAFETY.md).
+
 ## Erweiterung 0.19 — umgesetzt
 
 Vollständiges beschriebenes UX-Paket: kontextuelle Gebäudekarten, Materialhilfe, echte auswählbare Lieferungen und markierte Straßenwege, horizontale Baupalette, Straßenzeichnen mit geschützter Rücknahme, benannte Viertel mit tatsächlichen gemeinsamen Ausbauplänen, antippbare Übersicht und bestehende Regionsfreischaltungen, persistente Bauereignisse, konkrete Benno-Hinweise und Zugänglichkeitseinstellungen. Alle 14 Stadtgebäudetypen erhalten zehn echte Geometrie-/Architekturstadien; fertiggestellte Gebäude wechseln erst nach dem echten Bauabschluss. Grundrisse, Wirtschaft, Baustellen und Spielstände bleiben verbunden.
 
-Die Übersichtskarte organisiert die vorhandene Welt. Zusätzliche Landkäufe außerhalb der bestehenden Gebiete, tatsächliche Brand-/Schadensereignisse, Hafen-/Schiffslogistik und Flughäfen sind eigene künftige Gameplay-Kapitel; die vorhandenen Feuerwehr-/Rettungsdienstfahrten bleiben echte Gemeindedienste. Die [UX-Prüfliste](UX-CHECKLIST.md) beschreibt die konkrete Bedienung dieser Version.
+Die Übersichtskarte organisiert die vorhandene Welt. Zusätzliche Landkäufe außerhalb der bestehenden Gebiete, komplexe Schadens-/Reparatursysteme, Hafen-/Schiffslogistik und Flughäfen sind eigene künftige Gameplay-Kapitel; die vorhandenen Feuerwehr-/Rettungsdienstfahrten bleiben echte Gemeindedienste. Die [UX-Prüfliste](UX-CHECKLIST.md) beschreibt die konkrete Bedienung dieser Version.
 
 ## Korrektur 0.18 — umgesetzt
 
@@ -28,7 +37,7 @@ Sämtliche Verbindungen der kleinen Holzlinie und alle Materialbaustellen nutzen
 
 Neue Polizeiwache und Taxizentrale ergänzen Klinik und Feuerwehr. Tatsächliche gespeicherte Dienstfahrten, Taxi-Abholung und -Ziel, abholbare Stadtkasse, Bewohnerwege und Fahrzeug-/Figurenpools. Externe Gemeindehilfe vor dem Bau eigener Standorte; bessere Wachen erhöhen die parallele Fahrzeugzahl. Eigene aktive Wege schützen Straßen und Gebäude, Fahrten zahlen erst nach erfülltem Auftrag. Direkte Wischgesten über Menükarten mit sicherer Unterscheidung von Tipp und Ziehen.
 
-Die unten stehenden größeren Master-Phasen bleiben offen. Es gibt keine vollständige Fahrzeugkollisions-/Ampelsimulation; die übrigen fortgeschrittenen Fabrikrezepte und alten Exporte verwenden weiterhin die gemeinsame Wirtschaft. Stadtdienste sind eine eigene kleine Gemeindesimulation, kein Schaden-/Gesundheitssystem.
+Die unten stehenden größeren Master-Phasen bleiben offen. Es gibt keine vollständige Fahrzeugkollisions-/Ampelsimulation; die übrigen fortgeschrittenen Fabrikrezepte und alten Exporte verwenden weiterhin die gemeinsame Wirtschaft. Stadtdienste sind eine eigene kleine Gemeindesimulation. Seit 0.21 existieren tatsächliche Brandeinsätze; ein Schaden-/Gesundheitssystem bleibt offen.
 
 ## In 0.15 umgesetzt
 

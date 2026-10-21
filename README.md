@@ -1,6 +1,25 @@
-# Timber Loot Tycoon — Waldstadt 0.20
+# Timber Loot Tycoon — Einsatzstadt 0.22
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+
+## Neu in 0.21 und 0.22
+
+- **0.21 Brandschutz:** gespeicherte Gebäudebrände, automatische Feuerwehrdisposition,
+  echte Straßenanfahrt, Löscharbeit nach Ankunft und Nachbarschaftshilfe ohne eigene
+  Wache. Höchstens zwei Ereignisse gleichzeitig; keine endgültigen Gebäudeverluste.
+- **0.22 Einsatzstadt:** sichtbare Flammen, aufsteigender Rauch, Feuerwehrleute und
+  Wasserstrahlen am realen Einsatzort. Akkumodus und reduzierte Bewegung gelten auch
+  für die Effekte. Die Animation verändert keine Wirtschaft oder Einsatzzeiten.
+- Neues gemeinsames Oberflächendesign mit dunklem Waldgrün, hellen Karten,
+  klaren Zuständen und gruppierter Navigation. Eine rote Einsatzschaltfläche führt
+  direkt zur Feuerwehr. Handy- und Tabletansichten skalieren gleichmäßig;
+  breite Ansichten begrenzen die Lesebreite auf 760 logische Pixel.
+
+Details und Prüfungen: [Brandschutz & Einsatzstadt](docs/FIRE-SAFETY.md).
+[Gerenderte Vorschau](docs/preview-fire22.png), aus einem isoliert aufgebauten
+Testprofil. **Der Quellstand ist 0.22; die letzte gesicherte APK bleibt 0.20.**
+Für ein kompatibles neues Android-Update fehlt in dieser Cloud-Instanz der bisherige
+Testsignaturschlüssel. Er wird nicht durch einen neuen Schlüssel ersetzt.
 
 ## Auf dem Handy testen
 
@@ -13,6 +32,7 @@ Die signierte Android-Test-APK liegt nach dem Build unter **[releases/Timber-Loo
 ```bash
 bash scripts/godot.sh --editor
 bash scripts/test.sh
+bash scripts/test_visual.sh  # Grafiktests mit vorhandenem Display oder Xvfb
 python3 scripts/build_android.py
 python3 scripts/backup.py
 ```

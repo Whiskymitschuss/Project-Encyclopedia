@@ -82,6 +82,9 @@ func run() -> void:
  for button in ui.sheet_body.find_children("*","Button",true,false):
   if ui.sheet_scroll.get_global_rect().encloses(button.get_global_rect()): target=button; break
  check(target!=null,"A visible card action exists for the touch-hold test")
+ if target==null:
+  quit(1)
+  return
  var at=target.get_global_rect().get_center()
  await touch(at,true)
  ui.refresh()

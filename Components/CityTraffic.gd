@@ -5,6 +5,12 @@ var people: Dictionary={}
 var pools: Dictionary={}
 var moving_vehicles=0
 var visible_people=0
+var fire_world
+
+func _ready() -> void:
+ fire_world=load("res://Components/FireWorld.gd").new()
+ fire_world.world=world
+ add_child(fire_world)
 
 func recycle(table: Dictionary, present: Dictionary) -> void:
  for id in table.keys():

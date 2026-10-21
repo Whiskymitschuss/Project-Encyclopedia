@@ -5,12 +5,12 @@ signal focus_requested(point: Vector3)
 signal placement_requested(request: Dictionary)
 signal placement_action(action: String)
 
-const INK = Color("123e50")
-const PANEL = Color("197b87")
-const GOLD = Color("ffd05b")
-const CREAM = Color("fff5da")
-const MUTED = Color("a6dcd7")
-const PAPER = Color("fff3d9")
+const INK = Color("142d32")
+const PANEL = Color("27645b")
+const GOLD = Color("f3c779")
+const CREAM = Color("f7faf5")
+const MUTED = Color("b5ccc2")
+const PAPER = Color("f2f3e9")
 const Surface = preload("res://UI/SculptedSurface.gd")
 var money: Label
 var diamonds: Label
@@ -43,9 +43,25 @@ var placement_undo: Button
 var placement_rotate: Button
 var journey_ui
 var edition: Label
+var header_panel: PanelContainer
+var bottom_panel: VBoxContainer
+var camera_controls: VBoxContainer
+var emergency_button: Button
 
-func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxTexture:
- return Surface.create(color,radius,pressed)
+func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxFlat:
+ var skin=StyleBoxFlat.new()
+ skin.bg_color=color.darkened(0.12) if pressed else color
+ skin.set_corner_radius_all(radius)
+ skin.set_border_width_all(1)
+ skin.border_color=color.lightened(0.16)
+ skin.shadow_color=Color(0.02,0.09,0.08,0.22)
+ skin.shadow_size=3 if pressed else 6
+ skin.shadow_offset=Vector2(0,2)
+ skin.content_margin_left=16
+ skin.content_margin_right=16
+ skin.content_margin_top=12
+ skin.content_margin_bottom=12
+ return skin
 
 func _ready() -> void:
  set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -64,6 +80,7 @@ func _ready() -> void:
  spatial_icons=load("res://UI/SpatialIcons.gd").new()
  add_child(spatial_icons)
  var header = PanelContainer.new()
+ header_panel=header
  add_child(header)
  header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  header.offset_left = 14
@@ -74,11 +91,17 @@ func _ready() -> void:
  var top = VBoxContainer.new()
  header.add_child(top)
  var brand = row(top)
- var title = text(brand,"TIMBER LOOT",21)
+ var title = text(brand,"TIMBER · WALDSTADT",21)
  title.autowrap_mode = TextServer.AUTOWRAP_OFF
+ title.clip_text=true
+ title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
  title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- edition = text(brand,"WALDSTADT / 20",11,GOLD)
+ edition = text(brand,"WALDSTADT / 22",11,GOLD)
  edition.autowrap_mode = TextServer.AUTOWRAP_OFF
+ edition.custom_minimum_size.x=0
+ edition.clip_text=true
+ edition.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ edition.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
  var counters=row(top)
  money=resource_counter(counters,"coin",19)
  money.size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -95,6 +118,7 @@ func _ready() -> void:
  mission_button.add_theme_font_size_override("font_size",14)
  compact_style(mission_button,PANEL)
  var right = VBoxContainer.new()
+ camera_controls=right
  add_child(right)
  right.anchor_left = 1
  right.anchor_right = 1
@@ -108,6 +132,7 @@ func _ready() -> void:
   compact_style(quick,PAPER)
   quick.add_theme_color_override("font_color",INK)
  var bottom = VBoxContainer.new()
+ bottom_panel=bottom
  add_child(bottom)
  bottom.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
  bottom.offset_left = 14
@@ -178,6 +203,15 @@ func _ready() -> void:
  toast.add_theme_color_override("font_shadow_color",INK)
  toast.add_theme_constant_override("shadow_offset_x",1)
  toast.add_theme_constant_override("shadow_offset_y",2)
+ emergency_button=button(self,"",func(): open_menu("services"))
+ emergency_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+ emergency_button.offset_left=-238
+ emergency_button.offset_right=-76
+ emergency_button.offset_top=220
+ emergency_button.offset_bottom=270
+ emergency_button.add_theme_font_size_override("font_size",13)
+ compact_style(emergency_button,Color("a54235"))
+ emergency_button.hide()
  build_overlay()
  build_placement_bar()
  journey_ui=load("res://UI/JourneyUI.gd").new()
@@ -192,8 +226,34 @@ func _ready() -> void:
  Game.changed.connect(update_stats)
  Game.notice.connect(show_notice)
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
+ header_panel.resized.connect(layout_interface)
+ bottom_panel.resized.connect(layout_interface)
+ resized.connect(layout_interface)
+ layout_interface()
  update_stats()
  if int(Game.state.tutorial)==0: call_deferred("open_menu","welcome")
+
+# Keep a consistent, centered reading width on tablets without stretching controls.
+func layout_interface() -> void:
+ var inset=maxf(14,(size.x-760)/2)
+ for panel in [header_panel,bottom_panel,mission_button,overlay]:
+  if panel!=null:
+   panel.offset_left=inset
+   panel.offset_right=-inset
+ if camera_controls!=null:
+  camera_controls.offset_right=-inset
+  camera_controls.offset_left=-inset-52
+ bottom_panel.offset_top=-maxf(184,bottom_panel.get_combined_minimum_size().y+12)
+ mission_button.offset_top=maxf(122,header_panel.get_global_rect().end.y+8)
+ mission_button.offset_bottom=mission_button.offset_top+40
+ overlay.offset_top=maxf(168,mission_button.offset_bottom+6) if current!="building" else maxf(168,size.y-574)
+ overlay.offset_bottom=-maxf(192,bottom_panel.get_combined_minimum_size().y+20)
+ if ux!=null:
+  ux.event_button.offset_top=mission_button.offset_bottom+8
+  ux.event_button.offset_bottom=ux.event_button.offset_top+44
+  ux.layout_sheet()
+  ux.palette.offset_left=inset
+  ux.palette.offset_right=-inset
 
 func build_overlay() -> void:
  overlay = PanelContainer.new()
@@ -203,7 +263,7 @@ func build_overlay() -> void:
  overlay.offset_right = -14
  overlay.offset_top = 168
  overlay.offset_bottom = -192
- overlay.add_theme_stylebox_override("panel",style(Color("125263"),22))
+ overlay.add_theme_stylebox_override("panel",style(INK,22))
  var container = VBoxContainer.new()
  container.add_theme_constant_override("separation",12)
  overlay.add_child(container)
@@ -265,6 +325,7 @@ func row(parent: Node) -> HBoxContainer:
 func button(parent: Node, title: String, callback: Callable, enabled: bool = true) -> Button:
  var node = Button.new()
  node.text = title
+ node.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  node.custom_minimum_size = Vector2(0,48)
  node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  node.disabled = not enabled
@@ -297,7 +358,9 @@ func show_notice(message: String) -> void:
  toast_left = 5.0
 
 func update_stats() -> void:
- edition.text="WALDSTADT / 20"
+ emergency_button.visible=not Game.state.city_services.fires.is_empty()
+ emergency_button.text="FEUERWEHR · %s\nEINSÄTZE ANSEHEN" % Game.state.city_services.fires.size()
+ edition.text="WALDSTADT / 22"
  for chapter in Journey.CHAPTERS:
   if chapter.id==Game.state.journey.selected: edition.text=chapter.title.to_upper()
  money.text = "%s Münzen" % Catalog.number(Game.state.coins)
@@ -360,7 +423,7 @@ func open_menu(tab: String) -> void:
  current = tab
  scroll.scroll_vertical = 0
  overlay.show()
- overlay.offset_top=maxf(168,size.y-574) if tab=="building" else 168.0
+ overlay.offset_top=maxf(168,size.y-574) if tab=="building" else maxf(168,mission_button.offset_bottom+6)
  render_menu()
 
 func close_menu() -> void:
@@ -576,7 +639,7 @@ func team_menu() -> void:
 
 func garage_menu() -> void:
  text(contents,"Transportupgrades verbessern Ladekapazität und Fahrtempo. Höhere Stufen zeigen Gelenk-Auflieger und Tiefbetttransporter. Maschinen im Wald schaltest du unter Team mit den Werkzeugstufen frei.",15,MUTED)
- modal_title.text = "VEHICLE GARAGE"
+ modal_title.text = "GARAGE & FUHRPARK"
  var box = card("%s Transportfahrzeuge" % Game.state.trucks,"Deine gemeinsame Flotte transportiert Holz, Bretter, Möbel und Baumaterial. Beladen, Entladen und leere Rückfahrt belegen das Fahrzeug. Die Garage schafft zusätzliche Stellplätze.")
  button(box,"LIEFERKETTE & ZUTEILUNG",func(): open_menu("delivery"))
  button(box,"LKW KAUFEN · %s" % Catalog.number(Game.truck_cost()),func(): action(func(): Game.buy_truck()))
@@ -686,11 +749,18 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
- button(contents,"KAPITEL 1–10 & RATHAUS",func(): open_menu("journey"))
- button(contents,"DEINE AUSZEICHNUNGEN",func(): open_menu("trophies"))
- for entry in [["Stadtkarte & Bauflächen","overview"],["Viertel & gemeinsame Ausbaupläne","districts"],["Hinweise & Ereignisse","events"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Betriebe verwalten","industry"],["Stadt & Häuser","city"],["Stadtleben & Fahrzeuge","services"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Spänebox leeren","sawdust"],["Anleitung & Hilfe","guide"],["Regionen & Großprojekte","empire"],["Materialplaner","planner"],["Loot & Inventar","loot"],["Forschung","research"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"],["Lager & Verkaufsstelle","market"],["Einstellungen & Sicherung","settings"]]:
-  var key = str(entry[1])
-  button(contents,str(entry[0]),func(): open_menu(key))
+ var groups=[
+  ["Stadt & Sicherheit",[["Einsatzzentrale & Feuerwehr","services"],["Stadtkarte & freie Grundstücke","overview"],["Stadt & Häuser","city"],["Viertel & Ausbaupläne","districts"],["Hinweise & Ereignisse","events"]]],
+  ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Spänebox","sawdust"]]],
+  ["Wege & Team",[["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"]]],
+  ["Deine Entwicklung",[["Kapitel 1–10 & Rathaus","journey"],["Auszeichnungen","trophies"],["Regionen & Großprojekte","empire"],["Forschung","research"],["Loot & Inventar","loot"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"]]],
+  ["Hilfe & Einstellungen",[["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
+ ]
+ for group in groups:
+  var section=card(group[0])
+  for entry in group[1]:
+   var key=str(entry[1])
+   button(section,str(entry[0])+"  ›",func(): open_menu(key))
 
 func missions_menu() -> void:
  modal_title.text = "MEILENSTEINE"
@@ -1025,23 +1095,24 @@ func construction_menu() -> void:
 
 
 func services_menu() -> void:
- modal_title.text="LEBEN IN DEINER STADT"
+ modal_title.text="EINSATZZENTRALE & STADTLEBEN"
  var data=Game.state.city_services
- var box=card("Deine Gemeindedienste","Polizei hilft in der Nachbarschaft, Feuerwehr löscht gemeldete Gebäudebrände und prüft Rauchmelder und Rettungswagen leisten Erste Hilfe. Taxis holen Fahrgäste ab und bringen sie zu ihren Zielen. Ohne eigene Wache kommt die Gemeinde von der westlichen Zufahrt.")
- button(box,"Neue Fahrten: AN" if data.enabled else "Neue Fahrten: AUS",func(): action(func(): data.enabled=not data.enabled))
- dynamic_text(box,func(): return "%s aktive Fahrten · %s Spaziergänger\nStadtkasse: %s Münzen" % [data.missions.size(),data.walkers.size(),Catalog.number(float(data.treasury)*Game.multiplier())])
- button(box,"STADTKASSE ABHOLEN",func(): action(func(): Game.collect_city_income()))
- text(box,"Fahrgeld und Gemeindebonus entstehen erst nach erledigter Fahrt beziehungsweise Hilfe vor Ort. Laufende Fahrten enden auch bei ausgeschalteten neuen Aufträgen. Offline bleibt die Simulation aktiv.",14,MUTED)
- text(box,"Brandschutz: höchstens zwei Brände gleichzeitig, keine zerstörten Gebäude oder verlorenen Spielstände. Neue Ereignisse pausieren mit den Gemeindefahrten; laufende Rettungseinsätze gehen weiter.",14,MUTED)
- dynamic_text(box,func(): return "Brände: %s aktiv · %s gelöscht" % [data.fires.size(),int(data.fires_extinguished)])
+ var summary=card("Feuerwehr im Einsatz" if not data.fires.is_empty() else "Deine Stadt ist sicher")
+ dynamic_text(summary,func(): return "%s aktive Brände · %s erfolgreich gelöscht" % [data.fires.size(),int(data.fires_extinguished)])
  for incident in data.fires:
   var fire=incident
-  var alert=card("BRANDEINSATZ")
-  dynamic_text(alert,func(): return "Gelöscht" if not fire in data.fires else "Löschfortschritt: %s %%" % int(float(fire.progress)*100) if float(fire.progress)>0 else "Anfahrt" if int(fire.mission_id)>=0 else "Wartet auf freie Feuerwehr / Straßenanschluss")
+  var home=Game.state.homes[int(fire.target_ref.index)]
+  var alert=card("BRAND · "+str(Catalog.HOMES[home.kind].name))
+  dynamic_text(alert,func(): return "Gelöscht" if not fire in data.fires else "Löschfortschritt: %s %%" % int(float(fire.progress)*100) if float(fire.progress)>0 else "Feuerwehr auf Anfahrt" if int(fire.mission_id)>=0 else "Wartet auf freie Feuerwehr / Straßenanschluss")
   button(alert,"EINSATZORT ANSEHEN",func():
    if fire in data.fires:
     focus_requested.emit(CityServices.location(Game.state,fire.target_ref))
     close_menu())
+ var box=card("Gemeindedienste","Ohne eigene Wache hilft die Nachbargemeinde. Eigene Standorte verkürzen Wege und stellen mit jedem Ausbau mehr Fahrzeuge bereit.")
+ button(box,"Neue Ereignisse & Fahrten: AN" if data.enabled else "Neue Ereignisse & Fahrten: AUS",func(): action(func(): data.enabled=not data.enabled))
+ dynamic_text(box,func(): return "%s aktive Fahrten · %s Spaziergänger\nStadtkasse: %s Münzen" % [data.missions.size(),data.walkers.size(),Catalog.number(float(data.treasury)*Game.multiplier())])
+ button(box,"STADTKASSE ABHOLEN",func(): action(func(): Game.collect_city_income()))
+ text(box,"Neue Ereignisse lassen sich pausieren. Gemeldete Brände werden weiter gelöscht, auch während deiner Abwesenheit. Gebäude bleiben erhalten; es gibt keine Strafzahlungen.",14,MUTED)
  for kind in CityServices.TYPES:
   var key=str(kind)
   var definition=Catalog.HOMES[CityServices.BUILDINGS[kind]]

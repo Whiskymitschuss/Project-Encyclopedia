@@ -15,7 +15,7 @@ RUNTIME = Path(os.environ.get('TIMBER_RUNTIME', '/workspace/.timber-runtime'))
 SDK = RUNTIME / 'android-sdk'
 TOOLS = SDK / 'build-tools/36.0.0'
 parser = argparse.ArgumentParser()
-parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.20-test.apk')
+parser.add_argument('--output', type=Path, default=ROOT / 'exports/Timber-Loot-Tycoon-v0.22-test.apk')
 parser.add_argument('--verify-only', action='store_true')
 args = parser.parse_args()
 output = args.output.resolve()
@@ -30,15 +30,11 @@ elif output.with_suffix('.apk.json').exists():
     source_commit = json.loads(output.with_suffix('.apk.json').read_text()).get('source_commit')
 
 if not args.verify_only:
+    key = RUNTIME / 'android/TimberLoot-debug.keystore'
+    if not key.exists():
+        raise SystemExit('Existing TimberLoot-debug.keystore is required for compatible Android updates. Restore the previous key securely outside Git; no replacement key will be generated.')
     subprocess.run([sys.executable, ROOT / 'scripts/setup_android.py'], check=True)
     java = Path(os.environ.get('JAVA_HOME', Path(shutil.which('java')).resolve().parents[1]))
-    key = RUNTIME / 'android/TimberLoot-debug.keystore'
-    key.parent.mkdir(parents=True, exist_ok=True)
-    if not key.exists():
-        run([java / 'bin/keytool', '-genkeypair', '-keystore', key, '-storetype', 'JKS',
-             '-storepass', 'android', '-keypass', 'android', '-alias', 'androiddebugkey',
-             '-keyalg', 'RSA', '-keysize', '2048', '-validity', '10000',
-             '-dname', 'CN=Timber Loot Android Test, O=Timber Loot, C=DE', '-noprompt'])
     env = os.environ.copy()
     env.update(JAVA_HOME=str(java), ANDROID_HOME=str(SDK),
         XDG_DATA_HOME=os.environ.get('XDG_DATA_HOME',str(RUNTIME/'data')),
@@ -67,7 +63,7 @@ run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.20-test'", "versionCode='2000'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
+for required in ["package: name='com.whiskymitschuss.timberloot'", "versionName='0.22-test'", "versionCode='2200'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
@@ -84,7 +80,7 @@ with zipfile.ZipFile(output) as apk:
     assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'version':'0.20-test','package':'com.whiskymitschuss.timberloot',
+    'version':'0.22-test','package':'com.whiskymitschuss.timberloot',
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
     'debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],
     'source_commit':source_commit,

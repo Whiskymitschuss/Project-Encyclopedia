@@ -149,7 +149,7 @@ func run() -> void:
  var hud=scene.hud
  hud.open_menu("services")
  await process_frame
- check(hud.modal_title.text=="LEBEN IN DEINER STADT","Municipal services have a direct functioning mobile menu")
+ check(hud.modal_title.text=="EINSATZZENTRALE & STADTLEBEN","Municipal services have a direct functioning mobile menu")
  hud.build_category="Stadt"
  hud.open_menu("catalog")
  for i in 3: await process_frame

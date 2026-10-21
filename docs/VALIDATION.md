@@ -1,3 +1,37 @@
+# Prüfung 0.21/0.22 — Brandschutz, Einsatzstadt und Oberfläche
+
+- Vollständiges `bash scripts/test.sh`: **19.374 Headless-Prüfungen**, keine Fehler,
+  dazu der bestehende erste-Haus-Verlauf und abschließende Hauptszenenstart.
+  Darin 24 neue Brandprüfungen zu tatsächlichen Zielen, Flottenbegrenzung,
+  Straßenverbindung, Ankunft vor Löschen, JSON-Wiederaufnahme, Ereignisbudget,
+  Gebäudeschutz und einmaliger Vergütung.
+- Nach der letzten Priorisierung der Karteninhalte zusätzlich gezielt **1.931
+  Headless-Prüfungen** (Verkehr/Touch und Gebäudekarten), keine Fehler. Diese sind
+  eine getrennte Wiederholung und werden nicht zur vollständigen Suite addiert.
+- `bash scripts/test_visual.sh`: **205 Desktop-OpenGL-Prüfungen**, keine Fehler:
+  23 UI-/3D-Icon-, 87 tatsächliche Touch-/Karten-, 45 Stadt-UX- und 50 neue
+  Brand-/Format-/Zugänglichkeitsprüfungen. Der Helfer nutzt einen bestehenden
+  Bildschirm oder startet selbst Xvfb und räumt seine temporären Profile auf.
+- Die neuen Grafikprüfungen rendern Flammen und Rauch am tatsächlichen Brandort,
+  prüfen aufsteigenden Rauch, Ankunft vor Wasser/Mannschaft, begrenzte Effekte,
+  Akkumodus, reduzierte Bewegung und das Entfernen nach dem Löschen. Rendering
+  darf weder Geld noch Simulationsfortschritt verändern.
+- Fenstergrößen 360×640, 540×960, 591×1280 und 1280×800: gleichmäßige Skalierung
+  beider Achsen, begrenzte Lesebreite, sichtbare Navigation, scrollbare Inhalte
+  und keine Überschneidung von Kopfzeile/Ziel bei normaler oder großer Schrift.
+- Vorschauen: [Einsatz in der Welt](preview-fire22.png) und
+  [Einsatzzentrale](preview-fire-services22.png), aus einem ausdrücklich aufgebauten
+  Testprofil. Keine echten Nutzerspielstände wurden verändert.
+- Software-OpenGL unter Linux ist kein Android-Geräte-, Leistungs- oder
+  Langzeitbalancingnachweis. Audio wurde für die Grafiktests ausdrücklich durch
+  den Dummy-Treiber ersetzt; Ton auf echter Hardware bleibt ungeprüft.
+- Android-Export ist auf 0.22 / Code 2200 vorbereitet, aber **nicht gebaut**.
+  Der bestehende Testsignaturschlüssel fehlt. Der Helfer bricht jetzt vor Downloads
+  ab, statt einen inkompatiblen Ersatzschlüssel zu erzeugen. Die vorhandene
+  signierte APK 0.20 bleibt unverändert.
+
+## Historischer Prüfbericht 0.20
+
 # Prüfung 0.20 — Waldstadt und gerundete Weltmodelle
 
 - Vollständiges `bash scripts/test.sh`: **19.350 Headless-Prüfungen**, einschließlich 128 neuer Prüfungen für gerundete Geometrien, Normalen, Begrenzungen, Materialprofile und Kurvenfahrten. Erste normale Hausprogression weiterhin 1.682 simulierte Sekunden; Rathaus 1 bei 393 und Rathaus 2 bei 855 Sekunden. Kein Nutzerspielstand wurde für die Prüfungen verwendet.

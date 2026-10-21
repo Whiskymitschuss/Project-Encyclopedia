@@ -93,11 +93,13 @@ func _ready() -> void:
  Game.shipment_delivered.connect(on_delivery)
  refresh()
 func layout_sheet() -> void:
- var height=minf(360,maxf(120,hud.size.y-422))
- sheet.offset_left=14
- sheet.offset_right=-14
- sheet.offset_top=-204-height
- sheet.offset_bottom=-204
+ var clearance=maxf(204,hud.bottom_panel.get_combined_minimum_size().y+24)
+ var height=minf(360,maxf(120,hud.size.y-clearance-218))
+ var inset=maxf(14,(hud.size.x-760)/2)
+ sheet.offset_left=inset
+ sheet.offset_right=-inset
+ sheet.offset_top=-clearance-height
+ sheet.offset_bottom=-clearance
 func panels_visible() -> bool: return sheet.visible or palette.visible
 func hide_panels(clear: bool=false) -> void:
  sheet.hide()
@@ -200,6 +202,7 @@ func render_sheet() -> void:
    var item=hud.button(goods,Catalog.RESOURCES[key],func(): open_material(key))
    item.clip_text=true
    item.add_theme_font_size_override("font_size",13)
+  sheet_body.move_child(goods,0)
   var actions=sheet_actions()
   var bill=UXRules.upgrade_bill(Game.state,city,index)
   hud.button(actions,"Ausbauen · %s" % Catalog.number(bill.coins) if not bill.is_empty() else ("MAX · Stufe %s" % int(b.level) if int(b.level)>=(10 if city else int(Catalog.BUILDINGS[b.kind].max)) else "Ausbau läuft"),func():
@@ -489,6 +492,7 @@ func settings_controls(box: Node) -> void:
  hud.button(box,"Bewegung & Lieferfeedback: AN" if Game.state.ux.motion else "Bewegung & Lieferfeedback: REDUZIERT",func(): hud.action(func(): Game.state.ux.motion=not Game.state.ux.motion))
 func apply_accessibility() -> void:
  apply_fonts(hud)
+ hud.call_deferred("layout_interface")
 func apply_fonts(node: Node) -> void:
  if node is Label or node is Button:
   if not node.has_meta("ux_base_font"): node.set_meta("ux_base_font",node.get_theme_font_size("font_size"))
