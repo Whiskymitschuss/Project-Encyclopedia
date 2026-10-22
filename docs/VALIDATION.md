@@ -1,3 +1,10 @@
+## Externe Downloads Zentrallogistik · 0.28.4 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.4-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha284.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Auslieferung Zentrallogistik · 0.28.4-alpha.1
 
 APK aus `8ccb88798b42d22ab8c679d085606eb812c14e2a`, 63253444 Bytes,
