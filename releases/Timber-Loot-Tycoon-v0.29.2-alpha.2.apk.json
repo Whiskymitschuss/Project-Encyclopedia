@@ -1,0 +1,52 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.29.2-alpha.2.apk",
+  "bytes": 63219125,
+  "sha256": "f36640a234aa690387de47586de56d4adb6e5ab8482b393c5d1f9e34763f2317",
+  "version": "0.29.2-alpha.2",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "84a700d8b9b3d1b696e760d3edd8689455a90fb1",
+  "device_install_or_launch_tested": false,
+  "version_code": 2922,
+  "alpha": 2,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "packaged_alpha_resources_verified": true,
+  "automated_headless_checks": 20514,
+  "automated_opengl_checks": 526,
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.29.2-source.zip",
+    "bytes": 23013601,
+    "sha256": "e32d81c72eb035f3a59e8401fe08326c9613502754c19c8b5a3fdbfdfba43934",
+    "verified_files": 457
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-2-Schnellstart-Testerpaket.zip",
+    "bytes": 62601176,
+    "sha256": "38d5cab37171083fd4dc2f5173a1dcd596e5b99962045f69efc2be287956e6d3",
+    "verified_entries": 6
+  },
+  "packaged_desktop_startup": {
+    "apk_sha256": "f36640a234aa690387de47586de56d4adb6e5ab8482b393c5d1f9e34763f2317",
+    "method": "Unchanged extracted APK assets executed with desktop Godot 4.6.3 headless and isolated generated profiles",
+    "device_tested": false,
+    "interrupted_start_old_save_bytes_unchanged": true,
+    "cold_start_checks": 11,
+    "background_checks": 15,
+    "failures": 0,
+    "offline_seconds": 28800,
+    "main_loop_blocked_worker_progress_verified": true,
+    "fresh_profile_boot_smoke_passed": true,
+    "limitations": "No native Android execution or handset background-policy verification."
+  }
+}

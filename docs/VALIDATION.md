@@ -1,3 +1,26 @@
+## Verpackte 0.29.2-Startdateien geprüft
+
+Die unverändert extrahierten Assets der gebauten APK laufen in Desktop-Godot 4.6.3:
+11 Kaltstart- und 15 Hintergrundprüfungen bestanden, einschließlich tatsächlicher
+Berechnung bei blockiertem Hauptloop/Pause-Benachrichtigung. Ein Abbruch nach zehn
+Frames ließ den bisherigen Testspielstand bytegleich erhalten; ein frisches Profil
+startete ohne Skript-/Ladefehler. Alle Profile wurden neu unter /tmp erzeugt.
+[Bericht](alpha2-performance/packaged-startup.json). Dies ist keine Android-Ausführung
+und kein Nachweis dafür, wie lange das konkrete Handy Hintergrundprozesse zulässt.
+
+## Auslieferung Schnellstart 0.29.2
+
+APK aus Quell-Commit `84a700d8b9b3d1b696e760d3edd8689455a90fb1`, 63219125 Bytes,
+SHA256 `f36640a234aa690387de47586de56d4adb6e5ab8482b393c5d1f9e34763f2317`. Version 0.29.2-alpha.2 / Code 2922; gleiches Paket und
+Testzertifikat wie Alpha 2. V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, ARM64/ARMv7,
+OpenGL, Hochformat und ausschließlich optionale Vibration geprüft.
+
+Ladeanzeige, aktualisierter Spielmanager, Intro und bisherige Alpha-Ressourcen
+sind wirklich in der APK enthalten. Tests, Dokumentation und Release-Dateien sind
+ausgeschlossen. Quell-ZIP: 457 Dateien, SHA256 `e32d81c72eb035f3a59e8401fe08326c9613502754c19c8b5a3fdbfdfba43934`.
+Tester-ZIP: 6 Einträge, SHA256 `38d5cab37171083fd4dc2f5173a1dcd596e5b99962045f69efc2be287956e6d3`.
+Der private Testschlüssel wird nicht mitgeliefert. Downloads werden separat geprüft.
+
 # Prüfung 0.29.2 — schneller laden & App-Wechsel
 
 - `bash scripts/test.sh`: **20.514 Prüfungen in 29 Headless-Suiten**, keine Fehler;

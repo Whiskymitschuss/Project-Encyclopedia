@@ -1,3 +1,32 @@
+# Alpha 2 · Schnellstart 0.29.2
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-v0.29.2-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Schnellstart-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.29.2-source.zip) · [Änderungen](../docs/PERFORMANCE-292.md) · [Testplan](../docs/alpha2-performance/TESTPLAN.txt)
+
+Version **0.29.2-alpha.2**, Code **2922**, Launchername **Timber Loot Alpha**.
+Direkt über die vorhandene Alpha installieren; vorher nicht deinstallieren und
+keine App-Daten löschen. Gleiches Paket `com.whiskymitschuss.timberloot.reborn`,
+gleiches Testzertifikat und Speicherverzeichnis. Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0, nur optionale Vibration.
+
+Der Rechenlauf ist unabhängig vom sichtbaren Spielfenster. Minimieren pausiert ihn
+nicht mehr durch die Spielschleife; Android darf weiterhin den ganzen Prozess
+anhalten oder beenden. Der Desktop-Ladevergleich mit identischer Teststadt ist
+3,87× schneller (83,887 → 21,675 Sekunden), mit identischem Firmenstand.
+Das ist keine Messung auf einem Handy. Ein Abbruch bewahrt den bisherigen Stand.
+
+20,514 Headless- und 526 OpenGL-Prüfungen bestanden.
+Debug-signierte Alpha; ein Test dieser Fassung auf dem betroffenen Android-Handy
+steht noch aus. Es gibt keine zugesicherte maximale Ladezeit auf jedem Gerät.
+
+APK-Quellstand `84a700d8b9b3d1b696e760d3edd8689455a90fb1`. Quell-ZIP: 457 Dateien einzeln gegen Git-Blobs
+geprüft. Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Ein öffentlicher Download ist kein Zugang nur für eingeladene Tester.
+Private Schlüssel, Spielerprofile und Testberichte sind nicht enthalten.
+
+## Vorherige Veröffentlichungen
+
 # Alpha 2 · Startfix 0.29.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.1-alpha.2/releases/Timber-Loot-Tycoon-v0.29.1-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.1-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Startfix-Testerpaket.zip)**

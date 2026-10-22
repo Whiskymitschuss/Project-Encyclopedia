@@ -1,0 +1,13 @@
+{
+  "apk_sha256": "f36640a234aa690387de47586de56d4adb6e5ab8482b393c5d1f9e34763f2317",
+  "method": "Unchanged extracted APK assets executed with desktop Godot 4.6.3 headless and isolated generated profiles",
+  "device_tested": false,
+  "interrupted_start_old_save_bytes_unchanged": true,
+  "cold_start_checks": 11,
+  "background_checks": 15,
+  "failures": 0,
+  "offline_seconds": 28800,
+  "main_loop_blocked_worker_progress_verified": true,
+  "fresh_profile_boot_smoke_passed": true,
+  "limitations": "No native Android execution or handset background-policy verification."
+}
