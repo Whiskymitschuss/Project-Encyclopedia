@@ -1,3 +1,32 @@
+# Empfohlen: Rückkehr zur 0.28 · 0.28.1-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.1-alpha.1/releases/Timber-Loot-Tycoon-v0.28.1-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.1-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Rueckkehr-028-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.1-source.zip) · [Änderungen](../docs/ROLLBACK-028.md) · [Testplan](../docs/alpha1-rollback/TESTPLAN.txt)
+
+Version **0.28.1-alpha.1**, Android-Code **2951**. Die Spielbasis ist wieder die
+verteilte 0.28; Ampel- und Bauleitersteuerung ab 0.29 sind zurückgenommen.
+Die höhere interne Nummer erlaubt ein Update über 0.29.4. **Nicht deinstallieren
+und keine App-Daten löschen.** Gleiches Paket, Speicherverzeichnis und Testzertifikat
+wie seit 0.23. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0.
+
+Zusätzlich auf der 0.28-Basis: Häuser direkt versetzen, dauerhafte Materialbestände
+im Hauptbildschirm, begrenzte Tutorial-/Bauvorschau und mobile Lastbegrenzung.
+Android maximal 30 FPS, kleinere Schatten, keine Darstellung im Hintergrund.
+Die Temperaturwirkung auf S26 Ultra und S24 FE muss auf den Geräten geprüft werden.
+
+19,673 Headless-Prüfungen und 612 OpenGL-Prüfungen
+bestanden; zusätzlich 43 Headless- und 146
+OpenGL-Prüfungen mit den tatsächlich entpackten APK-Assets. Keine dieser Prüfungen
+ist ein echter Android-Gerätetest. Dieser steht aus. Paket, Signatur, Version
+und ZIP-Ausrichtung geprüft. Der private Schlüssel wird nicht mitgeliefert.
+
+APK-Quellstand `e1f70e76a30522f8456762c50f57ac580dfd311f`. Quell-ZIP: 455 Dateien gegen Git geprüft.
+Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Ein öffentlicher Download ist kein Zugang nur für eingeladene Tester.
+
+## Frühere Veröffentlichungen (0.29 zurückgenommen)
+
 # Alpha 2 · Ladehof-Update 0.29.4
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-v0.29.4-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Ladehof-Update-Testerpaket.zip)**

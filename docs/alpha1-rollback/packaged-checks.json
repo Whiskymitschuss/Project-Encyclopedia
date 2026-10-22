@@ -1,0 +1,11 @@
+{
+  "apk": "Timber-Loot-Tycoon-v0.28.1-alpha.1.apk",
+  "apk_sha256": "a03fe9222518cd398fc9dbb7764de8eb5a9e92c063e8d70679a8abb29835051d",
+  "apk_source_commit": "e1f70e76a30522f8456762c50f57ac580dfd311f",
+  "headless_checks": 43,
+  "visual_checks": 146,
+  "fixture": "Generated 0.29 city; no private player save",
+  "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+  "android_device_tested": false,
+  "temperature_measured": false
+}

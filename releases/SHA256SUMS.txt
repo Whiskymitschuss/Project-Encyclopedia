@@ -58,3 +58,6 @@ edb3fc4fc82b7dc1d9300b8e046b6f59bd575192011e87e6c56452f3fcd113f5  Timber-Loot-Ty
 48d5e788f025a46d69ce7404d118f087f22d353d1a56c1bfa9596d47ee676fe6  Timber-Loot-Tycoon-v0.29.4-alpha.2.apk
 c5154ef38d59d2d2b8882a047df9ba6617982bbe9dec6b6d1f2eefe34e61c719  Timber-Loot-Tycoon-v0.29.4-source.zip
 a614bf4a1b5def883224e3c29e3723a5ec5f3c1fd3b3f4f25b30bb116901fc14  Timber-Loot-Tycoon-Alpha-2-Ladehof-Update-Testerpaket.zip
+a03fe9222518cd398fc9dbb7764de8eb5a9e92c063e8d70679a8abb29835051d  Timber-Loot-Tycoon-v0.28.1-alpha.1.apk
+e13a6dbe97e8476aec2d9f869dbc6653bb17e57732a60c566ebe4547e83a54ba  Timber-Loot-Tycoon-v0.28.1-source.zip
+f274acc8945f8fb01a1f17edc9bd95ec39d348ee302f91eec881ad891d735018  Timber-Loot-Tycoon-Alpha-1-Rueckkehr-028-Testerpaket.zip

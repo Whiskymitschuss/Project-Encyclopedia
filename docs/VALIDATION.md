@@ -1,3 +1,16 @@
+## Auslieferung Rückkehr zur 0.28 · 0.28.1-alpha.1
+
+APK aus `e1f70e76a30522f8456762c50f57ac580dfd311f`, 63185613 Bytes,
+SHA256 `a03fe9222518cd398fc9dbb7764de8eb5a9e92c063e8d70679a8abb29835051d`. Version 0.28.1-alpha.1 / Android-Code 2951,
+kompatibles Paket und vorhandenes Testzertifikat. V2-Signatur, 16-KB-ZIP-Ausrichtung,
+API 24+, ARM64/ARMv7, OpenGL, Hochformat und optionale Vibration geprüft.
+
+Tatsächlich entpackte APK-Assets: 43 Headless- und
+146 OpenGL-Prüfungen bestehen. [Paketprüfung](alpha1-rollback/packaged-checks.json).
+Keine Messung von Android-Temperatur oder Handy-Bildrate; Gerätetest steht aus.
+[Source-Basis](alpha1-rollback/source-baseline.json) und [automatische Prüfungen](alpha1-rollback/automated-checks.json).
+Downloads werden nach Veröffentlichung separat vollständig zurückgeladen und geprüft.
+
 ## Externe Downloads Ladehof-Update 0.29.4 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.4-alpha.2` vollständig per
