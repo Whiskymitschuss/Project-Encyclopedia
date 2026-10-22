@@ -1,3 +1,16 @@
+## Tatsächliche APK-Ressourcen · 0.28.5-alpha.1
+
+Die unveränderten Ressourcen aus der tatsächlich gebauten APK wurden zusätzlich
+mit 1014 Headless- und 465 OpenGL-Prüfungen getestet.
+Enthalten: sämtliche vorhandenen Industriestufen, Biber/Fahrer, Straßen,
+Staplerübergaben einschließlich reduzierter Bewegung, Lagerwirtschaft,
+Spielstandübernahme, kalter Prozess und kompletter Einstieg/Tutorial per Touch.
+[APK-Prüfbericht](alpha1-beavers/packaged-checks.json).
+
+Diese Tests laufen auf dem Desktop und ersetzen keinen Android-Gerätelauf.
+APK-Quellstand: `845adf4cfd7f8e93f13c878e4a164c443d373633`.
+APK-SHA256: `750141cd8871c344d6b9a33b4a6bafbb61c04f5c53f9ea3b284ce0379e54c243`.
+
 ## Biberwelt · 0.28.5-alpha.1
 
 20.722 Einzelprüfungen in 30 Headless-Suiten einschließlich zweier natürlicher

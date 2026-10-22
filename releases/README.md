@@ -1,4 +1,30 @@
-# Empfohlen: Zentrallogistik · 0.28.4-alpha.1
+# Aktuell: Biberwelt · 0.28.5-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-v0.28.5-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Biberwelt-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.5-source.zip) · [Genauer Entwicklungsstand](../docs/WORLD-REWORK-285.md)
+
+Erster integrierter Meilenstein des großen Weltumbaus: getrennte Straßen und
+Grundstücke, zehn Biberformen und drei Berufsausstattungen, sichtbare Biberfahrer,
+zehn Architekturmodule für 14 bestehende Betriebsarten, Staplerphasen anhand
+wirklicher Lieferungen. **Der Gesamtumbau ist noch nicht fertig.** Zusätzliche
+Industriezweige, sämtliche neuen Gebäudefamilien und Berufsabläufe stehen aus.
+
+Android-Code **2991**, gleiches Paket und Testzertifikat. **Als Update installieren;
+nicht deinstallieren und keine App-Daten löschen.** Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0. Debug-signierte Testfassung.
+
+20722 Headless- und 934 OpenGL-Prüfungen
+bestanden. Zusätzlich 1014 Headless- und
+465 OpenGL-Prüfungen mit unveränderten Ressourcen aus der
+wirklichen APK. Keine echte Android-Ausführung und keine Temperaturmessung.
+[Prüfbericht](../docs/alpha1-beavers/automated-checks.json).
+
+APK-Quellstand `845adf4cfd7f8e93f13c878e4a164c443d373633`. Quell-ZIP: 550 Dateien gegen Git geprüft.
+Testerpaket: 7 Einträge. Paketdaten und SHA256 stehen in der APK-JSON
+und `SHA256SUMS.txt`. Der Signaturschlüssel bleibt außerhalb des Repositorys.
+Der Download ist öffentlich.
+
+## Vorher: Zentrallogistik · 0.28.4-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.4-alpha.1/releases/Timber-Loot-Tycoon-v0.28.4-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.4-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Zentrallogistik-Testerpaket.zip)**
 
