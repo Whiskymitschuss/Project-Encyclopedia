@@ -1,0 +1,42 @@
+{
+  "previous_apk_version": "0.29.2-alpha.2",
+  "previous_apk_sha256": "f36640a234aa690387de47586de56d4adb6e5ab8482b393c5d1f9e34763f2317",
+  "generated_fixture": "Tests/Fixtures/traffic293-gridlock.json",
+  "captured_after_simulated_seconds": 120,
+  "private_player_data_used": false,
+  "regression_checks": 2414,
+  "previous_apk_failures": 9,
+  "corrected_failures": 0,
+  "stress_run": {
+    "simulated_seconds_per_tier": 1800,
+    "tiers": [
+      2,
+      3,
+      4,
+      6,
+      9
+    ],
+    "sold_per_tier": [
+      55,
+      55,
+      55,
+      55,
+      55
+    ],
+    "on_time_orders_per_tier": [
+      12,
+      12,
+      12,
+      12,
+      12
+    ],
+    "fires_extinguished_per_tier": [
+      2,
+      2,
+      2,
+      2,
+      2
+    ]
+  },
+  "android_device_tested": false
+}

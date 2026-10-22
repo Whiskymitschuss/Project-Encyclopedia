@@ -1,0 +1,1520 @@
+{
+  "ambient_enabled": true,
+  "auto_export": true,
+  "auto_sawdust": false,
+  "bag": 0.0,
+  "biome": 0.0,
+  "boosters": {
+
+  },
+  "boss_hp": 100.0,
+  "bosses": 0.0,
+  "builders": 2.0,
+  "buildings": [
+    {
+      "kind": "station",
+      "level": 1.0,
+      "paused": false
+    },
+    {
+      "kind": "sawmill",
+      "level": 1.0,
+      "paused": false
+    },
+    {
+      "kind": "warehouse",
+      "level": 1.0,
+      "paused": false
+    },
+    {
+      "kind": "cabin",
+      "level": 1.0,
+      "paused": false
+    },
+    {
+      "kind": "market",
+      "level": 1.0,
+      "paused": false
+    },
+    {
+      "kind": "furniture",
+      "level": 3.0,
+      "paused": false
+    }
+  ],
+  "cash": 0.0,
+  "city_services": {
+    "auto_kind": 3,
+    "clock": 27.0,
+    "collected": 0.0,
+    "completed": {
+      "fire": 1,
+      "police": 1
+    },
+    "enabled": true,
+    "fire_clock": 120.0,
+    "fires": [],
+    "fires_extinguished": 0.0,
+    "missions": [
+      {
+        "age": 14.59999999999998,
+        "back": [
+          [
+            20.220272064208984,
+            0.95,
+            103.52434539794922
+          ],
+          [
+            20.0,
+            0.95,
+            100.0
+          ],
+          [
+            16.0,
+            0.95,
+            100.0
+          ],
+          [
+            12.0,
+            0.95,
+            100.0
+          ],
+          [
+            8.0,
+            0.95,
+            100.0
+          ],
+          [
+            4.0,
+            0.95,
+            100.0
+          ],
+          [
+            0.0,
+            0.95,
+            100.0
+          ],
+          [
+            -4.0,
+            0.95,
+            100.0
+          ],
+          [
+            -8.0,
+            0.95,
+            100.0
+          ],
+          [
+            -12.0,
+            0.95,
+            100.0
+          ],
+          [
+            -16.0,
+            0.95,
+            100.0
+          ],
+          [
+            -20.0,
+            0.95,
+            100.0
+          ],
+          [
+            -24.0,
+            0.95,
+            100.0
+          ],
+          [
+            -28.0,
+            0.95,
+            100.0
+          ],
+          [
+            -32.0,
+            0.95,
+            100.0
+          ],
+          [
+            -36.0,
+            0.95,
+            100.0
+          ],
+          [
+            -40.0,
+            0.95,
+            100.0
+          ],
+          [
+            -44.0,
+            0.95,
+            100.0
+          ],
+          [
+            -44.109413146972656,
+            0.95,
+            98.46823120117188
+          ]
+        ],
+        "destination_ref": {
+          "index": 6,
+          "type": "home"
+        },
+        "drive": 4.062758445739746,
+        "external": false,
+        "id": 2.0,
+        "kind": "fire",
+        "outward": [
+          [
+            -44.109413146972656,
+            0.95,
+            98.46823120117188
+          ],
+          [
+            -44.0,
+            0.95,
+            100.0
+          ],
+          [
+            -40.0,
+            0.95,
+            100.0
+          ],
+          [
+            -36.0,
+            0.95,
+            100.0
+          ],
+          [
+            -32.0,
+            0.95,
+            100.0
+          ],
+          [
+            -28.0,
+            0.95,
+            100.0
+          ],
+          [
+            -24.0,
+            0.95,
+            100.0
+          ],
+          [
+            -20.0,
+            0.95,
+            100.0
+          ],
+          [
+            -16.0,
+            0.95,
+            100.0
+          ],
+          [
+            -12.0,
+            0.95,
+            100.0
+          ],
+          [
+            -8.0,
+            0.95,
+            100.0
+          ],
+          [
+            -4.0,
+            0.95,
+            100.0
+          ],
+          [
+            0.0,
+            0.95,
+            100.0
+          ],
+          [
+            4.0,
+            0.95,
+            100.0
+          ],
+          [
+            8.0,
+            0.95,
+            100.0
+          ],
+          [
+            12.0,
+            0.95,
+            100.0
+          ],
+          [
+            16.0,
+            0.95,
+            100.0
+          ],
+          [
+            20.0,
+            0.95,
+            100.0
+          ],
+          [
+            20.220272064208984,
+            0.95,
+            103.52434539794922
+          ]
+        ],
+        "reward": 20.0,
+        "second": [],
+        "second_drive": 0.0,
+        "served": true,
+        "served_at": 14.062758445739746,
+        "source_ref": {
+          "index": 0,
+          "type": "home"
+        },
+        "target_ref": {
+          "index": 6,
+          "type": "home"
+        },
+        "total": 18.125516891479492,
+        "traffic_hidden": false,
+        "traffic_previous_age": 14.59999999999998,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Ampel · Rot",
+        "work": 10.0
+      }
+    ],
+    "next_fire": 1.0,
+    "next_id": 3.0,
+    "treasury": 40.0,
+    "walk_clock": 4.0,
+    "walkers": [],
+    "walks": 0.0
+  },
+  "coins": 7571.800000000064,
+  "companion_enabled": true,
+  "company_xp": 0.0,
+  "construction_auto": false,
+  "construction_intro": false,
+  "construction_logistics_version": 1.0,
+  "construction_shipments": [],
+  "contracts": 0.0,
+  "delivery": {
+    "active": true,
+    "buffers": {
+      "furniture": {
+        "boards": 0.0,
+        "furniture": 0.0,
+        "wood": 0.0
+      },
+      "market": {
+        "boards": 0.0,
+        "furniture": 0.0,
+        "wood": 0.0
+      },
+      "sawmill": {
+        "boards": 0.0,
+        "furniture": 0.0,
+        "wood": 0.0
+      },
+      "station": {
+        "boards": 0.0,
+        "furniture": 0.0,
+        "wood": 6.0
+      }
+    },
+    "last_receipt": "",
+    "late_orders": 0.0,
+    "next_id": 16.0,
+    "nodes": {
+      "furniture": 5.0,
+      "market": 4.0,
+      "sawmill": 1.0,
+      "station": 0.0
+    },
+    "on_time": 0.0,
+    "order": {
+      "amount": 3.0,
+      "delivered": 1.0,
+      "late": false,
+      "left": 180.0
+    },
+    "orders": 0.0,
+    "paused": false,
+    "progress": {
+      "furniture": 0.0,
+      "sawmill": 0.0
+    },
+    "recovered": {
+
+    },
+    "shipments": [
+      {
+        "age": 13.799999999999983,
+        "amount": 1,
+        "arrived": true,
+        "drive": 6.422216018040975,
+        "id": 3.0,
+        "key": "boards",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -16.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -12.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -8.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -4.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -24.0
+          ],
+          [
+            0.0,
+            0.95,
+            -20.0
+          ],
+          [
+            0.0,
+            0.95,
+            -16.0
+          ],
+          [
+            0.0,
+            0.95,
+            -12.0
+          ],
+          [
+            0.0,
+            0.95,
+            -8.0
+          ],
+          [
+            0.0,
+            0.95,
+            -4.0
+          ],
+          [
+            0.0,
+            0.95,
+            0.0
+          ],
+          [
+            0.0,
+            0.95,
+            4.0
+          ],
+          [
+            -4.0,
+            0.95,
+            4.0
+          ],
+          [
+            -8.0,
+            0.95,
+            4.0
+          ],
+          [
+            -12.0,
+            0.95,
+            4.0
+          ],
+          [
+            -16.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            1.4723148345947266
+          ]
+        ],
+        "source": "sawmill",
+        "target": "furniture",
+        "total": 18.844432036081948,
+        "traffic_hidden": false,
+        "traffic_previous_age": 13.799999999999983,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Kreuzung räumt",
+        "travel": 10.422216018040974,
+        "unload": 2.0
+      },
+      {
+        "age": 12.799999999999986,
+        "amount": 1,
+        "arrived": true,
+        "drive": 6.422216018040975,
+        "id": 5.0,
+        "key": "boards",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -16.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -12.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -8.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -4.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -24.0
+          ],
+          [
+            0.0,
+            0.95,
+            -20.0
+          ],
+          [
+            0.0,
+            0.95,
+            -16.0
+          ],
+          [
+            0.0,
+            0.95,
+            -12.0
+          ],
+          [
+            0.0,
+            0.95,
+            -8.0
+          ],
+          [
+            0.0,
+            0.95,
+            -4.0
+          ],
+          [
+            0.0,
+            0.95,
+            0.0
+          ],
+          [
+            0.0,
+            0.95,
+            4.0
+          ],
+          [
+            -4.0,
+            0.95,
+            4.0
+          ],
+          [
+            -8.0,
+            0.95,
+            4.0
+          ],
+          [
+            -12.0,
+            0.95,
+            4.0
+          ],
+          [
+            -16.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            1.4723148345947266
+          ]
+        ],
+        "source": "sawmill",
+        "target": "furniture",
+        "total": 18.844432036081948,
+        "traffic_hidden": false,
+        "traffic_previous_age": 12.799999999999986,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Abstand halten",
+        "travel": 10.422216018040974,
+        "unload": 2.0
+      },
+      {
+        "age": 5.400000000000002,
+        "amount": 1,
+        "arrived": false,
+        "drive": 6.422216018040975,
+        "id": 7.0,
+        "key": "boards",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -16.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -12.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -8.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -4.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -24.0
+          ],
+          [
+            0.0,
+            0.95,
+            -20.0
+          ],
+          [
+            0.0,
+            0.95,
+            -16.0
+          ],
+          [
+            0.0,
+            0.95,
+            -12.0
+          ],
+          [
+            0.0,
+            0.95,
+            -8.0
+          ],
+          [
+            0.0,
+            0.95,
+            -4.0
+          ],
+          [
+            0.0,
+            0.95,
+            0.0
+          ],
+          [
+            0.0,
+            0.95,
+            4.0
+          ],
+          [
+            -4.0,
+            0.95,
+            4.0
+          ],
+          [
+            -8.0,
+            0.95,
+            4.0
+          ],
+          [
+            -12.0,
+            0.95,
+            4.0
+          ],
+          [
+            -16.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            1.4723148345947266
+          ]
+        ],
+        "source": "sawmill",
+        "target": "furniture",
+        "total": 18.844432036081948,
+        "traffic_hidden": false,
+        "traffic_previous_age": 5.400000000000002,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Kreuzung räumt",
+        "travel": 10.422216018040974,
+        "unload": 2.0
+      },
+      {
+        "age": 4.400000000000001,
+        "amount": 1,
+        "arrived": false,
+        "drive": 6.422216018040975,
+        "id": 9.0,
+        "key": "boards",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -16.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -12.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -8.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -4.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -24.0
+          ],
+          [
+            0.0,
+            0.95,
+            -20.0
+          ],
+          [
+            0.0,
+            0.95,
+            -16.0
+          ],
+          [
+            0.0,
+            0.95,
+            -12.0
+          ],
+          [
+            0.0,
+            0.95,
+            -8.0
+          ],
+          [
+            0.0,
+            0.95,
+            -4.0
+          ],
+          [
+            0.0,
+            0.95,
+            0.0
+          ],
+          [
+            0.0,
+            0.95,
+            4.0
+          ],
+          [
+            -4.0,
+            0.95,
+            4.0
+          ],
+          [
+            -8.0,
+            0.95,
+            4.0
+          ],
+          [
+            -12.0,
+            0.95,
+            4.0
+          ],
+          [
+            -16.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            1.4723148345947266
+          ]
+        ],
+        "source": "sawmill",
+        "target": "furniture",
+        "total": 18.844432036081948,
+        "traffic_hidden": false,
+        "traffic_previous_age": 4.400000000000001,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Abstand halten",
+        "travel": 10.422216018040974,
+        "unload": 2.0
+      },
+      {
+        "age": 2.8000000000000003,
+        "amount": 1,
+        "arrived": false,
+        "drive": 6.422216018040975,
+        "id": 11.0,
+        "key": "boards",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -16.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -12.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -8.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -4.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -24.0
+          ],
+          [
+            0.0,
+            0.95,
+            -20.0
+          ],
+          [
+            0.0,
+            0.95,
+            -16.0
+          ],
+          [
+            0.0,
+            0.95,
+            -12.0
+          ],
+          [
+            0.0,
+            0.95,
+            -8.0
+          ],
+          [
+            0.0,
+            0.95,
+            -4.0
+          ],
+          [
+            0.0,
+            0.95,
+            0.0
+          ],
+          [
+            0.0,
+            0.95,
+            4.0
+          ],
+          [
+            -4.0,
+            0.95,
+            4.0
+          ],
+          [
+            -8.0,
+            0.95,
+            4.0
+          ],
+          [
+            -12.0,
+            0.95,
+            4.0
+          ],
+          [
+            -16.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            1.4723148345947266
+          ]
+        ],
+        "source": "sawmill",
+        "target": "furniture",
+        "total": 18.844432036081948,
+        "traffic_hidden": false,
+        "traffic_previous_age": 2.8000000000000003,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Ampel · Rot",
+        "travel": 10.422216018040974,
+        "unload": 2.0
+      },
+      {
+        "age": 3.800000000000001,
+        "amount": 2,
+        "arrived": false,
+        "drive": 2.422216018040975,
+        "id": 12.0,
+        "key": "wood",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -44.168514251708984,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -44.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -40.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -36.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -32.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -28.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -24.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ]
+        ],
+        "source": "station",
+        "target": "sawmill",
+        "total": 10.844432036081951,
+        "traffic_hidden": false,
+        "traffic_previous_age": 3.800000000000001,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Abstand halten",
+        "travel": 6.4222160180409755,
+        "unload": 2.0
+      },
+      {
+        "age": 0.0,
+        "amount": 2,
+        "arrived": false,
+        "drive": 6.422216018040975,
+        "id": 14.0,
+        "key": "boards",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -16.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -12.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -8.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -4.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -28.0
+          ],
+          [
+            0.0,
+            0.95,
+            -24.0
+          ],
+          [
+            0.0,
+            0.95,
+            -20.0
+          ],
+          [
+            0.0,
+            0.95,
+            -16.0
+          ],
+          [
+            0.0,
+            0.95,
+            -12.0
+          ],
+          [
+            0.0,
+            0.95,
+            -8.0
+          ],
+          [
+            0.0,
+            0.95,
+            -4.0
+          ],
+          [
+            0.0,
+            0.95,
+            0.0
+          ],
+          [
+            0.0,
+            0.95,
+            4.0
+          ],
+          [
+            -4.0,
+            0.95,
+            4.0
+          ],
+          [
+            -8.0,
+            0.95,
+            4.0
+          ],
+          [
+            -12.0,
+            0.95,
+            4.0
+          ],
+          [
+            -16.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.0,
+            0.95,
+            4.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            1.4723148345947266
+          ]
+        ],
+        "source": "sawmill",
+        "target": "furniture",
+        "total": 18.844432036081948,
+        "traffic_hidden": true,
+        "traffic_previous_age": 0.0,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Vorfahrt gewähren",
+        "travel": 10.422216018040974,
+        "unload": 2.0
+      },
+      {
+        "age": 3.0000000000000004,
+        "amount": 4,
+        "arrived": false,
+        "drive": 2.422216018040975,
+        "id": 15.0,
+        "key": "wood",
+        "load": 2.0,
+        "mode": "truck",
+        "path": [
+          [
+            -44.168514251708984,
+            0.95,
+            -30.527685165405273
+          ],
+          [
+            -44.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -40.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -36.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -32.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -28.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -24.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -20.0,
+            0.95,
+            -28.0
+          ],
+          [
+            -20.16851234436035,
+            0.95,
+            -30.527685165405273
+          ]
+        ],
+        "source": "station",
+        "target": "sawmill",
+        "total": 10.844432036081951,
+        "traffic_hidden": false,
+        "traffic_previous_age": 3.0000000000000004,
+        "traffic_speed": 0.0,
+        "traffic_wait": "Abstand halten",
+        "travel": 6.4222160180409755,
+        "unload": 2.0
+      }
+    ],
+    "sold": 1.0
+  },
+  "diamonds": 5.0,
+  "earned": 7221.800000000057,
+  "elapsed": 120.0,
+  "exported": 1.0,
+  "foreman": {
+    "enabled": true,
+    "reassignments": 0.0,
+    "transport_turn": "construction"
+  },
+  "gathered": 226.0,
+  "homes": [
+    {
+      "kind": "fire",
+      "level": 3.0,
+      "plot": 0.0
+    },
+    {
+      "kind": "police",
+      "level": 3.0,
+      "plot": 1.0
+    },
+    {
+      "kind": "taxi",
+      "level": 3.0,
+      "plot": 2.0
+    },
+    {
+      "kind": "clinic",
+      "level": 3.0,
+      "plot": 3.0
+    },
+    {
+      "kind": "townhall",
+      "level": 3.0,
+      "plot": 4.0
+    },
+    {
+      "kind": "house",
+      "level": 3.0,
+      "plot": 5.0
+    },
+    {
+      "kind": "shop",
+      "level": 3.0,
+      "plot": 6.0
+    },
+    {
+      "kind": "fire",
+      "level": 3.0,
+      "plot": 7.0
+    },
+    {
+      "kind": "police",
+      "level": 3.0,
+      "plot": 8.0
+    },
+    {
+      "kind": "taxi",
+      "level": 3.0,
+      "plot": 9.0
+    },
+    {
+      "kind": "clinic",
+      "level": 3.0,
+      "plot": 10.0
+    },
+    {
+      "kind": "townhall",
+      "level": 3.0,
+      "plot": 11.0
+    },
+    {
+      "kind": "house",
+      "level": 3.0,
+      "plot": 12.0
+    },
+    {
+      "kind": "shop",
+      "level": 3.0,
+      "plot": 13.0
+    },
+    {
+      "kind": "fire",
+      "level": 3.0,
+      "plot": 14.0
+    },
+    {
+      "kind": "police",
+      "level": 3.0,
+      "plot": 15.0
+    },
+    {
+      "kind": "taxi",
+      "level": 3.0,
+      "plot": 16.0
+    },
+    {
+      "kind": "clinic",
+      "level": 3.0,
+      "plot": 17.0
+    },
+    {
+      "kind": "townhall",
+      "level": 3.0,
+      "plot": 18.0
+    },
+    {
+      "kind": "house",
+      "level": 3.0,
+      "plot": 19.0
+    }
+  ],
+  "inventory": {
+
+  },
+  "jobs": [],
+  "journey": {
+    "active": {
+
+    },
+    "claimed": {
+
+    },
+    "completed_orders": 0.0,
+    "reached": {
+      "builders:1": true,
+      "builders:2": true,
+      "roots:hall": true,
+      "routes:0": true,
+      "routes:1": true,
+      "sawmill:2": true,
+      "sawmill:hall": true,
+      "town:1": true,
+      "workshop:1": true,
+      "workshop:hall": true
+    },
+    "selected": "",
+    "stats": {
+      "boards": 7.0,
+      "exported": 1.0,
+      "furniture": 1.0,
+      "gathered": 226.0,
+      "rent": 7156.800000000057,
+      "services": 2.0,
+      "shipments": 9.0
+    },
+    "trophies": [],
+    "version": 1.0
+  },
+  "last_seen": 1792649327.477259,
+  "missions_claimed": {
+
+  },
+  "muted": false,
+  "next_job": 1.0,
+  "next_shipment": 100000.0,
+  "onboarding": {
+    "active": false,
+    "finished": false,
+    "job": -1.0,
+    "paused": false,
+    "start_trees": 0.0,
+    "version": 1.0
+  },
+  "permanent_loot": 0.0,
+  "plan": {
+
+  },
+  "prestige": 0.0,
+  "prestige_points": 0.0,
+  "projects": {
+
+  },
+  "quality": 1.0,
+  "region": 0.0,
+  "research": {
+
+  },
+  "reserve": true,
+  "resources": {
+    "boards": 0.0,
+    "design": 0.0,
+    "dry": 0.0,
+    "furniture": 0.0,
+    "gravel": 0.0,
+    "nuts": 0.0,
+    "paper": 0.0,
+    "parts": 0.0,
+    "pellets": 0.0,
+    "rock": 0.0,
+    "roofs": 0.0,
+    "sawdust": 7.0,
+    "screws": 0.0,
+    "stone": 0.0,
+    "walls": 0.0,
+    "wood": 1000.0
+  },
+  "schema": 1.0,
+  "skin": "Rustikal",
+  "skin_tool": "Holz",
+  "stone": {
+    "cursor": 0.0,
+    "cycles": 0.0,
+    "delivered": 0.0,
+    "intro": false,
+    "mined": 0.0,
+    "next_id": 1000000.0,
+    "ready": false,
+    "shipments": [],
+    "sites": {
+
+    },
+    "turn": "stone"
+  },
+  "tickets": 0.0,
+  "time": 11.0000000000001,
+  "tokens": 0.0,
+  "tool": 0.0,
+  "town": {
+    "districts": 0.0,
+    "lines": [],
+    "next_line": 1.0,
+    "next_stop": 1.0,
+    "rent_auto": true,
+    "rent_collected": 0.0,
+    "rent_manager": false,
+    "roads": [],
+    "stops": [],
+    "trips_total": 0.0
+  },
+  "trade": {
+    "gateway": "highway",
+    "intro": false,
+    "ledgers": {
+      "airport": {
+        "revenue": 0.0,
+        "sold": 0.0
+      },
+      "harbor": {
+        "revenue": 0.0,
+        "sold": 0.0
+      },
+      "highway": {
+        "revenue": 0.0,
+        "sold": 0.0
+      }
+    },
+    "material": "furniture",
+    "next_id": 1.0,
+    "revenue": 0.0,
+    "shipments": [],
+    "sold": 0.0
+  },
+  "traffic": {
+    "clock": 120.0,
+    "enabled": true,
+    "fault_clock": 120.0,
+    "faults": [],
+    "next_fault": 1.0,
+    "repaired": 0.0
+  },
+  "trees": 0.0,
+  "trucks": 8.0,
+  "tutorial": 0.0,
+  "unlocked": 1.0,
+  "ux": {
+    "events": [],
+    "groups": [],
+    "high_contrast": false,
+    "large_text": false,
+    "motion": true,
+    "next_event": 1.0,
+    "next_group": 1.0,
+    "next_road": 1.0,
+    "road_undo": [],
+    "vibration": false
+  },
+  "vehicle": 0.0,
+  "weather": 0,
+  "workers": 17.0
+}

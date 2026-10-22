@@ -53,6 +53,15 @@ static func fault_at(state: Dictionary, cell: Vector2i) -> Dictionary:
 
 static func signal_phase(state: Dictionary, cell: Vector2i, clock: float = -1) -> String:
  if not fault_at(state,cell).is_empty(): return "fault"
+ # An approaching, assigned fire engine requests green for its road axis.
+ # Vehicles already crossing still clear first in prepare(); priority never
+ # disables following distances or credits a load before it actually arrives.
+ for mission in state.city_services.missions:
+  if not mission.has("fire_id") or float(mission.age)>=float(mission.drive): continue
+  var at=sample(mission,float(mission.age),true)
+  var center=TownRules.point(cell)
+  if Vector2(at.position.x-center.x,at.position.z-center.z).length()>32: continue
+  return "x" if absf(at.direction.x)>absf(at.direction.z) else "z"
  if clock<0: clock=float(state.traffic.clock)
  var phase=fposmod(clock+posmod(cell.x+cell.y,16),32)
  return "x" if phase<12 else "z" if phase>=16 and phase<28 else "red"
@@ -237,8 +246,12 @@ static func prepare(state: Dictionary, delta: float) -> void:
       if other_index==index: continue
       var other=entries[other_index]
       if other.age>=float(other.trip.get("total",INF)): continue
+      if other.trip.get("traffic_hidden",false): continue
       var at: Vector3=other.sample.position
-      if Vector2(at.x-center.x,at.z-center.z).length()<12:
+      # A green phase serves BOTH lanes of its axis. Treating an oncoming
+      # vehicle as a crossing conflict made queues at adjacent signals wait
+      # for one another forever. Docked vehicles also occupy their own bay.
+      if other.sample.moving and absf(direction.dot(other.sample.direction))<0.6 and Vector2(at.x-center.x,at.z-center.z).length()<12:
        reason="Kreuzung räumt"; break
      if not reason.is_empty(): break
    if reason.is_empty() and (next.moving or entry.age<=0.001):
@@ -261,6 +274,8 @@ static func prepare(state: Dictionary, delta: float) -> void:
    if reason.is_empty():
     entry.age+=dt
     entry.sample=next
+    entry.trip.traffic_wait=""
+    entry.trip.traffic_hidden=false
    else:
     entry.trip.traffic_wait=reason
     if entry.age<=0.001: entry.trip.traffic_hidden=true

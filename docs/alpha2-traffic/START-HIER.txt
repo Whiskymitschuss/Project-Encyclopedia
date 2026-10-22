@@ -1,0 +1,71 @@
+TIMBER LOOT TYCOON – ALPHA 2
+Version 0.29.3-alpha.2 · Android-Testfassung
+
+Schön, dass du mittestest!
+Aus einem kleinen Holzunternehmen wird deine eigene Waldstadt. Benno zeigt dir
+auf Wunsch direkt im Spiel die ersten Schritte. Danach bestimmst du selbst,
+wie deine Firma wächst.
+
+INSTALLATION
+1. Die APK auf ein Android-Handy herunterladen und öffnen.
+2. Installation aus dieser Quelle bei Bedarf erlauben.
+3. „Timber Loot Alpha“ starten.
+
+Android 7.0 oder neuer, ARM64/ARMv7 und OpenGL ES 3.0 werden benötigt.
+Hast du Alpha 1 oder „Timber Loot Neu“ ab Version 0.23, installiere Alpha 2 darüber.
+Nicht vorher deinstallieren und keine App-Daten löschen: So bleibt dein
+Fortschritt erhalten. Die ursprüngliche App bis 0.20 ist eine separate App.
+
+DIE ERSTEN MINUTEN
+Tippe auf „Meinen Wald entdecken“ und anschließend „Los geht’s“.
+Fälle fünf Bäume, liefere dein Holz ab und schaue deinem Sägewerk zu.
+Verkaufe ein paar Bretter und platziere deine erste Arbeiterhütte.
+Du bezahlst erst beim Bestätigen. Grün heißt: Der Standort passt.
+Benno führt dich anschließend zu den nächsten Kapitelzielen und deinem Rathaus.
+
+Ein Finger bewegt die Karte, zwei Finger zoomen. Im Baumodus bewegt ein Finger
+das Gebäude; mit zwei Fingern kannst du den Kartenausschnitt verschieben.
+„Später“ pausiert Bennos Anleitung. Du kannst sie unter Mehr → Anleitung & Hilfe
+wieder einblenden. Du musst die Anleitung nicht von vorn beginnen.
+
+RÜCKMELDUNG
+Mehr → Alpha 2 · Testen & Feedback öffnet einen bearbeitbaren Testbericht.
+Ergänze deine Beobachtung und tippe auf „Text kopieren“. Füge den Text dann in
+eine Nachricht an die Person ein, von der du die Alpha erhalten hast.
+„Sichern“ bewahrt den Text auf diesem Gerät. Es wird nichts automatisch versendet.
+Screenshot oder kurzes Video kannst du separat beilegen.
+
+WICHTIG FÜR DIESEN TEST
+Dies ist eine frühe Alpha, keine fertige Store-Version. Bitte melde auch unklare
+Bedienung oder Stellen, an denen dir die Motivation fehlt. Es geht nicht nur
+um Abstürze. Hafen und Flughafen kommen später; Schiffs- und Flugexport sind
+noch nicht aktiv. Der Autobahnexport benötigt eine selbst gebaute Straße.
+
+Dein Spielstand und deine Fotos bleiben lokal auf deinem Gerät. Es gibt keinen
+Cloud-Save und keinen Kontozwang. Löschen der App-Daten oder Deinstallation
+entfernt lokale Daten. Eine Update-Installation erhält sie.
+
+NEU IN ALPHA 2
+Flammen und Rauch, geräumte Bauflächen, umziehende Arbeiter, Ampeln,
+Techniker und Bauleiterin Mara. Die Bauleitung ist im Baustellenmenü aktiv;
+Verkehr & Ampeltechnik findest du unter Mehr → Produktion & Transport.
+Du kannst direkt mit deiner bisherigen Firma weiterspielen.
+
+SCHNELLER LADEN & APP-WECHSEL IN 0.29.2
+Installiere das Update über deine vorhandene Alpha, ohne Deinstallation.
+Die Firma wird während des Ladens getrennt vom Spielfenster aktualisiert.
+Du kannst kurz zu einer anderen App wechseln. Beim Zurückkehren erscheint der
+inzwischen berechnete Fortschritt. Android kann den gesamten Prozess trotzdem
+anhalten oder beenden; unbegrenzter Hintergrundbetrieb wird nicht zugesichert.
+„Spiel schließen“ und Wegwischen aus der App-Übersicht beenden die Berechnung.
+Der bisherige vollständige Spielstand bleibt erhalten. Beim erneuten Öffnen wird
+die Offline-Zeit wieder von diesem Stand aus berechnet, ohne doppelte Erträge.
+Es werden keine zusätzlichen Android-Berechtigungen angefordert.
+
+VERKEHRSFIX IN 0.29.3
+Gegenverkehr auf getrennten Spuren darf gemeinsam über Grün fahren. Dadurch
+lösen sich die nachgestellten, gegenseitig blockierten LKW-Schlangen wieder auf.
+Ein anrückender Löschwagen fordert Grün für seine Fahrtrichtung an. Querverkehr,
+der bereits auf der Kreuzung ist, räumt zuerst; Abstände bleiben wirksam.
+Du kannst mit der vorhandenen Firma weiterspielen. Es werden weder Lieferungen
+noch Vorräte zurückgesetzt. Rote Ampeln und kurze Warteschlangen bleiben normal.

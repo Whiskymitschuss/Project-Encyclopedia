@@ -2,6 +2,18 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
+## Verkehrsfix — 0.29.3-alpha.2
+
+Die Teststadt konnte sich an benachbarten Ampeln dauerhaft selbst blockieren:
+Gegenverkehr auf seiner eigenen Spur galt fälschlich als Querverkehr. Grün gibt
+jetzt beide Spuren einer Richtung frei; bereits festgefahrene Testlieferungen
+kommen wieder an. Anrückende Löschfahrzeuge fordern Grün an und lassen belegte
+Kreuzungen zunächst räumen. Waren, Geld und Fahrzeuge bleiben echte Bestände.
+
+[Änderungen und Nachweis](docs/TRAFFIC-293.md) ·
+[Installation](docs/alpha2-traffic/START-HIER.txt) ·
+[Testplan](docs/alpha2-traffic/TESTPLAN.txt) · [Downloads](releases/README.md).
+
 ## Schneller laden & App-Wechsel — 0.29.2-alpha.2
 
 Die Offline-Berechnung arbeitet jetzt auf einer getrennten Kopie der Firma und

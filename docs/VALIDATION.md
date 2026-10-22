@@ -1,3 +1,12 @@
+# Prüfung 0.29.3 — Verkehr und Feuerwehr-Grün
+
+- Vollständiger Lauf `bash scripts/test.sh`: **22.928 Prüfungen in 30 Headless-Suiten**, keine fehlgeschlagenen Prüfungen oder Skript-/Ladefehler. Zusätzlich natürliche Ersthaus-/Rathausprogression und Hauptwelt-/Intro-Smokes.
+- Vier gezielte OpenGL-Suiten (`VisualTrafficFlow293`, `VisualAlpha29`, `VisualFireUI`, `VisualCityUX`): **130 Prüfungen**, keine fehlgeschlagenen Prüfungen oder Skript-/Ladefehler. Bestehende ObjectDB-Aufräumhinweise beim Beenden von Alpha29/FireUI bleiben zu beobachten. Kein vollständiger erneuter Lauf aller Grafik-Suiten beansprucht.
+- Neuer Regressionstest: **2.414 Prüfungen**, dieselbe gespeicherte Testschlange mit kleinen LKW und langen Anhängern, tatsächliche Lieferungen, Materialerhaltung, Flottenlimit, Gegenverkehr, Notfall-Grün, Räumen und Ampelstörung. Gegen die entpackte alte APK scheitern 9 Prüfungen, mit der Korrektur keine.
+- Wiederherstellung, Offline-Worker und Vordergrund behalten identische Regeln. Die alte 0.29.1-Ganzzustandsreferenz wird bewusst durch die als 0.29.3 markierte Referenz ergänzt; das Archiv bleibt unverändert. Lieferzeiten und Erträge ändern sich durch die behobene Blockade absichtlich.
+- [Einzelergebnisse](alpha2-traffic/automated-checks.json), [Reproduktion](alpha2-traffic/gridlock-reproduction.json), [Änderungen](TRAFFIC-293.md), [3D-Testansicht](alpha2-traffic/preview-traffic.png).
+- Alle Tests verwenden isolierte, künstlich erzeugte Profile. **Kein tatsächlicher Android-Gerätetest dieser Fassung** und kein Zugriff auf die konkrete Firma des Spielers.
+
 ## Externe Downloads Schnellstart 0.29.2 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.2-alpha.2` vollständig per
