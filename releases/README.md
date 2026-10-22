@@ -1,3 +1,33 @@
+# Empfohlen: Werkshof · 0.28.3-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.3-alpha.1/releases/Timber-Loot-Tycoon-v0.28.3-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.3-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Werkshof-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.3-source.zip) · [Änderungen](../docs/CAMPUS-283.md) · [Testplan](../docs/alpha1-campus/TESTPLAN.txt)
+
+Version **0.28.3-alpha.1**, Android-Code **2971**, weiterhin auf 0.28-Basis.
+Direkt als Update über die vorhandene Alpha installieren. **Nicht deinstallieren
+und keine App-Daten löschen.** Gleiches Paket, Speicherverzeichnis und Testzertifikat
+wie seit 0.23. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0.
+
+Zusammenhängender offener Werkshof, geordnete Waldparzellen und breite sandfarbene
+Transportwege. Kompaktes warmes HUD und Benno-Dialoge direkt in der Welt. Neue
+Stapler-, Kran- und Holzfälleranimationen folgen der wirklichen Arbeit; reduzierte
+Bewegung und Akkumodus begrenzen die zusätzliche Darstellung. Die Start-, Verkehrs-
+und Bedienverbesserungen aus 0.28.2 bleiben enthalten.
+
+19,767 Headless-Prüfungen und 695 OpenGL-Prüfungen
+bestanden; zusätzlich 65 Headless- und 229
+OpenGL-Prüfungen mit den tatsächlich entpackten APK-Assets. Keine dieser Prüfungen
+ist ein echter Android-Gerätetest. Dieser steht aus, ebenso die Temperaturmessung
+auf S26 Ultra/S24 FE. Paket, Signatur, Version und ZIP-Ausrichtung geprüft.
+
+APK-Quellstand `dff975822d50b3feee22772269fbe01db625881e`. Quell-ZIP: 500 Dateien gegen Git geprüft.
+Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Der private Schlüssel wird nicht mitgeliefert. Ein öffentlicher Download ist
+kein Zugang nur für eingeladene Tester.
+
+## Frühere Veröffentlichungen
+
 # Empfohlen: Waldleben · 0.28.2-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.2-alpha.1/releases/Timber-Loot-Tycoon-v0.28.2-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.2-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Waldleben-Testerpaket.zip)**

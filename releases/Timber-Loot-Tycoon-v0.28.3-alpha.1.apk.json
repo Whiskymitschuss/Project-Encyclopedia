@@ -1,0 +1,60 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.28.3-alpha.1.apk",
+  "bytes": 63223981,
+  "sha256": "2d79721f4d6a75a84a8fd1311033945df9a32a847ed18252d3f7232bea842f9a",
+  "version": "0.28.3-alpha.1",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "dff975822d50b3feee22772269fbe01db625881e",
+  "device_install_or_launch_tested": false,
+  "version_code": 2971,
+  "alpha": 1,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "restored_028_base": "d14b53774d5505a93ee1e7b845b2b4753fd9b804",
+  "automated_headless_checks": 19767,
+  "automated_opengl_checks": 695,
+  "packaged_resource_checks": {
+    "apk": "Timber-Loot-Tycoon-v0.28.3-alpha.1.apk",
+    "apk_sha256": "2d79721f4d6a75a84a8fd1311033945df9a32a847ed18252d3f7232bea842f9a",
+    "apk_source_commit": "dff975822d50b3feee22772269fbe01db625881e",
+    "headless_checks": 65,
+    "headless_results": {
+      "Forest282": 22,
+      "Rollback028": 43
+    },
+    "visual_checks": 229,
+    "visual_results": {
+      "VisualCampus283": 47,
+      "VisualForest282": 28,
+      "VisualRollback028": 146,
+      "VisualColdStart282": 8
+    },
+    "fixture": "Generated test companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+    "android_device_tested": false,
+    "temperature_measured": false
+  },
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.28.3-source.zip",
+    "bytes": 25785771,
+    "sha256": "e95cb72e0f64b75701badc60a31e0e46c7219f3fa36f8b9353d92b8b5e64e42e",
+    "verified_files": 500
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-1-Werkshof-Testerpaket.zip",
+    "bytes": 62605256,
+    "sha256": "2bec85d0bae74bacc74cd8624d0b3163207e8c91bd8cf46c801c7625e9c5cc3a",
+    "verified_entries": 6
+  }
+}

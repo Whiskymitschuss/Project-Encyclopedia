@@ -1,3 +1,16 @@
+## Auslieferung Werkshof · 0.28.3-alpha.1
+
+APK aus `dff975822d50b3feee22772269fbe01db625881e`, 63223981 Bytes,
+SHA256 `2d79721f4d6a75a84a8fd1311033945df9a32a847ed18252d3f7232bea842f9a`. Version 0.28.3-alpha.1 / Android-Code 2971,
+kompatibles Paket und vorhandenes Testzertifikat. V2-Signatur, 16-KB-ZIP-Ausrichtung,
+API 24+, ARM64/ARMv7, OpenGL, Hochformat und optionale Vibration geprüft.
+
+Tatsächlich entpackte APK-Assets: 65 Headless- und
+229 OpenGL-Prüfungen einschließlich echtem neuen Prozess
+mit acht Stunden Abwesenheit bestehen. [Paketprüfung](alpha1-campus/packaged-checks.json).
+Dies ist keine Ausführung der Android-Binärdateien auf einem Handy.
+Downloads werden nach Veröffentlichung separat vollständig zurückgeladen und geprüft.
+
 ## Prüfung Offener Werkshof · 0.28.3-alpha.1
 
 19.767 Einzelprüfungen in 28 Headless-Suiten einschließlich zweier natürlicher
