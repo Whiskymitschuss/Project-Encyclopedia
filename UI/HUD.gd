@@ -17,6 +17,9 @@ var diamonds: Label
 var loot_counter: Label
 var subtitle: Label
 var supply: Label
+var material_bar: GridContainer
+var all_stock_button: Button
+var compact_materials=false
 var toast: Label
 var mission_button: Button
 var overlay: PanelContainer
@@ -179,17 +182,28 @@ func _ready() -> void:
  strip.add_theme_stylebox_override("panel",strip_style)
  bottom.add_child(strip)
  var supply_row = row(strip)
- supply = text(supply_row,"",13,CREAM)
- supply.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ var supply_column=VBoxContainer.new()
+ supply_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ supply_row.add_child(supply_column)
+ material_bar=load("res://UI/MaterialBar.gd").new()
+ material_bar.hud=self
+ supply_column.add_child(material_bar)
+ supply = text(supply_column,"",11,MUTED)
  supply.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- supply.custom_minimum_size.y = 35
- sawdust_button = button(supply_row,"SPÄNEBOX",func():
+ var stock_actions=VBoxContainer.new()
+ supply_row.add_child(stock_actions)
+ sawdust_button = button(stock_actions,"SPÄNEBOX",func():
   if float(Game.state.resources.sawdust)>0: Game.sell("sawdust"); Game.save(true)
   else: open_menu("sawdust"))
  sawdust_button.size_flags_horizontal=Control.SIZE_SHRINK_END
- sawdust_button.custom_minimum_size=Vector2(100,40)
- sawdust_button.add_theme_font_size_override("font_size",12)
+ sawdust_button.custom_minimum_size=Vector2(92,44)
+ sawdust_button.add_theme_font_size_override("font_size",11)
  compact_style(sawdust_button,PANEL)
+ var all_stock=button(stock_actions,"ALLE\nWAREN ›",func(): open_menu("stock"))
+ all_stock_button=all_stock
+ all_stock.custom_minimum_size=Vector2(92,44)
+ all_stock.add_theme_font_size_override("font_size",12)
+ compact_style(all_stock,PANEL)
  var actions = row(bottom)
  var chop = button(actions,"FÄLLEN",func():
   if Game.state.bag < Game.bag_capacity(): focus_requested.emit(Catalog.biome_position(int(Game.state.biome)))
@@ -277,12 +291,22 @@ func _ready() -> void:
  header_panel.resized.connect(layout_interface)
  bottom_panel.resized.connect(layout_interface)
  resized.connect(layout_interface)
+ for panel in [overlay,placement_panel,ux.sheet,ux.palette]: panel.visibility_changed.connect(layout_interface)
  layout_interface()
  update_stats()
  if int(Game.state.tutorial)==0: call_deferred("open_menu","welcome")
 
 # Keep a consistent, centered reading width on tablets without stretching controls.
 func layout_interface() -> void:
+ # On short screens an open detail sheet gets the reading space. Main play
+ # always shows all six counters; detail mode keeps a compact stock summary.
+ var compact=placement_panel.visible or (size.y<750 and (overlay.visible or ux.panels_visible()))
+ if compact!=compact_materials:
+  compact_materials=compact
+  material_bar.visible=not compact
+  all_stock_button.visible=not compact
+  supply.custom_minimum_size.y=35 if compact else 0
+  update_stats()
  var narrow=size.x<430
  if narrow!=narrow_layout:
   narrow_layout=narrow
@@ -309,6 +333,9 @@ func layout_interface() -> void:
  mission_button.offset_bottom=mission_button.offset_top+44
  overlay.offset_top=maxf(168,mission_button.offset_bottom+6) if current!="building" else maxf(168,size.y-574)
  overlay.offset_bottom=-maxf(192,bottom_panel.get_combined_minimum_size().y+20)
+ if placement_panel!=null:
+  placement_panel.offset_bottom=overlay.offset_bottom
+  placement_panel.offset_top=maxf(placement_panel.offset_bottom-268,mission_button.offset_bottom+6-size.y)
  if ux!=null:
   ux.event_button.offset_left=inset
   ux.event_button.offset_right=inset+168
@@ -477,14 +504,15 @@ func update_stats() -> void:
  diamonds.text=Catalog.number(Game.state.diamonds)
  loot_counter.text=Catalog.number(Game.state.tickets)
  subtitle.text = "%s · Rucksack %s/%s · Team %s · Lv. %s" % [Catalog.TOOLS[int(Game.state.tool)],int(Game.state.bag),int(Game.bag_capacity()),int(Game.state.workers),Game.company_level()]
- supply.text = "HOLZ %s → BRETTER %s → TROCKEN %s\nMÖBEL %s · %s LKW · %02d:00 · %s" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.dry),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks),int(Game.state.time),["Sonnig","Wolkig","Regen","Nebel"][int(Game.state.weather)]]
+ material_bar.refresh()
+ supply.text="Vorräte · Lager + Betriebe"
  if Game.state.delivery.active:
   var order = Game.state.delivery.order
-  supply.text = "HOLZ → BRETTER → MÖBEL\nLADEN %s/%s · %s" % [int(order.delivered),int(order.amount),"SPÄT · 70 %" if order.late else "%02d:%02d" % [int(float(order.left)/60),int(order.left)%60]]
- if narrow_layout and not Game.state.delivery.active:
-  supply.text="HOLZ %s · BRETTER %s\nMÖBEL %s · %s LKW" % [Catalog.number(Game.state.resources.wood),Catalog.number(Game.state.resources.boards),Catalog.number(Game.state.resources.furniture),int(Game.state.trucks)]
+  supply.text = "Laden %s/%s · %s" % [int(order.delivered),int(order.amount),"SPÄT · 70 %" if order.late else "%02d:%02d" % [int(float(order.left)/60),int(order.left)%60]]
+ if compact_materials:
+  supply.text="Holz %s · Bretter %s\nMöbel %s" % [Catalog.number(UXRules.material_stock(Game.state,"wood").stored),Catalog.number(UXRules.material_stock(Game.state,"boards").stored),Catalog.number(UXRules.material_stock(Game.state,"furniture").stored)]
  var fill = float(Game.state.resources.sawdust)/Game.capacity()
- sawdust_button.text=("SPÄNE\n%s %% leeren" if narrow_layout else "SPÄNEBOX\n%s %% · LEEREN") % int(fill*100)
+ sawdust_button.text="Späne %s %%\nLeeren" % int(fill*100)
  compact_style(sawdust_button,Color("e78a45") if fill>=0.8 else Color("258f8d"))
  mission_button.text = "MISSIONEN · Dein nächster Meilenstein"
  for m in Game.mission_definitions():
@@ -616,6 +644,7 @@ func render_menu() -> void:
   "boosters": boosters_menu()
   "prestige": prestige_menu()
   "market": market_menu()
+  "stock": stock_menu()
   "export": export_menu()
   "settings": settings_menu()
   "alpha": alpha_desk.populate()
@@ -985,6 +1014,17 @@ func confirm_prestige_menu() -> void:
  button(box,"JETZT NEUE ÄRA STARTEN",func(): action(func(): Game.prestige()); open_menu("prestige"))
  button(box,"ZURÜCK",func(): open_menu("prestige"))
 
+func stock_menu() -> void:
+ modal_title.text="MATERIALBESTÄNDE"
+ card("Deine Vorräte auf einen Blick","Die Hauptanzeige zählt Lager und lokale Betriebsbestände. LKW-Ladungen stehen separat unter unterwegs. Bereits verbaute Materialien sind keine Vorräte mehr.")
+ for key_value in Catalog.RESOURCES:
+  var key=str(key_value)
+  var box=card(Catalog.RESOURCES[key])
+  dynamic_text(box,func():
+   var stock=UXRules.material_stock(Game.state,key)
+   return "%s Vorrat\n%s Lager · %s Betriebe · %s unterwegs" % [Catalog.number(stock.stored),Catalog.number(stock.warehouse),Catalog.number(stock.local),Catalog.number(stock.transit)])
+  button(box,"QUELLEN & LIEFERUNGEN ›",func(): ux.open_material(key))
+
 func market_menu() -> void:
  modal_title.text = "LAGER & VERKAUF"
  var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Die Baureserve schützt Material für neue Häuser. Die Spänebox lässt sich direkt unten oder am Sägewerk öffnen; ihr voller Behälter stoppt nie die Bretterproduktion.")
@@ -1036,9 +1076,10 @@ func settings_menu() -> void:
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
- button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
+ button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality); Game.apply_device_profile()))
+ text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich Schatten und Umwelteffekte.",14,MUTED)
  if ux!=null: ux.settings_controls(box)
- text(contents,"Alpha 1 · 0.28 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Alpha 1 · 0.28.1 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -1049,9 +1090,13 @@ func build_placement_bar() -> void:
  placement_panel.offset_top=-470
  placement_panel.offset_bottom=-202
  placement_panel.grow_vertical=Control.GROW_DIRECTION_BEGIN
+ placement_panel.clip_contents=true
  placement_panel.add_theme_stylebox_override("panel",style(INK,20))
+ var reading=load("res://UI/TouchScroll.gd").new()
+ placement_panel.add_child(reading)
  var box=VBoxContainer.new()
- placement_panel.add_child(box)
+ box.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ reading.add_child(box)
  placement_title=text(box,"",20,GOLD)
  placement_hint=text(box,"",14,CREAM)
  placement_materials=text(box,"",13,MUTED)

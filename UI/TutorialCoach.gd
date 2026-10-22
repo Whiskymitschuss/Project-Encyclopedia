@@ -15,11 +15,16 @@ func _ready() -> void:
  mouse_filter=Control.MOUSE_FILTER_IGNORE
  panel=PanelContainer.new()
  panel.add_theme_stylebox_override("panel",hud.style(hud.PAPER,17))
+ panel.clip_contents=true
  add_child(panel)
+ # Isolate transient text-wrapping minima from the visible card's size.
+ var reading=load("res://UI/TouchScroll.gd").new()
+ panel.add_child(reading)
  var column=VBoxContainer.new()
+ column.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  column.set_meta("light_card",true)
  column.add_theme_constant_override("separation",5)
- panel.add_child(column)
+ reading.add_child(column)
  heading=hud.text(column,"",16,hud.INK)
  detail=hud.text(column,"",14,hud.INK)
  progress=ProgressBar.new()
@@ -67,14 +72,9 @@ func refresh() -> void:
  progress.value=float(info.value)
  var inset=maxf(14,(hud.size.x-760)/2)
  panel.position=Vector2(inset,hud.mission_button.get_global_rect().end.y+8)
- panel.size.x=maxf(220,minf(400,hud.size.x-inset*2-66))
- panel.reset_size()
- panel.size.x=maxf(220,minf(400,hud.size.x-inset*2-66))
  var limit=hud.bottom_panel.get_global_rect().position.y-8
- if panel.get_global_rect().end.y>limit:
-  detail.hide()
-  panel.reset_size()
- else: detail.show()
+ panel.size=Vector2(maxf(220,minf(400,hud.size.x-inset*2-66)),minf(190,maxf(100,limit-panel.position.y)))
+ detail.visible=panel.size.y>=165
  var target: Control=hud.chop_button if phase=="chop" else hud.deposit_button if phase=="deposit" else hud.sell_button if phase=="sell" else null
  if target!=null:
   marker.position=target.get_global_rect().position-Vector2.ONE*3

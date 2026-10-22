@@ -119,7 +119,7 @@ func _ready() -> void:
  for state in ["normal","hover","pressed","focus"]: play.add_theme_stylebox_override(state,button_skin(GOLD.darkened(0.12) if state=="pressed" else GOLD))
  play.pressed.connect(start_game)
  column.add_child(play)
- label(column,"ALPHA 1 · TESTFASSUNG · 0.28",12,Color("bdd4c5"))
+ label(column,"ALPHA 1 · TESTFASSUNG · 0.28.1",12,Color("bdd4c5"))
  skip=Button.new()
  skip.text="Intro überspringen  ›"
  skip.flat=true

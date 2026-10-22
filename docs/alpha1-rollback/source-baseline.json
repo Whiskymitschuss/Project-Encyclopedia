@@ -1,0 +1,24 @@
+{
+  "restored_base_commit": "d14b53774d5505a93ee1e7b845b2b4753fd9b804",
+  "original_apk_sha256": "e1f7ae4e6c3deb9e40d8af320e8b9fdc1b8562e5a640c0943718aa7954f5658d",
+  "unchanged_game_files": 180,
+  "followup_game_files": [
+    "Components/World.gd",
+    "Economy/UXRules.gd",
+    "Managers/Game.gd",
+    "SaveSystem/Store.gd",
+    "UI/CityUX.gd",
+    "UI/HUD.gd",
+    "UI/Startup.gd",
+    "UI/TutorialCoach.gd"
+  ],
+  "added_game_files": [
+    "UI/MaterialBar.gd.uid",
+    "UI/MaterialBar.gd"
+  ],
+  "metadata_changes": [
+    "project.godot",
+    "export_presets.cfg"
+  ],
+  "reason": "Requested house relocation, material HUD, bounded mobile rendering, protected rollback save and bounded tutorial UI on the shipped 0.28 base. No 0.29 traffic/foreman/catch-up worker retained."
+}

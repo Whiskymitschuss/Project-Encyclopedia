@@ -31,6 +31,8 @@ var city_route_cache: Dictionary = {}
 var stone_route_cache: Dictionary = {}
 var delivery_route_cache: Dictionary = {}
 var delivery_route_signature = 0
+var application_suspended=false
+var pause_tree_was_paused=false
 
 func initial_state() -> Dictionary:
  var resources = {}
@@ -56,6 +58,7 @@ func _ready() -> void:
  rng.randomize()
  changed.connect(func(): Journey.refresh(state))
  state = initial_state()
+ apply_device_profile()
  var saved = Store.load_game()
  if not saved.is_empty():
   restore(saved)
@@ -101,6 +104,9 @@ func restore(saved: Dictionary) -> void:
    if job.has("phases"): job.requested=true
  for key in CityServices.initial():
   if not state.city_services.has(key): state.city_services[key]=CityServices.initial()[key]
+ # Ampelwartung belongs to 0.29. Its zero-cargo technician missions have no
+ # counterpart in 0.28; ordinary services, incidents and freight remain intact.
+ state.city_services.missions=state.city_services.missions.filter(func(mission): return mission.kind!="technician")
  city_route_cache.clear()
  stone_route_cache.clear()
  for key in StoneIndustry.initial():
@@ -111,6 +117,29 @@ func restore(saved: Dictionary) -> void:
  StoneIndustry.synchronize(state)
  Journey.migrate(state,saved)
  Journey.refresh(state)
+ apply_device_profile()
+
+func apply_device_profile() -> void:
+ # Do not drive high-refresh Android screens at 90/120 FPS. Headless tests
+ # deliberately remain uncapped; simulation still uses elapsed seconds.
+ if DisplayServer.get_name()!="headless":
+  Engine.max_fps=30 if OS.has_feature("mobile") or int(state.quality)==0 else 60
+
+func suspend_presentation() -> void:
+ if application_suspended: return
+ application_suspended=true
+ pause_tree_was_paused=get_tree().paused
+ get_tree().paused=true
+ if DisplayServer.get_name()!="headless":
+  Engine.max_fps=5
+  RenderingServer.set_render_loop_enabled(false)
+
+func resume_presentation() -> void:
+ if not application_suspended: return
+ application_suspended=false
+ get_tree().paused=pause_tree_was_paused
+ RenderingServer.set_render_loop_enabled(true)
+ apply_device_profile()
 
 func snapshot() -> Dictionary:
  var data = state.duplicate(true)
@@ -129,6 +158,8 @@ func _notification(what: int) -> void:
  if what == NOTIFICATION_APPLICATION_PAUSED:
   paused_at=Time.get_unix_time_from_system()
   pause_capture=Journey.resume_capture(state)
+  suspend_presentation()
+ if what == NOTIFICATION_APPLICATION_RESUMED: resume_presentation()
  if what == NOTIFICATION_APPLICATION_RESUMED and paused_at>0:
   resume_company(Time.get_unix_time_from_system())
  if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -151,6 +182,7 @@ func resume_company(now: float) -> void:
  save(true)
 
 func _process(delta: float) -> void:
+ if application_suspended: return
  if not live_world: return
  if skip_resume_delta:
   # The OS may report the whole background interval as this frame's delta.
@@ -523,24 +555,29 @@ func next_city_plot() -> int:
  while occupied.has(plot): plot+=1
  return plot
 
-func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = false) -> bool:
+func move_reason(index: int, city: bool = false) -> String:
+ var records=state.homes if city else state.buildings
+ if index<0 or index>=records.size(): return "Gebäude nicht gefunden"
+ if city and job_for("home_upgrade",index): return "Laufenden Hausausbau zuerst abschließen"
  if not city and (delivery_owns(index) or job_for("upgrade",index)):
-  notice.emit("Vor dem Verschieben die Lieferlinie auflösen oder den laufenden Ausbau abschließen")
-  return false
+  return "Vor dem Verschieben die Lieferlinie auflösen oder den laufenden Ausbau abschließen"
  if not city:
   for trip in state.trade.shipments:
    if int(trip.origin)==index:
-    notice.emit("Export-LKW zuerst zum Markt zurückkehren lassen")
-    return false
+    return "Export-LKW zuerst zum Markt zurückkehren lassen"
  if not city and StoneIndustry.uses_building(state,index):
-  notice.emit("Laufende Steinlieferung zuerst beenden lassen")
-  return false
- if not state.construction_shipments.is_empty():
-  notice.emit("Laufende Baustellenlieferungen zuerst beenden lassen")
-  return false
+  return "Laufende Steinlieferung zuerst beenden lassen"
+ # An unrelated construction delivery must not lock the entire city layout.
+ if not city:
+  for trip in state.construction_shipments:
+   if int(trip.get("origin",-1))==index: return "Baustoff-LKW zuerst zu diesem Depot zurückkehren lassen"
  if CityServices.uses_building(state,index,city):
-  notice.emit("Laufende Stadtfahrt an diesem Gebäude zuerst beenden lassen")
-  return false
+  return "Einsatz oder Stadtfahrt an diesem Gebäude zuerst beenden lassen"
+ return ""
+
+func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = false) -> bool:
+ var blocked=move_reason(index,city)
+ if not blocked.is_empty(): notice.emit(blocked); return false
  var records = state.homes if city else state.buildings
  if index<0 or index>=records.size(): return false
  point = Placement.snap(point)

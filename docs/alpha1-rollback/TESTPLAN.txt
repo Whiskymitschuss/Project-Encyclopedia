@@ -1,0 +1,24 @@
+TESTPLAN · 0.28.1-alpha.1
+
+A. Update über 0.29.x installieren. Geld, Häuser, Ausbauten und Baustellen prüfen.
+   Firma schließen, erneut öffnen und Fortschritt prüfen. Nicht deinstallieren.
+B. LKW aus dem bisherigen Stau beobachten. Die Ampelsteuerung ab 0.29 entfällt;
+   Transporte verwenden wieder den Ablauf der 0.28. Lieferung wird einmal gebucht.
+C. Fertiges Wohnhaus antippen → Verschieben → freie Stelle → Drehen → SETZEN.
+   Stufe, Miete und Geld bleiben erhalten. Danach neu starten und Standort prüfen.
+   Zweiten Versuch abbrechen: Haus bleibt stehen. Straße und gesperrtes Biom
+   müssen ungültig bleiben. Eigener Ausbau/Einsatz sperrt nur dieses Gebäude.
+D. Materialzahlen bei aktivem Ladenauftrag prüfen, Quelle antippen. Alle Waren:
+   Lager und Betriebsbestände getrennt von unterwegs. Keine Gutschrift allein
+   durch Öffnen der Anzeige. Auch große Schrift und kleiner Bildschirm prüfen.
+E. Vergleich S26 Ultra und S24 FE bei ähnlicher Helligkeit, Raumtemperatur,
+   gleicher Stadt und ohne Ladegerät: 5, 10 und 15 Minuten spielen, Wärme und
+   Bildruhe notieren. Danach Akkumodus vergleichen. Diese Version wurde in
+   der Cloud automatisch geprüft; eine Temperaturmessung ist dort nicht möglich.
+F. App 2 Minuten minimieren, zurückkehren. Darstellung ruht im Hintergrund.
+   Firma setzt fort, Abwesenheit wird einmal berechnet. Bildschirm aus/an testen.
+G. Frisches Testgerät: Intro, Fällen, Abliefern, Bretter, Verkauf, erste Hütte.
+   Bestehende Firma dafür nicht löschen.
+
+Nicht als fehlerfrei oder für den Store freigegeben. Bei Fehlern genaue Aktion,
+Gerätemodell, Android-Version, Version und erwartetes/tatsächliches Ergebnis nennen.

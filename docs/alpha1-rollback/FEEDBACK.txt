@@ -1,0 +1,15 @@
+TESTBERICHT · 0.28.1-alpha.1
+
+Handy / Android:
+Vorher installierte Version:
+Bestehende Firma korrekt übernommen: ja / nein
+Häuser versetzen: ja / nein
+Materialanzeige verständlich: ja / nein
+Wärme nach 5 / 10 / 15 Minuten:
+Akkumodus an / aus:
+Aktion vor dem Fehler:
+Erwartet:
+Tatsächlich:
+Wiederholbar:
+
+Keine privaten Spielstände oder Zugangsdaten ohne gesonderte Absprache beilegen.

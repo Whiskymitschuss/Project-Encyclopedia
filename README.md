@@ -1,6 +1,22 @@
-# Timber Loot Tycoon — Alpha 2
+# Timber Loot Tycoon — Alpha 1 · Rückkehr zur 0.28
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+
+## Aktuell: 0.28.1-alpha.1 · Basis wieder 0.28
+
+Auf Wunsch ist der Spielcode wieder auf der verteilten 0.28 aufgebaut. Die
+Verkehrssteuerung ab 0.29 ist zurückgenommen. Neu auf dieser Basis: Häuser
+direkt versetzen, dauerhafte Materialbestände im HUD und begrenzte mobile
+Renderlast (30 FPS, kleinere Schatten, keine Darstellung im Hintergrund).
+
+Als Update über die vorhandene Alpha installieren; **nicht deinstallieren**.
+Die interne Android-Nummer 2951 ermöglicht die Rückkehr auch über 0.29.4.
+Die Wärmeentwicklung auf S26 Ultra und S24 FE bleibt auf den Geräten zu prüfen.
+
+[Änderungen und Gründe](docs/ROLLBACK-028.md) ·
+[Installation](docs/alpha1-rollback/START-HIER.txt) · [Downloads](releases/README.md).
+
+## Frühere 0.29-Entwicklung (zurückgenommen)
 
 ## Ladehöfe und Rückstau — 0.29.4-alpha.2
 

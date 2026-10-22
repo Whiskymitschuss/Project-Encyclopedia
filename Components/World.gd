@@ -951,6 +951,7 @@ func update_ghost() -> void:
  var city=bool(placement.get("city",false))
  var index=int(placement.get("index",-1))
  var reason=Game.placement_reason(placement_point,placement_rotation,-1 if city else index,index if city else -1)
+ if reason.is_empty() and index>=0: reason=Game.move_reason(index,city)
  if reason.is_empty() and index<0:
   var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[placement.kind]
   var price=float(definition.cost)*Game.difficulty() if city else Game.cost_for(placement.kind)

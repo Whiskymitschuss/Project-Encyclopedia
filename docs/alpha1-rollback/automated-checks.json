@@ -1,0 +1,66 @@
+{
+  "headless_checks": 19673,
+  "headless_suites": 27,
+  "headless_numeric_suites": {
+    "ROLLBACK 028": 43,
+    "ALPHA 1": 35,
+    "RULES": 233,
+    "SCENE": 4092,
+    "WORLD & HIGHWAY TRADE 27": 61,
+    "PLACEMENT & ONBOARDING": 52,
+    "WORKSHOP": 42,
+    "COMPANION": 23,
+    "WORLD LIFE": 30,
+    "TOWN": 215,
+    "VALLEY": 177,
+    "CRAFTED WORLD": 128,
+    "DELIVERY": 6057,
+    "CONSTRUCTION": 56,
+    "LOGISTICS FIX": 464,
+    "CITY UX": 797,
+    "BUILDING CARD": 437,
+    "JOURNEY": 215,
+    "TRAFFIC & TOUCH": 1494,
+    "FIRE SAFETY": 24,
+    "FIRE PROTECTION": 38,
+    "STONE INDUSTRY": 4870,
+    "QUALITY FEEDBACK": 32,
+    "PRESENTATION 26": 46,
+    "STARTUP": 12
+  },
+  "additional_headless_suites": [
+    "AlphaProgression: real first hut/town hall and 8 offline hours",
+    "Progression: real first home without grants"
+  ],
+  "main_and_boot_smokes_passed": true,
+  "visual_checks": 612,
+  "visual_suites": 12,
+  "visual_results": {
+    "VISUAL ROLLBACK 028": 146,
+    "VISUAL UI": 23,
+    "STARTUP OPENGL": 28,
+    "VISUAL BUILDING CARD": 87,
+    "VISUAL CITY UX": 45,
+    "FIRE & RESPONSIVE UI OPENGL": 50,
+    "FIRE PROTECTION OPENGL": 36,
+    "VISUAL CRAFTED WORLD": 14,
+    "VISUAL QUALITY": 41,
+    "VISUAL PRESENTATION 26": 37,
+    "VISUAL WORLD & TRADE 27": 45,
+    "VISUAL ALPHA 1": 60
+  },
+  "validation_sequence": "Complete headless suite; full OpenGL run followed by corrected layout and a passing rerun of VisualRollback028, VisualWorldTrade27, VisualAlpha28. Rollback028 and Alpha28 also rerun after atomic archive changes.",
+  "earlier_failures_fixed": [
+    "Full material HUD reduced room for short-screen building cards",
+    "Unbounded tutorial wrapping intercepted the first chop touch",
+    "Build preview intruded on the highway road gesture"
+  ],
+  "fixture": "Generated 0.29 test city only; never a private player save",
+  "rendering": "Godot 4.6.3, Mesa llvmpipe GL Compatibility on Xvfb",
+  "android_device_tested": false,
+  "temperature_measured": false,
+  "limitations": [
+    "Some desktop suites report ObjectDB cleanup warnings at exit; software X11 driver does not support changing VSync.",
+    "S26 Ultra/S24 FE temperature and sustained mobile performance require physical device tests."
+  ]
+}

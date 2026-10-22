@@ -1,0 +1,23 @@
+TIMBER LOOT TYCOON · Rückkehr zur 0.28 · 0.28.1-alpha.1
+
+1. Die beiliegende APK direkt über die vorhandene Timber Loot Alpha installieren.
+   NICHT deinstallieren und keine App-Daten löschen.
+2. Dieselbe App und dasselbe Testzertifikat wie ab 0.23. Android-Code 2951 ist
+   absichtlich höher als 0.29.4: Die Spielbasis ist wieder die 0.28.
+3. Intro starten, vorhandene Firma weiterspielen. Häuser antippen → Verschieben.
+   Standort wählen → SETZEN. Abbrechen kostet nichts. Eigener Ausbau oder
+   laufende Einsätze am Gebäude müssen zuerst beendet werden.
+4. Unten bleiben sechs Materialbestände sichtbar, auch während Ladenaufträgen.
+   Zahl = Lager + lokale Betriebsbestände. Antippen zeigt Quellen und Lieferungen.
+   Alle Waren öffnet auch Stein, Kies, Bauteile und Hardware.
+5. Android ist auf 30 Bilder/s begrenzt. Beim Minimieren ruht die Darstellung.
+   Mehr → Einstellungen → Akkumodus reduziert zusätzlich Effekte und Schatten.
+6. Beobachtungen unter Mehr → Alpha 1 · Testen & Feedback eintragen und kopieren.
+   Es wird nichts automatisch versendet.
+
+Die ursprüngliche 0.29-Datei wird beim ersten Speichern zusätzlich im privaten
+App-Speicher unter recovery/before-028-rollback.json bewahrt. Das ist kein
+Cloud-Save. Geräte nicht deinstallieren, bevor Fortschritt extern gesichert ist.
+
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, Hochformat. Debug-signierte Testfassung.
+Die Wärmeentwicklung auf S26 Ultra und S24 FE muss auf den Geräten geprüft werden.

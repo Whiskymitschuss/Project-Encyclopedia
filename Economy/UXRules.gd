@@ -63,6 +63,18 @@ static func material_counts(state: Dictionary,job: Dictionary,key: String) -> Di
  var total=float(job.materials.get(key,0))
  var transit=ConstructionRules.incoming(state,int(job.get("id",-1)),key)
  return {"arrived":delivered,"incoming":transit,"missing":maxf(0,total-delivered-transit),"total":total}
+static func material_stock(state: Dictionary,key: String) -> Dictionary:
+ var warehouse=float(state.resources.get(key,0))
+ var local=0.0
+ for group in [state.delivery.buffers,state.delivery.recovered]:
+  for stock in group.values(): local+=float(stock.get(key,0))
+ for site in state.stone.sites.values(): local+=float(site.get("stock",{}).get(key,0))
+ var transit=0.0
+ for trip in state.delivery.shipments+state.construction_shipments+state.stone.shipments+state.trade.shipments:
+  if trip.key==key and not trip.arrived: transit+=float(trip.amount)
+ # A truck's cargo was already withdrawn. An arrived truck has already
+ # credited its destination; neither may be counted twice as available stock.
+ return {"warehouse":warehouse,"local":local,"transit":transit,"stored":warehouse+local}
 static func group_members(state: Dictionary,group: Dictionary) -> Array:
  var bounds=Rect2(Vector2(float(group.bounds[0]),float(group.bounds[1])),Vector2(float(group.bounds[2]),float(group.bounds[3])))
  var result=[]

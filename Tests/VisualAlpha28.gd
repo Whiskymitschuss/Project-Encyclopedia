@@ -52,6 +52,7 @@ func run() -> void:
  check(game.state.onboarding.active and hud.coach.panel.visible,"Real welcome touch opens the contextual tutorial")
  check(not hud.companion.avatar.visible,"The regular companion bubble leaves room for the introductory coach")
  check(hud.coach.marker.get_global_rect().intersects(hud.chop_button.get_global_rect()),"The tutorial highlights the actual chop action")
+ check(hud.coach.panel.get_global_rect().end.y<hud.bottom_panel.get_global_rect().position.y,"Tutorial cannot grow across action buttons or intercept the first chop")
  root.get_texture().get_image().save_png("/workspace/timber-alpha28-tutorial.png")
  for i in 5: await tap(hud.chop_button)
  check(TutorialRules.phase(game.state)=="deposit" and game.state.bag==20,"Five physical chop touches collect the real tutorial cargo")

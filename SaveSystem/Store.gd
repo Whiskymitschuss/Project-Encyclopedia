@@ -1,6 +1,7 @@
 extends Node
 
 const PATH = "user://timber_rebuild.json"
+const ROLLBACK_COPY="user://recovery/before-028-rollback.json"
 var last_error = ""
 var load_status="new"
 var recovery_required=false
@@ -78,6 +79,18 @@ func save_game(data: Dictionary) -> bool:
  if not valid_shape(data):
   last_error="Spielstand enthält ungültige Werte und wurde nicht übernommen."
   return false
+ # Keep the original 0.29 bytes beyond the normal rotating .bak. Never
+ # overwrite that copy on later autosaves or replace the source if copying fails.
+ var source=PATH if not read_file(PATH).is_empty() else PATH+".bak"
+ var previous=read_file(source)
+ if (previous.has("traffic") or previous.has("foreman")) and not FileAccess.file_exists(ROLLBACK_COPY):
+  var archive_tmp=ROLLBACK_COPY+".tmp"
+  if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://recovery"))!=OK or DirAccess.copy_absolute(ProjectSettings.globalize_path(source),ProjectSettings.globalize_path(archive_tmp))!=OK:
+   last_error="Sicherung vor der Rückkehr auf 0.28 fehlgeschlagen · bisherige Datei bleibt erhalten."
+   return false
+  if FileAccess.get_sha256(source)!=FileAccess.get_sha256(archive_tmp) or DirAccess.rename_absolute(ProjectSettings.globalize_path(archive_tmp),ProjectSettings.globalize_path(ROLLBACK_COPY))!=OK:
+   last_error="Rollback-Sicherung konnte nicht geprüft werden · bisherige Datei bleibt erhalten."
+   return false
  var tmp = PATH + ".tmp"
  var file = FileAccess.open(tmp, FileAccess.WRITE)
  if file == null:

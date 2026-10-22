@@ -222,9 +222,8 @@ func render_sheet() -> void:
    hud.button(sheet_body,"BRANDSCHUTZ · RAUCHMELDER & HYDRANT",func(): hud.open_menu("fire_protection"))
   var other=sheet_actions()
   hud.button(other,"Details ↑",func(): expand_selection())
-  hud.button(other,"Stufen 1–10" if city else "Verschieben",func():
-   if city: show_evolution(b.kind,int(b.level))
-   else: hud.request_placement({"kind":b.kind,"city":false,"index":index}))
+  hud.button(other,"Verschieben",func(): hud.request_placement({"kind":b.kind,"city":city,"index":index}))
+  if city: hud.button(sheet_body,"ARCHITEKTUR · STUFEN 1–10",func(): show_evolution(b.kind,int(b.level)))
  elif selection.kind=="job":
   var job=find_job()
   if job.is_empty(): hide_panels(true); return
