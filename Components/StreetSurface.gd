@@ -7,6 +7,7 @@ const ROAD_Y=0.74
 const WALK_Y=0.90
 const PATH_Y=0.57
 const PAINT_Y=0.84
+const CURB_BASE_Y=0.30 # Below the flat valley soil (0.38), never a floating skirt.
 static var cache={}
 
 static func merge_intervals(values: Array) -> Array:
@@ -170,8 +171,8 @@ static func curbs(parent: Node3D,rects: Array) -> void:
     if hits%2==0: continue
     var a=Vector3(ends[i],WALK_Y,coordinate) if axis==0 else Vector3(coordinate,WALK_Y,ends[i])
     var b=Vector3(ends[i+1],WALK_Y,coordinate) if axis==0 else Vector3(coordinate,WALK_Y,ends[i+1])
-    var c=b-Vector3(0,0.36,0)
-    var d=a-Vector3(0,0.36,0)
+    var c=Vector3(b.x,CURB_BASE_Y,b.z)
+    var d=Vector3(a.x,CURB_BASE_Y,a.z)
     for point in [a,b,d,b,c,d]: builder.add_vertex(point)
     count+=1
  if count==0: return

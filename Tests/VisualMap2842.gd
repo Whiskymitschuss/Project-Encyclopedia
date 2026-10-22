@@ -80,6 +80,7 @@ func run() -> void:
    floors+=1
    check(floor_mesh.visible,"An actual factory retains its own bounded floor")
  check(scene.base_streets.has_node("StreetNetwork/Curbs"),"Canonical sidewalks have visible continuous kerb faces")
+ check(scene.base_streets.get_node("StreetNetwork/Curbs").get_aabb().position.y<0.38,"Sidewalk foundations reach into the valley soil instead of floating above it")
  check(floors>=10,"A populated company renders independent production plots")
  check(scene.camera.far-scene.camera.near<=1800,"The camera no longer wastes mobile depth precision on an oversized far range")
  for kind in ["Asphalt","Sidewalks","RoadMarkings"]:
