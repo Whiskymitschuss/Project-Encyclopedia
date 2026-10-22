@@ -7,12 +7,12 @@ const CURB=Color("f0ead5")
 
 static func context(state: Dictionary) -> Dictionary:
  var plots=[]
- for i in state.buildings.size(): plots.append(Placement.bounds(LogisticsRoutes.building_position(state,i),int(state.buildings[i].get("rotation",0))))
+ for i in state.buildings.size(): plots.append(Placement.bounds(LogisticsRoutes.building_position(state,i),int(state.buildings[i].get("rotation",0)),state.buildings[i].kind))
  for i in state.homes.size(): plots.append(Placement.bounds(LogisticsRoutes.home_position(state,i),int(state.homes[i].get("rotation",0))))
  for job in state.jobs:
   if job.type not in ["home","building"]: continue
   var fallback=Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.get("slot",0)))
-  plots.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))))
+  plots.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind",""))))
  for stop in state.town.stops: plots.append(Rect2(Vector2(TownRules.cell(stop.cell))-Vector2(5,5),Vector2(10,10)))
  var cells=TownRules.road_cells(state.town)
  var walkways=[]
@@ -30,18 +30,35 @@ static func context(state: Dictionary) -> Dictionary:
 static func strip(parent: Node3D,at: Vector3,size: Vector3,paved: bool,ctx: Dictionary={}) -> void:
  var vertical=size.z>size.x
  if vertical and size.z>300:
-  for section in [[-172.0,-58.0],[-58.0,30.0],[30.0,180.0]]:
+  for section in [[-172.0,ProductionCampus.YARD.position.y],[ProductionCampus.YARD.position.y,ProductionCampus.YARD.end.y],[ProductionCampus.YARD.end.y,180.0]]:
    strip(parent,Vector3(at.x,at.y,(section[0]+section[1])*0.5),Vector3(size.x,size.y,section[1]-section[0]),paved,ctx)
+  return
+ if not vertical and size.x>130 and at.z>=ProductionCampus.YARD.position.y and at.z<ProductionCampus.YARD.end.y:
+  for section in [[at.x-size.x/2,ProductionCampus.YARD.position.x],[ProductionCampus.YARD.position.x,ProductionCampus.YARD.end.x],[ProductionCampus.YARD.end.x,at.x+size.x/2]]:
+   if section[1]-section[0]>0.01: strip(parent,Vector3((section[0]+section[1])/2,at.y,at.z),Vector3(section[1]-section[0],size.y,size.z),paved,ctx)
   return
  if at.z<=-60:
   var haul_size=Vector3(10,size.y,size.z) if vertical else Vector3(size.x,size.y,10)
   Models.paving_box(parent,haul_size,at,ProductionCampus.SAND,"plaster",0.8)
   return
  if ProductionCampus.inside(at):
-  Models.box(parent,size,at,ProductionCampus.CONCRETE)
-  for side in [-1,1]:
-   var p=at+Vector3(side*(size.x/2-0.3),size.y/2+0.02,0) if vertical else at+Vector3(0,size.y/2+0.02,side*(size.z/2-0.3))
-   Models.box(parent,Vector3(0.15,0.03,size.z) if vertical else Vector3(size.x,0.03,0.15),p,Color("fff4df"))
+  at.y=0.55
+  size.y=0.04
+  var lane=Models.box(parent,size,at,ProductionCampus.CONCRETE.darkened(0.06))
+  lane.material_override=SurfaceLibrary.material(ProductionCampus.CONCRETE.darkened(0.06),"plaster")
+  var axis=Vector3.BACK if vertical else Vector3.RIGHT
+  var across=Vector3.RIGHT if vertical else Vector3.BACK
+  var extent=size.z if vertical else size.x
+  var width=size.x if vertical else size.z
+  for offset in range(-int(extent/2)+2,int(extent/2)-1,4):
+   var center=at+axis*offset
+   var free=true
+   for junction in ctx.get("junctions",[]):
+    if Vector2(center.x,center.z).distance_to(junction)<7: free=false; break
+   if not free: continue
+   for side in [-1,1]:
+    var p=center+across*side*(width/2-0.3)+Vector3.UP*(size.y/2+0.04)
+    Models.box(parent,Vector3(0.15,0.025,3.6) if vertical else Vector3(3.6,0.025,0.15),p,Color("fff4df"))
   return
  Models.paving_box(parent,size+Vector3(1.0,-0.04,1.0),at-Vector3(0,0.09,0),Color("b0b79c"),"plaster",0.8)
  Models.paving_box(parent,size,at,ASPHALT if paved else Color("b5a78a"),"asphalt" if paved else "plaster",0.65)
@@ -74,7 +91,10 @@ static func strip(parent: Node3D,at: Vector3,size: Vector3,paved: bool,ctx: Dict
 
 static func junctions(parent: Node3D,ctx: Dictionary) -> void:
  for p in ctx.junctions:
-  if ProductionCampus.YARD.has_point(p): continue
+  if ProductionCampus.YARD.has_point(p):
+   var cap=Models.box(parent,Vector3(7.5,0.04,7.5),Vector3(p.x,0.58,p.y),ProductionCampus.CONCRETE.darkened(0.06))
+   cap.material_override=SurfaceLibrary.material(ProductionCampus.CONCRETE.darkened(0.06),"plaster")
+   continue
   if p.y<=-60:
    Models.box(parent,Vector3(10,0.1,10),Vector3(p.x,0.87,p.y),ProductionCampus.SAND)
    continue

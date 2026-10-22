@@ -1,17 +1,17 @@
 extends RefCounted
 
 const STEEL=Color("eff2d9")
-const DARK=Color("3e5868")
-const WOOD=Color("c99459")
-const BLUE=Color("3987a1")
-const RED=Color("c46742")
+const DARK=Color("415a6d")
+const WOOD=Color("d59b53")
+const BLUE=Color("368dd2")
+const RED=Color("ef7840")
 
 static func create(kind: String, level: int) -> Node3D:
  # Shared factory finishes: lacquer, brushed metal, and unpolished timber.
  for color in [BLUE,RED,Color("27b6a7"),Color("b876c2")]:
   var paint=Models.material(color)
-  paint.roughness=0.68
-  paint.metallic=0.02
+  paint.roughness=0.9
+  paint.metallic=0.0
  var metal=Models.material(STEEL)
  metal.roughness=0.3
  metal.metallic=0.45
@@ -19,13 +19,15 @@ static func create(kind: String, level: int) -> Node3D:
  var root=Node3D.new()
  root.set_meta("open_factory",true)
  root.set_meta("kind",kind)
- Models.paving_box(root,Vector3(19,0.4,23),Vector3(0,0.2,0),ProductionCampus.CONCRETE,"plaster",1.0)
- for x in [-9,9]: block(root,Vector3(0.25,0.12,22.8),Vector3(x,0.48,0),Color("f4edcc"))
- for z in [-11,11]: block(root,Vector3(18,0.12,0.25),Vector3(0,0.48,z),Color("f4edcc"))
+ # One shared floor inside the campus; retain a private slab for remote factories.
+ var floor_mesh=Models.paving_box(root,Vector3(19,0.4,23),Vector3(0,0.2,0),ProductionCampus.CONCRETE,"plaster",1.0)
+ floor_mesh.name="FactoryFloor"
+ floor_mesh.set_meta("animated",true)
+ # Paint clears the shared floor by > 5 cm: no coplanar borders or flicker.
  for side in [-1,1]:
-  for z in range(-9,11,3): block(root,Vector3(0.4,0.06,1.5),Vector3(side*3.1,0.47,z),Color("ffd15a"))
+  for z in range(-9,11,3): block(root,Vector3(0.3,0.025,1.5),Vector3(side*3.1,0.585,z),Color("ffdb51"))
  for x in [-7,-4,4,7]:
-  var dash=block(root,Vector3(1.5,0.07,0.3),Vector3(x,0.48,10),Color("ffe58e"))
+  var dash=block(root,Vector3(1.5,0.025,0.3),Vector3(x,0.585,10),Color("ffe58e"))
   dash.rotation.y=-0.5
  if kind in ["station","warehouse"]:
   # A short rear canopy leaves the complete work line visible from above.
@@ -33,7 +35,7 @@ static func create(kind: String, level: int) -> Node3D:
   var canopy=Node3D.new()
   canopy.position.z=-9
   root.add_child(canopy)
-  Models.roof(canopy,17,3.4,5.8,Color("597c92") if kind in ["station","warehouse"] else Color("bd7145"))
+  Models.roof(canopy,17,3.4,5.8,Color("3899d4") if kind in ["station","warehouse"] else Color("bd7145"))
   for side in [-1,1]:
    for z in [-8,-4,0]: block(root,Vector3(0.35,1.7,0.35),Vector3(side*9,1.3,z),WOOD)
    for y in [1.0,1.9]: block(root,Vector3(0.2,0.2,8.0),Vector3(side*9,y,-4),WOOD)
@@ -149,7 +151,7 @@ static func create(kind: String, level: int) -> Node3D:
  # Control station and service markings remain within the existing footprint.
  block(root,Vector3(1.2,1.3,1),Vector3(-3.8,1.3,1.2),BLUE)
  block(root,Vector3(0.9,0.6,0.15),Vector3(-3.8,2,1.75),Color("a1f3c3"))
- for z in [-4.5,-2.5,0,2.5,4.5]: block(root,Vector3(0.3,0.08,1.3),Vector3(-4.6,0.5,z),Color("ffe085"))
+ for z in [-4.5,-2.5,0,2.5,4.5]: block(root,Vector3(0.3,0.08,1.3),Vector3(-4.6,0.585,z),Color("ffe085"))
  if level>=5:
   for x in [-5,5]: block(root,Vector3(4.2,0.16,2.3),Vector3(x,6.1,-9),Color("326a9d"))
  if level>=10:

@@ -76,12 +76,11 @@ static func calculate(state: Dictionary, a: Vector3, b: Vector3) -> Array:
  var raw = network.get_point_path(network.get_closest_point(Vector2(start)),network.get_closest_point(Vector2(end)))
  if raw.is_empty(): return []
  var result: Array = []
- # Docks terminate at the footprint edge, never inside the factory.
- var dock_a = a+(TownRules.point(start)-a).normalized()*(12.5)
- var dock_b = b+(TownRules.point(end)-b).normalized()*(11.5+1)
- result.append([dock_a.x,0.95,dock_a.z])
+ # Park parallel on the road. A short perpendicular private approach cannot
+ # safely contain a truck nose and a trailer beside an open conveyor.
  for v in raw: result.append([v.x,0.95,v.y])
- result.append([dock_b.x,0.95,dock_b.z])
+ result.push_front(result[0].duplicate())
+ result.append(result[-1].duplicate())
  return result
 
 static func encode(points: PackedVector3Array) -> Array:
@@ -108,3 +107,19 @@ static func sample(points: Array, fraction: float) -> Dictionary:
   if along<=d and d>0.00001: return {"position":a.lerp(b,along/d),"direction":(b-a).normalized()}
   along -= d
  return {"position":vector(points[-1]),"direction":(vector(points[-1])-vector(points[-2])).normalized()}
+
+static func presentation_sample(points: Array, fraction: float) -> Dictionary:
+ # Legacy saves retain their route, clocks and cargo; only their short private
+ # approach is displayed at the adjacent public-road loading position.
+ if points.size()<3 or float(points[-1][1])>1.1: return sample(points,fraction)
+ var first=vector(points[0])
+ var start=vector(points[1])
+ var end=vector(points[-2])
+ var last=vector(points[-1])
+ var total=length(points)
+ var along=clampf(fraction,0,1)*total
+ if first.distance_to(start)>0.01 and along<=first.distance_to(start):
+  return {"position":start,"direction":(vector(points[2])-start).normalized()}
+ if last.distance_to(end)>0.01 and along>=total-last.distance_to(end):
+  return {"position":end,"direction":(end-vector(points[-3])).normalized()}
+ return sample(points,fraction)

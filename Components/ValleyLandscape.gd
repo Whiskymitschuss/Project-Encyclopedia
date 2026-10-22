@@ -44,14 +44,14 @@ func height_at(point: Vector2) -> float:
  return height
 
 func ground_color(point: Vector2) -> Color:
- var tone=Color("829b59")
+ var tone=Color("8abf5d")
  var total=0.0
  var blend=Color(0,0,0,1)
  for i in 10:
   var p=Catalog.biome_position(i)
   var distance=Vector2((point.x-p.x)/49.0,(point.y-p.z)/44.0).length()
   var weight=pow(maxf(0,1.0-distance/1.5),2)
-  blend+=Color(Catalog.BIOMES[i].ground).lerp(Color("a1ad72"),0.4).darkened(0.15)*weight
+  blend+=Color(Catalog.BIOMES[i].ground).lerp(Color("b0d975"),0.4).darkened(0.05)*weight
   total+=weight
  if total>0.001:
   blend/=total
@@ -311,13 +311,13 @@ func clear_at(point: Vector2, radius: float, bounds: Array, routes: Array) -> bo
  return true
 
 func refresh() -> void:
- var bounds=[WorldAccess.HIGHWAY_SITE,Rect2(319,72,24,136)]
- for i in Game.state.buildings.size(): bounds.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))))
+ var bounds=[ProductionCampus.YARD,WorldAccess.HIGHWAY_SITE,Rect2(319,72,24,136)]
+ for i in Game.state.buildings.size(): bounds.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0)),Game.state.buildings[i].kind))
  for i in Game.state.homes.size(): bounds.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))))
  for job in Game.state.jobs:
   if job.type not in ["building","home"]: continue
   var fallback=Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.get("slot",0)))
-  bounds.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))))
+  bounds.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind",""))))
  for project in Catalog.PROJECTS: bounds.append(Placement.bounds(project.position,0))
  for stop in Game.state.town.stops: bounds.append(Rect2(Vector2(TownRules.cell(stop.cell))-Vector2(8,8),Vector2(16,16)))
  if world!=null and world.actors!=null:

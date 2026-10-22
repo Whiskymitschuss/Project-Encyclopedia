@@ -217,7 +217,7 @@ func run() -> void:
  await shot("materials")
  var source_button=null
  for button in hud.contents.find_children("*","Button",true,false):
-  if "verfügbar" in button.text: source_button=button; break
+  if " lokal" in button.text: source_button=button; break
  var source_point=source_button.get_global_rect().get_center()
  await touch(source_point,true)
  await touch(source_point,false)

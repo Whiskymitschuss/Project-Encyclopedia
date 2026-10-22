@@ -51,7 +51,7 @@ func run() -> void:
  var context=load("res://Components/StreetScape.gd").context(footpaths)
  check(not load("res://Components/ProductionCampus.gd").clear(Vector2(-140,-84),context,1.2),"Forest fences also leave a newly placed pedestrian path clear")
  check(hud.header_panel.size.y<80 and hud.mission_button.get_global_rect().end.y<130,"Compact wallet and goal free the upper world view")
- check(hud.material_bar.columns==6 and hud.bottom_panel.size.y<220,"Six real material counters fit one row on a normal phone")
+ check(hud.material_bar.columns==3 and hud.bottom_panel.size.y<270,"Six real material counters fit two readable rows on a normal phone")
  scene.focus=game.building_position(1)
  scene.zoom=85
  scene.set_camera()

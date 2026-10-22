@@ -29,13 +29,7 @@ static func apply(game: Node, node: Node3D, shipment: Dictionary, age: float) ->
  if not cargo.has_meta("rest_position"): cargo.set_meta("rest_position",cargo.position)
  cargo.position=cargo.get_meta("rest_position")
  if not game.state.ux.motion or stage.kind not in ["load","unload"]: return str(stage.kind)
- var loading=stage.kind=="load"
- var at=dock(game,shipment,loading)
- var toward=at-node.global_position
- toward.y=0
- if toward.length_squared()<0.01: toward=node.global_basis.x
- var direction=cargo.get_parent().global_basis.inverse()*toward.normalized()
- var t=smoothstep(0,1,float(stage.progress))
- var distance=(1-t if loading else t)*3.8
- cargo.position+=direction*distance+Vector3.UP*sin(float(stage.progress)*PI)*0.8
+ # Keep the real load on its deck. The former sideways 3.8 m slide sent
+ # pallets through machines and roofs; a small hoist pulse stays in the bay.
+ cargo.position+=Vector3.UP*sin(float(stage.progress)*PI)*0.18
  return str(stage.kind)

@@ -156,11 +156,11 @@ func _process(delta: float) -> void:
   b.button.position = p
  truck_visual_count = 0
  var present = {}
- var shipments = Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments
+ var shipments = FreightFlow.all_trips(Game.state)
  for shipment in shipments:
   var id = visual_key(shipment)
   present[id] = true
-  var signature = "truck:"+str(shipment.key)+":"+str(Game.state.vehicle)
+  var signature = "truck:"+str(shipment.key)+":"+str(Game.state.vehicle)+":"+str(shipment.get("fleet","general"))
   if visuals.has(id) and str(visuals[id].get_meta("pool_key"))!=signature:
    var old=visuals[id]
    var old_key=str(old.get_meta("pool_key"))
@@ -181,6 +181,7 @@ func _process(delta: float) -> void:
    node.cargo_boards = shipment.key=="boards"
    node.cargo_stone = shipment.key=="stone"
    node.road_freight = true
+   node.fleet=str(shipment.get("fleet","general"))
    add_child(node)
    node.set_meta("pool_key",signature)
    var cargo_label=Label3D.new()
@@ -209,8 +210,10 @@ func _process(delta: float) -> void:
   elif age>float(shipment.travel)+2:
    returning=true
    progress = 1-clampf((age-float(shipment.travel)-2)/float(shipment.travel),0,1)
-  var sample = LogisticsRoutes.sample(shipment.path,progress)
+  var sample = LogisticsRoutes.presentation_sample(shipment.path,progress)
   node.position = sample.position
+  if absf(node.position.y-0.95)<0.01:
+   node.position.y=0.61 if ProductionCampus.inside(node.position) else 0.87 if node.position.z<=-60 else 0.94
   var direction = -sample.direction if returning else sample.direction
   node.follow_heading(direction,delta)
   node.position+=Vector3(direction.z,0,-direction.x)*1.5
@@ -220,10 +223,8 @@ func _process(delta: float) -> void:
   if node.cargo!=null: node.cargo.visible = not shipment.arrived
   var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
-  var selected=world.hud.ux.selection
-  var focused=selected.get("kind","")=="truck" and (str(selected.get("domain",""))+":"+str(selected.get("id",-1)))==str(id)
-  cargo_label.visible=node.visible and (world.view_zoom<80 or focused)
-  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else Catalog.BUILDINGS[shipment.target].name
+  cargo_label.visible=false # Detail belongs in the bounded selection sheet, never across the world.
+  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else CentralLogistics.target_name(Game.state,shipment) if shipment.target in ["central","express"] else Catalog.BUILDINGS[shipment.target].name
   cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
   if cargo_stage=="load": cargo_label.text="BELADEN · "+cargo_label.text
   elif cargo_stage=="unload": cargo_label.text="ENTLADEN · "+cargo_label.text
@@ -243,7 +244,7 @@ func _process(delta: float) -> void:
 func visual_key(shipment: Dictionary) -> String:
  # Saves retain their original IDs. Separate domains prevent two simultaneous
  # jobs with the same numeric ID from sharing a model or swapping cargo types.
- return "%s:%s" % ["construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "export" if shipment.target=="export" else "wood",int(shipment.id)]
+ return "%s:%s" % ["central" if shipment.target in ["central","express"] else "construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "export" if shipment.target=="export" else "wood",int(shipment.id)]
 
 func _exit_tree() -> void:
  if is_instance_valid(overlay): overlay.queue_free()

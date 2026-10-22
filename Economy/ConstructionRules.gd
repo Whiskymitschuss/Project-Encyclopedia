@@ -125,6 +125,7 @@ static func sources(state: Dictionary, key: String) -> Array:
  var warehouse = -1
  for i in state.buildings.size():
   if state.buildings[i].kind=="warehouse": warehouse=i; break
+ if CentralLogistics.active(state): warehouse=CentralLogistics.depot(state)
  if warehouse>=0: result.append({"kind":"warehouse","index":warehouse,"stock":state.resources})
  return result
 
@@ -164,6 +165,7 @@ static func transport_tick(state: Dictionary, delta: float) -> void:
     var cap = 500.0
     for b in state.buildings:
      if b.kind=="warehouse": cap+=int(b.level)*500
+     elif b.kind=="central_depot": cap+=int(b.level)*1500
     if float(state.resources.get(s.key,0))+float(s.amount)>cap:
      s.age=float(s.travel)
      continue
@@ -176,7 +178,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  var busy = state.construction_shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
- var free = maxi(0,int(state.trucks)-busy)
+ var free = maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-busy)
  if free<=0: return 0
  var jobs = state.jobs.duplicate()
  jobs.sort_custom(func(a,b): return int(a.get("priority",false))>int(b.get("priority",false)))
@@ -190,7 +192,8 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
   material_keys.sort()
   for key in material_keys:
    var missing = maxf(0,phase_need(job,key)-incoming(state,id,key))
-   for source in sources(state,key):
+   var pickup_sources=CentralLogistics.construction_sources(state,job,key) if CentralLogistics.active(state) else sources(state,key)
+   for source in pickup_sources:
     var amount = minf(missing,minf(float(source.stock.get(key,0)),float(4+int(state.vehicle)*2)))
     if amount<=0 or free<=0: continue
     var route = LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job))
@@ -199,8 +202,9 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
     # second site, the furniture truck or the mineral warehouse dispatcher.
     source.stock[key] = float(source.stock[key])-amount
     var drive = maxf(2,LogisticsRoutes.length(route)/(9+int(state.vehicle)))
-    var travel = drive+4.0
-    FreightFlow.enqueue(state,state.construction_shipments,{"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
+    var loading=6.0 if CentralLogistics.active(state) else 2.0
+    var travel = drive+loading+2.0
+    FreightFlow.enqueue(state,state.construction_shipments,{"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","fleet":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":loading,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
     state.next_shipment += 1
     free-=1
     missing-=amount

@@ -23,7 +23,19 @@ with tempfile.TemporaryDirectory(prefix='timber-route-benchmark-',dir='/tmp') as
     game=game[:start]+current[begin:end]+game[finish:]
     for name in ['Economy/TownRules.gd','Economy/LogisticsRoutes.gd','Managers/Game.gd']:
         path=cached/name;path.with_suffix('.gd.remap').unlink(missing_ok=True)
-        path.write_text(game if name=='Managers/Game.gd' else (root/name).read_text())
+        source=game if name=='Managers/Game.gd' else (root/name).read_text()
+        if name=='Economy/LogisticsRoutes.gd':
+            # Compare caching alone, even after later releases change loading docks.
+            original=subprocess.check_output(['git','show',base_commit+':'+name],cwd=root,text=True)
+            old_begin=original.index('static func road_to_point(')
+            old_end=original.index('static func encode(',old_begin)
+            old_body=original[old_begin:old_end]
+            old_body=old_body[old_body.index(' var cells ='):]
+            begin=source.index('static func calculate(')
+            end=source.index('static func encode(',begin)
+            header=source[begin:source.index('\n',begin)+1]
+            source=source[:begin]+header+old_body+source[end:]
+        path.write_text(source)
     results={}
     for name,project in [('baseline',baseline),('cached',cached)]:
         output=temp/(name+'.json')

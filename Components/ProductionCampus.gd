@@ -2,8 +2,8 @@ class_name ProductionCampus
 extends RefCounted
 
 # Presentation only: the saved street graph, lots and freight routes stay authoritative.
-const YARD=Rect2(-62,-58,124,88)
-const CONCRETE=Color("a49ca2")
+const YARD=Rect2(-64,-58,128,128)
+const CONCRETE=Color("b9b2af")
 const SAND=Color("d7bb95")
 
 static func inside(point: Vector3) -> bool:
@@ -22,14 +22,14 @@ static func build(parent: Node3D,ctx: Dictionary) -> void:
  var yard=Node3D.new()
  yard.name="OpenProductionYard"
  parent.add_child(yard)
- Models.paving_box(yard,Vector3(124,0.12,88),Vector3(0,0.48,-14),CONCRETE,"plaster",1.5)
+ Models.paving_box(yard,Vector3(YARD.size.x,0.12,YARD.size.y),Vector3(YARD.get_center().x,0.48,YARD.get_center().y),CONCRETE,"plaster",1.5)
  # Low white walls with a red band frame the shared yard, leaving real access open.
  for x in range(-60,61,4):
-  for z in [-58,30]:
+  for z in [int(YARD.position.y),int(YARD.end.y)]:
    var at=Vector2(x,z)
    if clear(at,ctx): wall(yard,at,true)
- for z in range(-54,29,4):
-  for x in [-62,62]:
+ for z in range(int(YARD.position.y)+4,int(YARD.end.y),4):
+  for x in [int(YARD.position.x),int(YARD.end.x)]:
    var at=Vector2(x,z)
    if clear(at,ctx): wall(yard,at,false)
  # Forest compartments have broad sandy rims, with removable fences away from lots/roads.

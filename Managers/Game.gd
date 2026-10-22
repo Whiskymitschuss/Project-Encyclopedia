@@ -56,7 +56,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "hub":CentralLogistics.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "construction_logistics_version":1, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -90,6 +90,8 @@ func restore(saved: Dictionary) -> void:
  for key in state:
   if saved.has(key):
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
+ for key in CentralLogistics.initial():
+  if not state.hub.has(key): state.hub[key]=CentralLogistics.initial()[key]
  for key in TutorialRules.initial():
   if not state.onboarding.has(key): state.onboarding[key]=TutorialRules.initial()[key]
  for key in UXRules.initial():
@@ -328,7 +330,7 @@ func research_level(key: String) -> int:
  return int(state.research.get(key,0))
 
 func capacity() -> float:
- return 500.0 + level("warehouse") * 500.0
+ return CentralLogistics.capacity(state)
 
 func bag_capacity() -> float:
  return 40.0 + int(state.tool) * 25.0 + int(state.vehicle) * 80.0
@@ -375,6 +377,7 @@ func reserve_for(key: String) -> float:
 func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
  var building = state.buildings[index]
+ if building.kind in ["central_depot","express"]: return "Eigene Lagerflotte: %s · Baustellenflotte: %s · Waren tatsächlich unterwegs: %s" % [CentralLogistics.fleet_size(state),CentralLogistics.fleet_size(state),state.hub.shipments.size()]
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
   if state.delivery.paused or building.get("paused",false): return "Pausiert · Produktion fortsetzen"
@@ -388,7 +391,7 @@ func production_status(index: int) -> String:
  if building.get("paused",false): return "Pausiert · Produktion fortsetzen"
  var recipe = Catalog.RECIPES[building.kind]
  for key in recipe.out:
-  if key not in recipe.get("overflow_sell",[]) and float(state.resources[key]) >= capacity()-0.0001:
+  if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key]) >= capacity()-0.0001):
    return "%s-Lager voll · verkaufen oder weiterverarbeiten" % Catalog.RESOURCES[key]
  for key in recipe["in"]:
   if float(state.resources[key]) <= reserve_for(key)+0.0001:
@@ -401,7 +404,7 @@ func step(delta: float) -> void:
  var services_before=0
  for total in state.city_services.completed.values(): services_before+=int(total)
  var awaiting=[]
- for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments+state.trade.shipments:
+ for shipment in FreightFlow.all_trips(state):
   if not shipment.arrived: awaiting.append(shipment)
  var burning={}
  for incident in state.city_services.fires:
@@ -409,6 +412,7 @@ func step(delta: float) -> void:
  CityServices.tick(state,delta,city_route_cache)
  for incident in state.city_services.fires: burning.erase(int(incident.id))
  for point in burning.values(): fire_extinguished.emit(point)
+ CentralLogistics.tick(state,delta)
  ConstructionRules.transport_tick(state,delta)
  state.elapsed += delta
  state.time = fmod(float(state.time) + delta / 60.0,24.0)
@@ -418,7 +422,15 @@ func step(delta: float) -> void:
  var harvest = (0.65 + int(state.tool)*0.13) * int(state.workers) * (1.0+int(state.biome)*0.3) * (1.0+research_level("forestry")*0.15) * boost("workers") * delta
  harvest = minf(harvest,level("station")*5.0*delta)
  var accepted = minf(harvest,capacity()-float(state.resources.wood))
- add_resource("wood",accepted)
+ if CentralLogistics.active(state):
+  var station=-1
+  for i in state.buildings.size():
+   if state.buildings[i].kind=="station" and not state.buildings[i].get("paused",false): station=i; break
+  accepted=0 if station<0 else minf(harvest,CentralLogistics.output_room(state,station,"wood"))
+  if station>=0:
+   var stock=CentralLogistics.stock(state,station)
+   stock.wood=float(stock.get("wood",0))+accepted
+ else: add_resource("wood",accepted)
  state.gathered += accepted
  Journey.add(state,"gathered",accepted)
  flow = {"harvest":accepted/maxf(delta,0.001)}
@@ -448,10 +460,17 @@ func step(delta: float) -> void:
    fraction = minf(fraction,maxf(0.0,float(state.resources[key])-reserve_for(key))/maxf(float(demand[key]),0.0001))
   for key in recipe.out:
    if key in recipe.get("overflow_sell",[]): continue
-   fraction = minf(fraction,(capacity()-float(state.resources[key]))/maxf(float(output_demand[key]),0.0001))
+   var room=CentralLogistics.output_room(state,int(proposal.index),key) if CentralLogistics.active(state) else capacity()-float(state.resources[key])
+   fraction = minf(fraction,room/maxf(float(output_demand[key]),0.0001))
   var cycles = float(proposal.cycles)*maxf(0,fraction)
   for key in recipe["in"]: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
-  for key in recipe.out: produced[key] = float(produced.get(key,0))+float(recipe.out[key])*cycles
+  for key in recipe.out:
+   var amount=float(recipe.out[key])*cycles
+   if CentralLogistics.active(state) and key!="sawdust":
+    var output=CentralLogistics.stock(state,int(proposal.index))
+    output[key]=float(output.get(key,0))+amount
+    Journey.add(state,key,amount)
+   else: produced[key] = float(produced.get(key,0))+amount
   flow[proposal.kind] = float(flow.get(proposal.kind,0))+cycles/maxf(delta,0.001)
   flow["building:%s" % proposal.index] = cycles/maxf(delta,0.001)
  for key in consumed: state.resources[key] = maxf(0,float(state.resources[key])-float(consumed[key]))
@@ -477,6 +496,7 @@ func step(delta: float) -> void:
  var old_dispatch=int(state.delivery.next_id)
  step_delivery(delta)
  if int(state.delivery.next_id)>old_dispatch: state.stone.turn="stone"
+ CentralLogistics.dispatch(state)
  ConstructionRules.dispatch(state)
  StoneIndustry.dispatch(state,stone_route_cache)
  if not state.trade.intro and float(state.resources.furniture)>=4:
@@ -597,6 +617,11 @@ func pay(cost: float, materials: Dictionary = {}) -> bool:
  return true
 
 func available(kind: String) -> bool:
+ if kind=="central_depot":
+  if count(kind)>0: return false
+  for job in state.jobs:
+   if job.type=="building" and job.kind==kind: return false
+ if kind=="express": return count("central_depot")>0
  if kind in StoneIndustry.KINDS: return company_level()>=5
  if kind in ["prefab","joinery","pellet"]: return level("furniture") > 0
  if kind == "paper": return count("prefab") > 0
@@ -611,12 +636,13 @@ func home_position(index: int) -> Vector3:
  var h = state.homes[index]
  return Placement.position_of(h,Catalog.home_position(int(h.plot)))
 
-func placement_reason(point: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1) -> String:
- var reason=WorldAccess.building_reason(point,rotation,int(state.unlocked))
+func placement_reason(point: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1,kind: String="") -> String:
+ if kind.is_empty() and ignore_building>=0: kind=state.buildings[ignore_building].kind
+ var reason=WorldAccess.building_reason(point,rotation,int(state.unlocked),kind)
  if not reason.is_empty(): return reason
- reason = Placement.terrain_reason(point,rotation,int(state.town.districts))
+ reason = Placement.terrain_reason(point,rotation,int(state.town.districts),kind)
  if not reason.is_empty(): return reason
- var rectangle = Placement.bounds(point,rotation).grow(0.6)
+ var rectangle = Placement.bounds(point,rotation,kind).grow(0.6)
  for project in Catalog.PROJECTS:
   if rectangle.intersects(Placement.bounds(project.position,0)): return "Projektstandort freihalten"
  for road in state.town.roads:
@@ -627,19 +653,19 @@ func placement_reason(point: Vector3, rotation: int = 0, ignore_building: int = 
   if rectangle.grow(7).has_point(Vector2(TownRules.cell(stop.cell))): return "Abstand zur Haltestelle halten"
  for i in state.buildings.size():
   if i == ignore_building: continue
-  if rectangle.intersects(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0)))): return "Abstand zu anderen Gebäuden halten"
+  if rectangle.intersects(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0)),state.buildings[i].kind)): return "Abstand zu anderen Gebäuden halten"
  for i in state.homes.size():
   if i == ignore_home: continue
   if rectangle.intersects(Placement.bounds(home_position(i),int(state.homes[i].get("rotation",0)))): return "Dieses Grundstück ist bereits bebaut"
  for job in state.jobs:
   if job.type not in ["building","home"]: continue
   var fallback = Catalog.industry_position(int(job.get("slot",0))) if job.type=="building" else Catalog.home_position(int(job.plot))
-  if rectangle.intersects(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)))): return "Hier wird bereits gebaut"
+  if rectangle.intersects(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind","")))): return "Hier wird bereits gebaut"
  return ""
 
-func free_position(preferred: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1) -> Vector3:
+func free_position(preferred: Vector3, rotation: int = 0, ignore_building: int = -1, ignore_home: int = -1,kind: String="") -> Vector3:
  var point = Placement.snap(preferred)
- if placement_reason(point,rotation,ignore_building,ignore_home).is_empty(): return point
+ if placement_reason(point,rotation,ignore_building,ignore_home,kind).is_empty(): return point
  var best = Vector3(INF,0,INF)
  var candidates=[]
  # Search nearby first, then every usable part of the mainland. Candidates use
@@ -648,7 +674,7 @@ func free_position(preferred: Vector3, rotation: int = 0, ignore_building: int =
   for x in range(-296,297,8): candidates.append(Vector3(x,0,z))
  candidates.sort_custom(func(a,b): return a.distance_squared_to(preferred)<b.distance_squared_to(preferred))
  for candidate in candidates:
-  if placement_reason(candidate,rotation,ignore_building,ignore_home).is_empty():
+  if placement_reason(candidate,rotation,ignore_building,ignore_home,kind).is_empty():
    best=candidate
    break
  return best
@@ -669,6 +695,8 @@ func move_reason(index: int, city: bool = false) -> String:
  if not city and (delivery_owns(index) or job_for("upgrade",index)):
   return "Vor dem Verschieben die Lieferlinie auflösen oder den laufenden Ausbau abschließen"
  if not city:
+  for trip in state.hub.shipments:
+   if int(trip.origin)==index or int(trip.destination)==index: return "Lager-LKW zuerst entladen und zurückkehren lassen"
   for trip in state.trade.shipments:
    if int(trip.origin)==index:
     return "Export-LKW zuerst zum Markt zurückkehren lassen"
@@ -722,8 +750,8 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0) -> b
  var pending = 0
  for j in state.jobs:
   if j.type == "building": pending += 1
- var position_value = free_position(Catalog.industry_position((state.buildings.size()+pending)%16),rotation) if point==null else Placement.snap(point)
- var reason = placement_reason(position_value,rotation)
+ var position_value = free_position(Catalog.industry_position((state.buildings.size()+pending)%16),rotation,-1,-1,kind) if point==null else Placement.snap(point)
+ var reason = placement_reason(position_value,rotation,-1,-1,kind)
  if not reason.is_empty(): notice.emit(reason); return false
  if not pay(cost_for(kind)): return false
  var duration = 12.0+state.buildings.size()*2.0
@@ -848,6 +876,8 @@ func finish_job(job: Dictionary) -> void:
  elif job.type=="home_upgrade": finished_name=UXRules.title(state,true,int(job.index))
  elif job.type=="building": finished_name=UXRules.title(state,false,state.buildings.size()-1)
  elif job.type=="upgrade": finished_name=UXRules.title(state,false,int(job.index))
+ if job.type=="building" and job.kind=="central_depot":
+  UXRules.push_event(state,"central:ready","Zentrallager bereit · weiß-blau holt am Betrieb ab, schwarz-weiß beliefert Baustellen. Abhol-Express für entfernte Bauplätze jetzt verfügbar.",point,"catalog")
  UXRules.push_event(state,"finished:%s:%s:%s" % [int(state.elapsed),job.type,int(job.get("id",job.get("index",-1)))],finished_name+" · fertiggestellt",point)
  construction_finished.emit(point,str(job.type))
 
@@ -1237,12 +1267,12 @@ func road_reason(kind: String, cells: Array) -> String:
  if cells.size()>61: return "Kürzere Abschnitte bauen · höchstens 240 Meter"
  var width = float(TownRules.TYPES[kind].width)/2.0+0.7
  var occupied = []
- for i in state.buildings.size(): occupied.append(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0))).grow(width))
+ for i in state.buildings.size(): occupied.append(Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0)),state.buildings[i].kind).grow(width))
  for i in state.homes.size(): occupied.append(Placement.bounds(home_position(i),int(state.homes[i].get("rotation",0))).grow(width))
  for job in state.jobs:
   if job.type in ["home","building"]:
    var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
-   occupied.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(width))
+   occupied.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind",""))).grow(width))
  for project in Catalog.PROJECTS: occupied.append(Placement.bounds(project.position,0).grow(width))
  for i in cells.size():
   var c: Vector2i = cells[i]
@@ -1299,7 +1329,7 @@ func remove_road(index: int) -> bool:
     notice.emit("Export-LKW sind auf dieser Strecke unterwegs")
     return false
  var paths=[]
- for shipment in state.delivery.shipments+state.construction_shipments+state.stone.shipments: paths.append(shipment.path)
+ for shipment in FreightFlow.all_trips(state): paths.append(shipment.path)
  for mission in state.city_services.missions:
   paths.append_array([mission.outward,mission.second,mission.back])
   if not mission.get("water_route",[]).is_empty(): paths.append(mission.water_route)
@@ -1336,7 +1366,7 @@ func stop_reason(point: Vector3) -> String:
  for stop in state.town.stops:
   if TownRules.point(TownRules.cell(stop.cell)).distance_to(TownRules.point(c))<16: return "Mehr Abstand zur nächsten Haltestelle"
  for i in state.buildings.size():
-  if Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0))).grow(7).has_point(Vector2(c)): return "Haltestelle vor einem freien Straßenrand platzieren"
+  if Placement.bounds(building_position(i),int(state.buildings[i].get("rotation",0)),state.buildings[i].kind).grow(7).has_point(Vector2(c)): return "Haltestelle vor einem freien Straßenrand platzieren"
  for i in state.homes.size():
   if Placement.bounds(home_position(i),int(state.homes[i].get("rotation",0))).grow(7).has_point(Vector2(c)): return "Haltestelle vor einem freien Straßenrand platzieren"
  for project in Catalog.PROJECTS:
@@ -1344,7 +1374,7 @@ func stop_reason(point: Vector3) -> String:
  for job in state.jobs:
   if job.type in ["home","building"]:
    var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
-   if Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(7).has_point(Vector2(c)): return "Baustelle freihalten"
+   if Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind",""))).grow(7).has_point(Vector2(c)): return "Baustelle freihalten"
  return ""
 
 func build_stop(point: Vector3) -> bool:
@@ -1479,6 +1509,11 @@ func step_delivery(delta: float) -> void:
  flow.merge(report.flow,true)
 
 func unload_delivery(kind: String) -> float:
+ if CentralLogistics.active(state):
+  CentralLogistics.dispatch(state)
+  notice.emit("Abholung am Betrieb disponiert · Gutschrift nach Entladen im Zentrallager")
+  changed.emit()
+  return 0
  if not state.delivery.active or not state.delivery.buffers.has(kind): return 0.0
  var total = 0.0
  for key in state.delivery.buffers[kind]:

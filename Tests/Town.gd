@@ -159,7 +159,7 @@ func run() -> void:
  Game.state.tool=14
  scene.sync_actors()
  for actor in scene.actors.get_children():
-  if actor.has_meta("forestry_tier"): check(actor.tier==14 and actor.scale.x>1,"Titan upgrade replaces the small machine")
+  if actor.has_meta("forestry_tier"): check(actor.tier==14 and actor.scale.x>0.7 and actor.scale.x<0.8,"Titan upgrade retains its larger silhouette within the new consistent vehicle scale")
  Game.state.tool=0
  scene.sync_actors()
  machine_count=0

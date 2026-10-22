@@ -8,7 +8,7 @@ const GAP=3.0
 static var geometry={}
 
 static func all_trips(state: Dictionary) -> Array:
- return state.delivery.shipments+state.construction_shipments+state.stone.shipments+state.trade.shipments
+ return state.delivery.shipments+state.construction_shipments+state.stone.shipments+state.trade.shipments+state.get("hub",{}).get("shipments",[])
 
 static func segments(path: Array) -> Array:
  var key=hash(path)
@@ -44,13 +44,45 @@ static func legs(trip: Dictionary) -> Array:
 static func at(leg: Dictionary, fraction: float) -> float:
  return lerpf(float(leg.start),float(leg.end),fraction)
 
+static func docks(trip: Dictionary) -> Array:
+ if trip.path.is_empty(): return []
+ var load_time=float(trip.get("load",0))
+ var drive=float(trip.get("drive",trip.travel))
+ var total=float(trip.get("total",float(trip.travel)+drive))
+ return [
+  {"point":LogisticsRoutes.vector(trip.path[0]),"start":0.0,"end":load_time},
+  {"point":LogisticsRoutes.vector(trip.path[-1]),"start":load_time+drive,"end":float(trip.travel)},
+  {"point":LogisticsRoutes.vector(trip.path[0]),"start":float(trip.travel)+drive,"end":total}]
+
 static var window_cache={}
 static func windows(ours: Dictionary,theirs: Dictionary) -> Array:
- var source=[ours.path,float(ours.get("drive",ours.travel)),float(ours.get("load",0)),float(ours.travel)]
- var peer=[theirs.path,float(theirs.get("drive",theirs.travel)),float(theirs.get("load",0)),float(theirs.travel)]
+ var source=[ours.path,float(ours.get("drive",ours.travel)),float(ours.get("load",0)),float(ours.travel),float(ours.get("total",0))]
+ var peer=[theirs.path,float(theirs.get("drive",theirs.travel)),float(theirs.get("load",0)),float(theirs.travel),float(theirs.get("total",0))]
  var key=hash([source,peer])
  if window_cache.has(key) and window_cache[key].source==source and window_cache[key].peer==peer: return window_cache[key].windows
  var intervals=[]
+ for a in docks(ours):
+  for b in docks(theirs):
+   if a.point.distance_to(b.point)<3:
+    intervals.append(Vector2(b.start-a.end-GAP,b.end-a.start+GAP))
+ # A moving truck must also clear another truck's loading/unloading bay.
+ # These are finite departure windows, never a live intersection wait.
+ for a in legs(ours):
+  for b in docks(theirs):
+   var line: Vector2=a.b-a.a
+   if line.length_squared()<0.001: continue
+   var point=Vector2(b.point.x,b.point.z)
+   var t=clampf((point-a.a).dot(line)/line.length_squared(),0,1)
+   if point.distance_to(a.a+line*t)<2.5:
+    intervals.append(Vector2(b.start-at(a,t)-GAP,b.end-at(a,t)+GAP))
+ for a in docks(ours):
+  for b in legs(theirs):
+   var line: Vector2=b.b-b.a
+   if line.length_squared()<0.001: continue
+   var point=Vector2(a.point.x,a.point.z)
+   var t=clampf((point-b.a).dot(line)/line.length_squared(),0,1)
+   if point.distance_to(b.a+line*t)<2.5:
+    intervals.append(Vector2(at(b,t)-a.end-GAP,at(b,t)-a.start+GAP))
  for a in legs(ours):
   for b in legs(theirs):
    var u: Vector2=a.b-a.a

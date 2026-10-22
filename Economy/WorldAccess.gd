@@ -18,9 +18,9 @@ static func land_reason(rectangle: Rect2, unlocked: int) -> String:
  if not LAND.encloses(rectangle): return "Auf ebenem Festland bauen · Gewässer und Berghänge freihalten"
  return biome_reason(rectangle,unlocked)
 
-static func building_reason(point: Vector3, rotation: int, unlocked: int) -> String:
+static func building_reason(point: Vector3, rotation: int, unlocked: int,kind: String="") -> String:
  if not is_finite(point.x) or not is_finite(point.z): return "Ungültiger Standort"
- var rectangle=Placement.bounds(point,rotation)
+ var rectangle=Placement.bounds(point,rotation,kind)
  var reason=land_reason(rectangle,unlocked)
  if not reason.is_empty(): return reason
  if rectangle.intersects(HIGHWAY_SITE): return "Autobahnanschluss und Auffahrt freihalten"

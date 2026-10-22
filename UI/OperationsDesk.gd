@@ -13,7 +13,8 @@ static func populate(hud: Control,tab: String) -> void:
  var queued=0
  for trip in FreightFlow.all_trips(Game.state):
   if float(trip.get("depart_in",0))>0: queued+=1
- hud.card("%s / %s LKW belegt" % [FreightFlow.all_trips(Game.state).size(),Game.state.trucks],"%s warten mit reservierter Ladung im Depot. Laufende Fahrten enden auch bei Produktionspause. Platz im Ziellager bleibt nötig." % queued)
+ var fleet=int(Game.state.trucks)+(CentralLogistics.fleet_size(Game.state)*2 if CentralLogistics.active(Game.state) else 0)
+ hud.card("%s / %s LKW belegt" % [FreightFlow.all_trips(Game.state).size(),fleet],"%s warten mit reservierter Ladung im Depot. Laufende Fahrten enden auch bei Produktionspause. Platz im Ziellager bleibt nötig." % queued)
  for i in Game.state.buildings.size():
   var index=i
   var advice=ProductionPresentation.advice(Game,index)
@@ -26,7 +27,7 @@ static func populate(hud: Control,tab: String) -> void:
  hud.button(hud.contents,"ALLE BETRIEBE",func(): hud.open_menu("industry"))
  for trip in FreightFlow.all_trips(Game.state):
   var s=trip
-  var domain="construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+  var domain="central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
   var box=hud.card("%s %s" % [Catalog.number(s.amount),Catalog.RESOURCES[s.key]])
   hud.dynamic_text(box,func(): return "Abfahrt in %s s · im Depot" % ceili(float(s.get("depart_in",0))) if float(s.get("depart_in",0))>0 else "Leere Rückfahrt" if s.arrived else "Unterwegs · Ankunft in %s s" % ceili(maxf(0,float(s.travel)-float(s.age))))
   hud.button(box,"LKW & ROUTE",func(): hud.ux.select_truck({"kind":"truck","domain":domain,"id":int(s.id)},true))

@@ -92,11 +92,11 @@ func run() -> void:
  scene.zoom=68
  scene.set_camera()
  await shot("quarry")
- var old=excavator.turret.rotation.y
+ var old=Vector3(excavator.turret.rotation.y,excavator.boom.rotation.x,excavator.bucket.rotation.x)
  game.simulate(0.5)
  game.tick_clock=0
  await draw()
- check(excavator.turret.rotation.y!=old,"Real extraction progress animates the excavator's articulated upper structure")
+ check(Vector3(excavator.turret.rotation.y,excavator.boom.rotation.x,excavator.bucket.rotation.x)!=old,"Real extraction progress animates the turret, arm or tipping bucket according to its actual phase")
  scene.hud.open_menu("stone")
  await shot("menu")
  check(scene.hud.modal_title.text=="STEINBRUCH & BAUSTOFFE" and scene.hud.scroll.get_v_scroll_bar().max_value>scene.hud.scroll.size.y,"Production choices, depot and sites exist in the working scrollable mobile menu")

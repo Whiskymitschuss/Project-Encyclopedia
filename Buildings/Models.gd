@@ -21,7 +21,8 @@ static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
     image.set_pixel(x,y,Color(value,value,value))
   image.generate_mipmaps()
   grain = ImageTexture.create_from_image(image)
- if not glow: result.albedo_texture = grain
+ # Flat painted silhouettes; timber and paving use SurfaceLibrary deliberately.
+ # A stretched grain texture on every box made roads and vehicle panels streaky.
  if glow:
   result.emission_enabled = true
   result.emission = color
@@ -100,6 +101,7 @@ static func log_pile(parent: Node3D, at: Vector3, count: int = 4) -> void:
   end.rotation.x = PI/2
 
 static func building(kind: String, level: int, city: bool = false) -> Node3D:
+ if kind in ["central_depot","express"] and not city: return load("res://Buildings/CentralDepotModels.gd").create(kind,level)
  if city: return load("res://Buildings/TownModels.gd").create(kind,level)
  if kind in ["quarry","stoneworks"]: return load("res://Buildings/StoneModels.gd").create(kind,level)
  if not city and (Catalog.RECIPES.has(kind) or kind in ["station","warehouse"]):

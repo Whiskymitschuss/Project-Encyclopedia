@@ -24,10 +24,7 @@ static func capacity(state: Dictionary, index: int) -> float:
  return 8.0+int(state.buildings[index].level)*4.0
 
 static func warehouse_capacity(state: Dictionary) -> float:
- var result=500.0
- for b in state.buildings:
-  if b.kind=="warehouse": result+=int(b.level)*500
- return result
+ return CentralLogistics.capacity(state)
 
 static func incoming(state: Dictionary, target: int, key: String) -> float:
  var total=0.0
@@ -144,6 +141,7 @@ static func requests(state: Dictionary, cache: Dictionary) -> Array:
   var data=site(state,i)
   if data.is_empty(): continue
   for key in ["stone","gravel"]:
+   if CentralLogistics.active(state): continue
    var amount=minf(float(data.stock[key]),warehouse_capacity(state)-float(state.resources[key])-incoming(state,-1,key))
    if amount<1: continue
    var path=route(state,i,depot,cache)
@@ -163,7 +161,7 @@ static func requests(state: Dictionary, cache: Dictionary) -> Array:
  return result
 
 static func busy(state: Dictionary) -> int:
- return state.construction_shipments.size()+state.delivery.shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
+ return (0 if CentralLogistics.active(state) else state.construction_shipments.size())+state.delivery.shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
 
 static func dispatch(state: Dictionary, cache: Dictionary) -> int:
  var free=maxi(0,int(state.trucks)-busy(state))

@@ -1,0 +1,30 @@
+TIMBER LOOT TYCOON · 0.28.4-alpha.1 · FABRIK UND ZENTRALLOGISTIK
+
+Die APK direkt über die vorhandene Alpha installieren. Nicht deinstallieren,
+keine App-Daten löschen. Gleiches Paket, Speicherverzeichnis und Testzertifikat.
+Android-Code 2981. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; Testfassung.
+
+NEUEN WARENFLUSS AKTIVIEREN
+1. Bauen > Versorgung > Zentrallager platzieren.
+2. Für den 31 × 23 m großen Hof eine freie Fläche an einer Straße auswählen.
+   Der größere Umriss wird geprüft; Fertigstellung und Bauarbeiter abwarten.
+3. Weiß-blaue Lagerfahrzeuge holen Holz und Fertigwaren ab. Erst nach Entladen
+   stehen sie im Zentrallager bereit. Schwarz-weiße Fahrer versorgen Baustellen.
+4. Für weite Baustellen: Bauen > Versorgung > Abhol-Express nahe am Baugebiet.
+   Zentrale und Express müssen über Straßen verbunden sein.
+
+Bestehende Gebäude, Lager und Aufträge bleiben erhalten. Die zentrale Logistik
+wird erst mit dem neuen Gebäude aktiviert. Das vorhandene Lagerhaus wird weder
+versetzt noch ersetzt. Eine Zentrale genügt; sie kann ausgebaut werden.
+
+Materialwerte antippen: getrennte Lager-, Betriebs- und Transportmengen.
+LKW antippen: echte Ladung und Lade-/Entlade-/Rückfahrphase.
+Express antippen: Restbestand kann per LKW zur Zentrale zurückgefahren werden.
+
+Überarbeiteter Fabrikboden, kleinere Fahrzeuge, ruhige Frachtbeschriftung,
+lesbarere Materialwerte, bewegte Flammen und Rauch. Stapler arbeiten und parken;
+Regale spiegeln den wirklichen Bestand. Android maximal 30 FPS. Akkumodus erlaubt
+zwei nahe Stapler, Standard sechs; reduzierte Bewegung stoppt Animationen.
+
+Echter Android-Gerätetest und Temperaturmessung dieser Fassung stehen aus.
+Feedback wird nicht automatisch verschickt. Öffentliche Links sind nicht zugangsgeschützt.

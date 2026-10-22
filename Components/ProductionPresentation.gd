@@ -16,7 +16,7 @@ static func advice(game: Node,index: int) -> Dictionary:
   elif b.kind in StoneIndustry.KINDS: key="rock" if b.kind=="quarry" else "stone"
   elif Catalog.RECIPES.has(b.kind):
    for output in Catalog.RECIPES[b.kind].out:
-    if float(game.state.resources[output])>=game.capacity()-0.0001: key=output; break
+    if (CentralLogistics.output_room(game.state,index,output)<=0.0001 if CentralLogistics.active(game.state) else float(game.state.resources[output])>=game.capacity()-0.0001): key=output; break
  return {"kind":status.kind,"text":status.text,"key":key,"index":index}
 
 static func describe(game: Node,index: int) -> Dictionary:
@@ -47,7 +47,7 @@ static func describe(game: Node,index: int) -> Dictionary:
  if not Catalog.RECIPES.has(b.kind): return {"kind":"ready","text":""}
  var recipe=Catalog.RECIPES[b.kind]
  for key in recipe.out:
-  if key not in recipe.get("overflow_sell",[]) and float(state.resources[key])>=game.capacity()-0.0001: return {"kind":"full","text":"↑ %s-Lager voll" % Catalog.RESOURCES[key]}
+  if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key])>=game.capacity()-0.0001): return {"kind":"full","text":"↑ %s-Lager voll" % Catalog.RESOURCES[key]}
  for key in recipe["in"]:
   if float(state.resources[key])<=game.reserve_for(key)+0.0001:
    return {"kind":"missing","text":"! %s reserviert" % Catalog.RESOURCES[key] if game.reserve_for(key)>0 else "! %s fehlt" % Catalog.RESOURCES[key]}

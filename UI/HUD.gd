@@ -6,7 +6,7 @@ signal placement_requested(request: Dictionary)
 signal placement_action(action: String)
 
 const INK = Color("533b30")
-const PANEL = Color("ad602f")
+const PANEL = Color("c97234")
 const GOLD = Color("ffd06d")
 const CREAM = Color("fff8ed")
 const MUTED = Color("ebcdb0")
@@ -197,7 +197,7 @@ func _ready() -> void:
  supply_column.add_child(material_bar)
  supply = text(supply_column,"",11,MUTED)
  supply.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var stock_actions=HBoxContainer.new()
+ var stock_actions=VBoxContainer.new()
  stock_actions.add_theme_constant_override("separation",4)
  supply_row.add_child(stock_actions)
  sawdust_button = button(stock_actions,"SPÄNEBOX",func():
@@ -306,7 +306,7 @@ func _ready() -> void:
 
 # Keep a consistent, centered reading width on tablets without stretching controls.
 func layout_interface() -> void:
- if material_bar!=null: material_bar.columns=6 if size.x>=430 and not Game.state.ux.large_text else 3
+ if material_bar!=null: material_bar.columns=3
  # On short screens an open detail sheet gets the reading space. Main play
  # always shows all six counters; detail mode keeps a compact stock summary.
  var compact=placement_panel.visible or (size.y<750 and (overlay.visible or ux.panels_visible()))
@@ -420,7 +420,7 @@ func compact_style(control: Button, color: Color) -> void:
 func resource_counter(parent: Control, key: String, font_size: int) -> Label:
  var panel=PanelContainer.new()
  panel.size_flags_horizontal=Control.SIZE_EXPAND_FILL if key=="coin" else Control.SIZE_FILL
- var skin=style(Color("825031"),8)
+ var skin=style(PAPER,8)
  skin.content_margin_left=8
  skin.content_margin_right=8
  skin.content_margin_top=4
@@ -436,7 +436,7 @@ func resource_counter(parent: Control, key: String, font_size: int) -> Label:
  icon.custom_minimum_size=Vector2(20,24)
  icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
  line.add_child(icon)
- var value=text(line,"",font_size,GOLD if key=="coin" else CREAM)
+ var value=text(line,"",font_size,INK)
  value.autowrap_mode=TextServer.AUTOWRAP_OFF
  value.tooltip_text={"coin":"Münzen","gem":"Diamanten","more":"Tickets"}[key]
  return value
@@ -758,6 +758,9 @@ func catalog_menu() -> void:
   var tab=button(tabs,category,func(): build_category=category; render_menu())
   tab.add_theme_font_size_override("font_size",14)
   if category==build_category: tab.add_theme_stylebox_override("normal",style(Color("d99432"),13))
+ if build_category=="Versorgung":
+  var logistics=card("Ein Warenfluss für deine Baustellen","Betriebe → Zentrallager → Baustelle. In der Ferne: Zentrallager → Abhol-Express → Baustelle. Die 31 × 23 m große Zentrale bringt eine eigene weiß-blaue Lagerflotte und schwarz-weiße Baustellenfahrer mit.")
+  button(logistics,"ZENTRALLAGER PLATZIEREN",func(): request_placement({"kind":"central_depot","city":false,"index":-1}))
  var routes=row(contents)
  button(routes,"Straßen & Wege",func(): open_menu("networks"))
  button(routes,"Bus & Haltestellen",func(): open_menu("transit"))
@@ -773,7 +776,7 @@ func catalog_menu() -> void:
  for mineral in StoneIndustry.KINDS:
   if ordered.has(mineral): ordered.erase(mineral); ordered.append(mineral)
  for kind in ordered:
-  if not city and ((build_category=="Versorgung")!=(kind in ["station","cabin","warehouse","market","research","garage"])): continue
+  if not city and ((build_category=="Versorgung")!=(kind in ["station","cabin","warehouse","central_depot","express","market","research","garage"])): continue
   var key=str(kind)
   var d=definitions[kind]
   var enabled=(Game.home_available(kind) and (kind=="townhall" or Game.next_city_plot()>=0)) if city else Game.available(kind)

@@ -1,3 +1,21 @@
+## Prüfung Fabrik und Zentrallogistik · 0.28.4-alpha.1
+
+19.815 Einzelprüfungen in 29 Headless-Suiten einschließlich zweier natürlicher
+Progressionsläufe; zusätzlich Hauptwelt-/Intro-Starttests. 795 bestandene
+OpenGL-Prüfungen in 18 unterschiedlichen Suiten. Betroffene Suiten nach den letzten
+Korrekturen erneut ausgeführt; [Prüfbericht](alpha1-factory/automated-checks.json).
+
+Neue Prüfungen decken den tatsächlichen Fluss vom Produzenten über Zentrale und
+Express zur Baustelle, Mengen-/Save-Erhalt, größere Bauflächen, Fahrzeugmaßstab,
+Ladung auf der Ladefläche, tatsächliche Staplerzyklen und reale Lagerstapel ab.
+Kein privater Spielstand wurde verwendet. Keine echte Android-Ausführung und
+keine Temperaturmessung. Der kalte Desktop-Prozess berechnete acht Stunden einer
+künstlichen Firma in 17,0 s bei weiterhin sichtbaren Fortschrittsframes; dies ist
+keine gemessene Handy-Startzeit und kein Geschwindigkeitsversprechen.
+
+[Änderungen und Nutzen](FACTORY-284.md) · [Fabrikansicht](alpha1-factory/factory.png) ·
+[Zentrallager](alpha1-factory/central.png) · [Feuer](alpha1-factory/fire.png).
+
 ## Externe Downloads Werkshof · 0.28.3 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.3-alpha.1` vollständig per

@@ -82,7 +82,7 @@ func run() -> void:
  check(scene.city_traffic.vehicles[int(taxi.id)].passenger.visible,"Taxi passenger becomes visible only after actual boarding")
  scene.hud.open_menu("services")
  await shot("services")
- check(scene.hud.modal_title.text=="LEBEN IN DEINER STADT","Service dispatch and income UI actually render")
+ check(scene.hud.modal_title.text=="EINSATZZENTRALE & STADTLEBEN" and scene.hud.overlay.is_visible_in_tree(),"Service dispatch and income UI actually render")
  scene.hud.close_menu()
  scene.focus=Vector3(-20,0,-25)
  scene.zoom=99

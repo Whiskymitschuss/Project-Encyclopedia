@@ -58,6 +58,7 @@ func _process(delta: float) -> void:
   for entry in [["InputStock",input_key],["OutputStock",output_key]]:
    var pile=root.get_node_or_null(entry[0])
    if pile!=null:
-    var amount=float(stock[actual_input if entry[0]=="InputStock" else entry[1]])
+    var pile_stock=Game.state.hub.outputs.get(str(building_index),{}) if entry[0]=="OutputStock" and not local_line and CentralLogistics.active(Game.state) else stock
+    var amount=float(pile_stock.get(actual_input if entry[0]=="InputStock" else entry[1],0))
     pile.visible=amount>=0.5
     pile.scale.y=0.55+0.45*clampf(amount/50.0,0,1)

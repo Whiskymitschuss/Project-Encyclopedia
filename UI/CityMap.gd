@@ -64,7 +64,7 @@ func _draw() -> void:
   draw_line(p-Vector2(3,3),p+Vector2(3,3),Color("483f38"),2)
   markers.append({"kind":"job","index":i,"point":p})
  if filter=="Logistik":
-  for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
+  for s in FreightFlow.all_trips(Game.state):
    var points=PackedVector2Array()
    for p in s.path: points.append(map_point(LogisticsRoutes.vector(p)))
    if points.size()>1: draw_polyline(points,Color("fff6cf"),1,true)

@@ -1,8 +1,31 @@
-# Timber Loot Tycoon — Alpha 1 · Offener Werkshof
+# Timber Loot Tycoon — Alpha 1 · Fabrik und Zentrallogistik
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.3-alpha.1 · Offener Werkshof
+## Aktuell: 0.28.4-alpha.1 · Fabrik und Zentrallogistik
+
+Überarbeitete Map mit durchgehendem Hofboden, flachen Fahrgassen, freigehaltenen
+Kreuzungen und kleineren Fahrzeugen. Lesbare Materialwerte in zwei Reihen, helle
+Währungskarten und Fahrzeugdetails ohne bildschirmfüllende 3D-Liefertexte.
+Bewegte Flammenkörper ersetzen starre Feuerkegel; Rauch und Löschwasser bleiben.
+
+**Bauen → Versorgung → Zentrallager**: neuer 31 × 23 m Logistikhof mit zwei Staplern,
+echten Bestandsregalen und eigener weiß-blauer Abholflotte. Nach Fertigstellung
+laufen Holzernte und Fertigwaren über reale Abholung in die Zentrale. Eigene
+schwarz-weiße Baustellenfahrer beziehen dort ihre Ware. Entfernte Baustellen
+können über den nächstgelegenen geeigneten **Abhol-Express** versorgt werden.
+Alle Transporte erhalten tatsächliche Ladungen und leere Rückfahrten.
+
+Bestehende Firmen behalten ihre Gebäude, Materialien und laufenden Fahrten.
+Das größere Lager wird bewusst neu platziert. Weiter auf 0.28-Basis; Android-Code
+2981, gleiches Paket und Testzertifikat. **Als Update installieren, nicht
+deinstallieren und keine App-Daten löschen.** Reale Android-Temperatur und
+Startzeit müssen auf den betroffenen Handys geprüft werden.
+
+[Änderungen und Nutzen](docs/FACTORY-284.md) ·
+[Installation](docs/alpha1-factory/START-HIER.txt) · [Downloads](releases/README.md).
+
+## Vorher: 0.28.3-alpha.1 · Offener Werkshof
 
 Der zentrale Betrieb ist jetzt ein zusammenhängender offener Hof mit markierten
 Fahrgassen und niedrigen Randmauern. Geordnete Waldparzellen mit sandfarbenen

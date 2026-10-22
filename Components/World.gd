@@ -89,7 +89,7 @@ func _ready() -> void:
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
  env.ambient_light_color = Color("e5efff")
  var first_daylight=clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- env.ambient_light_energy = 0.34+first_daylight*0.12
+ env.ambient_light_energy = 0.38+first_daylight*0.06
  env.tonemap_mode = Environment.TONE_MAPPER_REINHARDT
  env.tonemap_white=2.0
  environment_node.environment = env
@@ -97,8 +97,8 @@ func _ready() -> void:
  sun = DirectionalLight3D.new()
  sun.rotation_degrees = Vector3(-48,-25,0)
  sun.light_color = Color("fff2df")
- sun.light_energy=0.20+first_daylight*0.55
- sun.shadow_opacity=0.7
+ sun.light_energy=0.24+first_daylight*0.45
+ sun.shadow_opacity=0.45
  sun.shadow_enabled = Game.state.quality>0
  sun.directional_shadow_mode=DirectionalLight3D.SHADOW_ORTHOGONAL
  sun.directional_shadow_max_distance=160
@@ -227,13 +227,13 @@ func rebuild_streets() -> void:
    var point=Vector2(x,z)
    var clear=true
    for i in Game.state.buildings.size():
-    if Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))).grow(2.5).has_point(point): clear=false
+    if Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0)),Game.state.buildings[i].kind).grow(2.5).has_point(point): clear=false
    for i in Game.state.homes.size():
     if Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).grow(2.5).has_point(point): clear=false
    for job in Game.state.jobs:
     if job.type not in ["building","home"]: continue
     var fallback=Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.get("slot",0)))
-    if Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(2.5).has_point(point): clear=false
+    if Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind",""))).grow(2.5).has_point(point): clear=false
    for record in Game.state.town.roads:
     for c in record.cells:
      if Vector2(TownRules.cell(c)).distance_to(point)<6: clear=false
@@ -367,6 +367,10 @@ func rebuild() -> void:
   model.position = Game.building_position(i)
   model.rotation_degrees.y = int(b.get("rotation",0))
   world_buildings.add_child(model)
+  var floor_mesh=model.get_node_or_null("FactoryFloor")
+  if floor_mesh!=null: floor_mesh.visible=not ProductionCampus.inside(model.position)
+  var depot_stock=model.get_node_or_null("DepotStock")
+  if depot_stock!=null: depot_stock.building_index=i
   var saw = model.get_node_or_null("Saw")
   if saw != null: machines.append({"node":saw,"index":i})
   var mineral = model.get_node_or_null("StonePlant")
@@ -374,7 +378,13 @@ func rebuild() -> void:
   var processing = model.get_node_or_null("Processing")
   if processing != null: processing.building_index = i
   var handler=model.get_node_or_null("YardHandling")
-  if handler!=null: yard_handlers.append(handler)
+  if handler!=null:
+   handler.building_index=i
+   yard_handlers.append(handler)
+  for extra in model.get_children():
+   if extra.name.begins_with("DepotHandler"):
+    extra.building_index=i
+    yard_handlers.append(extra)
   if not Game.delivery_owns(i):
    var label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
    label.set_meta("building_index",i)
@@ -383,6 +393,8 @@ func rebuild() -> void:
   var fill = model.get_node_or_null("SawdustFill")
   if fill!=null:
    var label = Models.label(model,"Spänebox",Vector3(7.5,5.2,-3),28)
+   label.set_meta("building_index",i)
+   industry_name_labels.append(label)
    bins.append({"fill":fill,"label":label})
   if Catalog.RECIPES.has(b.kind) and not model.get_meta("open_factory",false):
    for j in 3:
@@ -430,7 +442,7 @@ func rebuild() -> void:
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation,Game.state.town)
- if path.size()<2: return
+ if path.size()<2 or ProductionCampus.inside(point): return
  var length = path[0].distance_to(path[1])
  if length>0.1:
   var strip=Models.box(world_buildings,Vector3(3.0,0.12,length),(path[0]+path[1])/2,Color("efe2ae"))
@@ -438,12 +450,12 @@ func add_approach(point: Vector3, rotation: int) -> void:
 
 func refresh_forest_clearance() -> void:
  var rectangles = [WorldAccess.HIGHWAY_SITE.grow(3),Rect2(316,70,30,142)]
- for i in Game.state.buildings.size(): rectangles.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0))).grow(3))
+ for i in Game.state.buildings.size(): rectangles.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0)),Game.state.buildings[i].kind).grow(3))
  for i in Game.state.homes.size(): rectangles.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))).grow(3))
  for job in Game.state.jobs:
   if job.type in ["home","building"]:
    var fallback = Catalog.home_position(int(job.plot)) if job.type=="home" else Catalog.industry_position(int(job.slot))
-   rectangles.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))).grow(3))
+   rectangles.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0)),str(job.get("kind",""))).grow(3))
  for road_record in Game.state.town.roads:
   var radius=float(TownRules.TYPES[road_record.kind].width)/2+2
   for c in road_record.cells:
@@ -580,9 +592,9 @@ func _process(delta: float) -> void:
  update_forest_detail()
  sun.directional_shadow_max_distance=maxf(180,zoom*1.8)
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- sun.light_energy = 0.20+daylight*0.55
+ sun.light_energy = 0.24+daylight*0.45
  sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
- environment_resource.ambient_light_energy = 0.34+daylight*0.12
+ environment_resource.ambient_light_energy = 0.38+daylight*0.06
  SurfaceLibrary.daylight(daylight)
  var burning_homes={}
  for incident in Game.state.city_services.fires: burning_homes[int(incident.target_ref.index)]=true
@@ -900,11 +912,11 @@ func tap_world(screen: Vector2) -> void:
   if b.kind=="sawmill":
    var bin_position = Game.building_position(i)+Basis(Vector3.UP,deg_to_rad(int(b.get("rotation",0))))*Vector3(7.5,0,-3)
    if point.distance_to(bin_position)<3.5: hud.open_menu("sawdust"); return
-  if Placement.bounds(Game.building_position(i),int(b.get("rotation",0))).has_point(Vector2(point.x,point.z)):
+  if Placement.bounds(Game.building_position(i),int(b.get("rotation",0)),b.kind).has_point(Vector2(point.x,point.z)):
    hud.ux.select_building(i)
    return
  for job in Game.state.jobs:
-  if Placement.bounds(job_position(job),int(job.get("rotation",0))).has_point(Vector2(point.x,point.z)):
+  if Placement.bounds(job_position(job),int(job.get("rotation",0)),str(job.get("kind",""))).has_point(Vector2(point.x,point.z)):
    if job.has("id"): hud.ux.select_job(int(job.id))
    else: hud.open_menu("construction")
    return
@@ -959,7 +971,7 @@ func begin_placement(request: Dictionary) -> void:
  if index>=0:
   preferred = Game.home_position(index) if city else Game.building_position(index)
   placement_rotation = int((Game.state.homes if city else Game.state.buildings)[index].get("rotation",0))
- placement_point = Game.free_position(preferred,placement_rotation,-1 if city else index,index if city else -1)
+ placement_point = Game.free_position(preferred,placement_rotation,-1 if city else index,index if city else -1,str(placement.kind) if not city else "")
  if not is_finite(placement_point.x): placement_point=Placement.snap(focus)
  ghost = Node3D.new()
  add_child(ghost)
@@ -969,7 +981,8 @@ func begin_placement(request: Dictionary) -> void:
  var mat = Models.material(Color(1,1,1,0.45)).duplicate()
  mat.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
  tint_preview(model,mat)
- ghost_plate = Models.box(ghost,Vector3(19,0.2,23),Vector3(0,0.9,0),Color("5bfba0"))
+ var footprint=Placement.size_for(0,str(placement.kind) if not city else "")
+ ghost_plate = Models.box(ghost,Vector3(footprint.x,0.2,footprint.y),Vector3(0,0.9,0),Color("5bfba0"))
  hud.show_placement(placement)
  update_ghost()
 
@@ -993,7 +1006,7 @@ func update_ghost() -> void:
  ghost.rotation_degrees.y=placement_rotation
  var city=bool(placement.get("city",false))
  var index=int(placement.get("index",-1))
- var reason=Game.placement_reason(placement_point,placement_rotation,-1 if city else index,index if city else -1)
+ var reason=Game.placement_reason(placement_point,placement_rotation,-1 if city else index,index if city else -1,str(placement.kind) if not city else "")
  if reason.is_empty() and index>=0: reason=Game.move_reason(index,city)
  if reason.is_empty() and index<0:
   var definition=(Catalog.HOMES if city else Catalog.BUILDINGS)[placement.kind]
@@ -1154,7 +1167,7 @@ func pick_tall_home(screen: Vector2, minimum_height: float=12,move: bool=false) 
   if is_home:
    for i in Game.state.homes.size():
     if model.position.distance_to(Game.home_position(i))<0.1: index=i; break
-  var extent=Placement.size_for(roundi(model.rotation_degrees.y))
+  var extent=Placement.size_for(roundi(model.rotation_degrees.y),str(model.get_meta("kind","")))
   var top=float(model.get_meta("height",9.0))
   var volume=AABB(model.position-Vector3(extent.x/2,0,extent.y/2),Vector3(extent.x,top,extent.y))
   var hit=volume.intersects_ray(origin,direction)

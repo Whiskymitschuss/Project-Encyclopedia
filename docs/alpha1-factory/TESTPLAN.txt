@@ -1,0 +1,34 @@
+0.28.4-alpha.1 · TESTPLAN
+
+Update über vorhandene Alpha installieren, Daten nicht löschen.
+
+1. Start und Bestand: Stoppe die Zeit bis zur ersten bedienbaren Welt. Vergleiche
+   Gebäude, Münzen, Materialien und Baustellen mit vor dem Update.
+2. Grafik: Hof im Nah-/Fernzoom und beim Drehen ansehen. Flimmert Beton oder eine
+   Kreuzung? Ragen Bäume, Blumen, Ladungen oder Fahrzeuge durch andere Objekte?
+3. Zentrallager: Unter Bauen > Versorgung platzieren; der Umriss muss 31 × 23 m
+   freihalten, auch gedreht. Straße, Nachbargebäude und gesperrte Biome dürfen
+   nicht überbaut werden. Nach Fertigstellung weiß-blaue Abholungen verfolgen.
+4. Bestand: Eine Abholung vom Sägewerk oder Möbelbetrieb bis zur Entladung
+   verfolgen. Ware verschwindet am Ausgang, erscheint unterwegs und erst dann
+   im Zentrallager. Keine Verdopplung und kein Verlust nach Neustart.
+5. Baustelle: Schwarz-weiße Lieferung ab Zentrale beobachten. Auch bei vollständig
+   belegter alter Produktionsflotte müssen die eigenen Bau-LKW weiterarbeiten.
+6. Ferne Baustelle: Abhol-Express nahe am Baugebiet mit Straßenanschluss bauen.
+   Zentrale > Express > Baustelle verfolgen. Unverbundener Express darf keine
+   Ware erhalten. Restbestand über die Gebäudekarte zurückfahren.
+7. Stapler: Aufnahme, gefüllte Fahrt, Absetzen, leere Rückfahrt und Parken ansehen.
+   Holz, Bretter, Möbel und Kisten unterscheiden. Regale vor/nach Lieferung prüfen.
+8. Verkehr: Mehrere vollständige Touren und Rückfahrten beobachten. Bleibt ein LKW
+   dauerhaft stehen? Materialmangel, volle Lager und eine laufende Rückfahrt von
+   einem echten Stau unterscheiden. Fahrzeuge dürfen sich an Ladebuchten nicht
+   dauerhaft gegenseitig blockieren.
+9. Feuer: Unregelmäßige bewegte Flammen, steigenden Rauch, Wasser und Löschfortschritt
+   prüfen. Keine riesige überlagernde Frachtbeschriftung mehr.
+10. Handy: 10 Minuten gleiche Stadt, gleiche Helligkeit, ohne Laden. S26 Ultra und
+    S24 FE separat vergleichen; danach Akkumodus. Temperatur und Startdauer melden.
+    Minimieren und Wiederöffnen prüfen. Das Betriebssystem darf Hintergrundarbeit
+    unterbrechen; entscheidend sind eine sichere Fortsetzung und korrekte Bestände.
+
+Bitte Modell, Betriebssystem, Version, Schritte, erwartetes/tatsächliches Ergebnis
+und möglichst Video nennen. Keine privaten Spielstände öffentlich hochladen.

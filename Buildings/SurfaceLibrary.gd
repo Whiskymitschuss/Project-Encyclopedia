@@ -36,7 +36,7 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
  var mat=StandardMaterial3D.new()
  mat.albedo_color=color
  mat.roughness=0.9
- mat.albedo_texture=texture(kind)
+ mat.albedo_texture=texture(kind) if kind in ["timber","paving","roof"] else null
  if kind=="glass":
   mat.albedo_texture=null
   mat.roughness=0.23
@@ -46,7 +46,7 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
   mat.emission_energy_multiplier=0.04+maxf(0,last_night)*0.55
   mat.albedo_color=color.lerp(Color("cf9d64"),maxf(0,last_night)*0.8)
   windows.append({"material":mat,"day":color})
- elif kind=="paint": mat.roughness=0.68; mat.metallic=0.02
+ elif kind=="paint": mat.roughness=0.9; mat.metallic=0.0
  elif kind=="timber": mat.roughness=0.9
  if kind in ["asphalt","roof","paving"]:
   wet_surfaces.append({"material":mat,"color":mat.albedo_color,"roughness":mat.roughness})
@@ -63,7 +63,7 @@ static func daylight(day: float) -> void:
   entry.material.albedo_color=entry.day.lerp(Color("cf9d64"),night*0.8)
 
 static func apply_wet(entry: Dictionary) -> void:
- entry.material.albedo_color=entry.color.darkened(wetness*0.18)
+ entry.material.albedo_color=entry.color.darkened(wetness*0.08)
  entry.material.roughness=lerpf(float(entry.roughness),0.22,wetness)
 
 static func weather(amount: float) -> void:

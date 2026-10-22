@@ -15,9 +15,9 @@ func choose(value: Dictionary) -> void:
  signature=""
  refresh()
 func trip_domain(s: Dictionary) -> String:
- return "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+ return "central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
 func trips() -> Array:
- return Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments
+ return FreightFlow.all_trips(Game.state)
 func matches(s: Dictionary) -> bool:
  if selection.is_empty(): return false
  match str(selection.get("kind","")):
@@ -56,6 +56,9 @@ func refresh() -> void:
  for child in route_root.get_children(): route_root.remove_child(child); child.queue_free()
  if point!=null:
   var extent=Vector2(20,24)
+  if selection.kind=="building":
+   var building=Game.state.buildings[int(selection.index)]
+   extent=Placement.size_for(int(building.get("rotation",0)),str(building.kind))+Vector2.ONE
   if selection.kind=="group":
    for group in Game.state.ux.groups:
     if int(group.id)==int(selection.id): extent=Vector2(float(group.bounds[2]),float(group.bounds[3]))

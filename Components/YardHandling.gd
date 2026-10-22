@@ -2,6 +2,13 @@ extends Node3D
 
 # A bounded visual handler for the actual output of an active workshop.
 # It never creates cargo, changes stock or awards money.
+var building_index=-1
+var depot_handler=false
+var cycle_route=[]
+var payload_variants={}
+var cycle_loading=false
+var cycle_key="boards"
+var cycle_running=false
 var phase=0.0
 var active=false
 var presentation_enabled=true
@@ -11,7 +18,7 @@ var forks: Node3D
 var payload: Node3D
 var chassis: Node3D
 var operator: Node3D
-var points=[Vector3(6,0.6,5),Vector3(6,0.6,8),Vector3(3.5,0.6,8),Vector3(6,0.6,8),Vector3(6,0.6,5)]
+var points=[Vector3(8,0.6,8),Vector3(6,0.6,5),Vector3(3.5,0.6,8),Vector3(8,0.6,8),Vector3(8,0.6,8)]
 
 func _ready() -> void:
  position=points[0]
@@ -44,7 +51,7 @@ func _ready() -> void:
  payload=Node3D.new()
  payload.position=Vector3(0,0.42,1.6)
  forks.add_child(payload)
- var key=str(Catalog.RECIPES[get_parent().get_node("Processing").kind].out.keys()[0])
+ var key="boards" if depot_handler else str(Catalog.RECIPES[get_parent().get_node("Processing").kind].out.keys()[0])
  if key in ["furniture","design"]:
   Models.box(payload,Vector3(1.8,0.3,1.8),Vector3(0,1.0,0),Color("c99459"))
   Models.box(payload,Vector3(1.8,1.5,0.2),Vector3(0,1.8,-0.7),Color("c99459"))
@@ -56,27 +63,80 @@ func _ready() -> void:
   for i in 3: Models.box(payload,Vector3(0.65,0.3,3.6),Vector3((i-1)*0.78,0.3,0),Color("c99459"))
  payload.scale=Vector3.ONE*0.45
  Models.bake(payload)
+ if depot_handler:
+  var boards=Node3D.new()
+  payload.add_child(boards)
+  for child in payload.get_children():
+   if child!=boards: payload.remove_child(child); boards.add_child(child)
+  payload_variants.boards=boards
+  for key_name in ["wood","furniture","crates"]:
+   var variant=Node3D.new()
+   payload.add_child(variant)
+   if key_name=="wood":
+    for side in [-0.5,0.5]:
+     var log=Models.cylinder(variant,0.4,3.2,Vector3(side,0.4,0),Color("976439"))
+     log.rotation.x=PI/2
+   elif key_name=="furniture":
+    Models.box(variant,Vector3(1.8,0.3,1.8),Vector3(0,1,0),Color("dba85e"))
+    Models.box(variant,Vector3(1.8,1.4,0.2),Vector3(0,1.7,-0.7),Color("dba85e"))
+    for side in [-0.6,0.6]: Models.box(variant,Vector3(0.2,1,1.6),Vector3(side,0.5,0),Color("a27644"))
+   else: Models.box(variant,Vector3(2,1.4,2),Vector3(0,0.7,0),Color("d0b27c"))
+   Models.bake(variant)
+   variant.hide()
+   payload_variants[key_name]=variant
  Models.bake(forks)
  Models.bake(chassis)
+ payload.hide()
 
 func _process(delta: float) -> void:
  var machine=get_parent().get_node_or_null("Processing")
- if machine==null: return
+ if machine==null and not depot_handler: return
  var camera=get_viewport().get_camera_3d()
  var close=camera!=null and camera.global_position.distance_to(global_position)<260
  visible=close and presentation_enabled
- var index=int(machine.building_index)
+ var index=building_index if depot_handler else int(machine.building_index)
  active=visible and index>=0 and float(Game.flow.get("building:%s" % index,0))>0 and not Game.state.buildings[index].get("paused",false) and not (Game.delivery_owns(index) and Game.state.delivery.paused)
- if not active or not Game.state.ux.motion or not Game.state.ambient_enabled: return
- phase=fmod(phase+delta*0.16,4)
+ if depot_handler:
+  active=false
+  for trip in FreightFlow.all_trips(Game.state):
+   if float(trip.get("depart_in",0))>0: continue
+   var stage=CargoTransfer.phase(trip,float(trip.age)+minf(Game.tick_clock,0.99))
+   if stage.kind in ["load","unload"] and CargoTransfer.dock(Game,trip,stage.kind=="load").distance_to(get_parent().global_position)<1:
+    active=visible
+    if not cycle_running:
+     cycle_loading=stage.kind=="load"
+     var sample=LogisticsRoutes.sample(trip.path,0 if cycle_loading else 1)
+     var at=get_parent().to_local(sample.position)
+     var extent=Placement.size_for(0,str(get_parent().get_meta("kind","")))/2-Vector2.ONE*1.4
+     var bay=Vector3(clampf(at.x,-extent.x,extent.x),0.6,clampf(at.z,-extent.y,extent.y))
+     cycle_route=[points[0],points[1] if cycle_loading else bay,bay if cycle_loading else points[1],points[0],points[0]]
+     cycle_key=str(trip.key)
+     if cycle_key not in ["wood","boards","furniture"]: cycle_key="crates"
+    break
+ if active: cycle_running=true
+ if not cycle_running or not Game.state.ux.motion or not Game.state.ambient_enabled: return
+ if index>=0 and Game.state.buildings[index].get("paused",false): return
+ if not depot_handler and Game.delivery_owns(index) and Game.state.delivery.paused: return
+ phase+=delta*0.6
+ if phase>=4:
+  phase=0
+  cycle_running=false
+  position=points[0]
+  payload.hide()
+  return
  var segment=floori(phase)
- var target: Vector3=points[segment].lerp(points[segment+1],fposmod(phase,1))
+ var route=cycle_route if depot_handler and not cycle_route.is_empty() else points
+ var target: Vector3=route[segment].lerp(route[segment+1],fposmod(phase,1))
  var distance=position.distance_to(target)
  travelled+=distance
  position=target
- var direction: Vector3=points[segment+1]-points[segment]
+ var direction: Vector3=route[segment+1]-route[segment]
  rotation.y=atan2(direction.x,direction.z)
  for wheel in wheels: wheel.rotation.x+=distance/0.4
  forks.position.y=0.12+0.25*sin(fposmod(phase,1)*PI)
- payload.visible=segment<2
+ if depot_handler:
+  for key_name in payload_variants: payload_variants[key_name].visible=key_name==cycle_key
+  # Loading: rack → bay; unloading: bay → rack. Return is always empty.
+  # Both cycles start and finish at the same parking bay.
+ payload.visible=phase>=0.85 and phase<2.05
  operator.rotation.z=sin(travelled*0.8)*0.035

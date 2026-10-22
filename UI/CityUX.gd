@@ -169,8 +169,8 @@ func find_job() -> Dictionary:
   if int(job.get("id",-1))==int(selection.get("id",-2)): return job
  return {}
 func find_trip() -> Dictionary:
- for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
-  var domain="construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+ for s in FreightFlow.all_trips(Game.state):
+  var domain="central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
   if domain==selection.get("domain","") and int(s.id)==int(selection.get("id",-1)): return s
  return {}
 func clear_box(box: Node) -> void:
@@ -220,6 +220,8 @@ func render_sheet() -> void:
   else: hud.button(actions,"Wege ausblenden" if world().get("selection_world")!=null and world().selection_world.show_routes else "Wege anzeigen",func(): toggle_routes())
   if city and FireSafety.eligible(Game.state,index):
    hud.button(sheet_body,"BRANDSCHUTZ · RAUCHMELDER & HYDRANT",func(): hud.open_menu("fire_protection"))
+  if not city and b.kind=="express":
+   hud.button(sheet_body,"REGIONALBESTAND ZUR ZENTRALE FAHREN",func(): hud.action(func(): CentralLogistics.recall_express(Game.state,index)))
   var other=sheet_actions()
   hud.button(other,"Details ↑",func(): expand_selection())
   hud.button(other,"Verschieben",func(): hud.request_placement({"kind":b.kind,"city":city,"index":index}))
@@ -254,7 +256,7 @@ func render_sheet() -> void:
   title.text="Lieferfahrzeug"
   if s.is_empty(): hud.text(sheet_body,"Fahrt abgeschlossen · Fahrzeug wieder verfügbar",15,hud.INK)
   else:
-   var target="Baustelle" if s.target=="construction" else ("Lager" if int(s.destination)<0 else UXRules.title(Game.state,false,int(s.destination))) if s.target=="mineral" else "Autobahnexport" if s.target=="export" else Catalog.BUILDINGS[s.target].name
+   var target="Baustelle" if s.target=="construction" else ("Lager" if int(s.destination)<0 else UXRules.title(Game.state,false,int(s.destination))) if s.target=="mineral" else "Autobahnexport" if s.target=="export" else CentralLogistics.target_name(Game.state,s) if s.target in ["central","express"] else Catalog.BUILDINGS[s.target].name
    var stage="Leere Rückfahrt" if s.arrived else "Beladen" if float(s.age)<float(s.load) else "Entladen" if float(s.age)>=float(s.load)+float(s.drive) else "Unterwegs"
    if not s.arrived and float(s.age)>=float(s.travel): stage="Wartet auf freien Entladeplatz"
    var source=UXRules.title(Game.state,false,int(s.origin)) if int(s.get("origin",-1))>=0 else ConstructionRules.source_name(s)
@@ -377,7 +379,7 @@ func populate_menu(tab: String) -> void:
 func material_menu() -> void:
  var key=material_key
  hud.modal_title.text=Catalog.RESOURCES.get(key,key).to_upper()+" · VERSORGUNG"
- var box=hud.card("Wo liegt die Ware?","Lager, lokale Ausgänge und LKW-Ladungen werden getrennt gezählt. Tippe auf eine Quelle, um ihren Betrieb und den tatsächlichen Zustand anzusehen.")
+ var box=hud.card("Wo liegt die Ware?","Lager, lokale Ausgänge und LKW-Ladungen werden getrennt gezählt. Tippe auf den nummerierten Betrieb für seinen Zustand und die Lieferwege.")
  hud.dynamic_text(box,func():
   var amount=UXRules.material_stock(Game.state,key)
   var trend=Game.material_trend(key)
@@ -389,7 +391,7 @@ func material_menu() -> void:
     hud.button(box,"%s · WARE INS LAGER HOLEN" % Catalog.BUILDINGS[kind].name,func(): hud.action(func(): Game.unload_delivery(kind)))
  for source in UXRules.material_sources(Game.state,key):
   var index=int(source.index)
-  hud.button(box,"%s · Produktion fürs Lager →" % source.name if source.get("shared",false) else "%s · %s verfügbar →" % [source.name,Catalog.number(source.amount)],func(): select_building(index,false,true))
+  hud.button(box,"%s · %s\n%s →" % [source.name,"Hauptlager" if source.get("shared",false) else "%s lokal" % Catalog.number(source.amount),Game.production_status(index)],func(): select_building(index,false,true))
  for job in Game.state.jobs:
   if not job.get("materials",{}).has(key): continue
   var id=int(job.get("id",-1))
@@ -398,10 +400,10 @@ func material_menu() -> void:
   hud.button(site,"BAUSTELLE ANSEHEN",func(): select_job(id,true))
  var cargo=hud.card("Tatsächlich unterwegs")
  var found=false
- for s in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
+ for s in FreightFlow.all_trips(Game.state):
   if s.key!=key or s.arrived: continue
   found=true
-  var selected={"kind":"truck","id":int(s.id),"domain":"construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"}
+  var selected={"kind":"truck","id":int(s.id),"domain":"central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"}
   var at=LogisticsRoutes.sample(s.path,clampf((float(s.age)-float(s.load))/float(s.drive),0,1)).position
   hud.button(cargo,"%s %s · LKW ansehen" % [Catalog.number(s.amount),Catalog.RESOURCES[key]],func(): hud.focus_requested.emit(at); select_truck(selected))
  if not found: hud.text(cargo,"Momentan keine beladene Lieferung dieser Ware.",15,hud.MUTED)

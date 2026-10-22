@@ -14,10 +14,16 @@ func create_incident(roof: float) -> Node3D:
  flames.position.y=roof-2.0
  node.add_child(flames)
  for i in 6:
-  var mesh=Models.cylinder(flames,0.85,3.6,Vector3((i%3-1)*2.0,3.0,(i/3-0.5)*2.4),Color("ff8c37"))
-  mesh.mesh.top_radius=0.06
-  mesh.material_override=Models.material(Color("ff8c37"),true)
-  Models.cylinder(mesh,0.43,2.8,Vector3(0,-0.3,0),Color("ffdd75"))
+  var mesh=MeshInstance3D.new()
+  mesh.mesh=flame_mesh()
+  mesh.position=Vector3((i%3-1)*2.0,0,(int(i/3.0)-0.5)*2.4)
+  mesh.rotation.y=i*1.7
+  mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+  var fire_material=ShaderMaterial.new()
+  fire_material.shader=preload("res://Shaders/FireTongue.gdshader")
+  fire_material.set_shader_parameter("seed",float(i)*1.7)
+  mesh.material_override=fire_material
+  flames.add_child(mesh)
  var smoke=Node3D.new()
  smoke.name="Smoke"
  smoke.position.y=roof-3.0
@@ -86,10 +92,10 @@ func create_incident(roof: float) -> Node3D:
  label.name="Status"
  label.position=Vector3(0,roof+13,0)
  label.billboard=BaseMaterial3D.BILLBOARD_ENABLED
- label.font_size=32
- label.pixel_size=0.035
+ label.font_size=24
+ label.pixel_size=0.028
  label.modulate=Color("fff1d5")
- label.outline_size=9
+ label.outline_size=4
  label.no_depth_test=true
  node.add_child(label)
  return node
@@ -151,18 +157,19 @@ func _process(delta: float) -> void:
   meters.rotation.y=world.camera.global_rotation.y-node.rotation.y
   for i in node.get_node("Flames").get_child_count():
    var flame=node.get_node("Flames").get_child(i)
+   flame.material_override.set_shader_parameter("flame_clock",clock if motion else 0.0)
    flame.scale=Vector3.ONE*maxf(0.12,1-progress)*(1+0.12*sin(clock*7+i) if motion else 1.0)
   for i in node.get_node("Smoke").get_child_count():
    var puff=node.get_node("Smoke").get_child(i)
-   puff.scale=Vector3.ONE*(0.7+i*0.15)*maxf(0.2,1-progress)
+   puff.scale=Vector3.ONE*(0.55+i*0.16)*maxf(0.2,1-progress)
    if motion:
     var rise=fposmod(clock*0.9+i*1.8,10)
     var drift=Atmosphere.wind(Game.state)*rise*0.32
     drift=node.global_basis.inverse()*drift
-    puff.position=Vector3(drift.x+sin(clock*0.7+i)*0.3,6+rise,drift.z)
+    puff.position=Vector3(drift.x+sin(clock*0.7+i)*0.8,5+rise,drift.z+cos(i*2.1)*0.6)
    puff.visible=Game.state.quality!=0 or i<2
-  node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "BRAND · WARTET AUF FEUERWEHR"
-  node.get_node("Status").text+="\nBRAND %s %% · GEBÄUDESCHADEN 0" % int((1-progress)*100)
+  node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR · ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "BRAND · HILFE ANFORDERN"
+  node.get_node("Status").text+="\nBRANDSTÄRKE %s %%" % int((1-progress)*100)
   var status=node.get_node("Status")
   # Keep the compact incident caption below the HUD, even when its smoke column
   # reaches the top of a narrow screen. The caption never changes incident state.
@@ -249,3 +256,20 @@ func update_supply_hose(node: Node3D, mission: Dictionary, spraying: bool) -> vo
    tube.quaternion=Quaternion(Vector3.UP,(b-a).normalized())
   Models.bake(hose)
  hose.visible=spraying
+
+func flame_mesh() -> ArrayMesh:
+ # Irregular curved lobes with a hot base; no traffic-cone silhouette.
+ var surface=SurfaceTool.new()
+ surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+ var radii=[0.35,0.85,0.62,0.46,0.28,0.12,0.015]
+ for row in 6:
+  for side in 8:
+   var vertices=[]
+   for corner in [[row,side],[row+1,side],[row+1,side+1],[row,side+1]]:
+    var h=float(corner[0])/6.0
+    var angle=float(corner[1])*TAU/8.0+h*0.65
+    var radius=float(radii[int(corner[0])])*(1+0.14*sin(angle*3+h*4))
+    vertices.append(Vector3(cos(angle)*radius+sin(h*4)*0.3,h*4.8,sin(angle)*radius))
+   for index in [0,1,2,0,2,3]: surface.add_vertex(vertices[index])
+ surface.generate_normals()
+ return surface.commit()

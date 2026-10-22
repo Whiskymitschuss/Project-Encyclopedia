@@ -40,10 +40,20 @@ static func company_level(state: Dictionary) -> int:
  for i in thresholds.size():
   if int(state.company_xp)>=int(thresholds[i]): level=i+1
  return level
+static func factory_name(state: Dictionary,index: int) -> String:
+ var kind=state.buildings[index].kind
+ var ordinal=0
+ for i in range(index+1):
+  if state.buildings[i].kind==kind: ordinal+=1
+ return "%s %s" % [Catalog.BUILDINGS[kind].name,ordinal]
 static func material_sources(state: Dictionary,key: String) -> Array:
  var result=[]
+ for id in state.hub.outputs:
+  if float(state.hub.outputs[id].get(key,0))>0: result.append({"index":int(id),"amount":float(state.hub.outputs[id][key]),"name":factory_name(state,int(id)),"kind":state.buildings[int(id)].kind})
+ for id in state.hub.express:
+  result.append({"index":int(id),"amount":float(state.hub.express[id].get(key,0)),"name":factory_name(state,int(id)),"kind":"express"})
  for source in ConstructionRules.sources(state,key):
-  result.append({"index":int(source.index),"amount":float(source.stock.get(key,0)),"name":str(Catalog.BUILDINGS[source.kind].name),"kind":source.kind})
+  result.append({"index":int(source.index),"amount":float(source.stock.get(key,0)),"name":factory_name(state,int(source.index)),"kind":source.kind})
  for i in state.buildings.size():
   var b=state.buildings[i]
   var produces=Catalog.RECIPES.has(b.kind) and Catalog.RECIPES[b.kind].out.has(key)
@@ -56,7 +66,7 @@ static func material_sources(state: Dictionary,key: String) -> Array:
    if int(source.index)==i: exists=true
   if not exists:
    var mineral=StoneIndustry.site(state,i) if b.kind in StoneIndustry.KINDS else {}
-   result.append({"index":i,"amount":float(mineral.get("stock",{}).get(key,0)),"shared":mineral.is_empty(),"name":str(Catalog.BUILDINGS[b.kind].name),"kind":b.kind})
+   result.append({"index":i,"amount":float(mineral.get("stock",{}).get(key,0)),"shared":mineral.is_empty() and not CentralLogistics.active(state),"name":factory_name(state,i),"kind":b.kind})
  return result
 static func material_counts(state: Dictionary,job: Dictionary,key: String) -> Dictionary:
  var delivered=float(job.get("delivered",{}).get(key,0))
@@ -68,9 +78,11 @@ static func material_stock(state: Dictionary,key: String) -> Dictionary:
  var local=0.0
  for group in [state.delivery.buffers,state.delivery.recovered]:
   for stock in group.values(): local+=float(stock.get(key,0))
+ for group in [state.hub.outputs,state.hub.express]:
+  for stock in group.values(): local+=float(stock.get(key,0))
  for site in state.stone.sites.values(): local+=float(site.get("stock",{}).get(key,0))
  var transit=0.0
- for trip in state.delivery.shipments+state.construction_shipments+state.stone.shipments+state.trade.shipments:
+ for trip in FreightFlow.all_trips(state):
   if trip.key==key and not trip.arrived: transit+=float(trip.amount)
  # A truck's cargo was already withdrawn. An arrived truck has already
  # credited its destination; neither may be counted twice as available stock.
