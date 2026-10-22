@@ -2,6 +2,23 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
+## Schneller laden & App-Wechsel — 0.29.2-alpha.2
+
+Die Offline-Berechnung arbeitet jetzt auf einer getrennten Kopie der Firma und
+unabhängig vom sichtbaren Spielfenster. Sie startet schon vor dem ersten Ladeframe.
+Minimieren pausiert diesen Rechenlauf nicht mehr durch die Spielschleife; Android
+kann den ganzen Prozess weiterhin anhalten oder beenden. Erst das fertige Ergebnis
+wird übernommen und gespeichert. Schließen stoppt die Berechnung sicher.
+
+Verkehr prüft nur nahe Kreuzungen und verwendet bereits berechnete Positionen und
+Richtungen erneut. Im Desktop-Vergleich mit 20 Häusern, acht LKW und acht Stunden
+Abwesenheit: **83,887 → 21,675 Sekunden**, etwa **3,87× schneller**, identischer
+Firmenstand. Das ist keine zugesicherte Ladezeit oder Messung auf einem Handy.
+
+[Änderungen und Nutzen](docs/PERFORMANCE-292.md) ·
+[Installation](docs/alpha2-performance/START-HIER.txt) ·
+[Testplan](docs/alpha2-performance/TESTPLAN.txt) · [Downloads](releases/README.md).
+
 ## Startfix — 0.29.1-alpha.2
 
 Der Start wartet nicht länger unsichtbar auf die komplette Offline-Berechnung.

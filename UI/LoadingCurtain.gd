@@ -44,9 +44,9 @@ func _ready() -> void:
  progress.add_theme_stylebox_override("background",background)
  column.add_child(progress)
  detail=label(column,"Offline-Fortschritt wird vorbereitet …",15)
- label(column,"Deine Firma bleibt erhalten.\nBei längerer Abwesenheit kann das etwas dauern.",14)
+ label(column,"Du kannst kurz die App wechseln.\nAndroid kann Hintergrundarbeit anhalten.\nSchließen beendet die Berechnung.",14)
  var later=Button.new()
- later.text="SPÄTER WEITERSPIELEN"
+ later.text="SPIEL SCHLIESSEN"
  later.custom_minimum_size.y=48
  later.add_theme_font_size_override("font_size",14)
  for style in ["normal","hover","pressed","focus"]:

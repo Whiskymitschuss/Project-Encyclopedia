@@ -178,6 +178,9 @@ func start_game() -> void:
 func open_after_frame() -> void:
  await get_tree().process_frame
  await get_tree().process_frame
+ # A resume notification can arrive after Play but before the deferred switch.
+ # Scene initialization must not read shared route caches while a worker runs.
+ while Game.catching_up: await get_tree().process_frame
  open_world()
 
 func open_world() -> void:

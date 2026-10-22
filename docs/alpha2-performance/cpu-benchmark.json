@@ -1,0 +1,18 @@
+{
+  "seconds_per_case": 3600,
+  "method": "Sequential desktop headless steps, identical generated fixtures, all five checkpoint dictionaries compared; no Android timing",
+  "cases": {
+    "basic": {
+      "before_usec": 1694176,
+      "after_usec": 1002718,
+      "speedup": 1.6895837114722185,
+      "whole_company_checkpoints_identical": 5
+    },
+    "city": {
+      "before_usec": 5109705,
+      "after_usec": 2398064,
+      "speedup": 2.130762565135876,
+      "whole_company_checkpoints_identical": 5
+    }
+  }
+}

@@ -7,6 +7,9 @@ const LANE=1.5
 const STEP=0.2
 static var network_signature=0
 static var junction_cache=[]
+# A query tile covers all centres that can intersect its 12-metre stop zone.
+# Build lazily per road network, preserving the original junction order.
+static var junction_tiles={}
 static var path_cache={}
 static var bus_cache={}
 
@@ -18,6 +21,7 @@ static func junctions(state: Dictionary) -> Array:
  if signature==network_signature and not junction_cache.is_empty(): return junction_cache
  network_signature=signature
  junction_cache=[]
+ junction_tiles.clear()
  var cells=TownRules.road_cells(state.town)
  for c in cells:
   var degree=0
@@ -30,6 +34,17 @@ static func junctions(state: Dictionary) -> Array:
    if separate: junction_cache.append(Vector2i(c))
  junction_cache.sort_custom(func(a,b): return a.x<b.x if a.x!=b.x else a.y<b.y)
  return junction_cache
+
+static func nearby_junctions(position: Vector3) -> Array:
+ var tile=Vector2i(floori(position.x/32.0),floori(position.z/32.0))
+ if not junction_tiles.has(tile):
+  var candidates=[]
+  for cell in junction_cache:
+   if cell.x>=tile.x*32-12 and cell.x<=(tile.x+1)*32+12 and cell.y>=tile.y*32-12 and cell.y<=(tile.y+1)*32+12:
+    candidates.append(cell)
+  if junction_tiles.size()>=512: junction_tiles.clear()
+  junction_tiles[tile]=candidates
+ return junction_tiles[tile]
 
 static func fault_at(state: Dictionary, cell: Vector2i) -> Dictionary:
  for fault in state.traffic.faults:
@@ -66,7 +81,9 @@ static func compiled(points: Array) -> Dictionary:
    if not positions.is_empty(): lengths.append(float(lengths[-1])+positions[-1].distance_to(LogisticsRoutes.vector(p)))
    positions.append(LogisticsRoutes.vector(p))
   if path_cache.size()>=256: path_cache.clear()
-  path_cache[key]={"points":positions,"lengths":lengths}
+  var directions=[]
+  for i in range(1,positions.size()): directions.append((positions[i]-positions[i-1]).normalized())
+  path_cache[key]={"points":positions,"lengths":lengths,"directions":directions}
  return path_cache[key]
 
 static func point(points: Array, amount: float) -> Dictionary:
@@ -83,7 +100,7 @@ static func point_on(data: Dictionary, amount: float) -> Dictionary:
   else: hi=mid
  var a: Vector3=data.points[lo-1]
  var b: Vector3=data.points[lo]
- return {"position":a.lerp(b,clampf((distance-float(data.lengths[lo-1]))/maxf(0.00001,float(data.lengths[lo])-float(data.lengths[lo-1])),0,1)),"direction":(b-a).normalized()}
+ return {"position":a.lerp(b,clampf((distance-float(data.lengths[lo-1]))/maxf(0.00001,float(data.lengths[lo])-float(data.lengths[lo-1])),0,1)),"direction":data.directions[lo-1]}
 
 static func sample(trip: Dictionary, age: float, service: bool = false, prepared: Dictionary = {}) -> Dictionary:
  var path: Array=trip.outward if service else trip.path
@@ -122,8 +139,8 @@ static func sample(trip: Dictionary, age: float, service: bool = false, prepared
  # checkpoints, cargo reservations or road protection.
  var length_value=float(line.lengths[-1])
  var along=clampf(amount,0,1)*length_value
- var start_dir=(line.points[1]-line.points[0]).normalized()
- var end_dir=(line.points[-1]-line.points[-2]).normalized()
+ var start_dir: Vector3=line.directions[0]
+ var end_dir: Vector3=line.directions[-1]
  value.position-=start_dir*3.5*(1-smoothstep(0,7,along))
  value.position+=end_dir*3.5*(1-smoothstep(0,7,length_value-along))
  if not service:
@@ -180,24 +197,29 @@ static func prepare(state: Dictionary, delta: float) -> void:
  var crossings=junctions(state)
  # Empty cities skip all collision work. Clocks still persist across saves.
  if entries.is_empty(): remaining=0
+ for entry in entries:
+  entry.sample=bus_sample(entry.plan,entry.age) if entry.get("bus",false) else sample(entry.trip,entry.age,entry.service,entry.routes)
  while remaining>0.00001:
   var active=false
   for entry in entries:
    if not entry.get("readonly",false) and entry.age<float(entry.trip.get("total",INF)): active=true; break
   if not active: break
   var dt=minf(STEP,remaining)
-  for entry in entries: entry.sample=bus_sample(entry.plan,entry.age) if entry.get("bus",false) else sample(entry.trip,entry.age,entry.service,entry.routes)
   for index in entries.size():
    var entry=entries[index]
    if entry.get("readonly",false) or entry.age>=float(entry.trip.get("total",INF)): continue
    var now=entry.sample
-   var next=bus_sample(entry.plan,entry.age+dt) if entry.get("bus",false) else sample(entry.trip,entry.age+dt,entry.service,entry.routes)
+   var next_age=float(entry.age)+dt
+   if not entry.has("next_age") or entry.next_age!=next_age:
+    entry.next_age=next_age
+    entry.next_sample=bus_sample(entry.plan,next_age) if entry.get("bus",false) else sample(entry.trip,next_age,entry.service,entry.routes)
+   var next=entry.next_sample
    var reason=""
    var old: Vector3=now.position
    var target: Vector3=next.position
    var direction: Vector3=next.direction
    # Before entering the conflict area, wait for green AND a cleared junction.
-   for cell in crossings:
+   for cell in nearby_junctions(target):
     var center=TownRules.point(cell)
     center.y=old.y
     var before=Vector2(old.x-center.x,old.z-center.z).length()
@@ -211,8 +233,10 @@ static func prepare(state: Dictionary, delta: float) -> void:
       var fallback=fposmod(float(traffic.clock)+elapsed,40)
       phase="x" if fallback<14 else "z" if fallback>=20 and fallback<34 else "red"
      if phase!=axis: reason="Ampel · Rot" if fault_at(state,cell).is_empty() else "Ampelstörung · Wechselverkehr"; break
-     for other in entries:
-      if other==entry or other.age>=float(other.trip.get("total",INF)): continue
+     for other_index in entries.size():
+      if other_index==index: continue
+      var other=entries[other_index]
+      if other.age>=float(other.trip.get("total",INF)): continue
       var at: Vector3=other.sample.position
       if Vector2(at.x-center.x,at.z-center.z).length()<12:
        reason="Kreuzung räumt"; break

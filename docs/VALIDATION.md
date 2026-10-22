@@ -1,3 +1,36 @@
+# Prüfung 0.29.2 — schneller laden & App-Wechsel
+
+- `bash scripts/test.sh`: **20.514 Prüfungen in 29 Headless-Suiten**, keine Fehler;
+  zusätzlich natürliche Ersthaus-/Tutorialprogression und Hauptwelt-/Intro-Smokes.
+- OpenGL: **526 bestandene Prüfungen in 14 unterschiedlichen Suiten**. Der erste
+  Gesamtlauf verlor in VisualAlpha28 synthetische Fäll-Touches; zwei isolierte
+  Wiederholungen bestanden jeweils alle 59 Prüfungen, ohne Produktionscode zu
+  ändern. Das intermittierende Touch-/Timingverhalten ist weiter zu beobachten.
+  Keine Skript-/Ladefehler. [Einzelergebnisse](alpha2-performance/automated-checks.json).
+- Neue Hintergrundsuite: **15 Prüfungen**, einschließlich sofortigem Start vor
+  einem Ladeframe, Worker-Fortschritt trotz blockiertem Hauptloop und
+  Pause-Benachrichtigung, unverändertem Originalzustand und Speicherbytes,
+  identischem Acht-Stunden-Ergebnis, zusätzlicher Hintergrundzeit, Abbruch,
+  Join und Ersatz eines laufenden Workers. Drei frühere Stresswiederholungen
+  bestanden nach einer Korrektur für sehr kleine Zeitbruchteile.
+- Neue Referenzsuite: **339 Prüfungen**. Zehn vollständige Firmenzustände aus
+  unveränderter 0.29.1, aktive Lieferlinie, 20 Stadthäuser, Brände, Techniker,
+  Servicefahrten und echte Reservierungen; räumliche Kreuzungsabfragen nach
+  Straßenänderung und Wiederherstellung. Die Referenz umfasst 3.600 Sekunden.
+- Neue OpenGL-Suite: **9 Prüfungen** mit echter 3D-Stadt, angehaltenem Hauptloop,
+  Worker-Fortschritt, sicherer Ergebnisübernahme und physischem Fäll-Touch nach
+  dem Laden. Vorhandene 27 Lade-/Bildschirmformatprüfungen bestehen weiterhin.
+- Ladevergleich: acht Stunden, 20 Häuser, acht LKW, identischer CPU-Kern, 60 FPS,
+  Desktop-Godot 4.6.3 headless: **83,887 → 21,675 Sekunden (3,87×)**. Der komplette
+  abschließende Firmenzustand ist identisch. Die alte Version lief aus ihren
+  unverändert extrahierten APK-Assets. [Messdaten](alpha2-performance/loading-benchmark.json).
+- Manche bestehenden OpenGL-Suiten melden weiterhin ObjectDB-Aufräumhinweise
+  beim Beenden. Dies ist kein bestätigter Android-Langzeit-Speichertest.
+- Alle Profile wurden isoliert erzeugt. **Kein echter Android-Test dieser Fassung**
+  und keine zugesicherte Handy-Ladezeit oder unbegrenzte Hintergrundausführung.
+  Android kann den ganzen Prozess anhalten oder beenden; ein Hintergrunddienst
+  und zusätzliche Berechtigungen werden nicht eingebaut.
+
 ## Externe Downloads Startfix 0.29.1 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.1-alpha.2` vollständig per

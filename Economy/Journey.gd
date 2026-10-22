@@ -117,14 +117,20 @@ static func value(state: Dictionary,key: String) -> float:
 static func goal_id(chapter: int,index: int) -> String:
  return str(CHAPTERS[chapter].id)+":"+str(index)
 
+static var refresh_goals=[]
 static func refresh(state: Dictionary) -> void:
- # Latch achievements at the time they happen, even before opening the UI.
+ # Definitions are immutable; IDs do not need reformatting every game second.
+ if refresh_goals.is_empty():
+  for c in CHAPTERS.size():
+   for i in CHAPTERS[c].goals.size():
+    var goal=CHAPTERS[c].goals[i]
+    refresh_goals.append({"id":goal_id(c,i),"metric":goal[0],"target":float(goal[1])})
+ var reached=state.journey.reached
+ for goal in refresh_goals:
+  if not reached.has(goal.id) and value(state,goal.metric)+0.00001>=goal.target: reached[goal.id]=true
+ var hall=townhall_level(state)
  for c in CHAPTERS.size():
-  for i in CHAPTERS[c].goals.size():
-   var goal=CHAPTERS[c].goals[i]
-   var id=goal_id(c,i)
-   if not state.journey.reached.has(id) and value(state,goal[0])+0.00001>=float(goal[1]): state.journey.reached[id]=true
-  if townhall_level(state)>=c+1: state.journey.reached[hall_id(c)]=true
+  if hall>=c+1: reached[hall_id(c)]=true
 
 static func hall_id(chapter: int) -> String:
  return str(CHAPTERS[chapter].id)+":hall"

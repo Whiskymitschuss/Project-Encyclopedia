@@ -28,6 +28,9 @@ var catchup_curtain: CanvasLayer
 var catchup_scene: Node
 var catchup_scene_mode=Node.PROCESS_MODE_INHERIT
 var catchup_signals_were_blocked=false
+var use_catchup_worker=true
+var catchup_worker: RefCounted
+var catchup_extension=0.0
 var live_world=true
 var state: Dictionary
 var flow: Dictionary = {}
@@ -148,6 +151,7 @@ func _notification(what: int) -> void:
   if what==NOTIFICATION_APPLICATION_RESUMED and catchup_paused_at>0:
    var extra=minf(maxf(0,Time.get_unix_time_from_system()-catchup_paused_at),maxf(0,28800-catchup_total))
    catchup_left+=extra
+   if catchup_worker!=null: catchup_extension+=extra
    catchup_total+=extra
    catchup_report_seconds=minf(28800,catchup_report_seconds+extra)
    catchup_paused_at=0
@@ -217,6 +221,10 @@ func queue_catchup(seconds: float, before: Dictionary, report_seconds: float) ->
  catchup_signals_were_blocked=is_blocking_signals()
  # Avoid rebuilding the entire 3D city for every offline construction phase.
  set_block_signals(true)
+ pause_catchup_scene()
+ # Start independently of frame delivery: Android may minimize the app even
+ # before the two presentation frames or the curtain's deferred callback.
+ if use_catchup_worker: start_catchup_worker(state,catchup_left)
  call_deferred("show_catchup",catchup_generation)
 
 func show_catchup(generation: int) -> void:
@@ -229,6 +237,16 @@ func show_catchup(generation: int) -> void:
  if catching_up and generation==catchup_generation:
   pause_catchup_scene()
   catchup_running=true
+
+func start_catchup_worker(data: Dictionary, seconds: float) -> bool:
+ var model=get_script().new()
+ model.state=data.duplicate(true)
+ model.catching_up=true
+ model.set_block_signals(true)
+ var work=load("res://Managers/OfflineWork.gd").new()
+ if work.start(model,seconds)!=OK: return false
+ catchup_worker=work
+ return true
 
 func pause_catchup_scene() -> void:
  # During a cold start the main scene may not exist when the autoload queues
@@ -244,6 +262,19 @@ func pause_catchup_scene() -> void:
 func process_catchup(budget_usec: int = 8000, max_steps: int = 120) -> void:
  if not catching_up or not catchup_running: return
  pause_catchup_scene()
+ if catchup_worker!=null:
+  var progress=catchup_worker.progress()
+  catchup_left=float(progress.remaining)+catchup_extension
+  if not progress.complete: return
+  var result=catchup_worker.take()
+  catchup_worker=null
+  if catchup_extension>0.000001:
+   var extra=catchup_extension
+   catchup_extension=0
+   if use_catchup_worker and start_catchup_worker(result.state,extra): return
+   catchup_left=extra
+  state=result.state
+  flow=result.flow
  var started=Time.get_ticks_usec()
  var steps=0
  while catchup_left>0.000001 and steps<max_steps and Time.get_ticks_usec()-started<budget_usec:
@@ -264,6 +295,10 @@ func process_catchup(budget_usec: int = 8000, max_steps: int = 120) -> void:
  save(true)
 
 func cancel_catchup() -> void:
+ if catchup_worker!=null:
+  catchup_worker.stop()
+  catchup_worker=null
+ catchup_extension=0
  catchup_generation+=1
  if catching_up: set_block_signals(catchup_signals_were_blocked)
  catching_up=false
@@ -278,6 +313,12 @@ func cancel_catchup() -> void:
   catchup_curtain.hide()
   catchup_curtain.queue_free()
  catchup_curtain=null
+
+func _exit_tree() -> void:
+ # Never leave a worker accessing its detached model during engine shutdown.
+ if catchup_worker!=null:
+  catchup_worker.stop()
+  catchup_worker=null
 
 func simulate(seconds: float) -> void:
  for i in int(seconds): step(1.0)

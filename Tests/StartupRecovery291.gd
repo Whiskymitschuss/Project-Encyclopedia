@@ -14,6 +14,7 @@ func run() -> void:
  await process_frame
  game=root.get_node("Game")
  game.set_process(false)
+ game.use_catchup_worker=false
  game.restore(game.initial_state())
  game.state.workers=4
  game.state.resources.wood=80.0

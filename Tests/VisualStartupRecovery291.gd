@@ -12,6 +12,7 @@ func run() -> void:
  await process_frame
  var game=root.get_node("Game")
  game.set_process(false)
+ game.use_catchup_worker=false
  game.restore(game.initial_state())
  var boot=load("res://Scenes/Boot.tscn").instantiate()
  root.add_child(boot)

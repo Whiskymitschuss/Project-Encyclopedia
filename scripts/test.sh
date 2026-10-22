@@ -22,6 +22,8 @@ if [ "$#" -gt 0 ]; then
  exit 0
 fi
 bash scripts/test_startup.sh
+check --script res://Tests/BackgroundRecovery292.gd
+check --script res://Tests/OfflineReplay292.gd
 check --script res://Tests/StartupRecovery291.gd
 check --script res://Tests/TrafficMaintenance29.gd
 check --script res://Tests/Alpha28.gd
