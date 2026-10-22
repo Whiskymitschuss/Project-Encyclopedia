@@ -1,3 +1,34 @@
+# Empfohlen: Zentrallogistik · 0.28.4-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.4-alpha.1/releases/Timber-Loot-Tycoon-v0.28.4-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.4-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Zentrallogistik-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.4-source.zip) · [Änderungen](../docs/FACTORY-284.md) · [Testplan](../docs/alpha1-factory/TESTPLAN.txt)
+
+Version **0.28.4-alpha.1**, Android-Code **2981**, weiterhin auf 0.28-Basis.
+Direkt als Update über die vorhandene Alpha installieren. **Nicht deinstallieren
+und keine App-Daten löschen.** Gleiches Paket, Speicherverzeichnis und Testzertifikat
+wie seit 0.23. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0.
+
+Überarbeiteter Fabrikhof, kompakte Fahrzeuge und lesbare Materialwerte. Neues
+31 × 23 m Zentrallager mit tatsächlicher Warenabholung, eigener weiß-blauer Lagerflotte
+und schwarz-weißer Baustellenflotte. Regionale Abhol-Express-Depots für entfernte
+Baustellen. Vollständige Staplerzyklen und Regale mit wirklichen Beständen.
+Bewegte Flammenkörper und Rauch; alte Standorte und laufende Frachten bleiben erhalten.
+Unter Bauen → Versorgung die Zentrale bewusst neu platzieren und fertigstellen.
+
+19,815 Headless-Prüfungen und 795 OpenGL-Prüfungen
+bestanden; zusätzlich 107 Headless- und 274
+OpenGL-Prüfungen mit den tatsächlich entpackten APK-Assets. Keine dieser Prüfungen
+ist ein echter Android-Gerätetest. Dieser steht aus, ebenso die Temperaturmessung
+auf S26 Ultra/S24 FE. Paket, Signatur, Version und ZIP-Ausrichtung geprüft.
+
+APK-Quellstand `8ccb88798b42d22ab8c679d085606eb812c14e2a`. Quell-ZIP: 522 Dateien gegen Git geprüft.
+Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Der private Schlüssel wird nicht mitgeliefert. Ein öffentlicher Download ist
+kein Zugang nur für eingeladene Tester.
+
+## Frühere Veröffentlichungen
+
 # Empfohlen: Werkshof · 0.28.3-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.3-alpha.1/releases/Timber-Loot-Tycoon-v0.28.3-alpha.1.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.3-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Werkshof-Testerpaket.zip)**

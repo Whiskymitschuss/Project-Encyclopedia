@@ -1,0 +1,62 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.28.4-alpha.1.apk",
+  "bytes": 63253444,
+  "sha256": "500b97b51baad01ab24d6f68eb3c8d9dc4c08f2d299c5b86beb773a9f1926b5f",
+  "version": "0.28.4-alpha.1",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "8ccb88798b42d22ab8c679d085606eb812c14e2a",
+  "device_install_or_launch_tested": false,
+  "version_code": 2981,
+  "alpha": 1,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "restored_028_base": "d14b53774d5505a93ee1e7b845b2b4753fd9b804",
+  "automated_headless_checks": 19815,
+  "automated_opengl_checks": 795,
+  "packaged_resource_checks": {
+    "apk": "Timber-Loot-Tycoon-v0.28.4-alpha.1.apk",
+    "apk_sha256": "500b97b51baad01ab24d6f68eb3c8d9dc4c08f2d299c5b86beb773a9f1926b5f",
+    "apk_source_commit": "8ccb88798b42d22ab8c679d085606eb812c14e2a",
+    "headless_checks": 107,
+    "headless_results": {
+      "Central284": 34,
+      "Forest282": 22,
+      "Rollback028": 51
+    },
+    "visual_checks": 274,
+    "visual_results": {
+      "VisualFactory284": 45,
+      "VisualCampus283": 47,
+      "VisualForest282": 28,
+      "VisualRollback028": 146,
+      "VisualColdStart282": 8
+    },
+    "fixture": "Generated test companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+    "android_device_tested": false,
+    "temperature_measured": false
+  },
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.28.4-source.zip",
+    "bytes": 26304079,
+    "sha256": "c49ad0555ab146c364b46a02706a51952c8b55f449c5fc75d4c24c66f30b82be",
+    "verified_files": 522
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-1-Zentrallogistik-Testerpaket.zip",
+    "bytes": 62630596,
+    "sha256": "47775cf70689179c39c95c5c0519b5bfc85811e74e3cdff1a4172dac0674f8ad",
+    "verified_entries": 6
+  }
+}

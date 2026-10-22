@@ -67,3 +67,6 @@ bd9101c64946e78a6095dd5b5a34f432b1fed90628e030fa04b45c0fa7c1fc39  Timber-Loot-Ty
 2d79721f4d6a75a84a8fd1311033945df9a32a847ed18252d3f7232bea842f9a  Timber-Loot-Tycoon-v0.28.3-alpha.1.apk
 e95cb72e0f64b75701badc60a31e0e46c7219f3fa36f8b9353d92b8b5e64e42e  Timber-Loot-Tycoon-v0.28.3-source.zip
 2bec85d0bae74bacc74cd8624d0b3163207e8c91bd8cf46c801c7625e9c5cc3a  Timber-Loot-Tycoon-Alpha-1-Werkshof-Testerpaket.zip
+500b97b51baad01ab24d6f68eb3c8d9dc4c08f2d299c5b86beb773a9f1926b5f  Timber-Loot-Tycoon-v0.28.4-alpha.1.apk
+c49ad0555ab146c364b46a02706a51952c8b55f449c5fc75d4c24c66f30b82be  Timber-Loot-Tycoon-v0.28.4-source.zip
+47775cf70689179c39c95c5c0519b5bfc85811e74e3cdff1a4172dac0674f8ad  Timber-Loot-Tycoon-Alpha-1-Zentrallogistik-Testerpaket.zip

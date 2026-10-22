@@ -1,3 +1,16 @@
+## Auslieferung Zentrallogistik · 0.28.4-alpha.1
+
+APK aus `8ccb88798b42d22ab8c679d085606eb812c14e2a`, 63253444 Bytes,
+SHA256 `500b97b51baad01ab24d6f68eb3c8d9dc4c08f2d299c5b86beb773a9f1926b5f`. Version 0.28.4-alpha.1 / Android-Code 2981,
+kompatibles Paket und vorhandenes Testzertifikat. V2-Signatur, 16-KB-ZIP-Ausrichtung,
+API 24+, ARM64/ARMv7, OpenGL, Hochformat und optionale Vibration geprüft.
+
+Tatsächlich entpackte APK-Assets: 107 Headless- und
+274 OpenGL-Prüfungen einschließlich echtem neuen Prozess
+mit acht Stunden Abwesenheit bestehen. [Paketprüfung](alpha1-factory/packaged-checks.json).
+Dies ist keine Ausführung der Android-Binärdateien auf einem Handy.
+Downloads werden nach Veröffentlichung separat vollständig zurückgeladen und geprüft.
+
 ## Prüfung Fabrik und Zentrallogistik · 0.28.4-alpha.1
 
 19.815 Einzelprüfungen in 29 Headless-Suiten einschließlich zweier natürlicher
