@@ -10,6 +10,7 @@ var loaded=false
 var active=false
 
 func _ready() -> void:
+ scale=Vector3.ONE*0.8
  var yellow=Color("f4b638")
  Models.box(self,Vector3(3,0.7,4.4),Vector3(0,0.9,0),Color("435967"))
  for x in [-1.6,1.6]:

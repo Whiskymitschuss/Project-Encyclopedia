@@ -69,7 +69,7 @@ func _ready() -> void:
  add_child(cargo)
  cargo.position=Vector3(-0.8,1.6,-2.2)
  Models.log_pile(cargo,Vector3.ZERO,3 if tier==10 else 6)
- scale=Vector3.ONE*(0.8 if tier==10 else 1.0 if tier<13 else 1.25)
+ scale=Vector3.ONE*(0.62 if tier==10 else 0.68 if tier<13 else 0.72)
  # Keep only animated subtrees separate; combine the static coloured geometry.
  for node in [self,turret,boom,forearm,head,saw,cargo]: Models.bake(node)
  position=origin_point
