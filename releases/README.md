@@ -1,3 +1,31 @@
+# Alpha 2 · Verkehrsfix 0.29.3
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.3-alpha.2/releases/Timber-Loot-Tycoon-v0.29.3-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.3-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Verkehrsfix-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.29.3-source.zip) · [Änderungen](../docs/TRAFFIC-293.md) · [Testplan](../docs/alpha2-traffic/TESTPLAN.txt)
+
+Version **0.29.3-alpha.2**, Code **2932**, Launchername **Timber Loot Alpha**.
+Direkt über die vorhandene Alpha installieren; vorher nicht deinstallieren und
+keine App-Daten löschen. Gleiches Paket, Speicherverzeichnis und Testzertifikat
+wie seit 0.23. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0.
+
+Behebt die nachgestellte gegenseitige Blockade von LKW auf getrennten Spuren;
+bereits gespeicherte Testschlangen kommen wieder in Bewegung. Anrückende
+Löschfahrzeuge fordern Grün an und lassen belegte Kreuzungen zuerst räumen.
+Waren und Fahrzeugbestand werden weder zurückgesetzt noch künstlich ergänzt.
+
+22.928 Headless-Prüfungen und 130 gezielte OpenGL-Prüfungen bestanden. Zusätzlich
+2.414 Verkehrs- und 15 Hintergrundprüfungen auf den tatsächlich entpackten APK-Assets.
+Diese Desktop-Prüfungen sind kein echter Android-Gerätetest; dieser steht aus.
+APK-Signatur, Paket, Version und ZIP-Ausrichtung geprüft. Der private Schlüssel
+und Spielerprofile werden nicht mitgeliefert.
+
+APK-Quellstand `129dcbe0a6a59f8647c7c7d1cabcbc1f5f04a030`. Quell-ZIP: 472 Dateien gegen Git-Blobs geprüft.
+Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Ein öffentlicher Download ist kein Zugang nur für eingeladene Tester.
+
+## Vorherige Veröffentlichungen
+
 # Alpha 2 · Schnellstart 0.29.2
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-v0.29.2-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Schnellstart-Testerpaket.zip)**

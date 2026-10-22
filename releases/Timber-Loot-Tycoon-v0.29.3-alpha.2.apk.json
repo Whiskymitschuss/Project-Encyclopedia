@@ -1,0 +1,56 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.29.3-alpha.2.apk",
+  "bytes": 63219229,
+  "sha256": "b8f6a3cbcd4be3efd2b21204c39d89d934e3dfb6f5e86434826a8a9071a7d9f4",
+  "version": "0.29.3-alpha.2",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "129dcbe0a6a59f8647c7c7d1cabcbc1f5f04a030",
+  "device_install_or_launch_tested": false,
+  "version_code": 2932,
+  "alpha": 2,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "automated_headless_checks": 22928,
+  "automated_opengl_checks": 130,
+  "packaged_resource_checks": {
+    "version": "0.29.3-alpha.2",
+    "apk_sha256": "b8f6a3cbcd4be3efd2b21204c39d89d934e3dfb6f5e86434826a8a9071a7d9f4",
+    "traffic_checks": 2414,
+    "background_checks": 15,
+    "failures": 0,
+    "method": "Actual unchanged APK assets extracted, desktop Godot 4.6.3 headless; test drivers and generated fixture supplied externally, outside the APK. Fresh temporary profile per suite.",
+    "resources_verified": [
+      "Economy/TrafficRules",
+      "Managers/OfflineWork",
+      "UI/HUD",
+      "UI/Startup",
+      "Scenes/Boot",
+      "Scenes/Main"
+    ],
+    "tests_docs_scripts_releases_excluded": true,
+    "android_device_tested": false
+  },
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.29.3-source.zip",
+    "bytes": 23587694,
+    "sha256": "9d8658240df559833e98776e6ef156e0c11457f39ed3e8dc6e06c35dc4ea58fa",
+    "verified_files": 472
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-2-Verkehrsfix-Testerpaket.zip",
+    "bytes": 62602804,
+    "sha256": "edb3fc4fc82b7dc1d9300b8e046b6f59bd575192011e87e6c56452f3fcd113f5",
+    "verified_entries": 6
+  }
+}

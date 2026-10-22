@@ -1,3 +1,17 @@
+## Auslieferung Verkehrsfix 0.29.3
+
+APK aus `129dcbe0a6a59f8647c7c7d1cabcbc1f5f04a030`, 63219229 Bytes,
+SHA256 `b8f6a3cbcd4be3efd2b21204c39d89d934e3dfb6f5e86434826a8a9071a7d9f4`. Version 0.29.3-alpha.2 / Code 2932, kompatibles
+Paket und vorhandenes Testzertifikat. V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+,
+ARM64/ARMv7, OpenGL, Hochformat und ausschließlich optionale Vibration geprüft.
+
+Tatsächlich entpackte APK-Assets: 2.414 Verkehrsprüfungen einschließlich der alten
+Testschlange und 15 Hintergrundprüfungen bestehen. [Paketprüfung](alpha2-traffic/packaged-traffic.json).
+Das ist eine Desktop-Prüfung exportierter Ressourcen, kein Android-Gerätelauf.
+Quell-ZIP: 472 Dateien, SHA256 `9d8658240df559833e98776e6ef156e0c11457f39ed3e8dc6e06c35dc4ea58fa`.
+Testerpaket: 6 Einträge, SHA256 `edb3fc4fc82b7dc1d9300b8e046b6f59bd575192011e87e6c56452f3fcd113f5`.
+Downloads werden nach Veröffentlichung separat geprüft.
+
 # Prüfung 0.29.3 — Verkehr und Feuerwehr-Grün
 
 - Vollständiger Lauf `bash scripts/test.sh`: **22.928 Prüfungen in 30 Headless-Suiten**, keine fehlgeschlagenen Prüfungen oder Skript-/Ladefehler. Zusätzlich natürliche Ersthaus-/Rathausprogression und Hauptwelt-/Intro-Smokes.
