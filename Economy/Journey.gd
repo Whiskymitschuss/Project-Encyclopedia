@@ -185,7 +185,11 @@ static func order_progress(state: Dictionary) -> float:
  return clampf(float(state.journey.stats.get(order.metric,0))-float(order.baseline),0,float(order.target))
 
 static func resume_capture(state: Dictionary) -> Dictionary:
- return {"coins":float(state.coins),"completed":float(state.journey.stats.get("completed",0)),"shipments":float(state.journey.stats.get("shipments",0)),"boards":float(state.journey.stats.get("boards",0)),"furniture":float(state.journey.stats.get("furniture",0)),"rent":banked_rent(state),"elapsed":float(state.elapsed)}
+ var places={}
+ for city in [false,true]:
+  var records=state.homes if city else state.buildings
+  for i in records.size(): places[("home:" if city else "building:")+str(i)]=int(records[i].level)
+ return {"coins":float(state.coins),"completed":float(state.journey.stats.get("completed",0)),"shipments":float(state.journey.stats.get("shipments",0)),"boards":float(state.journey.stats.get("boards",0)),"furniture":float(state.journey.stats.get("furniture",0)),"rent":banked_rent(state),"elapsed":float(state.elapsed),"places":places,"exported":float(state.exported)}
 
 static func banked_rent(state: Dictionary) -> float:
  var amount=0.0
@@ -196,4 +200,12 @@ static func resume_report(state: Dictionary,before: Dictionary,seconds: float) -
  var now=resume_capture(state)
  var report={"seconds":seconds,"coins":now.coins-before.coins,"rent":maxf(0,now.rent-before.rent)}
  for key in ["completed","shipments","boards","furniture"]: report[key]=maxf(0,now[key]-before[key])
+ report.sold=maxf(0,float(state.exported)-float(before.get("exported",state.exported)))
+ report.destinations=[]
+ for city in [false,true]:
+  var records=state.homes if city else state.buildings
+  for i in records.size():
+   var key=("home:" if city else "building:")+str(i)
+   if before.has("places") and int(records[i].level)>int(before.places.get(key,0)) and report.destinations.size()<8:
+    report.destinations.append({"city":city,"index":i,"name":UXRules.title(state,city,i)})
  return report

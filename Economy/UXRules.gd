@@ -75,6 +75,15 @@ static func material_stock(state: Dictionary,key: String) -> Dictionary:
  # A truck's cargo was already withdrawn. An arrived truck has already
  # credited its destination; neither may be counted twice as available stock.
  return {"warehouse":warehouse,"local":local,"transit":transit,"stored":warehouse+local}
+static func build_quote(state: Dictionary,key: String,needed: float) -> Dictionary:
+ var pickup=0.0
+ for source in ConstructionRules.sources(state,key): pickup+=float(source.stock.get(key,0))
+ var committed=ConstructionRules.reserved_materials(state,key)
+ var inbound_reserved=0.0
+ for trip in state.construction_shipments:
+  if not trip.arrived and trip.key==key: inbound_reserved+=float(trip.amount)
+ var available=maxf(0,pickup-maxf(0,committed-inbound_reserved))
+ return {"available":available,"committed":committed,"incoming":inbound_reserved,"missing":maxf(0,needed-available)}
 static func group_members(state: Dictionary,group: Dictionary) -> Array:
  var bounds=Rect2(Vector2(float(group.bounds[0]),float(group.bounds[1])),Vector2(float(group.bounds[2]),float(group.bounds[3])))
  var result=[]

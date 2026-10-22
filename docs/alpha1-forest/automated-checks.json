@@ -1,0 +1,71 @@
+{
+  "headless_checks": 19779,
+  "headless_suites": 28,
+  "headless_numeric_suites": {
+    "FOREST 282": 22,
+    "ROLLBACK 028": 43,
+    "ALPHA 1": 35,
+    "RULES": 233,
+    "SCENE": 4092,
+    "WORLD & HIGHWAY TRADE 27": 61,
+    "PLACEMENT & ONBOARDING": 52,
+    "WORKSHOP": 42,
+    "COMPANION": 23,
+    "WORLD LIFE": 30,
+    "TOWN": 215,
+    "VALLEY": 177,
+    "CRAFTED WORLD": 128,
+    "DELIVERY": 6057,
+    "CONSTRUCTION": 56,
+    "LOGISTICS FIX": 548,
+    "CITY UX": 797,
+    "BUILDING CARD": 437,
+    "JOURNEY": 215,
+    "TRAFFIC & TOUCH": 1494,
+    "FIRE SAFETY": 24,
+    "FIRE PROTECTION": 38,
+    "STONE INDUSTRY": 4870,
+    "QUALITY FEEDBACK": 32,
+    "PRESENTATION 26": 46,
+    "STARTUP": 12
+  },
+  "additional_headless_suites": [
+    "AlphaProgression: real first hut/town hall and 8 offline hours",
+    "Progression: real first home without grants"
+  ],
+  "main_and_boot_smokes_passed": true,
+  "visual_checks": 648,
+  "visual_suites": 14,
+  "visual_results": {
+    "VISUAL COLD START 282": 8,
+    "VISUAL FOREST 282": 28,
+    "VISUAL ROLLBACK 028": 146,
+    "VISUAL UI": 23,
+    "STARTUP OPENGL": 28,
+    "VISUAL BUILDING CARD": 87,
+    "VISUAL CITY UX": 45,
+    "FIRE & RESPONSIVE UI OPENGL": 50,
+    "FIRE PROTECTION OPENGL": 36,
+    "VISUAL CRAFTED WORLD": 14,
+    "VISUAL QUALITY": 41,
+    "VISUAL PRESENTATION 26": 37,
+    "VISUAL WORLD & TRADE 27": 45,
+    "VISUAL ALPHA 1": 60
+  },
+  "validation_sequence": "Complete headless and OpenGL suites; latest VisualForest282 rerun passes 28 checks after wrapping replay labels and adding two small-screen assertions.",
+  "cold_process_desktop": {
+    "first_script_frame_ms": 436,
+    "total_ms": 13971,
+    "responsive_frames": 802,
+    "offline_seconds": 28800,
+    "fixture": "Generated saved city only"
+  },
+  "fixture": "Synthetic disposable profiles only; no private player data",
+  "rendering": "Godot 4.6.3, Xvfb and Mesa llvmpipe GL Compatibility",
+  "android_device_tested": false,
+  "temperature_measured": false,
+  "limitations": [
+    "Some older visual suites report ObjectDB cleanup warnings at exit. Software X11 does not support changing VSync.",
+    "Android startup, background process lifetime and S26 Ultra/S24 FE temperatures require real device tests."
+  ]
+}

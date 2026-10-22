@@ -1,0 +1,41 @@
+TIMBER LOOT · WALDLEBEN 0.28.2-alpha.1 · KURZER GERÄTETEST
+
+Vorbereitung: Gerät/Android-Version, vorherige Spielversion und Firma notieren.
+Als Update installieren. Keine App-Daten löschen. Für Leistungsmessung gleiche
+Helligkeit, gleiches Profil, kein Ladegerät und möglichst abgekühltes Gerät nutzen.
+
+START UND WIEDERAUFNAHME
+- Kaltstart stoppen: Zeit bis Logo, bis Titel bedienbar, bis Welt bedienbar.
+- Mit kleiner und großer Firma, nach 10 Minuten sowie langer Abwesenheit wiederholen.
+- Während Berechnung 30 Sekunden minimieren und zurückkehren. Fortschritt/Firma prüfen.
+  Android kann den gesamten Prozess anhalten/beenden; kein dauerhaft laufender Dienst.
+- Während Berechnung schließen, erneut öffnen: vorherige Firma bleibt erhalten,
+  fertiges Ergebnis einmalig. Miete/Lieferungen nicht doppelt erhalten.
+
+LKW UND MATERIAL
+- Mehr > Betriebsübersicht: wartende Fahrzeuge mit Abfahrtszeit gegen unterwegs prüfen.
+- Mehrere Holz-, Bau-, Stein- und Exporttouren beobachten: getrennte Spuren,
+  versetzte Abfahrten, Ankunft und leere Rückkehr. Zwei Minuten mit Uhrzeit filmen.
+- Während laufender Lieferung eine Maschine/Produktion pausieren: vorhandene Fracht
+  kommt an; Verarbeitung und Auftragsuhr bleiben pausiert. Danach fortsetzen.
+- Falls Ziel voll: Lagerstand dokumentieren und Platz schaffen; dann weiter beobachten.
+- Speichern, schließen, wieder öffnen: reservierte Ladung bleibt einmal vorhanden.
+
+BEDIENUNG UND GRAFIK
+- Material im HUD antippen; nach Verbrauch/Produktion Trendpfeile und Zahlen prüfen.
+- Engpasswarnung antippen: führt sie zum richtigen Material/Betrieb?
+- Haus lange drücken, verschieben, abbrechen; erneut verschieben und bestätigen.
+  Gebäudekarte > letztes Versetzen rückgängig. Stufe/Miete unverändert?
+- Bauvorschau mit mehreren reservierten Baustellen: benötigt/frei/fehlend plausibel?
+  Bestätigen/Abbruch auch auf kleinem Display und mit großer Schrift erreichbar?
+- Betriebsübersicht, Leistungsvergleich, Rückkehrbilanz und fertige Gebäude öffnen.
+- Sandhöfe, Dächer, Straßen und ruhige Beschriftung bei Nah-/Fernkamera prüfen.
+
+S26 ULTRA / S24 FE
+- 5 und 15 Minuten spielen. Wärme, Akkustand, Ruckler und Helligkeit dokumentieren.
+- Mehr > Leistungsvergleich: Kamerarunde in Standard, dann im Akkumodus ausführen.
+  Mittlere FPS und 95%-Framezeit notieren; dieselbe Firma/Ansichten vergleichen.
+- Keine automatisierte Behauptung zur Temperatur: reale Beobachtungen sind nötig.
+
+Bei Fehler: Version, Gerät, genaue Schritte, Lager-/Frachtzustand und Video/Screenshot.
+Keinen privaten Signaturschlüssel weitergeben. Feedback wird nicht automatisch gesendet.

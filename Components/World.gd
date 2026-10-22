@@ -69,6 +69,12 @@ var production_alerts: Node
 var falling_trees=[]
 var next_fall=0
 var forest_detail_key=Vector4(INF,INF,INF,INF)
+var performance_tour: Node
+var hold_pointer=-1
+var hold_started=0
+var hold_point=Vector2.ZERO
+var hold_consumed=false
+var industry_name_labels=[]
 
 func _ready() -> void:
  Game.live_world=true
@@ -80,7 +86,8 @@ func _ready() -> void:
  env.background_color = Color("53bbd3")
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
  env.ambient_light_color = Color("e5efff")
- env.ambient_light_energy = 0.65
+ var first_daylight=clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
+ env.ambient_light_energy = 0.34+first_daylight*0.12
  env.tonemap_mode = Environment.TONE_MAPPER_REINHARDT
  env.tonemap_white=2.0
  environment_node.environment = env
@@ -88,6 +95,8 @@ func _ready() -> void:
  sun = DirectionalLight3D.new()
  sun.rotation_degrees = Vector3(-48,-25,0)
  sun.light_color = Color("fff2df")
+ sun.light_energy=0.20+first_daylight*0.55
+ sun.shadow_opacity=0.7
  sun.shadow_enabled = Game.state.quality>0
  sun.directional_shadow_mode=DirectionalLight3D.SHADOW_ORTHOGONAL
  sun.directional_shadow_max_distance=160
@@ -349,6 +358,7 @@ func rebuild() -> void:
  cranes.clear()
  bins.clear()
  town_name_labels.clear()
+ industry_name_labels.clear()
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
   var model = Models.building(b.kind,int(b.level))
@@ -361,7 +371,10 @@ func rebuild() -> void:
   if mineral!=null: mineral.building_index=i
   var processing = model.get_node_or_null("Processing")
   if processing != null: processing.building_index = i
-  if not Game.delivery_owns(i): Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
+  if not Game.delivery_owns(i):
+   var label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
+   label.set_meta("building_index",i)
+   industry_name_labels.append(label)
   add_approach(model.position,int(b.get("rotation",0)))
   var fill = model.get_node_or_null("SawdustFill")
   if fill!=null:
@@ -530,6 +543,8 @@ func make_weather() -> void:
  add_child(weather)
 
 func _process(delta: float) -> void:
+ if hold_pointer>=0 and not hold_consumed and touches.size()==1 and not pinch_active and drag_distance<8 and placement.is_empty() and Time.get_ticks_msec()-hold_started>=550:
+  hold_consumed=pick_tall_home(hold_point,0,true)
  update_camera(delta)
  time += delta
  var animate=bool(Game.state.ux.motion) and bool(Game.state.ambient_enabled)
@@ -562,7 +577,11 @@ func _process(delta: float) -> void:
  SurfaceLibrary.daylight(daylight)
  var burning_homes={}
  for incident in Game.state.city_services.fires: burning_homes[int(incident.target_ref.index)]=true
- for label in town_name_labels: label.visible=zoom<135 and not burning_homes.has(label.get_meta("home_index",-1))
+ for label in town_name_labels:
+  var selected=hud.ux.selection.get("kind","")=="home" and int(hud.ux.selection.get("index",-1))==int(label.get_meta("home_index",-1))
+  label.visible=(zoom<70 or selected) and not burning_homes.has(label.get_meta("home_index",-1))
+ for label in industry_name_labels:
+  label.visible=zoom<70 or (hud.ux.selection.get("kind","")=="building" and int(hud.ux.selection.get("index",-1))==int(label.get_meta("building_index",-1)))
  for label in biome_labels: label.visible=zoom<300
  for label in boss_labels: label.visible=zoom<180
  environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
@@ -744,6 +763,12 @@ func focus_at(point: Vector3) -> void:
  ease_camera()
 
 func camera_action(action: String) -> void:
+ if action=="benchmark":
+  if performance_tour==null:
+   performance_tour=load("res://Components/PerformanceTour.gd").new()
+   performance_tour.world=self
+   add_child(performance_tour)
+  return
  if action=="photo":
   if photo!=null: photo.enter()
   return
@@ -776,6 +801,10 @@ func _unhandled_input(event: InputEvent) -> void:
   else: pan(event.relative)
  elif event is InputEventScreenTouch:
   if event.pressed:
+   hold_pointer=event.index
+   hold_started=Time.get_ticks_msec()
+   hold_point=event.position
+   hold_consumed=false
    touches[event.index] = event.position
    if touches.size()>1: pinch_active=true
    else:
@@ -783,7 +812,8 @@ func _unhandled_input(event: InputEvent) -> void:
     drag_distance = 0
     start_network_drag(event.position)
   else:
-   if touches.size() == 1 and drag_distance < 12 and not pinch_active and not event.canceled: tap_world(event.position)
+   if event.index==hold_pointer: hold_pointer=-1
+   if touches.size() == 1 and drag_distance < 12 and not pinch_active and not event.canceled and not hold_consumed: tap_world(event.position)
    touches.erase(event.index)
    if event.canceled: pan_velocity=Vector3.ZERO
    pinch_distance = 0
@@ -1098,7 +1128,7 @@ func start_network_drag(screen: Vector2) -> void:
   road_anchor=TownRules.snap(point)
   update_network_ghost()
 
-func pick_tall_home(screen: Vector2) -> bool:
+func pick_tall_home(screen: Vector2, minimum_height: float=12,move: bool=false) -> bool:
  var best=-1
  var closest=INF
  var origin=camera.project_ray_origin(screen)
@@ -1119,7 +1149,9 @@ func pick_tall_home(screen: Vector2) -> bool:
   var distance=origin.distance_squared_to(hit)
   if distance>=closest: continue
   closest=distance
-  best=index if is_home and top>=12 else -1
+  best=index if is_home and top>=minimum_height else -1
  if best<0: return false
- hud.ux.select_building(best,true)
+ if move:
+  hud.request_placement({"kind":Game.state.homes[best].kind,"city":true,"index":best})
+ else: hud.ux.select_building(best,true)
  return true

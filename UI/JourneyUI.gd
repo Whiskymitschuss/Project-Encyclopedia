@@ -158,6 +158,13 @@ func return_menu() -> void:
   var box=hud.card("Dein Betrieb hat weitergearbeitet","%s Minuten berücksichtigt · tatsächliche Entwicklung" % int(float(report.seconds)/60))
   hud.text(box,"Münzbilanz: %s Münzen\n%s Bretter und %s Möbel produziert\n%s Materiallieferungen angekommen\n%s Gebäude / Ausbauten fertig\n%s neue Münzen in den Hauskonten" % [Catalog.number(report.coins),Catalog.number(report.boards),Catalog.number(report.furniture),int(report.shipments),int(report.completed),Catalog.number(report.rent)],17,hud.INK)
   hud.text(box,"Münzen und Waren sind bereits im Spiel verbucht. Miete liegt im jeweiligen Hauskonto, sofern du keinen Hausverwalter nutzt.",14,hud.MUTED)
+  hud.text(box,"%s Einheiten tatsächlich verkauft" % Catalog.number(float(report.get("sold",0))),15,hud.INK)
+  var links=hud.row(box)
+  hud.button(links,"ZUM SÄGEWERK",func(): go("sawmill"))
+  hud.button(links,"LIEFERUNGEN",func(): hud.open_menu("operations"))
+  for destination in report.get("destinations",[]):
+   var place=destination
+   hud.button(box,str(place.name)+" · FERTIG ANSEHEN",func(): hud.ux.select_building(int(place.index),bool(place.city),true))
  if Game.rent_total()>0: hud.button(hud.contents,"MIETE ABHOLEN · %s" % Catalog.number(Game.rent_total()),func(): hud.action(func(): Game.collect_rent()))
  var next=Journey.current(Game.state)
  if not next.is_empty():

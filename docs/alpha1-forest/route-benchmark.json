@@ -1,0 +1,14 @@
+{
+  "seconds_simulated": 1800,
+  "baseline_apk_sha256": "a03fe9222518cd398fc9dbb7764de8eb5a9e92c063e8d70679a8abb29835051d",
+  "baseline_source_commit": "e1f70e76a30522f8456762c50f57ac580dfd311f",
+  "fixture_sha256": "665514e37b5ef7c87f2e948e5e80ec833b026ef5801744f83eb3c82429e6be15",
+  "baseline_ms": 7805,
+  "cached_ms": 1022,
+  "speedup": 7.636986301369863,
+  "identical_complete_state_excluding_last_seen": true,
+  "result_state_sha256": "58c67f48e0c0628d287cf23d27432f25bf5d9fecbe378999519b07f7f51fb87f",
+  "scope": "Cache-only derived APK assets; no 0.28.2 freight or UI changes in this comparison",
+  "desktop_only": true,
+  "android_device_tested": false
+}

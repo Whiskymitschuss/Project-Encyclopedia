@@ -44,14 +44,14 @@ func height_at(point: Vector2) -> float:
  return height
 
 func ground_color(point: Vector2) -> Color:
- var tone=Color("659954")
+ var tone=Color("829b59")
  var total=0.0
  var blend=Color(0,0,0,1)
  for i in 10:
   var p=Catalog.biome_position(i)
   var distance=Vector2((point.x-p.x)/49.0,(point.y-p.z)/44.0).length()
   var weight=pow(maxf(0,1.0-distance/1.5),2)
-  blend+=Color(Catalog.BIOMES[i].ground).darkened(0.11)*weight
+  blend+=Color(Catalog.BIOMES[i].ground).lerp(Color("a1ad72"),0.4).darkened(0.15)*weight
   total+=weight
  if total>0.001:
   blend/=total

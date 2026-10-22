@@ -1,3 +1,18 @@
+## Prüfung Waldleben · 0.28.2-alpha.1
+
+19.779 Headless-Prüfungen in 28 Suiten einschließlich zweier natürlicher
+Progressionsläufe und zusätzlicher Hauptwelt-/Intro-Smokes; 648 OpenGL-Prüfungen
+in 14 unterschiedlichen Suiten. Keine fehlgeschlagenen Prüfungen oder Skriptfehler.
+Neu: reale Produktionspause mit ankommender Fracht, 16 konkurrierende Touren,
+gespeicherte Warteschlange, materialerhaltende Trends, echte Langdruck-/Undo-Touches,
+kleine Displays und sichere asynchrone Ergebnisübernahme.
+
+[Einzelergebnisse](alpha1-forest/automated-checks.json),
+[Cache-Vergleich](alpha1-forest/route-benchmark.json),
+[Änderungen und Grenzen](FOREST-282.md). Nur künstliche temporäre Profile.
+Die bestehende ObjectDB-Warnung einzelner älterer Grafiktests bleibt zu beobachten.
+Kein tatsächlicher Android-Gerätetest und keine Temperaturmessung dieser Fassung.
+
 ## Externe Downloads Rückkehr zur 0.28 · 0.28.1 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.1-alpha.1` vollständig per

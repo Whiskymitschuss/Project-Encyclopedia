@@ -124,7 +124,7 @@ func run() -> void:
  game.state.delivery.paused=true
  var frozen=game.state.delivery.duplicate(true)
  game.simulate(90)
- check(game.state.delivery==frozen,"Pausing freezes cargo, production and the order deadline together")
+ check(game.state.delivery.order==frozen.order and game.state.delivery.progress==frozen.progress,"Production pause freezes processing and the order deadline while already dispatched freight may finish")
  game.state.delivery.paused=false
  var order=game.state.delivery.order
  order.left=1

@@ -1,9 +1,9 @@
 class_name StreetScape
 extends RefCounted
 
-const ASPHALT=Color("596f75")
-const WALK=Color("c8c2aa")
-const CURB=Color("e4dbc2")
+const ASPHALT=Color("485f70")
+const WALK=Color("d9cba7")
+const CURB=Color("f0ead5")
 
 static func context(state: Dictionary) -> Dictionary:
  var plots=[]

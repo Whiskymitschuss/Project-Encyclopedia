@@ -74,7 +74,7 @@ static func dispatch(state: Dictionary, reserve: float, unit_price: float) -> bo
  var drive=maxf(1.0,float(connection.distance)/(12.0+int(state.vehicle)*1.5))
  var travel=2+drive+2
  state.resources[key]-=amount
- state.trade.shipments.append({"id":state.trade.next_id,"source":"market","origin":connection.origin,"target":"export","gateway":"highway","key":key,"amount":amount,"mode":"truck","path":connection.path.duplicate(true),"road_cells":connection.road_cells.duplicate(true),"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false,"unit_price":unit_price})
+ FreightFlow.enqueue(state,state.trade.shipments,{"id":state.trade.next_id,"source":"market","origin":connection.origin,"target":"export","gateway":"highway","key":key,"amount":amount,"mode":"truck","path":connection.path.duplicate(true),"road_cells":connection.road_cells.duplicate(true),"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false,"unit_price":unit_price})
  state.trade.next_id+=1
  return true
 
@@ -82,7 +82,7 @@ static func tick(state: Dictionary, delta: float) -> Dictionary:
  var report={"coins":0.0,"amount":0.0,"receipts":[]}
  var done=[]
  for trip in state.trade.shipments:
-  trip.age=float(trip.age)+delta
+  FreightFlow.advance(trip,delta)
   if not trip.arrived and float(trip.age)>=float(trip.travel):
    trip.arrived=true
    var coins=float(trip.amount)*float(trip.unit_price)

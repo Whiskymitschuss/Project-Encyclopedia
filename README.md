@@ -1,20 +1,29 @@
-# Timber Loot Tycoon — Alpha 1 · Rückkehr zur 0.28
+# Timber Loot Tycoon — Alpha 1 · Waldleben
 
-Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
+Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.1-alpha.1 · Basis wieder 0.28
+## Aktuell: 0.28.2-alpha.1 · weiterhin auf 0.28-Basis
 
-Auf Wunsch ist der Spielcode wieder auf der verteilten 0.28 aufgebaut. Die
-Verkehrssteuerung ab 0.29 ist zurückgenommen. Neu auf dieser Basis: Häuser
-direkt versetzen, dauerhafte Materialbestände im HUD und begrenzte mobile
-Renderlast (30 FPS, kleinere Schatten, keine Darstellung im Hintergrund).
+Wärmere Betriebshöfe mit sandfarbenem Boden, blauen/kupferroten Dächern,
+Holzzäunen und klaren Straßen. Zeitversetzte Depotabfahrten für alle Frachtarten;
+bereits fahrende LKW bleiben bei Produktionspause nicht mehr stehen.
 
-Als Update über die vorhandene Alpha installieren; **nicht deinstallieren**.
-Die interne Android-Nummer 2951 ermöglicht die Rückkehr auch über 0.29.4.
-Die Wärmeentwicklung auf S26 Ultra und S24 FE bleibt auf den Geräten zu prüfen.
+Routen-Caches vermeiden wiederholte Wegsuche. Die Offline-Berechnung läuft auf
+einer getrennten Firmenkopie mit sichtbarem Fortschritt und sicherem Abschluss.
+Cache-Vergleich auf dem Desktop: rund 7,6× schneller bei identischem Ergebnis.
+Das ist keine zugesicherte Handy-Startzeit.
 
-[Änderungen und Gründe](docs/ROLLBACK-028.md) ·
-[Installation](docs/alpha1-rollback/START-HIER.txt) · [Downloads](releases/README.md).
+Acht Bedienhilfen: Engpasslösungen, Materialtrends, langes Drücken zum Verschieben
+mit Rückgängig, verfügbare/fehlende Baumaterialien, gestaffelte Abfahrten,
+vergleichbare Kameramessung, ruhigere Beschriftung und verlinkte Rückkehrbilanz.
+
+Als Update installieren; **nicht deinstallieren oder App-Daten löschen**.
+Android-Code 2961, gleiches Paket und Testzertifikat. Die mobilen 30 FPS und
+kleineren Schatten bleiben aktiv. Reale Android-Startzeit und Temperatur auf
+S26 Ultra/S24 FE müssen am Gerät geprüft werden.
+
+[Änderungen, Nutzen und Nachweise](docs/FOREST-282.md) ·
+[Installation](docs/alpha1-forest/START-HIER.txt) · [Downloads](releases/README.md).
 
 ## Frühere 0.29-Entwicklung (zurückgenommen)
 

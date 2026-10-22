@@ -610,7 +610,9 @@ func dynamic_text(parent: Node, callback: Callable) -> void:
 func materials_text(materials: Dictionary) -> String:
  var parts = []
  for key in materials:
-  parts.append("%s %s (%s vorhanden)" % [Catalog.number(materials[key]),Catalog.RESOURCES[key],Catalog.number(Game.state.resources[key])])
+  var needed=float(materials[key])
+  var quote=UXRules.build_quote(Game.state,key,needed)
+  parts.append("%s: %s nötig · %s frei · %s fehlen · %s für andere Baustellen unterwegs" % [Catalog.RESOURCES[key],Catalog.number(needed),Catalog.number(quote.available),Catalog.number(quote.missing),Catalog.number(quote.incoming)])
  return ", ".join(parts)
 
 func render_menu() -> void:
@@ -645,6 +647,7 @@ func render_menu() -> void:
   "prestige": prestige_menu()
   "market": market_menu()
   "stock": stock_menu()
+  "operations","performance": load("res://UI/OperationsDesk.gd").populate(self,current)
   "export": export_menu()
   "settings": settings_menu()
   "alpha": alpha_desk.populate()
@@ -913,6 +916,8 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
+ button(contents,"BETRIEBSÜBERSICHT · ENGPÄSSE & LKW",func(): open_menu("operations"))
+ button(contents,"LEISTUNGSVERGLEICH · KAMERARUNDE",func(): open_menu("performance"))
  var groups=[
   ["Stadt & Sicherheit",[["Einsatzzentrale & Feuerwehr","services"],["Stadtkarte & freie Grundstücke","overview"],["Stadt & Häuser","city"],["Viertel & Ausbaupläne","districts"],["Hinweise & Ereignisse","events"]]],
   ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Autobahn & Exporthandel","export"],["Spänebox","sawdust"]]],
@@ -1079,7 +1084,7 @@ func settings_menu() -> void:
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality); Game.apply_device_profile()))
  text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich Schatten und Umwelteffekte.",14,MUTED)
  if ux!=null: ux.settings_controls(box)
- text(contents,"Alpha 1 · 0.28.1 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Alpha 1 · 0.28.2 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -1092,18 +1097,21 @@ func build_placement_bar() -> void:
  placement_panel.grow_vertical=Control.GROW_DIRECTION_BEGIN
  placement_panel.clip_contents=true
  placement_panel.add_theme_stylebox_override("panel",style(INK,20))
+ var frame=VBoxContainer.new()
+ placement_panel.add_child(frame)
  var reading=load("res://UI/TouchScroll.gd").new()
- placement_panel.add_child(reading)
+ reading.size_flags_vertical=Control.SIZE_EXPAND_FILL
+ frame.add_child(reading)
  var box=VBoxContainer.new()
  box.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  reading.add_child(box)
  placement_title=text(box,"",20,GOLD)
  placement_hint=text(box,"",14,CREAM)
  placement_materials=text(box,"",13,MUTED)
- var choices=row(box)
+ var choices=row(frame)
  button(choices,"Abbrechen",func(): placement_action.emit("cancel"))
  placement_rotate=button(choices,"Drehen 90°",func(): placement_action.emit("rotate"))
- placement_undo=button(box,"LETZTEN VORSCHAUSCHRITT ZURÜCK",func(): placement_action.emit("undo"))
+ placement_undo=button(frame,"LETZTEN VORSCHAUSCHRITT ZURÜCK",func(): placement_action.emit("undo"))
  placement_confirm=button(choices,"BAUEN",func(): placement_action.emit("confirm"))
  placement_confirm.add_theme_stylebox_override("normal",style(Color("e2a536"),12))
  placement_panel.hide()

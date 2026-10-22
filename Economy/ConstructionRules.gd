@@ -152,7 +152,7 @@ static func logistics_status(state: Dictionary, job: Dictionary) -> String:
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done = []
  for s in state.construction_shipments:
-  s.age = float(s.age)+delta
+  FreightFlow.advance(s,delta)
   if not s.arrived and float(s.age)>=float(s.travel):
    var found = false
    for job in state.jobs:
@@ -200,7 +200,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
     source.stock[key] = float(source.stock[key])-amount
     var drive = maxf(2,LogisticsRoutes.length(route)/(9+int(state.vehicle)))
     var travel = drive+4.0
-    state.construction_shipments.append({"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
+    FreightFlow.enqueue(state,state.construction_shipments,{"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
     state.next_shipment += 1
     free-=1
     missing-=amount

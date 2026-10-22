@@ -1,0 +1,22 @@
+TIMBER LOOT TYCOON · 0.28.2-alpha.1 · WALDLEBEN
+
+1. APK herunterladen und direkt über die vorhandene Timber-Loot-Alpha installieren.
+   Nicht deinstallieren und keine App-Daten löschen. Bei Bedarf im Android-Dialog
+   die Installation für die verwendete Download-/Datei-App erlauben.
+2. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Paket und Testsignatur bleiben gleich.
+   Interner Versionscode 2961: Update auch über die verworfene 0.29.4 möglich.
+3. Start zeigt Logo und echten Fortschritt. Deine Firma wird vollständig berechnet,
+   bevor das fertige Ergebnis gespeichert wird. APP SCHLIESSEN lässt den bisherigen
+   gespeicherten Stand bestehen. Nach erneutem Öffnen wird wieder vollständig gerechnet.
+4. Die Spielbasis bleibt 0.28. Produktionspause hält bereits fahrende Fracht nicht
+   mehr fest. Weitere LKW starten bei Konflikten zeitversetzt aus dem Depot.
+5. Materialzahlen antippen: Bestände, Lieferungen und beobachteter Trend.
+   Mehr > Betriebsübersicht: Engpässe und wartende/unterwegs befindliche LKW.
+   Haus lange drücken: Vorschau zum Versetzen. Erst Bestätigen setzt es um.
+   In der Gebäudekarte lässt sich das letzte Versetzen rückgängig machen.
+6. Mehr > Leistungsvergleich: feste 30-Sekunden-Kamerarunde; danach auch Akkumodus
+   vergleichen. Temperatur bitte selbst am Gerät messen/beobachten.
+
+Debug-signierte Testfassung, kein Store-Release. Kein echter Android-Gerätetest
+dieser Fassung in der Cloud möglich. Öffentlich verteilbarer Link, kein Zugangsschutz.
+Es werden keine Berichte automatisch versendet. Feedback bitte bewusst weitergeben.

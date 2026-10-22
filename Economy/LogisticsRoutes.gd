@@ -2,6 +2,7 @@ class_name LogisticsRoutes
 extends RefCounted
 
 static var curve_cache: Dictionary={}
+static var route_cache: Dictionary={}
 
 static func driving_path(points: Array) -> Array:
  # Keep authoritative saved checkpoints intact: reservations, road protection,
@@ -57,6 +58,16 @@ static func road_to_point(state: Dictionary, source: int, target: Vector3) -> Ar
  return between(state,building_position(state,source),target)
 
 static func between(state: Dictionary, a: Vector3, b: Vector3) -> Array:
+ var key=hash([a,b,state.town.roads,int(state.town.districts)])
+ if route_cache.has(key):
+  var saved=route_cache[key]
+  if saved.a==a and saved.b==b and saved.roads==state.town.roads and saved.districts==int(state.town.districts): return saved.path.duplicate(true)
+ var path=calculate(state,a,b)
+ if route_cache.size()>=128: route_cache.clear()
+ route_cache[key]={"a":a,"b":b,"roads":state.town.roads.duplicate(true),"districts":int(state.town.districts),"path":path.duplicate(true)}
+ return path
+
+static func calculate(state: Dictionary, a: Vector3, b: Vector3) -> Array:
  var cells = TownRules.road_cells(state.town)
  var start = TownRules.nearest(a,cells,32.0)
  var end = TownRules.nearest(b,cells,32.0)

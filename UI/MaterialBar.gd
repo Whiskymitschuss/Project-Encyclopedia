@@ -5,6 +5,7 @@ const NAMES={"wood":"Holz","boards":"Bretter","dry":"Trocken","furniture":"Möbe
 var hud
 var counters={}
 var controls={}
+var captions={}
 func _ready() -> void:
  columns=3
  size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -29,6 +30,7 @@ func _ready() -> void:
   name_label.autowrap_mode=TextServer.AUTOWRAP_OFF
   name_label.clip_text=true
   name_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+  captions[key]=name_label
   var count=hud.text(box,"0",17,hud.GOLD)
   count.autowrap_mode=TextServer.AUTOWRAP_OFF
   count.clip_text=true
@@ -40,4 +42,6 @@ func refresh() -> void:
  for key in counters:
   var stock=UXRules.material_stock(Game.state,key)
   counters[key].text=Catalog.number(stock.stored)
+  var trend=Game.material_trend(key)
+  captions[key].text=NAMES[key]+(" "+str(trend.arrow) if trend.ready else "")
   controls[key].tooltip_text="%s: %s im Lager · %s in Betrieben · %s unterwegs. Antippen für Quellen und Lieferungen." % [Catalog.RESOURCES[key],Catalog.number(stock.warehouse),Catalog.number(stock.local),Catalog.number(stock.transit)]

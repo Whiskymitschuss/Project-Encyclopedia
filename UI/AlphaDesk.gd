@@ -15,6 +15,9 @@ func populate() -> void:
  if draft.is_empty() and FileAccess.file_exists("user://Alpha-Testbericht.txt"): draft=FileAccess.get_file_as_string("user://Alpha-Testbericht.txt")
  report=TextEdit.new()
  report.text=AlphaReport.build(Game.state,device,health) if draft.is_empty() else draft
+ if draft.is_empty() and not Game.performance_results.is_empty():
+  var result=Game.performance_results
+  report.text+="\nKamerarunde: %.1f FPS · P95 %.1f ms · %s · %.1f Sekunden\nWärme am Gerät: [bitte ergänzen]\n" % [result.fps,result.p95_ms,result.profile,result.seconds]
  original=report.text
  report.custom_minimum_size=Vector2(0,clampf(hud.size.y*0.15,96,180))
  report.wrap_mode=TextEdit.LINE_WRAPPING_BOUNDARY

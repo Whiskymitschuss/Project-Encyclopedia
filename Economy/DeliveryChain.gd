@@ -48,7 +48,16 @@ static func reserved(data: Dictionary, kind: String, key: String) -> float:
 static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonus: float = 1.0) -> Dictionary:
  var report = {"coins":0.0,"sold":0,"tickets":0,"sawdust":0.0,"produced":{},"orders":0,"flow":{}}
  var data = state.delivery
- if not data.active or data.paused: return report
+ var finished = []
+ for shipment in data.shipments:
+  FreightFlow.advance(shipment,delta)
+  if not shipment.arrived and float(shipment.age)>=float(shipment.travel):
+   data.buffers[shipment.target][shipment.key] += float(shipment.amount)
+   shipment.arrived = true
+  if float(shipment.age)>=float(shipment.total): finished.append(shipment)
+ for shipment in finished: data.shipments.erase(shipment)
+ if not data.active: return report
+ if data.paused: return report
  # Freeze this line while one of its selected buildings is paused.
  for kind in KINDS:
   var index = int(data.nodes.get(kind,-1))
@@ -63,14 +72,6 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    data.buffers[kind][key] += amount
  # Arrival precedes production and dispatch. A dispatch can never teleport goods
  # into a downstream recipe in the same simulation tick.
- var finished = []
- for shipment in data.shipments:
-  shipment.age = float(shipment.age)+delta
-  if not shipment.arrived and float(shipment.age)>=float(shipment.travel):
-   data.buffers[shipment.target][shipment.key] += float(shipment.amount)
-   shipment.arrived = true
-  if float(shipment.age)>=float(shipment.total): finished.append(shipment)
- for shipment in finished: data.shipments.erase(shipment)
  var protected_wood = ConstructionRules.reserved_materials(state,"wood")
  var take = minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
  data.buffers.station.wood += take
@@ -140,7 +141,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   travel+=4.0
   var total = travel+drive+2
   data.buffers[source][key] -= batch
-  data.shipments.append({"id":data.next_id,"source":source,"target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":total,"age":0.0,"arrived":false})
+  FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"source":source,"target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":total,"age":0.0,"arrived":false})
   data.next_id += 1
  return report
 

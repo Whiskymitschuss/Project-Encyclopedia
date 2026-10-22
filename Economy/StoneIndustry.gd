@@ -43,7 +43,7 @@ static func uses_building(state: Dictionary, index: int) -> bool:
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done=[]
  for shipment in state.stone.shipments:
-  shipment.age=float(shipment.age)+delta
+  FreightFlow.advance(shipment,delta)
   if not shipment.arrived and float(shipment.age)>=float(shipment.travel):
    var stock=state.resources if int(shipment.destination)<0 else site(state,int(shipment.destination)).get("stock",{})
    var cap=warehouse_capacity(state) if int(shipment.destination)<0 else capacity(state,int(shipment.destination))
@@ -181,7 +181,7 @@ static func dispatch(state: Dictionary, cache: Dictionary) -> int:
   site(state,int(request.origin)).stock[request.key]-=amount
   var drive=maxf(2,LogisticsRoutes.length(request.path)/(10.0+int(state.vehicle)))
   request.merge({"id":state.stone.next_id,"domain":"stone","source":"mineral","target":"mineral","mode":"truck","amount":amount,"age":0.0,"arrived":false,"load":2.0,"unload":2.0,"drive":drive,"travel":drive+4,"total":drive*2+6},true)
-  state.stone.shipments.append(request)
+  FreightFlow.enqueue(state,state.stone.shipments,request)
   state.stone.next_id=int(state.stone.next_id)+1
   state.stone.turn="wood"
   free-=1

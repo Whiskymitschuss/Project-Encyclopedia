@@ -109,9 +109,12 @@ func run() -> void:
  game.simulate(180)
  check(float(game.state.journey.stats.get("boards",0))>0,"Physical production contributes actual newly produced boards")
  var ship_count=float(game.state.journey.stats.get("shipments",0))
+ var expected_arrivals=0
+ for trip in game.state.delivery.shipments:
+  if not trip.arrived and float(trip.get("depart_in",0))+float(trip.travel)-float(trip.age)<=10: expected_arrivals+=1
  game.state.delivery.paused=true
  game.simulate(10)
- check(game.state.journey.stats.get("shipments",0)==ship_count,"Paused deliveries and empty returns create no fake arrivals")
+ check(game.state.journey.stats.get("shipments",0)==ship_count+expected_arrivals,"Production pause counts only real in-flight arrivals, once; empty returns never add arrivals")
 
  # Migration has no made-up production or payouts.
  fresh()

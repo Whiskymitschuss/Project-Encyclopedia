@@ -24,10 +24,11 @@ if [ -z "${DISPLAY:-}" ]; then
  if [ ! -s "$test_data/display" ]; then cat "$test_data/x11.log"; exit 1; fi
  export DISPLAY=":$(cat "$test_data/display")"
 fi
-targets=(VisualRollback028 VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI VisualFireProtection VisualCrafted VisualQuality VisualPresentation26 VisualWorldTrade27 VisualAlpha28)
+targets=(VisualColdStart282 VisualForest282 VisualRollback028 VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI VisualFireProtection VisualCrafted VisualQuality VisualPresentation26 VisualWorldTrade27 VisualAlpha28)
 if [ "$#" -gt 0 ]; then targets=("$@"); fi
 for target in "${targets[@]}"; do
  export XDG_DATA_HOME="$test_data/profile-$target"
+ if [ "$target" = VisualColdStart282 ]; then python3 scripts/seed_cold.py "$XDG_DATA_HOME"; fi
  status=0
  timeout 120s bash scripts/godot.sh --audio-driver Dummy --rendering-method gl_compatibility --script "res://Tests/$target.gd" >"$test_data/log" 2>&1 || status=$?
  cat "$test_data/log"

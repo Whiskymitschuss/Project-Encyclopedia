@@ -223,6 +223,14 @@ func render_sheet() -> void:
   var other=sheet_actions()
   hud.button(other,"Details ↑",func(): expand_selection())
   hud.button(other,"Verschieben",func(): hud.request_placement({"kind":b.kind,"city":city,"index":index}))
+  var moved=Game.state.ux.get("move_undo",{})
+  if not moved.is_empty() and bool(moved.city)==city and int(moved.index)==index:
+   hud.button(sheet_body,"LETZTES VERSETZEN RÜCKGÄNGIG",func(): hud.action(func(): Game.undo_building_move()))
+  if not city:
+   var advice=ProductionPresentation.advice(Game,index)
+   if not str(advice.key).is_empty(): hud.button(sheet_body,"ENGPASS LÖSEN · "+Catalog.RESOURCES[advice.key],func(): open_material(str(advice.key)))
+   if b.get("paused",false): hud.button(sheet_body,"DIESEN BETRIEB FORTSETZEN",func(): hud.action(func(): Game.state.buildings[index].paused=false))
+   elif Game.delivery_owns(index) and Game.state.delivery.paused: hud.button(sheet_body,"LIEFERLINIE FORTSETZEN",func(): hud.action(func(): Game.state.delivery.paused=false))
   if city: hud.button(sheet_body,"ARCHITEKTUR · STUFEN 1–10",func(): show_evolution(b.kind,int(b.level)))
  elif selection.kind=="job":
   var job=find_job()
@@ -281,7 +289,7 @@ func refresh() -> void:
  if sheet.visible and not sheet_gesture and not content_gesture and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): render_sheet()
 func _process(delta: float) -> void:
  refresh_clock+=delta
- event_button.visible=not hud.overlay.visible and not hud.placement_panel.visible and not palette.visible
+ event_button.visible=not hud.overlay.visible and not hud.placement_panel.visible and not palette.visible and not sheet.visible
  if refresh_clock>=1:
   refresh_clock=0
   refresh()
@@ -370,6 +378,15 @@ func material_menu() -> void:
  var key=material_key
  hud.modal_title.text=Catalog.RESOURCES.get(key,key).to_upper()+" · VERSORGUNG"
  var box=hud.card("Wo liegt die Ware?","Lager, lokale Ausgänge und LKW-Ladungen werden getrennt gezählt. Tippe auf eine Quelle, um ihren Betrieb und den tatsächlichen Zustand anzusehen.")
+ hud.dynamic_text(box,func():
+  var amount=UXRules.material_stock(Game.state,key)
+  var trend=Game.material_trend(key)
+  return "%s Lager · %s Betriebe · %s unterwegs\n%s" % [Catalog.number(amount.warehouse),Catalog.number(amount.local),Catalog.number(amount.transit),"Bestandstrend: %+.1f / Min." % float(trend.rate) if trend.ready else "Bestandstrend wird beim Spielen gemessen."])
+ if Game.state.delivery.active:
+  for kind_value in Game.state.delivery.buffers:
+   var kind=str(kind_value)
+   if float(Game.state.delivery.buffers[kind].get(key,0))>0:
+    hud.button(box,"%s · WARE INS LAGER HOLEN" % Catalog.BUILDINGS[kind].name,func(): hud.action(func(): Game.unload_delivery(kind)))
  for source in UXRules.material_sources(Game.state,key):
   var index=int(source.index)
   hud.button(box,"%s · Produktion fürs Lager →" % source.name if source.get("shared",false) else "%s · %s verfügbar →" % [source.name,Catalog.number(source.amount)],func(): select_building(index,false,true))

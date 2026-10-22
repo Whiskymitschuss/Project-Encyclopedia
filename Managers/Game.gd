@@ -33,6 +33,17 @@ var delivery_route_cache: Dictionary = {}
 var delivery_route_signature = 0
 var application_suspended=false
 var pause_tree_was_paused=false
+var simulation_only=false
+var catching_up=false
+var replay_worker: RefCounted
+var replay_before={}
+var replay_seconds=0.0
+var replay_extension=0.0
+var replay_paused_at=0.0
+var replay_tree_was_paused=false
+var replay_overlay: CanvasLayer
+var stock_history=[]
+var performance_results={}
 
 func initial_state() -> Dictionary:
  var resources = {}
@@ -64,14 +75,17 @@ func _ready() -> void:
   restore(saved)
   var offline = clampf(Time.get_unix_time_from_system() - float(state.last_seen),0.0,28800.0)
   var before = Journey.resume_capture(state)
-  simulate(offline)
-  if offline > 60:
+  if offline>2 and DisplayServer.get_name()!="headless":
+   start_replay(offline,before)
+  else: simulate(offline)
+  if offline > 60 and not catching_up:
    return_report=Journey.resume_report(state,before,offline)
    offline_report = "%s Min. offline · +%s Münzen" % [int(offline/60),Catalog.number(state.coins-float(before.coins))]
  get_tree().quit_on_go_back=false
  process_mode = Node.PROCESS_MODE_ALWAYS
 
 func restore(saved: Dictionary) -> void:
+ stock_history.clear()
  state = initial_state()
  for key in state:
   if saved.has(key):
@@ -122,7 +136,7 @@ func restore(saved: Dictionary) -> void:
 func apply_device_profile() -> void:
  # Do not drive high-refresh Android screens at 90/120 FPS. Headless tests
  # deliberately remain uncapped; simulation still uses elapsed seconds.
- if DisplayServer.get_name()!="headless":
+ if not simulation_only and DisplayServer.get_name()!="headless":
   Engine.max_fps=30 if OS.has_feature("mobile") or int(state.quality)==0 else 60
 
 func suspend_presentation() -> void:
@@ -147,6 +161,8 @@ func snapshot() -> Dictionary:
  return data
 
 func save(silent: bool = false) -> bool:
+ if simulation_only: return true
+ if catching_up: return false
  var previously_ok=last_save_ok
  last_save_ok = Store.save_game(snapshot())
  if silent and previously_ok and not last_save_ok: notice.emit("Speichern fehlgeschlagen · "+Store.last_error)
@@ -154,6 +170,17 @@ func save(silent: bool = false) -> bool:
  return last_save_ok
 
 func _notification(what: int) -> void:
+ if catching_up:
+  if what==NOTIFICATION_APPLICATION_PAUSED:
+   replay_paused_at=Time.get_unix_time_from_system()
+   suspend_presentation()
+  if what==NOTIFICATION_APPLICATION_RESUMED:
+   resume_presentation()
+   if replay_paused_at>0:
+    replay_extension+=clampf(Time.get_unix_time_from_system()-replay_paused_at,0,maxf(0,28800-replay_seconds-replay_extension))
+    replay_paused_at=0
+  if what==NOTIFICATION_WM_GO_BACK_REQUEST: get_tree().quit()
+  return
  if what==NOTIFICATION_WM_GO_BACK_REQUEST: back_requested.emit()
  if what == NOTIFICATION_APPLICATION_PAUSED:
   paused_at=Time.get_unix_time_from_system()
@@ -161,16 +188,22 @@ func _notification(what: int) -> void:
   suspend_presentation()
  if what == NOTIFICATION_APPLICATION_RESUMED: resume_presentation()
  if what == NOTIFICATION_APPLICATION_RESUMED and paused_at>0:
-  resume_company(Time.get_unix_time_from_system())
+  resume_company(Time.get_unix_time_from_system(),DisplayServer.get_name()!="headless")
  if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
   save(true)
 
-func resume_company(now: float) -> void:
+func resume_company(now: float, asynchronous: bool=false) -> void:
  if paused_at<=0 or pause_capture.is_empty(): return
  var gap=maxf(0,now-paused_at)
  # Some platforms continue processing briefly in the background. Subtract
  # those already simulated seconds instead of paying them a second time.
  var remaining=clampf(gap-(float(state.elapsed)-float(pause_capture.elapsed)),0,28800)
+ if asynchronous and remaining>2:
+  var before=pause_capture.duplicate(true)
+  paused_at=0
+  pause_capture={}
+  start_replay(remaining,before)
+  return
  simulate(remaining)
  if gap>60:
   return_report=Journey.resume_report(state,pause_capture,minf(gap,28800))
@@ -182,6 +215,9 @@ func resume_company(now: float) -> void:
  save(true)
 
 func _process(delta: float) -> void:
+ if catching_up:
+  poll_replay()
+  return
  if application_suspended: return
  if not live_world: return
  if skip_resume_delta:
@@ -195,6 +231,7 @@ func _process(delta: float) -> void:
   var steps = int(tick_clock)
   tick_clock -= steps
   for i in steps: step(1.0)
+  track_materials()
   changed.emit()
  if save_clock >= 20.0:
   save_clock = 0.0
@@ -204,6 +241,76 @@ func simulate(seconds: float) -> void:
  for i in int(seconds): step(1.0)
  var rest = seconds - floorf(seconds)
  if rest > 0: step(rest)
+
+func start_replay(seconds: float,before: Dictionary) -> void:
+ if catching_up: return
+ replay_before=before.duplicate(true)
+ replay_seconds=seconds
+ replay_extension=0
+ replay_tree_was_paused=get_tree().paused
+ catching_up=true
+ get_tree().paused=true
+ replay_worker=load("res://Managers/CompanyReplay.gd").new()
+ if replay_worker.start(get_script(),state,seconds)!=OK:
+  replay_worker.cancel()
+  replay_worker=null
+  catching_up=false
+  get_tree().paused=replay_tree_was_paused
+  simulate(seconds)
+  return
+ replay_overlay=load("res://UI/ReplayStatus.gd").new()
+ add_child(replay_overlay)
+
+func replay_progress() -> float:
+ return replay_worker.progress() if replay_worker!=null else 1.0
+
+func poll_replay() -> void:
+ if not catching_up or application_suspended or not replay_worker.finished(): return
+ var result=replay_worker.take()
+ replay_worker=null
+ if replay_extension>0.001:
+  var extra=replay_extension
+  replay_extension=0
+  replay_seconds+=extra
+  replay_worker=load("res://Managers/CompanyReplay.gd").new()
+  if replay_worker.start(get_script(),result,extra)==OK: return
+  replay_worker.cancel()
+  replay_worker=null
+  state=result
+  simulate(extra)
+ else: state=result
+ catching_up=false
+ get_tree().paused=replay_tree_was_paused
+ replay_overlay.queue_free()
+ replay_overlay=null
+ stock_history.clear()
+ if replay_seconds>60:
+  return_report=Journey.resume_report(state,replay_before,replay_seconds)
+  offline_report="%s Min. offline · +%s Münzen" % [int(replay_seconds/60),Catalog.number(return_report.coins)]
+ skip_resume_delta=true
+ changed.emit()
+ rebuild_world.emit()
+ save(true)
+
+func _exit_tree() -> void:
+ if replay_worker!=null: replay_worker.cancel()
+
+func track_materials() -> void:
+ if not stock_history.is_empty() and float(state.elapsed)-float(stock_history.back().at)<5: return
+ var stock={}
+ for key in Catalog.RESOURCES:
+  var amount=UXRules.material_stock(state,key)
+  stock[key]=amount.stored+amount.transit
+ stock_history.append({"at":float(state.elapsed),"stock":stock})
+ while stock_history.size()>13: stock_history.pop_front()
+
+func material_trend(key: String) -> Dictionary:
+ if stock_history.size()<2: return {"ready":false,"rate":0.0,"arrow":""}
+ var first=stock_history.front()
+ var last=stock_history.back()
+ var seconds=float(last.at)-float(first.at)
+ var rate=(float(last.stock.get(key,0))-float(first.stock.get(key,0)))*60/maxf(seconds,1)
+ return {"ready":seconds>=5,"rate":rate,"arrow":"↗" if rate>0.5 else "↘" if rate< -0.5 else "→"}
 
 func level(kind: String) -> int:
  var total = 0
@@ -575,7 +682,7 @@ func move_reason(index: int, city: bool = false) -> String:
   return "Einsatz oder Stadtfahrt an diesem Gebäude zuerst beenden lassen"
  return ""
 
-func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = false) -> bool:
+func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = false, remember: bool=true) -> bool:
  var blocked=move_reason(index,city)
  if not blocked.is_empty(): notice.emit(blocked); return false
  var records = state.homes if city else state.buildings
@@ -590,12 +697,25 @@ func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = f
   for ref in [person.source_ref,person.destination_ref]:
    if ref.type==ref_type and int(ref.index)==index: return false
   return true)
+ var original=home_position(index) if city else building_position(index)
+ var old_rotation=int(records[index].get("rotation",0))
+ state.ux.move_undo={"index":index,"city":city,"kind":records[index].kind,"from":[original.x,original.z],"rotation":old_rotation,"to":[point.x,point.z],"new_rotation":posmod(rotation,360)} if remember else {}
  records[index].position = [point.x,point.z]
  records[index].rotation = posmod(rotation,360)
  rebuild_world.emit()
  changed.emit()
  save(true)
  return true
+
+func undo_building_move() -> bool:
+ var last=state.ux.get("move_undo",{}).duplicate(true)
+ if last.is_empty(): return false
+ var records=state.homes if last.city else state.buildings
+ var index=int(last.index)
+ if index>=records.size() or records[index].kind!=last.kind: return false
+ var current=home_position(index) if last.city else building_position(index)
+ if current!=Vector3(float(last.to[0]),0,float(last.to[1])) or int(records[index].get("rotation",0))!=int(last.new_rotation): return false
+ return move_building(index,Vector3(float(last.from[0]),0,float(last.from[1])),int(last.rotation),bool(last.city),false)
 
 func order_building(kind: String, point: Variant = null, rotation: int = 0) -> bool:
  if not Catalog.BUILDINGS.has(kind) or not available(kind): return false
@@ -1320,10 +1440,9 @@ func delivery_owns(index: int) -> bool:
 
 func delivery_routes() -> Dictionary:
  if not state.delivery.active: return {}
- var footprints = []
- for job in state.jobs:
-  if job.type in ["building","home"]: footprints.append([job.get("position",[]),job.get("rotation",0)])
- var signature = hash([state.buildings,state.homes,state.town.roads,state.town.districts,state.delivery.nodes,footprints])
+ var points=[]
+ for kind in DeliveryChain.KINDS: points.append(building_position(int(state.delivery.nodes[kind])))
+ var signature = hash([points,state.town.roads,state.town.districts,state.delivery.nodes])
  if signature==delivery_route_signature and not delivery_route_cache.is_empty(): return delivery_route_cache
  delivery_route_signature = signature
  delivery_route_cache = {}

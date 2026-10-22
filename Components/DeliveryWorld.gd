@@ -134,8 +134,14 @@ func _process(delta: float) -> void:
   var ux=world.hud.ux
   for control in [ux.event_button,ux.sheet,ux.palette]:
    if control.visible: occupied.append(control.get_global_rect())
+ var priority_count=0
  for b in badges:
   b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.view_zoom<260 and not world.camera.is_position_behind(b.at)
+  var selected=world.hud.ux.selection
+  var chosen=(selected.get("kind","")=="building" and int(selected.get("index",-2))==int(b.index)) or (b.kind=="construction" and selected.get("kind","")=="job" and b.job<Game.state.jobs.size() and int(Game.state.jobs[b.job].get("id",-2))==int(selected.get("id",-1)))
+  if world.view_zoom>=105 and not chosen:
+   if priority_count>=3: b.button.visible=false
+   if b.button.visible: priority_count+=1
   if not b.button.visible: continue
   var extent: Vector2=b.button.size
   var p = world.camera.unproject_position(b.at)-Vector2(extent.x/2,extent.y-4)
@@ -187,11 +193,8 @@ func _process(delta: float) -> void:
    node.add_child(cargo_label)
    visuals[id] = node
   var node: Node3D = visuals[id]
-  var running = true
-  if shipment.target not in ["construction","mineral","export"]:
-   running = not Game.state.delivery.paused
-   for kind in DeliveryChain.KINDS:
-    if Game.state.buildings[int(Game.state.delivery.nodes[kind])].get("paused",false): running=false
+  var running = float(shipment.get("depart_in",0))<=0
+  node.visible=running
   var age = float(shipment.age)+minf(Game.tick_clock,0.99) if running else float(shipment.age)
   if not shipment.arrived: age=minf(age,float(shipment.travel)-0.000001)
   var progress = clampf(age/float(shipment.travel),0,1)
@@ -208,14 +211,16 @@ func _process(delta: float) -> void:
   node.position = sample.position
   var direction = -sample.direction if returning else sample.direction
   node.follow_heading(direction,delta)
-  if progress>0.02 and progress<0.98: node.position+=Vector3(direction.z,0,-direction.x)*1.0
+  node.position+=Vector3(direction.z,0,-direction.x)*1.5
   truck_visual_count += 1
   if running and progress>0 and progress<1:
    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
   if node.cargo!=null: node.cargo.visible = not shipment.arrived
   var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
-  cargo_label.visible=world.view_zoom<140
+  var selected=world.hud.ux.selection
+  var focused=selected.get("kind","")=="truck" and (str(selected.get("domain",""))+":"+str(selected.get("id",-1)))==str(id)
+  cargo_label.visible=node.visible and (world.view_zoom<80 or focused)
   var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else Catalog.BUILDINGS[shipment.target].name
   cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
   if cargo_stage=="load": cargo_label.text="BELADEN · "+cargo_label.text

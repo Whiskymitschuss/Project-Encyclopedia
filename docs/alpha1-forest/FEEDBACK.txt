@@ -1,0 +1,27 @@
+TIMBER LOOT · 0.28.2-alpha.1 · FEEDBACK
+
+Gerät / Android:
+Update von Version:
+Standard- oder Akkumodus / Helligkeit / Ladegerät:
+Anzahl Betriebe / Häuser / LKW:
+
+Kaltstart: bis Logo __ s / bis Titel __ s / bis Welt __ s
+Nach wie viel Abwesenheit? __
+Verhalten beim Minimieren / Wiederöffnen:
+
+Verkehr: Welche Fracht? Welches Ziel? Zielbestände / freie Kapazität?
+Abfahrtszeit laut Betriebsübersicht / tatsächliche Ankunft:
+Dieselben LKW nach zwei Minuten weiter? Video mit Uhrzeit:
+
+Kamerarunde Standard: __ FPS / 95%-Framezeit __ ms
+Kamerarunde Akku: __ FPS / 95%-Framezeit __ ms
+Wärme nach 5 / 15 Minuten, Akkuverlust:
+
+Grafik und Lesbarkeit:
+Materialhilfe / Engpass / Baukosten verständlich?
+Haus verschieben / Rückgängig:
+Schritte zum Fehler:
+Erwartetes / tatsächliches Verhalten:
+Screenshot / Video (bewusst beifügen):
+
+Freiwilliger Bericht. Keine automatische Übermittlung aus dem Spiel.

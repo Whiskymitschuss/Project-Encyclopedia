@@ -35,7 +35,7 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
  if materials.has(key): return materials[key]
  var mat=StandardMaterial3D.new()
  mat.albedo_color=color
- mat.roughness=0.82
+ mat.roughness=0.9
  mat.albedo_texture=texture(kind)
  if kind=="glass":
   mat.albedo_texture=null
@@ -46,7 +46,7 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
   mat.emission_energy_multiplier=0.04+maxf(0,last_night)*0.55
   mat.albedo_color=color.lerp(Color("cf9d64"),maxf(0,last_night)*0.8)
   windows.append({"material":mat,"day":color})
- elif kind=="paint": mat.roughness=0.42; mat.metallic=0.08
+ elif kind=="paint": mat.roughness=0.68; mat.metallic=0.02
  elif kind=="timber": mat.roughness=0.9
  if kind in ["asphalt","roof","paving"]:
   wet_surfaces.append({"material":mat,"color":mat.albedo_color,"roughness":mat.roughness})

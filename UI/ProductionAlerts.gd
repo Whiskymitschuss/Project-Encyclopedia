@@ -11,14 +11,18 @@ func _ready() -> void:
  overlay.mouse_filter=Control.MOUSE_FILTER_IGNORE
  world.hud.add_child(overlay)
  for i in 3:
-  var panel=PanelContainer.new()
-  panel.mouse_filter=Control.MOUSE_FILTER_IGNORE
-  panel.custom_minimum_size=Vector2(120,32)
+  var panel=Button.new()
+  panel.custom_minimum_size=Vector2(120,44)
   overlay.add_child(panel)
   var label=world.hud.text(panel,"",13,world.hud.CREAM)
   label.mouse_filter=Control.MOUSE_FILTER_IGNORE
   label.autowrap_mode=TextServer.AUTOWRAP_OFF
   pool.append({"panel":panel,"label":label,"index":-1,"left":0.0})
+  var slot=i
+  panel.pressed.connect(func():
+   var advice=ProductionPresentation.advice(Game,int(pool[slot].index))
+   if not str(advice.key).is_empty(): world.hud.ux.open_material(str(advice.key))
+   else: world.hud.ux.select_building(int(pool[slot].index)))
   panel.hide()
 
 func refresh() -> void:
@@ -46,7 +50,7 @@ func refresh() -> void:
   skin.content_margin_bottom=5
   skin.content_margin_left=9
   skin.content_margin_right=9
-  candidate.panel.add_theme_stylebox_override("panel",skin)
+  candidate.panel.add_theme_stylebox_override("normal",skin)
  known=current
 
 func _process(delta: float) -> void:

@@ -1,6 +1,24 @@
 class_name ProductionPresentation
 extends RefCounted
 
+static func advice(game: Node,index: int) -> Dictionary:
+ var status=describe(game,index)
+ var key=""
+ var b=game.state.buildings[index]
+ if status.kind=="missing":
+  if b.kind in StoneIndustry.KINDS: key="rock" if b.kind=="stoneworks" else ""
+  elif game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).key)
+  elif Catalog.RECIPES.has(b.kind):
+   for input in Catalog.RECIPES[b.kind]["in"]:
+    if float(game.state.resources[input])<=game.reserve_for(input)+0.0001: key=input; break
+ if status.kind=="full":
+  if game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).get("output_key","wood"))
+  elif b.kind in StoneIndustry.KINDS: key="rock" if b.kind=="quarry" else "stone"
+  elif Catalog.RECIPES.has(b.kind):
+   for output in Catalog.RECIPES[b.kind].out:
+    if float(game.state.resources[output])>=game.capacity()-0.0001: key=output; break
+ return {"kind":status.kind,"text":status.text,"key":key,"index":index}
+
 static func describe(game: Node,index: int) -> Dictionary:
  var state=game.state
  if index<0 or index>=state.buildings.size(): return {"kind":"ready","text":""}

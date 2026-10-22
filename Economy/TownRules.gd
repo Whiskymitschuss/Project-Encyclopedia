@@ -2,6 +2,8 @@ class_name TownRules
 extends RefCounted
 
 const STEP = 4
+static var base_cache={}
+static var graph_cache={}
 const TYPES = {"asphalt":{"name":"Straße","width":6.0,"price":7.0,"color":"697f80"},"path":{"name":"Fußweg","width":2.4,"price":2.0,"color":"d9bd88"}}
 
 static func initial() -> Dictionary:
@@ -29,6 +31,7 @@ static func path(a: Vector2i, b: Vector2i, horizontal_first: bool = true) -> Arr
  return result
 
 static func base_cells(districts: int = 0) -> Dictionary:
+ if base_cache.has(districts): return base_cache[districts].duplicate()
  var result = {}
  for x in [-80,0,80]:
   for z in range(-172,181,STEP): result[Vector2i(x,z)] = true
@@ -44,6 +47,7 @@ static func base_cells(districts: int = 0) -> Dictionary:
   var side = 1 if district==0 else -1
   for x in range(80,297,STEP): result[Vector2i(side*x,-160)] = true
   for z in range(-160,149,STEP): result[Vector2i(side*200,z)] = true
+ base_cache[districts]=result.duplicate()
  return result
 
 static func road_cells(town: Dictionary, exclude: int = -1) -> Dictionary:
@@ -62,6 +66,8 @@ static func nearest(point_value: Vector3, cells: Dictionary, max_distance: float
  return best
 
 static func graph(cells: Dictionary) -> AStar2D:
+ var key=hash(cells)
+ if graph_cache.has(key) and graph_cache[key].cells==cells: return graph_cache[key].network
  var result = AStar2D.new()
  var ids = {}
  for c in cells:
@@ -71,6 +77,8 @@ static func graph(cells: Dictionary) -> AStar2D:
  for c in ids:
   for offset in [Vector2i(STEP,0),Vector2i(0,STEP)]:
    if ids.has(c+offset): result.connect_points(ids[c],ids[c+offset])
+ if graph_cache.size()>=8: graph_cache.clear()
+ graph_cache[key]={"cells":cells.duplicate(),"network":result}
  return result
 
 static func route(town: Dictionary, stops: Array, exclude_road: int = -1) -> Dictionary:
