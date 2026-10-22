@@ -1,0 +1,59 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.29.4-alpha.2.apk",
+  "bytes": 63227525,
+  "sha256": "48d5e788f025a46d69ce7404d118f087f22d353d1a56c1bfa9596d47ee676fe6",
+  "version": "0.29.4-alpha.2",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "1b503a1692ee994840a6b2330d0e3fcabd76644b",
+  "device_install_or_launch_tested": false,
+  "version_code": 2942,
+  "alpha": 2,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "automated_headless_checks": 25466,
+  "automated_opengl_checks": 228,
+  "packaged_resource_checks": {
+    "version": "0.29.4-alpha.2",
+    "apk_sha256": "48d5e788f025a46d69ce7404d118f087f22d353d1a56c1bfa9596d47ee676fe6",
+    "traffic_checks": 2420,
+    "background_checks": 15,
+    "failures": 0,
+    "method": "Actual unchanged APK assets extracted and run on desktop Godot 4.6.3 headless; test drivers and generated fixtures supplied outside the APK, fresh temporary profile per suite.",
+    "resources_verified": [
+      "Economy/TrafficRules",
+      "Economy/ForemanRules",
+      "Economy/ConstructionRules",
+      "Economy/DeliveryChain",
+      "Managers/OfflineWork",
+      "UI/HUD",
+      "UI/Startup",
+      "Scenes/Boot",
+      "Scenes/Main"
+    ],
+    "tests_docs_scripts_releases_excluded": true,
+    "android_device_tested": false
+  },
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.29.4-source.zip",
+    "bytes": 24302706,
+    "sha256": "c5154ef38d59d2d2b8882a047df9ba6617982bbe9dec6b6d1f2eefe34e61c719",
+    "verified_files": 491
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-2-Ladehof-Update-Testerpaket.zip",
+    "bytes": 62609070,
+    "sha256": "a614bf4a1b5def883224e3c29e3723a5ec5f3c1fd3b3f4f25b30bb116901fc14",
+    "verified_entries": 6
+  }
+}

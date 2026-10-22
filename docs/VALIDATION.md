@@ -1,3 +1,17 @@
+## Auslieferung Ladehof-Update 0.29.4
+
+APK aus `1b503a1692ee994840a6b2330d0e3fcabd76644b`, 63227525 Bytes,
+SHA256 `48d5e788f025a46d69ce7404d118f087f22d353d1a56c1bfa9596d47ee676fe6`. Version 0.29.4-alpha.2 / Code 2942, kompatibles
+Paket und vorhandenes Testzertifikat. V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+,
+ARM64/ARMv7, OpenGL, Hochformat und ausschließlich optionale Vibration geprüft.
+
+Tatsächlich entpackte APK-Assets: 2.420 Verkehrsprüfungen einschließlich der alten
+Testschlange und 15 Hintergrundprüfungen bestehen. [Paketprüfung](alpha2-yard/packaged-traffic.json).
+Das ist eine Desktop-Prüfung exportierter Ressourcen, kein Android-Gerätelauf.
+Quell-ZIP: 491 Dateien, SHA256 `c5154ef38d59d2d2b8882a047df9ba6617982bbe9dec6b6d1f2eefe34e61c719`.
+Testerpaket: 6 Einträge, SHA256 `a614bf4a1b5def883224e3c29e3723a5ec5f3c1fd3b3f4f25b30bb116901fc14`.
+Downloads werden nach Veröffentlichung separat geprüft.
+
 # Prüfung 0.29.4 — Ladehöfe und Rückstau
 
 - Vollständiger Lauf `bash scripts/test.sh`: **25,466 Prüfungen in 32 Headless-Suiten**, keine fehlgeschlagenen Prüfungen oder Skript-/Ladefehler; zusätzlich natürliche Ersthaus-/Rathausprogression, Acht-Stunden-Worker und Hauptwelt-/Intro-Smokes.

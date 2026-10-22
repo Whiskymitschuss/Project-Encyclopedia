@@ -1,0 +1,21 @@
+{
+  "version": "0.29.4-alpha.2",
+  "apk_sha256": "48d5e788f025a46d69ce7404d118f087f22d353d1a56c1bfa9596d47ee676fe6",
+  "traffic_checks": 2420,
+  "background_checks": 15,
+  "failures": 0,
+  "method": "Actual unchanged APK assets extracted and run on desktop Godot 4.6.3 headless; test drivers and generated fixtures supplied outside the APK, fresh temporary profile per suite.",
+  "resources_verified": [
+    "Economy/TrafficRules",
+    "Economy/ForemanRules",
+    "Economy/ConstructionRules",
+    "Economy/DeliveryChain",
+    "Managers/OfflineWork",
+    "UI/HUD",
+    "UI/Startup",
+    "Scenes/Boot",
+    "Scenes/Main"
+  ],
+  "tests_docs_scripts_releases_excluded": true,
+  "android_device_tested": false
+}

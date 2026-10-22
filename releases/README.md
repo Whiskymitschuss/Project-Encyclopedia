@@ -1,3 +1,32 @@
+# Alpha 2 · Ladehof-Update 0.29.4
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-v0.29.4-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Ladehof-Update-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.29.4-source.zip) · [Änderungen](../docs/TRAFFIC-294.md) · [Testplan](../docs/alpha2-yard/TESTPLAN.txt)
+
+Version **0.29.4-alpha.2**, Code **2942**, Launchername **Timber Loot Alpha**.
+Direkt über die vorhandene Alpha installieren; vorher nicht deinstallieren und
+keine App-Daten löschen. Gleiches Paket, Speicherverzeichnis und Testzertifikat
+wie seit 0.23. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0.
+
+Behebt blockierte Hofzufahrten und volle Kreuzungsausfahrten. Weitere Ladungen
+warten im Depot, bis die laufende Tour zurück ist. Baustellen und Ladenlinie
+wechseln sich am Ladehof ab. Alte noch nicht angelieferte Frachten werden einmal
+vom vorhandenen Depot neu disponiert; ihre Mengen und bereits gutgeschriebene
+Lieferungen bleiben erhalten. Anrückende Feuerwehr fordert weiterhin Grün an.
+
+25.466 Headless-Prüfungen und 228 gezielte OpenGL-Prüfungen bestanden. Zusätzlich
+2.420 Verkehrs- und 15 Hintergrundprüfungen auf den tatsächlich entpackten APK-Assets.
+Diese Desktop-Prüfungen sind kein echter Android-Gerätetest; dieser steht aus.
+APK-Signatur, Paket, Version und ZIP-Ausrichtung geprüft. Der private Schlüssel
+und Spielerprofile werden nicht mitgeliefert.
+
+APK-Quellstand `1b503a1692ee994840a6b2330d0e3fcabd76644b`. Quell-ZIP: 491 Dateien gegen Git-Blobs geprüft.
+Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Ein öffentlicher Download ist kein Zugang nur für eingeladene Tester.
+
+## Vorherige Veröffentlichungen
+
 # Alpha 2 · Verkehrsfix 0.29.3
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.3-alpha.2/releases/Timber-Loot-Tycoon-v0.29.3-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.3-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Verkehrsfix-Testerpaket.zip)**
