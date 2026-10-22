@@ -1,3 +1,16 @@
+## Auslieferung Waldleben · 0.28.2-alpha.1
+
+APK aus `0215505adc1f92566f53577f4700666608706ea6`, 63211086 Bytes,
+SHA256 `38145c256fafa42c22e647491c498f87f3c318bf121fae4fa484d1ef941a874b`. Version 0.28.2-alpha.1 / Android-Code 2961,
+kompatibles Paket und vorhandenes Testzertifikat. V2-Signatur, 16-KB-ZIP-Ausrichtung,
+API 24+, ARM64/ARMv7, OpenGL, Hochformat und optionale Vibration geprüft.
+
+Tatsächlich entpackte APK-Assets: 65 Headless- und
+182 OpenGL-Prüfungen einschließlich echtem neuen Prozess
+mit acht Stunden Abwesenheit bestehen. [Paketprüfung](alpha1-forest/packaged-checks.json).
+Dies ist keine Ausführung der Android-Binärdateien auf einem Handy.
+Downloads werden nach Veröffentlichung separat vollständig zurückgeladen und geprüft.
+
 ## Prüfung Waldleben · 0.28.2-alpha.1
 
 19.779 Headless-Prüfungen in 28 Suiten einschließlich zweier natürlicher

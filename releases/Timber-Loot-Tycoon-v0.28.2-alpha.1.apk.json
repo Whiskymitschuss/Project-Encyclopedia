@@ -1,0 +1,59 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.28.2-alpha.1.apk",
+  "bytes": 63211086,
+  "sha256": "38145c256fafa42c22e647491c498f87f3c318bf121fae4fa484d1ef941a874b",
+  "version": "0.28.2-alpha.1",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "0215505adc1f92566f53577f4700666608706ea6",
+  "device_install_or_launch_tested": false,
+  "version_code": 2961,
+  "alpha": 1,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "restored_028_base": "d14b53774d5505a93ee1e7b845b2b4753fd9b804",
+  "automated_headless_checks": 19779,
+  "automated_opengl_checks": 648,
+  "packaged_resource_checks": {
+    "apk": "Timber-Loot-Tycoon-v0.28.2-alpha.1.apk",
+    "apk_sha256": "38145c256fafa42c22e647491c498f87f3c318bf121fae4fa484d1ef941a874b",
+    "apk_source_commit": "0215505adc1f92566f53577f4700666608706ea6",
+    "headless_checks": 65,
+    "headless_results": {
+      "Forest282": 22,
+      "Rollback028": 43
+    },
+    "visual_checks": 182,
+    "visual_results": {
+      "VisualForest282": 28,
+      "VisualRollback028": 146,
+      "VisualColdStart282": 8
+    },
+    "fixture": "Generated test companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+    "android_device_tested": false,
+    "temperature_measured": false
+  },
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.28.2-source.zip",
+    "bytes": 24631313,
+    "sha256": "aaf2fa1a7a110f6e09105b99c5f6f3847ae3f50c307c3cf6222c9b0a6b1c3593",
+    "verified_files": 482
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-1-Waldleben-Testerpaket.zip",
+    "bytes": 62591246,
+    "sha256": "bd9101c64946e78a6095dd5b5a34f432b1fed90628e030fa04b45c0fa7c1fc39",
+    "verified_entries": 6
+  }
+}
