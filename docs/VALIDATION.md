@@ -1,3 +1,10 @@
+## Externe Downloads Ladehof-Update 0.29.4 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.4-alpha.2` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha294.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Auslieferung Ladehof-Update 0.29.4
 
 APK aus `1b503a1692ee994840a6b2330d0e3fcabd76644b`, 63227525 Bytes,

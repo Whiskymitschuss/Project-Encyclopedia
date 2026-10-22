@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-22T07:20:23.298238+00:00",
+  "tag": "v0.29.4-alpha.2",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-v0.29.4-alpha.2.apk",
+      "http_status": 200,
+      "bytes": 63227525,
+      "sha256": "48d5e788f025a46d69ce7404d118f087f22d353d1a56c1bfa9596d47ee676fe6",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-v0.29.4-source.zip",
+      "http_status": 200,
+      "bytes": 24302706,
+      "sha256": "c5154ef38d59d2d2b8882a047df9ba6617982bbe9dec6b6d1f2eefe34e61c719",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.4-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Ladehof-Update-Testerpaket.zip",
+      "http_status": 200,
+      "bytes": 62609070,
+      "sha256": "a614bf4a1b5def883224e3c29e3723a5ec5f3c1fd3b3f4f25b30bb116901fc14",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}
