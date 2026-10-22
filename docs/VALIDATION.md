@@ -1,3 +1,10 @@
+## Externe Downloads Werkshof · 0.28.3 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.3-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha283.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Auslieferung Werkshof · 0.28.3-alpha.1
 
 APK aus `dff975822d50b3feee22772269fbe01db625881e`, 63223981 Bytes,
