@@ -58,7 +58,7 @@
     "VISUAL STONE": 27,
     "VISUAL TRAFFIC": 27
   },
-  "validation_sequence": "Complete final headless run. Affected central/legacy freight, construction and cargo presentation repeated after loading-time adjustments. Standard OpenGL set run through BuildingCard, then CityUX and all remaining suites repeated after updating its numbered-source touch target. Additional Stone and Traffic checks adjusted to actual excavation phases and the existing current service heading, then passed. Latest Factory/Campus run after rack, route and cab fixes; FireUI/Quality repeated after compact fire caption. Duplicate successful reruns are not added to totals.",
+  "validation_sequence": "Complete final headless run. Affected central/legacy freight, construction and cargo presentation repeated after loading-time adjustments. Standard OpenGL set run through BuildingCard, then CityUX and all remaining suites repeated after updating its numbered-source touch target. Additional Stone and Traffic checks adjusted to actual excavation phases and the existing current service heading, then passed. Latest Factory/Campus run after rack, route and cab fixes; FireUI/Quality repeated after compact fire caption. Duplicate successful reruns are not added to totals. Final house-body/facade alignment checked again with Town, Crafted and BuildingCard headless suites and VisualCrafted/VisualBuildingCard; all passed without increasing aggregate counts.",
   "new_coverage": [
     "Complete producer \u2192 central \u2192 regional express \u2192 construction logistics with dedicated vehicles",
     "No inventory credit before unloading, no double credit, fractional goods conservation across ten product types",
@@ -70,7 +70,8 @@
     "Actual warehouse unloading drives forklifts, including empty return and parking",
     "Warehouse racks show real material stock; decorative vegetation cannot grow through concrete",
     "Cargo remains on deck; giant world route labels stay hidden",
-    "Readable material targets at 360\u00d7640, 540\u00d7960 and 1100\u00d7700"
+    "Readable material targets at 360\u00d7640, 540\u00d7960 and 1100\u00d7700",
+    "Stage-sized house facade, entrance and roof use consistent dimensions; all architectural stages and building-card bounds repeated"
   ],
   "cold_process_desktop": {
     "first_script_frame_ms": 565,

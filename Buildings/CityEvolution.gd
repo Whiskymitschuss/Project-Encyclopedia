@@ -114,9 +114,10 @@ static func create(kind: String,level: int,skin: String = "Rustikal") -> Node3D:
    var home_h=home_f*2.7
    var size=Vector3(8.0+n*0.12,home_h,7.0+n*0.1)
    slab(root,size.x,size.z,size.y,tone,-2,-2)
-   facade(root,9,8,home_f,CREAM,-2,-2)
-   roof(root,9,8,home_h+1.7,-2,-2,tone.darkened(0.3))
-   door(root,-2,2.2,tone.darkened(0.2))
+   # Facade, entrance and overhang follow the same stage-sized house body.
+   facade(root,size.x,size.z,home_f,CREAM,-2,-2)
+   roof(root,size.x+0.8,size.z+0.8,home_h+1.7,-2,-2,tone.darkened(0.3))
+   door(root,-2,-2+size.z/2+0.12,tone.darkened(0.2))
    if n>=2:
     box(root,Vector3(10,0.2,3),Vector3(-2,3.7,4),Color("c57950"))
     for x in [-6.3,2.3]: box(root,Vector3(0.23,3,0.23),Vector3(x,2,5),CREAM)

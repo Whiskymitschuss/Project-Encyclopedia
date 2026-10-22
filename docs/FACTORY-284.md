@@ -9,6 +9,7 @@ Keine fremden Figuren, Bilder oder Markenassets übernommen.
 | Abgeschlossene Aufgabe | Änderung und Grund | Nutzen | Geschätzter Qualitätseinfluss |
 | --- | --- | --- | --- |
 | Grafikfehler im Werkshof | Größerer zusammenhängender Hof; eine sichtbare Bodenfläche; erhöhte Markierungen, flache interne Fahrgassen, freigehaltene Kreuzungen; entfernte gestreckte Flächentexturen und Pflanzen im Beton | Weniger Flimmern und Überschneidungen; Arbeitsbereiche verständlicher | Hoch |
+| Hausproportionen | Fenster, Eingang und Dachüberstand folgen der tatsächlichen Größe des Hauses auf jeder Stufe, statt festen Fremdmaßen | Keine schwebenden Fassadenteile; saubere Anschlüsse ohne verzerrte Skalierung | Mittel–hoch |
 | Maßstab und Transport | Straßen-LKW unter 2,5 m breit und 6,6 m lang, kleinere Forstmaschinen und Bagger; Gebäude behalten ihre maßhaltigen Grundstücke; neuer großer Logistikhof | Fahrzeuge passen zu Fahrgassen und Werkstätten | Hoch |
 | Laden und Frachttexte | Keine bildschirmfüllenden 3D-Liefertexte; Fahrzeugauswahl zeigt Ladung, Ziel und Phase. Ladung bleibt auf der Ladefläche, statt seitlich durch Maschinen zu gleiten | Sicht bleibt frei und Verladung wirkt schlüssiger | Hoch |
 | Zentrallager | Neues Gebäude mit 31 × 23 m statt 19 × 23 m; größere Kapazität, Regale, zwei Stapler mit Fahrern, eigener Abholflotte | Fertigwaren sammeln sich nachvollziehbar an einem Ort | Hoch |
