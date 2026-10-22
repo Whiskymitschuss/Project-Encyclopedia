@@ -68,7 +68,6 @@ static func dispatch(state: Dictionary, reserve: float, unit_price: float) -> bo
  if stock<1: return false
  var connection=route(state)
  if connection.is_empty(): return false
- if TrafficRules.source_busy(state,int(connection.origin)): return false
  var base_capacity=4+int(state.vehicle)*2+maxi(0,int(state.buildings[int(connection.origin)].level)-1)
  var capacity=ceili(base_capacity*(1+int(state.research.get("logistics",0))*0.12))
  var amount=minf(stock,capacity)
@@ -83,7 +82,7 @@ static func tick(state: Dictionary, delta: float) -> Dictionary:
  var report={"coins":0.0,"amount":0.0,"receipts":[]}
  var done=[]
  for trip in state.trade.shipments:
-  trip.age=float(trip.age)+TrafficRules.advance(trip,delta)
+  trip.age=float(trip.age)+delta
   if not trip.arrived and float(trip.age)>=float(trip.travel):
    trip.arrived=true
    var coins=float(trip.amount)*float(trip.unit_price)

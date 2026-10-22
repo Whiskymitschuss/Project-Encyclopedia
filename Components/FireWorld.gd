@@ -11,16 +11,19 @@ func create_incident(roof: float) -> Node3D:
  add_child(node)
  var flames=Node3D.new()
  flames.name="Flames"
- flames.position.y=roof+0.15
+ flames.position.y=roof-2.0
  node.add_child(flames)
  for i in 6:
-  var flame=card(flames,Vector2(2.4,4.1),Vector3((i%3-1)*2.0,3.0,(i/3-0.5)*2.4),false,i*2.1)
-  flame.set_meta("base",flame.position)
+  var mesh=Models.cylinder(flames,0.85,3.6,Vector3((i%3-1)*2.0,3.0,(i/3-0.5)*2.4),Color("ff8c37"))
+  mesh.mesh.top_radius=0.06
+  mesh.material_override=Models.material(Color("ff8c37"),true)
+  Models.cylinder(mesh,0.43,2.8,Vector3(0,-0.3,0),Color("ffdd75"))
  var smoke=Node3D.new()
  smoke.name="Smoke"
- smoke.position.y=roof+0.6
+ smoke.position.y=roof-3.0
  node.add_child(smoke)
- for i in 5: card(smoke,Vector2(6,6),Vector3(0,2+i*2,0),true,i*4.3)
+ for i in 5:
+  sphere(smoke,2.0,Vector3(sin(i*2.0)*1.3,6+i*1.8,cos(i*2.0)),Color("626e78"))
  var sparks=FeedbackFX.emitter("spark",18)
  sparks.name="Sparks"
  sparks.position.y=roof+2
@@ -37,37 +40,22 @@ func create_incident(roof: float) -> Node3D:
  glow.omni_range=16
  glow.shadow_enabled=false
  node.add_child(glow)
- var badge=PanelContainer.new()
- badge.name="FireBadge"
- badge.mouse_filter=Control.MOUSE_FILTER_IGNORE
- badge.custom_minimum_size=Vector2(208,62)
- badge.add_theme_stylebox_override("panel",load("res://UI/SculptedSurface.gd").create(Color("183b3d"),12))
- var column=VBoxContainer.new()
- column.add_theme_constant_override("separation",2)
- badge.add_child(column)
- var status=Label.new()
- status.name="Status"
- status.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
- status.add_theme_font_size_override("font_size",13)
- status.add_theme_color_override("font_color",Color("fff3d4"))
- column.add_child(status)
- for kind in ["Intensity","Extinguishing"]:
-  var meter=ProgressBar.new()
-  meter.name=kind
-  meter.custom_minimum_size=Vector2(192,5)
-  meter.show_percentage=false
-  meter.step=0.0
-  var fill=StyleBoxFlat.new()
-  fill.bg_color=Color("f6a35d") if kind=="Intensity" else Color("94dcd8")
-  fill.set_corner_radius_all(3)
-  meter.add_theme_stylebox_override("fill",fill)
-  var bg=fill.duplicate()
-  bg.bg_color=Color("35575a")
-  meter.add_theme_stylebox_override("background",bg)
-  column.add_child(meter)
- world.hud.add_child(badge)
- node.set_meta("badge",badge)
- node.set_meta("roof",roof)
+ var meters=Node3D.new()
+ meters.name="Meters"
+ meters.position.y=roof+10
+ meters.set_meta("roof",roof)
+ node.add_child(meters)
+ for row_id in 2:
+  Models.box(meters,Vector3(8,0.45,0.3),Vector3(0,-row_id*0.85,0),Color("273e42"))
+  var fill=Models.box(meters,Vector3(7.7,0.28,0.34),Vector3(0,-row_id*0.85,0),Color("f6a35d") if row_id==0 else Color("94dcd8"))
+  fill.name="Intensity" if row_id==0 else "Extinguishing"
+ for bar in meters.get_children():
+  bar.material_override=bar.material_override.duplicate()
+  bar.material_override.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
+  bar.material_override.no_depth_test=true
+  bar.material_override.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
+  bar.material_override.render_priority=2 if bar.name in ["Intensity","Extinguishing"] else 1
+  bar.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
  var crew=Node3D.new()
  crew.name="Crew"
  node.add_child(crew)
@@ -91,8 +79,19 @@ func create_incident(roof: float) -> Node3D:
    var t2=float(i+1)/8
    var a=Vector3(side*(1-t),1.5+(roof-1.5)*t+3*sin(t*PI),11-10*t)
    var b=Vector3(side*(1-t2),1.5+(roof-1.5)*t2+3*sin(t2*PI),11-10*t2)
-   var jet=Models.cylinder(water,0.045,a.distance_to(b),(a+b)*0.5,Color("9bdef4"))
+   var jet=Models.cylinder(water,0.10,a.distance_to(b),(a+b)*0.5,Color("9bdef4"))
    jet.quaternion=Quaternion(Vector3.UP,(b-a).normalized())
+ var label=Label3D.new()
+ label.layers=Models.WORLD_LABEL_LAYER
+ label.name="Status"
+ label.position=Vector3(0,roof+13,0)
+ label.billboard=BaseMaterial3D.BILLBOARD_ENABLED
+ label.font_size=32
+ label.pixel_size=0.035
+ label.modulate=Color("fff1d5")
+ label.outline_size=9
+ label.no_depth_test=true
+ node.add_child(label)
  return node
 
 func _process(delta: float) -> void:
@@ -104,8 +103,7 @@ func _process(delta: float) -> void:
   present[id]=true
   if not scenes.has(id):
    var home=Game.state.homes[int(incident.target_ref.index)]
-   var roof=TownEvolution.floors(str(home.kind),int(home.level))*2.7+1.15
-   if home.kind in ["house","landhouse","villa"]: roof=(1+int((int(home.level)-1)/3.0))*2.7+2.5
+   var roof=TownEvolution.floors(str(home.kind),int(home.level))*2.7+2.0
    scenes[id]=create_incident(roof)
    scenes[id].rotation_degrees.y=int(home.get("rotation",0))
   var node=scenes[id]
@@ -144,42 +142,47 @@ func _process(delta: float) -> void:
   for jet in node.get_node("Water").get_children():
    jet.scale.x=1+0.12*sin(clock*13) if motion else 1.0
    jet.scale.z=jet.scale.x
-  var strength=FireSafety.intensity(incident)
+  var meters=node.get_node("Meters")
+  meters.get_node("Intensity").scale.x=maxf(0.001,1-progress)
+  meters.get_node("Intensity").position.x=-3.85*progress
+  meters.get_node("Extinguishing").scale.x=maxf(0.001,progress)
+  meters.get_node("Extinguishing").position.x=-3.85*(1-progress)
+  # Align the bars with the same camera-facing plane as their status caption.
+  meters.rotation.y=world.camera.global_rotation.y-node.rotation.y
   for i in node.get_node("Flames").get_child_count():
    var flame=node.get_node("Flames").get_child(i)
-   var flicker=1+0.1*sin(clock*6+i*2.3) if motion else 1.0
-   flame.scale=Vector3(0.6+strength*0.4,maxf(0.06,strength)*flicker,1)
-   flame.position.y=2.05*flame.scale.y
-   flame.material_override.set_shader_parameter("clock",clock if motion else 0.0)
-   flame.material_override.set_shader_parameter("opacity",minf(1,strength*2.5))
+   flame.scale=Vector3.ONE*maxf(0.12,1-progress)*(1+0.12*sin(clock*7+i) if motion else 1.0)
   for i in node.get_node("Smoke").get_child_count():
    var puff=node.get_node("Smoke").get_child(i)
-   var rise=fposmod(clock*1.3+i*2.8,14) if motion else 2.0+i*2.1
-   var drift=node.global_basis.inverse()*Atmosphere.wind(Game.state)*rise*0.4
-   puff.position=Vector3(drift.x+sin(i*2.4)*0.7,1.5+rise,drift.z)
-   puff.scale=Vector3.ONE*(0.4+rise*0.09)*(0.7+strength*0.3)
-   puff.material_override.set_shader_parameter("clock",clock*0.25 if motion else 0.0)
-   puff.material_override.set_shader_parameter("opacity",smoothstep(0,2,rise)*(1-smoothstep(8,14,rise))*maxf(0.2,1-progress*0.7))
-   puff.material_override.set_shader_parameter("cooling",progress)
+   puff.scale=Vector3.ONE*(0.7+i*0.15)*maxf(0.2,1-progress)
+   if motion:
+    var rise=fposmod(clock*0.9+i*1.8,10)
+    var drift=Atmosphere.wind(Game.state)*rise*0.32
+    drift=node.global_basis.inverse()*drift
+    puff.position=Vector3(drift.x+sin(clock*0.7+i)*0.3,6+rise,drift.z)
    puff.visible=Game.state.quality!=0 or i<2
-  var badge: Control=node.get_meta("badge")
-  var column=badge.get_child(0)
-  column.get_node("Status").text=("LÖSCHEN · %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "FEUERWEHR ANGEFORDERT")+"\nBrandstärke · %s %%" % int(strength*100)
-  column.get_node("Intensity").value=strength*100
-  column.get_node("Extinguishing").value=progress*100
-  var at=node.to_global(Vector3(0,float(node.get_meta("roof"))+9,0))
+  node.get_node("Status").text="LÖSCHEN %s %%" % int(progress*100) if spraying else "FEUERWEHR AUF ANFAHRT" if int(incident.mission_id)>=0 else "RAUCH · ALARM IN %s s" % ceili(FireSafety.alarm_left(incident)) if FireSafety.alarm_left(incident)>0 else "BRAND · WARTET AUF FEUERWEHR"
+  node.get_node("Status").text+="\nBRAND %s %% · GEBÄUDESCHADEN 0" % int((1-progress)*100)
+  var status=node.get_node("Status")
+  # Keep the compact incident caption below the HUD, even when its smoke column
+  # reaches the top of a narrow screen. The caption never changes incident state.
+  status.position=Vector3(0,float(meters.get_meta("roof"))+13,0)
+  var at=node.to_global(status.position)
   var screen=world.camera.unproject_position(at)
-  var viewport_size=world.hud.size
-  var top=world.hud.mission_button.get_global_rect().end.y+82
-  var bottom=world.hud.bottom_panel.get_global_rect().position.y-badge.size.y-12
+  var viewport_size=world.get_viewport().get_visible_rect().size
+  var top=world.hud.mission_button.get_global_rect().end.y+132
+  var bottom=world.hud.bottom_panel.get_global_rect().position.y-46
   var in_front=not world.camera.is_position_behind(at)
-  var on_screen=screen.x>0 and screen.x<viewport_size.x and screen.y>top-70 and screen.y<bottom+100
-  badge.visible=nearby and in_front and on_screen and bottom>top and not world.hud.overlay.visible
-  badge.position=Vector2(clampf(screen.x-badge.size.x*0.5,12,viewport_size.x-badge.size.x-70),clampf(screen.y,top,maxf(top,bottom)))
+  var on_screen=screen.x>0 and screen.x<viewport_size.x and screen.y>0 and screen.y<viewport_size.y
+  if in_front and on_screen and bottom>top:
+   screen.y=clampf(screen.y,top,bottom)
+   status.position=node.to_local(world.camera.project_position(screen,-world.camera.to_local(at).z))
+  status.visible=in_front and on_screen and bottom>top and not world.hud.overlay.visible
+  meters.position=status.position-Vector3(0,3,0)
+  meters.visible=status.visible
   node.visible=nearby
  for id in scenes.keys():
   if not present.has(id):
-   scenes[id].get_meta("badge").queue_free()
    scenes[id].queue_free()
    scenes.erase(id)
 
@@ -246,23 +249,3 @@ func update_supply_hose(node: Node3D, mission: Dictionary, spraying: bool) -> vo
    tube.quaternion=Quaternion(Vector3.UP,(b-a).normalized())
   Models.bake(hose)
  hose.visible=spraying
-
-func card(parent: Node3D, size: Vector2, at: Vector3, smoke: bool, seed_value: float) -> MeshInstance3D:
- var node=MeshInstance3D.new()
- var mesh=QuadMesh.new()
- mesh.size=size
- node.mesh=mesh
- node.position=at
- node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
- var material=ShaderMaterial.new()
- material.shader=preload("res://Shaders/Incident.gdshader")
- material.set_shader_parameter("smoke",smoke)
- material.set_shader_parameter("seed",seed_value)
- node.material_override=material
- parent.add_child(node)
- return node
-
-func _exit_tree() -> void:
- for node in scenes.values():
-  var badge=node.get_meta("badge",null)
-  if is_instance_valid(badge): badge.queue_free()

@@ -11,7 +11,7 @@ func _ready() -> void:
  var fire=kind=="fire"
  var medical=kind=="ambulance"
  var length=6.2 if fire else 5.6 if medical else 4.6
- var color=Color("ef6050") if fire else Color("fff1d4") if medical else Color("f8c657") if kind=="taxi" else Color("eaa446") if kind=="technician" else Color("428fae")
+ var color=Color("ef6050") if fire else Color("fff1d4") if medical else Color("f8c657") if kind=="taxi" else Color("428fae")
  Models.box(self,Vector3(2.5,0.75,length),Vector3(0,1.05,0),color)
  Models.box(self,Vector3(2.3,1.6,2.3 if not medical else 3.8),Vector3(0,1.9,-0.3),color)
  Models.box(self,Vector3(2.15,0.9,0.12),Vector3(0,2.15,1.1 if not medical else 1.65),Color("8fd8df"))
@@ -35,8 +35,6 @@ func _ready() -> void:
  if fire:
   Models.box(self,Vector3(1.7,0.2,3.9),Vector3(0,2.9,-0.9),Color("dfdcc4"))
   for z in [-2.4,-1.8,-1.2,-0.6,0,0.6]: Models.box(self,Vector3(2.1,0.12,0.12),Vector3(0,3.05,z),Color("b5d0cc"))
- if kind=="technician":
-  for z in [-1.3,-0.7,0,0.7]: Models.box(self,Vector3(2.0,0.12,0.12),Vector3(0,2.9,z),Color("e6e0c4"))
  if medical:
   for x in [-1.29,1.29]:
    Models.box(self,Vector3(0.07,0.35,1.1),Vector3(x,2,-0.9),Color("ed7563"))
@@ -53,7 +51,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
  if Game.state.ux.motion: flash+=delta
  for i in lights.size():
-  var on=(emergency or kind=="technician") and (int(flash*5)+i)%2==0
-  lights[i].material_override=Models.material((Color("ffd16a") if kind=="technician" else Color("71d6ff")) if on else Color("38788f"),on)
+  var on=emergency and (int(flash*5)+i)%2==0
+  lights[i].material_override=Models.material(Color("71d6ff") if on else Color("38788f"),on)
  if moving and Game.state.ux.motion:
   for wheel in wheels: wheel.rotate_object_local(Vector3.UP,delta*8)

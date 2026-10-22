@@ -95,9 +95,7 @@ func run() -> void:
  check(game.state.buildings[5].level==1 and not game.state.jobs.is_empty(),"A quarry upgrade cannot finish while even one required foundation material is missing")
  game.buy_stone_material("gravel",1)
  game.deliver_job(int(upgrade.id))
- for i in 900:
-  if game.state.jobs.is_empty(): break
-  game.step(1)
+ game.simulate(300)
  check(game.state.buildings[5].level==2 and game.state.jobs.is_empty(),"A delivered final unit completes the paid upgrade through the existing builder system")
  company(0)
  var quarry=StoneIndustry.site(game.state,5)

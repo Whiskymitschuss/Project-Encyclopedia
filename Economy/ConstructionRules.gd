@@ -71,7 +71,6 @@ static func attach(job: Dictionary, workers: int = 1) -> void:
  # A paid site requests its phase materials immediately, including before
  # company level ten. Pausing remains the explicit way to stop new deliveries.
  job.requested = true
- job.auto_crew = true
  job.phases = []
  for title in PHASES: job.phases.append({"name":title,"materials":{}})
  for key in job.materials:
@@ -153,7 +152,7 @@ static func logistics_status(state: Dictionary, job: Dictionary) -> String:
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done = []
  for s in state.construction_shipments:
-  s.age=float(s.age)+TrafficRules.advance(s,delta)
+  s.age = float(s.age)+delta
   if not s.arrived and float(s.age)>=float(s.travel):
    var found = false
    for job in state.jobs:
@@ -178,25 +177,20 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
  var free = maxi(0,int(state.trucks)-busy)
- if free>0 and ForemanRules.hold_for_line(state): free=maxi(0,free-1)
  if free<=0: return 0
  var jobs = state.jobs.duplicate()
  jobs.sort_custom(func(a,b): return int(a.get("priority",false))>int(b.get("priority",false)))
  var result = 0.0
- var line_holds={}
  for job in jobs:
   var id = int(job.get("id",-1))
   if not job.has("phases") or job.get("paused",false) or (only_job>=0 and id!=only_job): continue
-  if (job.has("district_group") or state.get("foreman",{}).get("enabled",false)) and int(job.get("workers",0))<=0: continue
+  if job.has("district_group") and int(job.get("workers",0))<=0: continue
   if not state.construction_auto and not job.get("requested",false): continue
   var material_keys = job.materials.keys()
   material_keys.sort()
   for key in material_keys:
    var missing = maxf(0,phase_need(job,key)-incoming(state,id,key))
    for source in sources(state,key):
-    var source_index=int(source.index)
-    if not line_holds.has(source_index): line_holds[source_index]=ForemanRules.hold_source_for_line(state,source_index)
-    if line_holds[source_index]: continue
     var amount = minf(missing,minf(float(source.stock.get(key,0)),float(4+int(state.vehicle)*2)))
     if amount<=0 or free<=0: continue
     var route = LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job))
@@ -209,8 +203,6 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
     state.construction_shipments.append({"id":state.next_shipment,"job":id,"source":source.kind,"origin":int(source.index),"target":"construction","mode":"truck","key":key,"amount":amount,"path":route,"age":0.0,"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":travel+drive+2,"arrived":false})
     state.next_shipment += 1
     free-=1
-    if state.has("foreman"): state.foreman.transport_turn="line"
-    if state.has("foreman"): state.foreman.yard_turns[str(int(source.index))]="line"
     missing-=amount
     result+=amount
  return result

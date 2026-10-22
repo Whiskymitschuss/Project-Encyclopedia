@@ -596,7 +596,6 @@ func render_menu() -> void:
   "stone": stone_menu()
   "delivery": delivery_menu()
   "construction": construction_menu()
-  "traffic": traffic_menu()
   "industry": industry_menu()
   "building": building_menu()
   "catalog": catalog_menu()
@@ -677,8 +676,7 @@ func jobs_cards() -> void:
    var hardware_cost=Game.job_hardware_cost(id)
    if hardware_cost>0: button(box,"FEHLENDE TEILE KAUFEN · %s MÜNZEN" % Catalog.number(hardware_cost),func(): action(func(): Game.buy_job_hardware(id)))
    if job.has("phases"):
-    dynamic_text(box,func(): return "Bauleitung · "+ForemanRules.diagnosis(Game.state,job))
-    if not job.get("auto_crew",true): button(box,"TEAM WIEDER DER BAULEITUNG GEBEN",func(): action(func(): job.auto_crew=true))
+    dynamic_text(box,func(): return ConstructionRules.logistics_status(Game.state,job))
     dynamic_text(box,func():
      var underway=0
      for s in Game.state.construction_shipments:
@@ -888,10 +886,10 @@ func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
  var groups=[
   ["Stadt & Sicherheit",[["Einsatzzentrale & Feuerwehr","services"],["Stadtkarte & freie Grundstücke","overview"],["Stadt & Häuser","city"],["Viertel & Ausbaupläne","districts"],["Hinweise & Ereignisse","events"]]],
-  ["Produktion & Transport",[["Verkehr & Ampeltechnik","traffic"],["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Autobahn & Exporthandel","export"],["Spänebox","sawdust"]]],
+  ["Produktion & Transport",[["Betriebe verwalten","industry"],["Steinbruch & Baustoffe","stone"],["Lieferkette & Ladenaufträge","delivery"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Autobahn & Exporthandel","export"],["Spänebox","sawdust"]]],
   ["Wege & Team",[["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"]]],
   ["Deine Entwicklung",[["Kapitel 1–10 & Rathaus","journey"],["Auszeichnungen","trophies"],["Regionen & Großprojekte","empire"],["Forschung","research"],["Loot & Inventar","loot"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"]]],
-  ["Hilfe & Einstellungen",[["Alpha 2 · Testen & Feedback","alpha"],["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
+  ["Hilfe & Einstellungen",[["Alpha 1 · Testen & Feedback","alpha"],["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
  ]
  for group in groups:
   var section=card(group[0])
@@ -1034,13 +1032,13 @@ func settings_menu() -> void:
  modal_title.text = "EINSTELLUNGEN"
  var box = card("Lokaler Spielstand","Automatische Speicherung alle 20 Sekunden, beim Wechsel in den Hintergrund und nach Bauaufträgen. Eine Backup-Datei schützt den vorherigen gültigen Stand. Bis zu acht Stunden Offline-Wirtschaft.")
  button(box,"JETZT SPEICHERN",func(): Game.save())
- button(box,"ALPHA 2 · TESTBERICHT & HILFE",func(): open_menu("alpha"))
+ button(box,"ALPHA 1 · TESTBERICHT & HILFE",func(): open_menu("alpha"))
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality)))
  if ux!=null: ux.settings_controls(box)
- text(contents,"Alpha 2 · "+str(ProjectSettings.get_setting("application/config/version"))+" · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Alpha 1 · 0.28 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -1112,7 +1110,7 @@ func welcome_menu() -> void:
  var box=card("Hi, ich bin Benno!","Lass uns deine ersten Bretter machen und etwas Eigenes bauen.")
  button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.begin_tutorial(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
  button(box,"Direkt frei spielen",func(): Game.end_tutorial(); close_menu())
- text(contents,"ALPHA 2 · Danke fürs Mittesten! Dein Fortschritt bleibt auf diesem Gerät. Feedback findest du unter Mehr → Alpha 2.",14,MUTED)
+ text(contents,"ALPHA 1 · Danke fürs Mittesten! Dein Fortschritt bleibt auf diesem Gerät. Feedback findest du unter Mehr → Alpha 1.",14,MUTED)
 
 func guide_menu() -> void:
  if int(Game.state.tutorial)==0: welcome_menu(); return
@@ -1239,10 +1237,6 @@ func delivery_menu() -> void:
 func construction_menu() -> void:
  modal_title.text = "BAUSTELLEN & MATERIAL"
  card("Erst Material. Dann Richtfest.","Lieferungen starten automatisch: direkt vom Sägewerk, Steinwerk oder Lager zur Baustelle. Jede Bauphase wartet auf ihre tatsächlichen Materialien. Alle Transporte teilen sich deine LKWs; mehr Fahrzeuge gibt es in der Garage.")
- var foreman=card("Bauleiterin Mara","Verteilt vorhandene Bauteams zuerst auf priorisierte, arbeitsbereite Baustellen und lässt Laden- und Baulieferungen abwechseln. Manuell zugeteilte Teams bleiben bei ihrer Aufgabe. Sie kauft und erfindet kein Material.")
- button(foreman,"BAULEITUNG: AN" if Game.state.foreman.enabled else "BAULEITUNG: AUS",func(): action(func(): Game.state.foreman.enabled=not Game.state.foreman.enabled))
- dynamic_text(foreman,func(): return "Ladenauftrag · "+ForemanRules.order_status(Game.state))
- button(foreman,"LIEFERKETTE PRÜFEN",func(): open_menu("delivery"))
  if Game.state.jobs.is_empty(): card("Keine offenen Baustellen","Im Baukatalog ein Gebäude platzieren oder auf einen Betrieb tippen und Ausbauen wählen.")
  else: jobs_cards()
  var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Dein erstes Rathaus erklärt die Materialbaustellen. Ab Unternehmenslevel 4 gilt das System auch für weitere Gebäude; bis zu fünf Bauarbeiter arbeiten je Baustelle.")
@@ -1274,8 +1268,8 @@ func services_menu() -> void:
   var home=Game.state.homes[int(fire.target_ref.index)]
   var alert=card("BRAND · "+str(Catalog.HOMES[home.kind].name))
   dynamic_text(alert,func(): return FireSafety.status(Game.state,fire) if fire in data.fires else "Brand gelöscht")
-  text(alert,"Brandstärke",13,MUTED)
-  journey_ui.meter(alert,func(): return FireSafety.intensity(fire)*100 if fire in data.fires else 0,100)
+  text(alert,"Brandstärke (verbleibender Brand)",13,MUTED)
+  journey_ui.meter(alert,func(): return (1-float(fire.progress))*100 if fire in data.fires else 0,100)
   text(alert,"Löschfortschritt",13,MUTED)
   journey_ui.meter(alert,func(): return float(fire.progress)*100 if fire in data.fires else 100,100)
   text(alert,"Gebäudeschaden: 0 · Gebäude und Ausbaustufe bleiben erhalten.",13,MUTED)
@@ -1384,30 +1378,9 @@ func game_menu() -> void:
  modal_title.text="DEIN WALD · SPIELMENÜ"
  button(contents,"WEITERSPIELEN",close_menu)
  button(contents,"ANLEITUNG & HILFE",func(): open_menu("guide"))
- button(contents,"ALPHA 2 · FEEDBACK",func(): open_menu("alpha"))
+ button(contents,"ALPHA 1 · FEEDBACK",func(): open_menu("alpha"))
  button(contents,"EINSTELLUNGEN",func(): open_menu("settings"))
  button(contents,"SPEICHERN & ZUM STARTBILDSCHIRM",func():
   if not Game.save(true): show_notice(Store.last_error); return
   var error=get_tree().change_scene_to_file("res://Scenes/Boot.tscn")
   if error!=OK: show_notice("Der Startbildschirm konnte nicht geöffnet werden"))
-
-func traffic_menu() -> void:
- modal_title.text="VERKEHR & AMPELTECHNIK"
- var summary=card("Freie Fahrt mit Abstand","Grün gibt beide Fahrspuren einer Richtung frei. LKWs fahren erst in eine Kreuzung, wenn die Ausfahrt Platz hat. Zusätzliche Ladungen warten am Ladehof; Einfahrt und leere Rückfahrt nutzen getrennte Hofseiten. Anrückende Löschfahrzeuge fordern Grün an.")
- dynamic_text(summary,func(): return "%s Kreuzungen · %s Störungen · %s repariert" % [TrafficRules.junctions(Game.state).size(),Game.state.traffic.faults.size(),int(Game.state.traffic.repaired)])
- var tech=card("Technikdienst · automatisch","Bei einem Ausfall blinkt die Ampel gelb. Wechselverkehr hält die Stadt beweglich. Ein Techniker fährt von der Fahrzeuggarage oder der Nachbargemeinde hin, repariert vor Ort und fährt zurück. Der Dienst benötigt keinen Fracht-LKW.")
- dynamic_text(tech,func():
-  for mission in Game.state.city_services.missions:
-   if mission.kind=="technician": return "Techniker · "+str(CityServices.sample(mission).status)
-  return "Techniker bereit · derzeit kein Einsatz" if Game.state.traffic.faults.is_empty() else "Techniker angefordert · freie Einsatzkapazität und Straßenanschluss benötigt")
- for fault in Game.state.traffic.faults:
-  var cell=TownRules.cell(fault.cell)
-  var box=card("Ampelstörung · %s / %s" % [cell.x,cell.y])
-  button(box,"EINSATZORT ANSEHEN",func(): focus_requested.emit(TownRules.point(cell)); close_menu())
- var waiting=0
- for trip in Game.state.delivery.shipments+Game.state.construction_shipments+Game.state.stone.shipments+Game.state.trade.shipments:
-  if str(trip.get("traffic_wait","")).is_empty(): continue
-  waiting+=1
-  card("LKW · "+str(trip.traffic_wait),"%s · %s %s" % ["Leer zurück" if trip.arrived else "Beladen",Catalog.number(trip.amount),Catalog.RESOURCES[trip.key]])
- if waiting==0: text(contents,"Kein Fracht-LKW wartet derzeit.",15,MUTED)
- button(contents,"BAULEITUNG & MATERIAL",func(): open_menu("construction"))

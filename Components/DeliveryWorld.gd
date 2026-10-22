@@ -130,12 +130,6 @@ func _process(delta: float) -> void:
  clock += delta
  if clock>=0.5: clock=0; refresh_badges()
  var occupied: Array[Rect2] = []
- # A floating stock button must never intercept a tap on a real truck behind
- # it. Keep the vehicle's touch target clear, even in its loading courtyard.
- for vehicle in visuals.values():
-  if not vehicle.visible or world.camera.is_position_behind(vehicle.global_position): continue
-  var at=world.camera.unproject_position(vehicle.global_position+Vector3(0,2,0))
-  occupied.append(Rect2(at-Vector2(26,22),Vector2(52,44)))
  if world.hud.get("ux")!=null:
   var ux=world.hud.ux
   for control in [ux.event_button,ux.sheet,ux.palette]:
@@ -179,7 +173,6 @@ func _process(delta: float) -> void:
    node.cargo_boards = shipment.key=="boards"
    node.cargo_stone = shipment.key=="stone"
    node.road_freight = true
-   node.scale=Vector3.ONE*0.75
    add_child(node)
    node.set_meta("pool_key",signature)
    var cargo_label=Label3D.new()
@@ -199,7 +192,7 @@ func _process(delta: float) -> void:
    running = not Game.state.delivery.paused
    for kind in DeliveryChain.KINDS:
     if Game.state.buildings[int(Game.state.delivery.nodes[kind])].get("paused",false): running=false
-  var age = TrafficRules.visual_age(shipment,Game.tick_clock) if running else float(shipment.age)
+  var age = float(shipment.age)+minf(Game.tick_clock,0.99) if running else float(shipment.age)
   if not shipment.arrived: age=minf(age,float(shipment.travel)-0.000001)
   var progress = clampf(age/float(shipment.travel),0,1)
   var returning = false
@@ -211,20 +204,18 @@ func _process(delta: float) -> void:
   elif age>float(shipment.travel)+2:
    returning=true
    progress = 1-clampf((age-float(shipment.travel)-2)/float(shipment.travel),0,1)
-  var sample = TrafficRules.sample(shipment,age)
+  var sample = LogisticsRoutes.sample(shipment.path,progress)
   node.position = sample.position
-  var direction = sample.direction
+  var direction = -sample.direction if returning else sample.direction
   node.follow_heading(direction,delta)
-  node.visible=not shipment.get("traffic_hidden",false)
+  if progress>0.02 and progress<0.98: node.position+=Vector3(direction.z,0,-direction.x)*1.0
   truck_visual_count += 1
-  if running and float(shipment.get("traffic_speed",1))>0 and progress>0 and progress<1:
+  if running and progress>0 and progress<1:
    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
   if node.cargo!=null: node.cargo.visible = not shipment.arrived
   var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
-  # The selected vehicle already has a readable screen-space detail card.
-  # Unbounded world labels previously covered the entire phone screen.
-  cargo_label.visible=false
+  cargo_label.visible=world.view_zoom<140
   var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else Catalog.BUILDINGS[shipment.target].name
   cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
   if cargo_stage=="load": cargo_label.text="BELADEN · "+cargo_label.text

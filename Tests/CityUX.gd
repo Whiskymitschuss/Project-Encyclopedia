@@ -76,8 +76,7 @@ func run() -> void:
  for pressure_job in pressure.jobs: pressure_job.materials.wood=5000.0
  check(ConstructionRules.reserved_materials(pressure,"wood")==game.capacity()*0.5,"Oversized district plans leave half of warehouse capacity available to feed production")
  for key in ["wood","boards","nuts","screws"]: game.state.resources[key]=100.0
- # The bound includes red lights and the empty return of each phase load.
- for i in 1200:
+ for i in 700:
   game.step(1)
   if game.state.jobs.is_empty(): break
  check(game.state.jobs.is_empty() and int(game.state.buildings[0].level)==2 and int(game.state.buildings[1].level)==2,"One real crew automatically moves on and completes all grouped staged upgrades")
@@ -172,9 +171,10 @@ func run() -> void:
   game.step(1)
   if game.state.buildings[0].level==2: break
  var crew_visible=false
- scene.get_node("ConstructionCrews")._process(0)
- for worker in scene.get_node("ConstructionCrews").workers:
-  if worker.visible and worker.job_id==int(waiting.id): crew_visible=true
+ for site in scene.world_buildings.get_children():
+  if site.get("job_id")==int(waiting.id):
+   for worker in site.get_children():
+    if worker.get("role")=="construction": crew_visible=true
  check(waiting.workers==1 and crew_visible,"Automatic crew handoff creates the actual visible worker at the next construction site")
  game.assign_builders(int(waiting.id),0)
  game.step(1)

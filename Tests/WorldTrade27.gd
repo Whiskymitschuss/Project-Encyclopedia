@@ -94,21 +94,15 @@ func run() -> void:
  game.state.auto_export=false
  game.state.boosters.money={"left":200,"factor":9.0}
  var saved=JSON.parse_string(JSON.stringify(game.snapshot()))
- var arrival_seconds=0
- for i in 600:
-  game.step(1)
-  arrival_seconds+=1
-  if trip.arrived: break
+ game.simulate(ceili(float(trip.travel)))
  check(game.state.coins==paid+quoted and game.state.trade.revenue==quoted and game.state.trade.sold==4,"Arrival pays the saved quote exactly once even after price settings change")
  check(game.state.trade.shipments.size()==1 and game.state.trade.shipments[0].arrived,"Empty return still occupies the same truck")
  check(not game.remove_road(1),"Return journey still protects all public route cells")
  var online=game.snapshot()
  game.restore(saved)
- for i in arrival_seconds: game.step(1)
+ for i in ceili(float(trip.travel)): game.step(1)
  check(game.state.resources==online.resources and equivalent(game.state.trade,online.trade) and game.state.coins==online.coins,"JSON restore and offline/online advancement settle the same cargo exactly once")
- for i in 600:
-  if game.state.trade.shipments.is_empty(): break
-  game.step(1)
+ game.simulate(100)
  check(game.state.trade.shipments.is_empty() and game.state.coins==paid+quoted,"Return frees the truck without a second payout")
  check(game.remove_road(1),"A completed round trip releases its road reservation")
  check(game.move_building(4,Vector3(248,0,-80)),"A completed trip releases its source building")

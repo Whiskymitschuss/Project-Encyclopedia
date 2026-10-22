@@ -17,18 +17,10 @@ check() {
 check --editor --import --quit
 if [ "$#" -gt 0 ]; then
  for target in "$@"; do
-  if [ "$target" = ColdStart291 ]; then bash scripts/test_startup.sh; else check --script "res://Tests/$target.gd"; fi
+  check --script "res://Tests/$target.gd"
  done
  exit 0
 fi
-bash scripts/test_startup.sh
-check --script res://Tests/BackgroundRecovery292.gd
-check --script res://Tests/OfflineReplay292.gd
-check --script res://Tests/StartupRecovery291.gd
-check --script res://Tests/TrafficMaintenance29.gd
-check --script res://Tests/TrafficFlow293.gd
-check --script res://Tests/TrafficRecovery294.gd
-check --script res://Tests/TrafficStress294.gd
 check --script res://Tests/Alpha28.gd
 check --script res://Tests/AlphaProgression.gd
 check --script res://Tests/Rules.gd

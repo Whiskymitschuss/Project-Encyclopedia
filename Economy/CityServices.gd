@@ -9,7 +9,6 @@ static func initial() -> Dictionary:
  return {"enabled":true,"missions":[],"walkers":[],"next_id":1,"clock":12.0,"walk_clock":4.0,"completed":{},"treasury":0.0,"collected":0.0,"walks":0,"auto_kind":0,"fires":[],"fire_clock":0.0,"next_fire":1,"fires_extinguished":0}
 
 static func location(state: Dictionary, ref: Dictionary) -> Vector3:
- if ref.get("type","")=="road": return TownRules.point(TownRules.cell(ref.cell))
  return LogisticsRoutes.home_position(state,int(ref.index)) if ref.type=="home" else LogisticsRoutes.building_position(state,int(ref.index)) if ref.type=="building" else Vector3(-80,0,-164)
 
 static func destinations(state: Dictionary) -> Array:
@@ -114,10 +113,9 @@ static func tick(state: Dictionary, delta: float, cache: Dictionary) -> void:
  tick_fires(state,delta,cache)
  var done=[]
  for mission in data.missions:
-  mission.age=float(mission.age)+TrafficRules.advance(mission,delta)
+  mission.age=float(mission.age)+delta
   if not mission.served and float(mission.age)>=float(mission.served_at):
    mission.served=true
-   if mission.has("repair_id"): TrafficRules.finish_repair(state,int(mission.repair_id))
    if mission.has("fire_id"):
     for incident in data.fires.duplicate():
      if int(incident.id)==int(mission.fire_id):
@@ -145,15 +143,15 @@ static func tick(state: Dictionary, delta: float, cache: Dictionary) -> void:
   data.walk_clock=fposmod(float(data.walk_clock),12.0)
   create_walk(state,cache)
 
-static func sample(mission: Dictionary, extra: float = -1.0) -> Dictionary:
- var age=TrafficRules.visual_age(mission,extra) if extra>=0 else float(mission.age)
+static func sample(mission: Dictionary, extra: float = 0.0) -> Dictionary:
+ var age=float(mission.age)+extra
  var a=float(mission.drive)
  var pickup=a+float(mission.work)
  var served=float(mission.served_at)
  var path: Array=mission.outward
  var amount=clampf(age/a,0,1)
  var status="Zum Fahrgast" if mission.kind=="taxi" else "Zum Einsatz"
- var lights=mission.kind not in ["taxi","technician"] and age<served
+ var lights=mission.kind!="taxi" and age<served
  if age>=served:
   path=mission.back
   amount=clampf((age-served)/maxf(0.001,float(mission.total)-served),0,1)
@@ -165,12 +163,11 @@ static func sample(mission: Dictionary, extra: float = -1.0) -> Dictionary:
  elif age>=a:
   amount=1.0
   status="Löscharbeiten" if mission.has("fire_id") else "Einsteigen" if mission.kind=="taxi" else "Hilfe vor Ort"
- var value=TrafficRules.sample(mission,age,true)
- if not str(mission.get("traffic_wait","")).is_empty(): status=str(mission.traffic_wait)
+ var value=LogisticsRoutes.sample(path,amount)
  value.status=status
  value.lights=lights
  value.passenger=mission.kind=="taxi" and age>=pickup and age<served
- value.moving=float(mission.get("traffic_speed",1))>0 and status in ["Zum Fahrgast","Zum Einsatz","Fahrgast an Bord","Rückfahrt"]
+ value.moving=status in ["Zum Fahrgast","Zum Einsatz","Fahrgast an Bord","Rückfahrt"]
  return value
 
 static func uses_building(state: Dictionary, index: int, city: bool) -> bool:
@@ -209,7 +206,7 @@ static func tick_fires(state: Dictionary, delta: float, cache: Dictionary) -> vo
   for mission in data.missions:
    if int(mission.get("fire_id",-1))!=int(incident.id): continue
    assigned=true
-   incident.progress=clampf((float(mission.age)+float(mission.get("traffic_delta",delta))-float(mission.drive))/float(mission.work),0,1)
+   incident.progress=clampf((float(mission.age)+delta-float(mission.drive))/float(mission.work),0,1)
    break
   if not assigned:
    incident.mission_id=-1

@@ -43,7 +43,7 @@ static func uses_building(state: Dictionary, index: int) -> bool:
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done=[]
  for shipment in state.stone.shipments:
-  shipment.age=float(shipment.age)+TrafficRules.advance(shipment,delta)
+  shipment.age=float(shipment.age)+delta
   if not shipment.arrived and float(shipment.age)>=float(shipment.travel):
    var stock=state.resources if int(shipment.destination)<0 else site(state,int(shipment.destination)).get("stock",{})
    var cap=warehouse_capacity(state) if int(shipment.destination)<0 else capacity(state,int(shipment.destination))

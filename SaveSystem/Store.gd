@@ -8,7 +8,7 @@ var recovery_required=false
 func valid_shape(data: Variant) -> bool:
  if not data is Dictionary or not data.get("schema") is float and not data.get("schema") is int: return false
  if int(data.schema)!=1: return false
- for key in ["traffic","foreman","resources","ux","onboarding","journey","town","trade","stone","city_services","research","boosters","delivery","inventory","projects","plan","missions_claimed"]:
+ for key in ["resources","ux","onboarding","journey","town","trade","stone","city_services","research","boosters","delivery","inventory","projects","plan","missions_claimed"]:
   if data.has(key) and not data[key] is Dictionary: return false
  for key in ["buildings","homes","jobs","construction_shipments"]:
   if data.has(key) and not data[key] is Array: return false
@@ -28,7 +28,7 @@ func valid_shape(data: Variant) -> bool:
     if not record.position is Array or record.position.size()!=2: return false
     for coordinate in record.position:
      if not coordinate is float and not coordinate is int or not is_finite(float(coordinate)): return false
- for pair in [["traffic","faults"],["town","roads"],["town","stops"],["town","lines"],["trade","shipments"],["stone","shipments"],["delivery","shipments"],["city_services","missions"],["city_services","walkers"],["city_services","fires"]]:
+ for pair in [["town","roads"],["town","stops"],["town","lines"],["trade","shipments"],["stone","shipments"],["delivery","shipments"],["city_services","missions"],["city_services","walkers"],["city_services","fires"]]:
   if data.get(pair[0],{}).has(pair[1]) and not data[pair[0]][pair[1]] is Array: return false
  return true
 

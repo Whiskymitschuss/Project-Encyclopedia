@@ -26,7 +26,7 @@ func populate() -> void:
  hud.button(box,"ANLEITUNG & ERSTE SCHRITTE",func(): hud.open_menu("guide"))
  if TutorialRules.can_resume(Game.state) and not Game.state.onboarding.active:
   hud.button(box,"BENNO WIEDER EINBLENDEN",func(): Game.begin_tutorial(); hud.close_menu())
- hud.text(box,"Hafen und Flughafen sind geplant. Schiffs- und Flugexport sind in Alpha 2 noch nicht aktiv. Dein Fortschritt wird auf diesem Gerät gespeichert. Der Testbericht enthält keine Spielstanddatei und keine automatisch angehängten Kontaktdaten.",14,hud.INK)
+ hud.text(box,"Hafen und Flughafen sind geplant. Schiffs- und Flugexport sind in Alpha 1 noch nicht aktiv. Dein Fortschritt wird auf diesem Gerät gespeichert. Der Testbericht enthält keine Spielstanddatei und keine automatisch angehängten Kontaktdaten.",14,hud.INK)
 
 func copy_report() -> void:
  if not is_instance_valid(report): return

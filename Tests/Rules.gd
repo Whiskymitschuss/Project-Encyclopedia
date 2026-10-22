@@ -142,7 +142,7 @@ func run() -> void:
  Game.build_road("asphalt",TownRules.path(Vector2i(80,176),ExportTrade.GATE))
  Game.state.resources.furniture=8
  var export_coins=Game.state.coins
- Game.simulate(240)
+ Game.simulate(70)
  check(Game.state.exported>0 and Game.state.coins>export_coins,"Connected trucks export actual stock after arrival")
  fresh()
  Game.state.workers = 0

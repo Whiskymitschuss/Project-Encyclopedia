@@ -14,23 +14,6 @@ signal construction_phase_completed(job_id: int, phase: int)
 signal company_level_unlocked(level: int)
 signal construction_finished(point: Vector3, job_type: String)
 
-# Catch-up is deferred until a loading curtain has actually rendered. No partial
-# simulation is saved, so Android may terminate the app without losing the old file.
-var catching_up=false
-var catchup_running=false
-var catchup_total=0.0
-var catchup_left=0.0
-var catchup_before={}
-var catchup_report_seconds=0.0
-var catchup_generation=0
-var catchup_paused_at=0.0
-var catchup_curtain: CanvasLayer
-var catchup_scene: Node
-var catchup_scene_mode=Node.PROCESS_MODE_INHERIT
-var catchup_signals_were_blocked=false
-var use_catchup_worker=true
-var catchup_worker: RefCounted
-var catchup_extension=0.0
 var live_world=true
 var state: Dictionary
 var flow: Dictionary = {}
@@ -60,7 +43,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "foreman":ForemanRules.initial(), "traffic":TrafficRules.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "construction_logistics_version":1, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -77,12 +60,15 @@ func _ready() -> void:
  if not saved.is_empty():
   restore(saved)
   var offline = clampf(Time.get_unix_time_from_system() - float(state.last_seen),0.0,28800.0)
-  if offline>0.001: queue_catchup(offline,Journey.resume_capture(state),offline)
+  var before = Journey.resume_capture(state)
+  simulate(offline)
+  if offline > 60:
+   return_report=Journey.resume_report(state,before,offline)
+   offline_report = "%s Min. offline · +%s Münzen" % [int(offline/60),Catalog.number(state.coins-float(before.coins))]
  get_tree().quit_on_go_back=false
  process_mode = Node.PROCESS_MODE_ALWAYS
 
 func restore(saved: Dictionary) -> void:
- cancel_catchup()
  state = initial_state()
  for key in state:
   if saved.has(key):
@@ -110,8 +96,6 @@ func restore(saved: Dictionary) -> void:
  for key in DeliveryChain.initial():
   if not state.delivery.has(key): state.delivery[key] = DeliveryChain.initial()[key]
  DeliveryChain.migrate_belts(state)
- for job in state.jobs:
-  if job.has("phases") and not job.has("auto_crew"): job.auto_crew=true
  if int(saved.get("construction_logistics_version",0))<1:
   for job in state.jobs:
    if job.has("phases"): job.requested=true
@@ -123,11 +107,6 @@ func restore(saved: Dictionary) -> void:
   if not state.stone.has(key): state.stone[key]=StoneIndustry.initial()[key]
  for key in ExportTrade.initial():
   if not state.trade.has(key): state.trade[key]=ExportTrade.initial()[key]
- for key in ForemanRules.initial():
-  if not state.foreman.has(key): state.foreman[key]=ForemanRules.initial()[key]
- TrafficRules.migrate(state)
- for key in TrafficRules.initial():
-  if not state.traffic.has(key): state.traffic[key]=TrafficRules.initial()[key]
  ExportTrade.route_cache.clear()
  StoneIndustry.synchronize(state)
  Journey.migrate(state,saved)
@@ -139,7 +118,6 @@ func snapshot() -> Dictionary:
  return data
 
 func save(silent: bool = false) -> bool:
- if catching_up: return false
  var previously_ok=last_save_ok
  last_save_ok = Store.save_game(snapshot())
  if silent and previously_ok and not last_save_ok: notice.emit("Speichern fehlgeschlagen · "+Store.last_error)
@@ -147,39 +125,21 @@ func save(silent: bool = false) -> bool:
  return last_save_ok
 
 func _notification(what: int) -> void:
- if catching_up:
-  if what==NOTIFICATION_APPLICATION_PAUSED: catchup_paused_at=Time.get_unix_time_from_system()
-  if what==NOTIFICATION_APPLICATION_RESUMED and catchup_paused_at>0:
-   var extra=minf(maxf(0,Time.get_unix_time_from_system()-catchup_paused_at),maxf(0,28800-catchup_total))
-   catchup_left+=extra
-   if catchup_worker!=null: catchup_extension+=extra
-   catchup_total+=extra
-   catchup_report_seconds=minf(28800,catchup_report_seconds+extra)
-   catchup_paused_at=0
-  if what==NOTIFICATION_WM_GO_BACK_REQUEST: get_tree().quit()
-  return
  if what==NOTIFICATION_WM_GO_BACK_REQUEST: back_requested.emit()
  if what == NOTIFICATION_APPLICATION_PAUSED:
   paused_at=Time.get_unix_time_from_system()
   pause_capture=Journey.resume_capture(state)
  if what == NOTIFICATION_APPLICATION_RESUMED and paused_at>0:
-  resume_company(Time.get_unix_time_from_system(),true)
+  resume_company(Time.get_unix_time_from_system())
  if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
   save(true)
 
-func resume_company(now: float, deferred: bool = false) -> void:
+func resume_company(now: float) -> void:
  if paused_at<=0 or pause_capture.is_empty(): return
  var gap=maxf(0,now-paused_at)
  # Some platforms continue processing briefly in the background. Subtract
  # those already simulated seconds instead of paying them a second time.
  var remaining=clampf(gap-(float(state.elapsed)-float(pause_capture.elapsed)),0,28800)
- if deferred and remaining>0.001:
-  var before=pause_capture.duplicate(true)
-  paused_at=0.0
-  pause_capture={}
-  skip_resume_delta=true
-  queue_catchup(remaining,before,minf(gap,28800))
-  return
  simulate(remaining)
  if gap>60:
   return_report=Journey.resume_report(state,pause_capture,minf(gap,28800))
@@ -191,9 +151,6 @@ func resume_company(now: float, deferred: bool = false) -> void:
  save(true)
 
 func _process(delta: float) -> void:
- if catching_up:
-  if catchup_running and catchup_paused_at<=0: process_catchup()
-  return
  if not live_world: return
  if skip_resume_delta:
   # The OS may report the whole background interval as this frame's delta.
@@ -210,116 +167,6 @@ func _process(delta: float) -> void:
  if save_clock >= 20.0:
   save_clock = 0.0
   save(true)
-
-func queue_catchup(seconds: float, before: Dictionary, report_seconds: float) -> void:
- cancel_catchup()
- if seconds<=0: return
- catching_up=true
- catchup_total=clampf(seconds,0,28800)
- catchup_left=catchup_total
- catchup_before=before.duplicate(true)
- catchup_report_seconds=clampf(report_seconds,0,28800)
- catchup_signals_were_blocked=is_blocking_signals()
- # Avoid rebuilding the entire 3D city for every offline construction phase.
- set_block_signals(true)
- pause_catchup_scene()
- # Start independently of frame delivery: Android may minimize the app even
- # before the two presentation frames or the curtain's deferred callback.
- if use_catchup_worker: start_catchup_worker(state,catchup_left)
- call_deferred("show_catchup",catchup_generation)
-
-func show_catchup(generation: int) -> void:
- if not catching_up or generation!=catchup_generation: return
- catchup_curtain=load("res://UI/LoadingCurtain.gd").new()
- add_child(catchup_curtain)
- # Two frames let Android present the curtain before any expensive game tick.
- await get_tree().process_frame
- await get_tree().process_frame
- if catching_up and generation==catchup_generation:
-  pause_catchup_scene()
-  catchup_running=true
-
-func start_catchup_worker(data: Dictionary, seconds: float) -> bool:
- var model=get_script().new()
- model.state=data.duplicate(true)
- model.catching_up=true
- model.set_block_signals(true)
- var work=load("res://Managers/OfflineWork.gd").new()
- if work.start(model,seconds)!=OK: return false
- catchup_worker=work
- return true
-
-func pause_catchup_scene() -> void:
- # During a cold start the main scene may not exist when the autoload queues
- # the curtain. Bind after its first frames, and track any pending scene change.
- var scene=get_tree().current_scene
- if scene==catchup_scene: return
- if is_instance_valid(catchup_scene): catchup_scene.process_mode=catchup_scene_mode
- catchup_scene=scene
- if is_instance_valid(catchup_scene):
-  catchup_scene_mode=catchup_scene.process_mode
-  catchup_scene.process_mode=Node.PROCESS_MODE_DISABLED
-
-func process_catchup(budget_usec: int = 8000, max_steps: int = 120) -> void:
- if not catching_up or not catchup_running: return
- pause_catchup_scene()
- if catchup_worker!=null:
-  var progress=catchup_worker.progress()
-  catchup_left=float(progress.remaining)+catchup_extension
-  if not progress.complete: return
-  var result=catchup_worker.take()
-  catchup_worker=null
-  if catchup_extension>0.000001:
-   var extra=catchup_extension
-   catchup_extension=0
-   if use_catchup_worker and start_catchup_worker(result.state,extra): return
-   catchup_left=extra
-  state=result.state
-  flow=result.flow
- var started=Time.get_ticks_usec()
- var steps=0
- while catchup_left>0.000001 and steps<max_steps and Time.get_ticks_usec()-started<budget_usec:
-  var amount=minf(1,catchup_left)
-  step(amount)
-  catchup_left=maxf(0,catchup_left-amount)
-  steps+=1
- if catchup_left>0.000001: return
- var report_seconds=catchup_report_seconds
- var before=catchup_before.duplicate(true)
- cancel_catchup()
- if report_seconds>60:
-  return_report=Journey.resume_report(state,before,report_seconds)
-  offline_report="%s Min. offline · +%s Münzen" % [int(report_seconds/60),Catalog.number(state.coins-float(before.coins))]
- skip_resume_delta=true
- rebuild_world.emit()
- changed.emit()
- save(true)
-
-func cancel_catchup() -> void:
- if catchup_worker!=null:
-  catchup_worker.stop()
-  catchup_worker=null
- catchup_extension=0
- catchup_generation+=1
- if catching_up: set_block_signals(catchup_signals_were_blocked)
- catching_up=false
- catchup_running=false
- catchup_paused_at=0
- catchup_total=0
- catchup_left=0
- catchup_before={}
- if is_instance_valid(catchup_scene): catchup_scene.process_mode=catchup_scene_mode
- catchup_scene=null
- if is_instance_valid(catchup_curtain):
-  catchup_curtain.hide()
-  catchup_curtain.queue_free()
- catchup_curtain=null
-
-func _exit_tree() -> void:
- # Never leave a worker accessing its detached model during engine shutdown.
- if catchup_worker!=null:
-  catchup_worker.stop()
-  catchup_worker=null
 
 func simulate(seconds: float) -> void:
  for i in int(seconds): step(1.0)
@@ -420,10 +267,7 @@ func step(delta: float) -> void:
  var burning={}
  for incident in state.city_services.fires:
   burning[int(incident.id)]=CityServices.location(state,incident.target_ref)
- TrafficRules.prepare(state,delta)
- if ForemanRules.tick(state,delta): rebuild_world.emit()
  CityServices.tick(state,delta,city_route_cache)
- TrafficRules.dispatch_repair(state,city_route_cache)
  for incident in state.city_services.fires: burning.erase(int(incident.id))
  for point in burning.values(): fire_extinguished.emit(point)
  ConstructionRules.transport_tick(state,delta)
@@ -533,7 +377,7 @@ func step(delta: float) -> void:
  for j in completed:
   state.jobs.erase(j)
   finish_job(j)
- if allocate_group_crews() or ForemanRules.tick(state,0): rebuild_world.emit()
+ if allocate_group_crews(): rebuild_world.emit()
  if not state.plan.is_empty() and state.plan.get("auto",false):
   var plan = state.plan.duplicate(true)
   var affordable = state.coins >= float(Catalog.HOMES[plan.kind].cost)*difficulty()
@@ -1417,7 +1261,7 @@ func step_transit(delta: float) -> void:
  for line in state.town.lines:
   var plan = transit_plan(line.stops)
   if plan.is_empty(): continue
-  var phase = float(line.phase)+TrafficRules.advance(line,delta)
+  var phase = float(line.phase)+delta
   var trips = floori(phase/float(plan.duration))
   line.phase = fposmod(phase,float(plan.duration))
   if trips>0:
@@ -1733,7 +1577,6 @@ func undo_road() -> bool:
 
 
 func allocate_group_crews() -> bool:
- if state.foreman.enabled: return ForemanRules.tick(state,0)
  var assigned=false
  for queued in state.jobs:
   if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free_builders()>0:

@@ -91,9 +91,9 @@ func run() -> void:
  fw._process(0.1)
  await settle()
  var fire=fw.scenes.values()[0]
- check(is_equal_approx(fire.get_meta("badge").get_child(0).get_node("Intensity").value,FireSafety.intensity(incident)*100) and is_equal_approx(fire.get_meta("badge").get_child(0).get_node("Extinguishing").value,50),"Screen-space fire meters use actual rescue progress and intensity")
+ check(is_equal_approx(fire.get_node("Meters/Intensity").scale.x,0.5) and is_equal_approx(fire.get_node("Meters/Extinguishing").scale.x,0.5),"World fire meters use actual rescue progress")
  check(not scene.town_name_labels[0].visible and not scene.town_layer.rent_labels[0].label.visible,"Incident status replaces competing home and rent captions")
- check(fire.get_meta("badge").visible,"Fire progress remains visible below the HUD when focused")
+ check(fire.get_node("Status").visible and fire.get_node("Meters").visible,"Fire progress remains visible below the HUD when focused")
  check(fire.get_node("WaterMist").emitting and fire.get_node("Sparks").emitting,"Actual on-site rescue enables water mist and sparks")
  check(fire.get_node("FireGlow").visible and not fire.get_node("FireGlow").shadow_enabled,"Normal-quality fire has bounded shadowless warm light")
  root.get_texture().get_image().save_png("/workspace/timber-quality-fire25.png")
