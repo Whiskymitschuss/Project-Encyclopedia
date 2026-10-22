@@ -124,17 +124,24 @@ func _process(delta: float) -> void:
      if cycle_key not in ["wood","boards","furniture"]: cycle_key="crates"
     break
  if active: cycle_running=true
- if not cycle_running or not Game.state.ux.motion or not Game.state.ambient_enabled: return
+ if not cycle_running: return
+ var transferred=false
+ if depot_handler and not cycle_trip.is_empty():
+  transferred=bool(cycle_trip.get("arrived",false)) if not cycle_loading else float(cycle_trip.age)>=float(cycle_trip.get("load",0))
+  var present=false
+  for trip in FreightFlow.all_trips(Game.state):
+   if int(trip.id)==int(cycle_trip.id): present=true; break
+  transferred=transferred or not present
+ if not Game.state.ux.motion or not Game.state.ambient_enabled:
+  # Freeze movement, but never retain a phantom pallet after its real handoff.
+  if transferred: payload.hide()
+  return
  if not depot_handler and index>=0 and Game.state.buildings[index].get("paused",false): return
  if not depot_handler and Game.delivery_owns(index) and Game.state.delivery.paused: return
  if depot_handler and not cycle_trip.is_empty():
   # The load remains on the forks until the authoritative transfer completes.
   # Full storage holds it here; hidden/reduced-motion views never book goods.
-  var done=bool(cycle_trip.get("arrived",false)) if not cycle_loading else float(cycle_trip.age)>=float(cycle_trip.get("load",0))
-  var present=false
-  for trip in FreightFlow.all_trips(Game.state):
-   if int(trip.id)==int(cycle_trip.id): present=true; break
-  if done or not present:
+  if transferred:
    phase=maxf(phase,2.05)+delta*0.6
   else:
    var progress=CargoTransfer.phase(cycle_trip,float(cycle_trip.age)+minf(Game.tick_clock,0.99))

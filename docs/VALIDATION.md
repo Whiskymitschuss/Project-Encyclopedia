@@ -2,7 +2,7 @@
 
 20.722 Einzelprüfungen in 30 Headless-Suiten einschließlich zweier natürlicher
 Progressionsläufe; Hauptwelt- und Titelstart ebenfalls bestanden.
-933 OpenGL-Prüfungen in 21 unterschiedlichen Suiten bestanden.
+934 OpenGL-Prüfungen in 21 unterschiedlichen Suiten bestanden.
 Betroffene Suiten nach Änderungen erneut ausgeführt; erfolgreiche Wiederholungen
 werden nicht doppelt addiert. [Prüfbericht](alpha1-beavers/automated-checks.json).
 

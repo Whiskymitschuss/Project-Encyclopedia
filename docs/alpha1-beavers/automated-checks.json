@@ -37,13 +37,13 @@
     "Progression: real first home without resource grants"
   ],
   "main_and_boot_smokes_passed": true,
-  "visual_checks": 933,
+  "visual_checks": 934,
   "visual_suites": 21,
   "visual_results": {
     "BEAVER WORLD": 88,
     "VISUAL MAP 2842": 32,
     "VISUAL FACTORY 284": 48,
-    "VISUAL CAMPUS 283": 54,
+    "VISUAL CAMPUS 283": 55,
     "VISUAL COLD START 282": 8,
     "VISUAL FOREST 282": 28,
     "VISUAL ROLLBACK 028": 146,
@@ -62,7 +62,7 @@
     "VISUAL TRAFFIC": 27,
     "VISUAL VALLEY": 9
   },
-  "validation_sequence": "Complete headless set plus targeted import/Crafted/Delivery/CityUX rerun. Standard expanded OpenGL set run, then first tutorial touch and stone cargo failures investigated. Reveal text now shapes before typing; cargo handoff hides a load only at a station with an actual forklift. Alpha/Campus/Stone/Traffic/Valley/Factory rerun successfully. Final Beaver/Factory/Campus/Traffic/FireUI rerun after staff, bus, service and forklift scale adjustments. Duplicate successful reruns are not added. Final Map/Valley rerun confirms kerb foundations reach below the valley ground.",
+  "validation_sequence": "Complete headless set plus targeted import/Crafted/Delivery/CityUX rerun. Standard expanded OpenGL set run, then first tutorial touch and stone cargo failures investigated. Reveal text now shapes before typing; cargo handoff hides a load only at a station with an actual forklift. Alpha/Campus/Stone/Traffic/Valley/Factory rerun successfully. Final Beaver/Factory/Campus/Traffic/FireUI rerun after staff, bus, service and forklift scale adjustments. Duplicate successful reruns are not added. Final Map/Valley rerun confirms kerb foundations reach below the valley ground. Final Campus/Factory rerun also confirms completed pallet handoffs stay accurate with movement disabled.",
   "resolved_findings": [
     "The first tutorial touch failed in one initial run; stationary typewriter action regression and full physical tutorial now pass.",
     "Stone loads were incorrectly hidden when no forklift receives them; handoff is now limited to actual handler stations and unchanged Stone tests pass.",
@@ -82,7 +82,8 @@
     "No synthetic loaded forklift trip from production alone; depot handlers do not duplicate a trip",
     "Physical intro, tutorial, selling, paid construction and return-to-title flow",
     "Material counters and touch layouts at small-phone and tablet sizes",
-    "Sidewalk kerb foundations reach into the terrain instead of leaving a visible gap underneath"
+    "Sidewalk kerb foundations reach into the terrain instead of leaving a visible gap underneath",
+    "Reduced motion freezes forklift movement while removing cargo already transferred or cancelled"
   ],
   "fixture": "Synthetic disposable profiles only; no private player save",
   "rendering": "Godot 4.6.3, Xvfb and Mesa llvmpipe GL Compatibility",

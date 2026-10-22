@@ -77,8 +77,10 @@ func run() -> void:
  position=handler.position
  handler._process(1)
  check(handler.position==position,"Reduced motion freezes the new handler")
- game.state.ux.motion=true
  dock_trip.arrived=true
+ handler._process(0.1)
+ check(not handler.payload.visible and handler.position==position,"Reduced motion keeps movement frozen while reflecting the actual completed cargo handoff")
+ game.state.ux.motion=true
  handler._process(0.1)
  check(not handler.payload.visible,"The pallet disappears only after the authoritative inventory transfer")
  for i in 40: handler._process(0.25)
