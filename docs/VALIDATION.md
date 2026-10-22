@@ -1,3 +1,31 @@
+# Prüfung Startfix — 0.29.1-alpha.2
+
+- `bash scripts/test.sh`: **20,160 Prüfungen in 27 Headless-Suiten**,
+  keine Fehler. Zusätzlich natürlicher Ersthaus-/Tutorialfortschritt und
+  Hauptwelt-/Intro-Starttests. Erste Hütte und Rathaus in 630 simulierten Sekunden;
+  acht Stunden Offline-Produktion nach Neuladen stimmen mit normaler Simulation überein.
+- `bash scripts/test_visual.sh`: **517 Prüfungen in 13 OpenGL-Suiten**,
+  keine Skript-/Ladefehler. Die neue Ladesuite wurde nach der letzten Änderung
+  separat erneut geprüft. [Einzelergebnisse](alpha2-startfix/automated-checks.json).
+- Kaltstart-Suite: 11 Prüfungen in einem eigenen Prozess mit vorbereiteter,
+  isolierter Firma und mehr als acht Stunden Abwesenheit. Der echte Game-Autoload
+  kehrt vor der Berechnung zurück, die echte Boot-Szene wird geladen und pausiert,
+  der Fortschritt läuft über mehrere Frames. Der fertige Stand ist gültig gespeichert.
+- Recovery-Suite: 24 Prüfungen für identische Produktion einschließlich Bruchteilen,
+  unveränderte Speicherbytes bei Teilberechnung/Schließen, Hintergrundpause,
+  korrekte Resume-Zeit, keine Doppelzahlung, Acht-Stunden-Limit, Szenenfreigabe
+  und abgebrochene/ersetzte Ladeanforderungen.
+- Neue OpenGL-Suite: 27 Prüfungen für sichtbares Laden, sicheren Abbruchknopf,
+  Fortschritt, unverzerrte Darstellung bei 360×640, 540×960, 591×1280 und 1280×800,
+  freie Touch-Bedienung nach dem Laden und echten Übergang in die Hauptwelt.
+  [Gerenderte Ladeansicht](alpha2-startfix/preview-loading.png).
+- Einige vorhandene OpenGL-Suiten melden beim Beenden weiterhin einen ObjectDB-
+  Aufräumhinweis. Ihre Prüfungen bestehen; dies ist kein Nachweis eines bestandenen
+  Android-Langzeit-Speicher-, Akku- oder Leistungstests.
+- Reale Profile wurden weder gelesen noch verändert. Jede unabhängige Testsuite
+  verwendet ihr eigenes temporäres Profil; nur der Kaltstart erhält gezielt eine
+  neu erzeugte Testdatei. **Kein Test dieser Fassung auf einem echten Android-Handy.**
+
 ## Auslieferung Alpha 2
 
 APK aus Quell-Commit `04d4f4210301848fd14041bcfb5ab940a52e978f`, 63206319 Bytes,

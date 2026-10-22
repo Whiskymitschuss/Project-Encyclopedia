@@ -4,7 +4,10 @@ cd "$(dirname "$0")/.."
 test_data=$(mktemp -d /tmp/timber-tests.XXXXXX)
 trap 'rm -rf "$test_data"' EXIT
 export XDG_DATA_HOME="$test_data"
+test_invocation=0
 check() {
+ test_invocation=$((test_invocation+1))
+ export XDG_DATA_HOME="$test_data/profile-$test_invocation"
  local status=0
  timeout 120s bash scripts/godot.sh --headless "$@" > "$test_data/log" 2>&1 || status=$?
  cat "$test_data/log"
@@ -13,9 +16,13 @@ check() {
 }
 check --editor --import --quit
 if [ "$#" -gt 0 ]; then
- for target in "$@"; do check --script "res://Tests/$target.gd"; done
+ for target in "$@"; do
+  if [ "$target" = ColdStart291 ]; then bash scripts/test_startup.sh; else check --script "res://Tests/$target.gd"; fi
+ done
  exit 0
 fi
+bash scripts/test_startup.sh
+check --script res://Tests/StartupRecovery291.gd
 check --script res://Tests/TrafficMaintenance29.gd
 check --script res://Tests/Alpha28.gd
 check --script res://Tests/AlphaProgression.gd

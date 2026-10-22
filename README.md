@@ -2,6 +2,18 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
+## Startfix — 0.29.1-alpha.2
+
+Der Start wartet nicht länger unsichtbar auf die komplette Offline-Berechnung.
+Logo, Ladefortschritt und eine sichere Abbruchmöglichkeit erscheinen zuerst;
+die Firma wird anschließend abschnittsweise aktualisiert. Auch Androids
+Hintergrundwechsel verwendet diesen Ablauf. Teilstände überschreiben den
+bisherigen Spielstand nicht. Als Update über die vorhandene Alpha installieren.
+
+[Änderungen und Nutzen](docs/STARTFIX-291.md) ·
+[Installation](docs/alpha2-startfix/START-HIER.txt) ·
+[Testplan](docs/alpha2-startfix/TESTPLAN.txt) · [Downloads](releases/README.md).
+
 ## Alpha 2 — 0.29-alpha.2
 
 Rückmeldungen aus dem ersten Handytest: neue Flammen und weicher Rauch,

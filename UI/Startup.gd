@@ -119,7 +119,7 @@ func _ready() -> void:
  for state in ["normal","hover","pressed","focus"]: play.add_theme_stylebox_override(state,button_skin(GOLD.darkened(0.12) if state=="pressed" else GOLD))
  play.pressed.connect(start_game)
  column.add_child(play)
- label(column,"ALPHA 2 · TESTFASSUNG · 0.29",12,Color("bdd4c5"))
+ label(column,"ALPHA 2 · TESTFASSUNG · "+str(ProjectSettings.get_setting("application/config/version")).get_slice("-",0),12,Color("bdd4c5"))
  skip=Button.new()
  skip.text="Intro überspringen  ›"
  skip.flat=true
@@ -169,7 +169,7 @@ func finish_intro() -> void:
  update_phase()
 
 func start_game() -> void:
- if starting or Store.recovery_required: return
+ if starting or Store.recovery_required or Game.catching_up: return
  starting=true
  play.disabled=true
  play.text="DEIN WALD WIRD VORBEREITET …"
@@ -209,6 +209,7 @@ func show_recovery() -> void:
   subtitle.text="Deine bisherigen Dateien sind gesichert. Dein neuer Wald ist bereit.")
 
 func back() -> void:
+ if Game.catching_up: get_tree().quit(); return
  if not ready_to_play: finish_intro()
  elif not starting:
   Game.save(true)

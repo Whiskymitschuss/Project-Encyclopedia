@@ -1,0 +1,67 @@
+STARTFIX 0.29.1 – ZUERST PRÜFEN
+[ ] Update über vorhandene Alpha 2 installieren, keine Deinstallation.
+[ ] App aus beendetem Zustand öffnen: Logo/Ladeanzeige statt leerer grüner Fläche.
+[ ] Nach längerer Pause: Prozentanzeige läuft bis zum Ende, dann Intro sichtbar.
+[ ] Weiterspielen öffnet die vorhandene Firma mit Gebäuden und Vorräten.
+[ ] Während des Ladens „Später weiterspielen“: App schließt ohne Zurücksetzen.
+[ ] Erneutes Öffnen rechnet den bisherigen Stand genau einmal nach.
+[ ] Während des Ladens kurz in den Hintergrund wechseln und zurückkehren.
+[ ] Nach längerem Hintergrundaufenthalt: Ladeanzeige, danach normale Bedienung.
+Bitte Wartezeit, Gerät und letzten sichtbaren Text notieren, falls etwas hängt.
+Die Prüfung auf echten Android-Geräten steht für diese Fassung noch aus.
+
+ALPHA 2 – KURZER TESTPLAN (10–20 MINUTEN)
+
+Bitte spiele zuerst ohne zusätzliche Erklärung. Notiere, wo du suchen musstest.
+
+START UND ERSTER EINDRUCK
+[ ] Intro sieht richtig aus; Logo und Welt sind nicht verzerrt.
+[ ] Spielen funktioniert; Intro überspringen funktioniert.
+[ ] Bennos nächste Handlung war verständlich und erreichbar.
+[ ] Fällen, Abliefern und erster Verkauf funktionieren.
+[ ] Erste Hütte lässt sich setzen und drehen; Geld wird erst nach Bestätigung abgezogen.
+[ ] Fertigstellung und nächste Kapitelziele sind verständlich.
+
+BEDIENUNG UND SPEICHERUNG
+[ ] Karte verschieben und mit zwei Fingern zoomen.
+[ ] Bauvorschau abbrechen: kein Kauf, kein Geldverlust.
+[ ] Gesperrtes Biom verhindert den Bau mit verständlichem Hinweis.
+[ ] Ein Menü mit der Android-Zurück-Taste schließen.
+[ ] Über das Spielmenü speichern und zum Startbildschirm zurückkehren.
+[ ] Weiterspielen: Firma und Vorräte sind erhalten.
+[ ] App kurz in den Hintergrund schicken und wieder öffnen.
+[ ] Große Schrift und Akkumodus in den Einstellungen ausprobieren.
+[ ] Testbericht bearbeiten, kopieren und in eine Nachricht einfügen.
+
+WENN DU WEITERSPIELST
+[ ] Kapitelbelohnungen abholen und das erste Rathaus bauen.
+[ ] Produktion und Miete wirken nachvollziehbar.
+[ ] Eigene Straße bauen und Autobahnexport verbinden.
+[ ] Feuerwehr fährt über Straßen zum Brand; Rauch und Löschwasser sind sichtbar.
+
+DEIN EINDRUCK
+Was hat Spaß gemacht?
+Wo wusstest du nicht weiter?
+Welches Ziel wolltest du als Nächstes erreichen?
+Würdest du morgen wieder spielen – und warum?
+
+Handymodell, Android-Version, Spielversion und genaue Schritte helfen bei Fehlern.
+Bitte keine Passwörter, privaten Schlüssel oder persönlichen Dateien beilegen.
+
+NEU IN ALPHA 2 – MIT DER VORHANDENEN FIRMA TESTEN
+[ ] Haus auf Waldfläche bauen: Bäume und der BOSS-Baum bleiben außerhalb des Grundstücks.
+[ ] Forstmaschinen arbeiten nicht mehr zwischen neu gebauten Häusern.
+[ ] Zwei Baustellen gleichzeitig starten: Bauleitung verteilt vorhandene Teams.
+[ ] Baustelle ohne Material antippen: fehlender Baustoff oder Transportgrund wird erklärt.
+[ ] Manuell zugeteilte Bauarbeiter bleiben zugeteilt; Automatik lässt sich wieder aktivieren.
+[ ] Bauarbeiter laufen beim Wechsel zur nächsten Baustelle.
+[ ] Mehrere LKW beobachten: getrennte Spuren, Abstand und Halt an roten Ampeln.
+[ ] Wartender LKW liefert seine Ladung erst nach wirklicher Ankunft.
+[ ] Nach ungefähr 15 Spielminuten: Ampelstörung, Techniker fährt hin und repariert.
+[ ] Während eines Staus oder Technikereinsatzes speichern, schließen und weiterspielen.
+[ ] Brand: flackernde Flammen, Rauch mit Wind und sichtbares Löschwasser.
+[ ] Einsatzanzeige bleibt klein und lesbar, auch beim Heranzoomen.
+[ ] Akkumodus und reduzierte Bewegung funktionieren weiter.
+
+Bitte bei Stau Ort, betroffene Fahrzeuge und ungefähre Dauer nennen.
+Ein kurzes Video ist dafür besonders hilfreich.

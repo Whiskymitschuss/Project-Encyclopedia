@@ -14,6 +14,20 @@ signal construction_phase_completed(job_id: int, phase: int)
 signal company_level_unlocked(level: int)
 signal construction_finished(point: Vector3, job_type: String)
 
+# Catch-up is deferred until a loading curtain has actually rendered. No partial
+# simulation is saved, so Android may terminate the app without losing the old file.
+var catching_up=false
+var catchup_running=false
+var catchup_total=0.0
+var catchup_left=0.0
+var catchup_before={}
+var catchup_report_seconds=0.0
+var catchup_generation=0
+var catchup_paused_at=0.0
+var catchup_curtain: CanvasLayer
+var catchup_scene: Node
+var catchup_scene_mode=Node.PROCESS_MODE_INHERIT
+var catchup_signals_were_blocked=false
 var live_world=true
 var state: Dictionary
 var flow: Dictionary = {}
@@ -60,15 +74,12 @@ func _ready() -> void:
  if not saved.is_empty():
   restore(saved)
   var offline = clampf(Time.get_unix_time_from_system() - float(state.last_seen),0.0,28800.0)
-  var before = Journey.resume_capture(state)
-  simulate(offline)
-  if offline > 60:
-   return_report=Journey.resume_report(state,before,offline)
-   offline_report = "%s Min. offline · +%s Münzen" % [int(offline/60),Catalog.number(state.coins-float(before.coins))]
+  if offline>0.001: queue_catchup(offline,Journey.resume_capture(state),offline)
  get_tree().quit_on_go_back=false
  process_mode = Node.PROCESS_MODE_ALWAYS
 
 func restore(saved: Dictionary) -> void:
+ cancel_catchup()
  state = initial_state()
  for key in state:
   if saved.has(key):
@@ -124,6 +135,7 @@ func snapshot() -> Dictionary:
  return data
 
 func save(silent: bool = false) -> bool:
+ if catching_up: return false
  var previously_ok=last_save_ok
  last_save_ok = Store.save_game(snapshot())
  if silent and previously_ok and not last_save_ok: notice.emit("Speichern fehlgeschlagen · "+Store.last_error)
@@ -131,21 +143,38 @@ func save(silent: bool = false) -> bool:
  return last_save_ok
 
 func _notification(what: int) -> void:
+ if catching_up:
+  if what==NOTIFICATION_APPLICATION_PAUSED: catchup_paused_at=Time.get_unix_time_from_system()
+  if what==NOTIFICATION_APPLICATION_RESUMED and catchup_paused_at>0:
+   var extra=minf(maxf(0,Time.get_unix_time_from_system()-catchup_paused_at),maxf(0,28800-catchup_total))
+   catchup_left+=extra
+   catchup_total+=extra
+   catchup_report_seconds=minf(28800,catchup_report_seconds+extra)
+   catchup_paused_at=0
+  if what==NOTIFICATION_WM_GO_BACK_REQUEST: get_tree().quit()
+  return
  if what==NOTIFICATION_WM_GO_BACK_REQUEST: back_requested.emit()
  if what == NOTIFICATION_APPLICATION_PAUSED:
   paused_at=Time.get_unix_time_from_system()
   pause_capture=Journey.resume_capture(state)
  if what == NOTIFICATION_APPLICATION_RESUMED and paused_at>0:
-  resume_company(Time.get_unix_time_from_system())
+  resume_company(Time.get_unix_time_from_system(),true)
  if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
   save(true)
 
-func resume_company(now: float) -> void:
+func resume_company(now: float, deferred: bool = false) -> void:
  if paused_at<=0 or pause_capture.is_empty(): return
  var gap=maxf(0,now-paused_at)
  # Some platforms continue processing briefly in the background. Subtract
  # those already simulated seconds instead of paying them a second time.
  var remaining=clampf(gap-(float(state.elapsed)-float(pause_capture.elapsed)),0,28800)
+ if deferred and remaining>0.001:
+  var before=pause_capture.duplicate(true)
+  paused_at=0.0
+  pause_capture={}
+  skip_resume_delta=true
+  queue_catchup(remaining,before,minf(gap,28800))
+  return
  simulate(remaining)
  if gap>60:
   return_report=Journey.resume_report(state,pause_capture,minf(gap,28800))
@@ -157,6 +186,9 @@ func resume_company(now: float) -> void:
  save(true)
 
 func _process(delta: float) -> void:
+ if catching_up:
+  if catchup_running and catchup_paused_at<=0: process_catchup()
+  return
  if not live_world: return
  if skip_resume_delta:
   # The OS may report the whole background interval as this frame's delta.
@@ -173,6 +205,79 @@ func _process(delta: float) -> void:
  if save_clock >= 20.0:
   save_clock = 0.0
   save(true)
+
+func queue_catchup(seconds: float, before: Dictionary, report_seconds: float) -> void:
+ cancel_catchup()
+ if seconds<=0: return
+ catching_up=true
+ catchup_total=clampf(seconds,0,28800)
+ catchup_left=catchup_total
+ catchup_before=before.duplicate(true)
+ catchup_report_seconds=clampf(report_seconds,0,28800)
+ catchup_signals_were_blocked=is_blocking_signals()
+ # Avoid rebuilding the entire 3D city for every offline construction phase.
+ set_block_signals(true)
+ call_deferred("show_catchup",catchup_generation)
+
+func show_catchup(generation: int) -> void:
+ if not catching_up or generation!=catchup_generation: return
+ catchup_curtain=load("res://UI/LoadingCurtain.gd").new()
+ add_child(catchup_curtain)
+ # Two frames let Android present the curtain before any expensive game tick.
+ await get_tree().process_frame
+ await get_tree().process_frame
+ if catching_up and generation==catchup_generation:
+  pause_catchup_scene()
+  catchup_running=true
+
+func pause_catchup_scene() -> void:
+ # During a cold start the main scene may not exist when the autoload queues
+ # the curtain. Bind after its first frames, and track any pending scene change.
+ var scene=get_tree().current_scene
+ if scene==catchup_scene: return
+ if is_instance_valid(catchup_scene): catchup_scene.process_mode=catchup_scene_mode
+ catchup_scene=scene
+ if is_instance_valid(catchup_scene):
+  catchup_scene_mode=catchup_scene.process_mode
+  catchup_scene.process_mode=Node.PROCESS_MODE_DISABLED
+
+func process_catchup(budget_usec: int = 8000, max_steps: int = 120) -> void:
+ if not catching_up or not catchup_running: return
+ pause_catchup_scene()
+ var started=Time.get_ticks_usec()
+ var steps=0
+ while catchup_left>0.000001 and steps<max_steps and Time.get_ticks_usec()-started<budget_usec:
+  var amount=minf(1,catchup_left)
+  step(amount)
+  catchup_left=maxf(0,catchup_left-amount)
+  steps+=1
+ if catchup_left>0.000001: return
+ var report_seconds=catchup_report_seconds
+ var before=catchup_before.duplicate(true)
+ cancel_catchup()
+ if report_seconds>60:
+  return_report=Journey.resume_report(state,before,report_seconds)
+  offline_report="%s Min. offline · +%s Münzen" % [int(report_seconds/60),Catalog.number(state.coins-float(before.coins))]
+ skip_resume_delta=true
+ rebuild_world.emit()
+ changed.emit()
+ save(true)
+
+func cancel_catchup() -> void:
+ catchup_generation+=1
+ if catching_up: set_block_signals(catchup_signals_were_blocked)
+ catching_up=false
+ catchup_running=false
+ catchup_paused_at=0
+ catchup_total=0
+ catchup_left=0
+ catchup_before={}
+ if is_instance_valid(catchup_scene): catchup_scene.process_mode=catchup_scene_mode
+ catchup_scene=null
+ if is_instance_valid(catchup_curtain):
+  catchup_curtain.hide()
+  catchup_curtain.queue_free()
+ catchup_curtain=null
 
 func simulate(seconds: float) -> void:
  for i in int(seconds): step(1.0)
