@@ -1,3 +1,10 @@
+## Externe Downloads Rückkehr zur 0.28 · 0.28.1 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.1-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha281.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Auslieferung Rückkehr zur 0.28 · 0.28.1-alpha.1
 
 APK aus `e1f70e76a30522f8456762c50f57ac580dfd311f`, 63185613 Bytes,
