@@ -25,7 +25,8 @@ func run() -> void:
  check(scene.delivery_world.visuals.size()==8,"All eight real saved freight trips create distinct models")
  var sold=game.state.delivery.sold
  game.set_block_signals(true)
- for i in 90: game.step(1)
+ # The old loaded queue is re-dispatched once from its depots in 0.29.4.
+ for i in 180: game.step(1)
  game.set_block_signals(false)
  game.changed.emit()
  await settle()

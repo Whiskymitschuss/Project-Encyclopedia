@@ -10,10 +10,10 @@ func run() -> void:
  var game=root.get_node("Game")
  game.set_process(false)
  game.set_block_signals(true)
- # 0.29.3 intentionally changes junction behaviour. Keep the old hash file as
- # historical evidence; TrafficFlow293 independently asserts liveness and
- # material conservation on an actual gridlock captured from the old APK.
- var reference=JSON.parse_string(FileAccess.get_file_as_string("res://Tests/Fixtures/offline293-reference.json"))
+ # 0.29.4 deliberately changes dispatch and yard movement. Keep previous hash
+ # files as history; TrafficRecovery294 independently checks cargo conservation
+ # and liveness on queues captured from the shipped 0.29.3 APK.
+ var reference=JSON.parse_string(FileAccess.get_file_as_string("res://Tests/Fixtures/offline294-reference.json"))
  for name in ["basic","city"]:
   var fixture=JSON.parse_string(FileAccess.get_file_as_string("res://Tests/Fixtures/offline292-"+name+".json"))
   game.restore(fixture)
@@ -24,7 +24,7 @@ func run() -> void:
    var sample=game.state.duplicate(true)
    sample.erase("last_seen")
    var canonical=JSON.parse_string(JSON.stringify(sample,"",true,true))
-   check(JSON.stringify(canonical,"",true,true).sha256_text()==reference.cases[name][index],"Whole company matches the corrected 0.29.3 traffic baseline at second %s (%s)" % [second+1,name])
+   check(JSON.stringify(canonical,"",true,true).sha256_text()==reference.cases[name][index],"Whole company matches the corrected 0.29.4 traffic baseline at second %s (%s)" % [second+1,name])
    index+=1
    if index>=reference.seconds.size(): break
   check(index==5,"All legacy checkpoints are exercised for "+name)

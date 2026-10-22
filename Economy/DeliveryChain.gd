@@ -127,13 +127,14 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   var key = LINKS[i][2]
   var route = routes.get(target,[])
   if route.size()<2: continue
+  if TrafficRules.source_busy(state,int(data.nodes[source])): continue
   var busy = 0
   for s in data.shipments:
    if s.mode=="truck": busy += 1
   if busy >= truck_count: continue
   var room = capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
   var batch = mini(4+int(state.vehicle)*2,mini(floori(float(data.buffers[source][key])),floori(room)))
-  if batch<=0: continue
+  if batch<(2 if key in ["wood","boards"] else 1): continue
   var travel = maxf(2,LogisticsRoutes.length(route)/(12.0+int(state.vehicle)))
   # The truck remains assigned while unloading and driving back empty.
   var drive = travel
@@ -143,6 +144,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   data.shipments.append({"id":data.next_id,"source":source,"target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":2.0,"drive":drive,"unload":2.0,"travel":travel,"total":total,"age":0.0,"arrived":false})
   data.next_id += 1
   if state.has("foreman"): state.foreman.transport_turn="construction"
+  if state.has("foreman"): state.foreman.yard_turns[str(int(data.nodes[source]))]="construction"
  return report
 
 static func status(state: Dictionary, kind: String) -> Dictionary:

@@ -1,0 +1,205 @@
+{
+  "version": "0.29.4-alpha.2",
+  "headless_checks": 25466,
+  "headless_suites": 32,
+  "visual_checks": 228,
+  "visual_suites": 5,
+  "headless": [
+    {
+      "suite": "COLD START 0.29.1",
+      "checks": 11,
+      "failures": 0
+    },
+    {
+      "suite": "BACKGROUND RECOVERY 0.29.2",
+      "checks": 15,
+      "failures": 0
+    },
+    {
+      "suite": "OFFLINE REPLAY 0.29.2",
+      "checks": 339,
+      "failures": 0
+    },
+    {
+      "suite": "STARTUP RECOVERY 0.29.1",
+      "checks": 24,
+      "failures": 0
+    },
+    {
+      "suite": "TRAFFIC & MAINTENANCE 29",
+      "checks": 30,
+      "failures": 0
+    },
+    {
+      "suite": "TRAFFIC FLOW 0.29.3",
+      "checks": 2416,
+      "failures": 0
+    },
+    {
+      "suite": "TRAFFIC RECOVERY 0.29.4",
+      "checks": 2420,
+      "failures": 0
+    },
+    {
+      "suite": "TRAFFIC STRESS 0.29.4",
+      "checks": 20,
+      "failures": 0
+    },
+    {
+      "suite": "ALPHA 1",
+      "checks": 35,
+      "failures": 0
+    },
+    {
+      "suite": "RULES",
+      "checks": 233,
+      "failures": 0
+    },
+    {
+      "suite": "SCENE",
+      "checks": 4092,
+      "failures": 0
+    },
+    {
+      "suite": "WORLD & HIGHWAY TRADE 27",
+      "checks": 61,
+      "failures": 0
+    },
+    {
+      "suite": "PLACEMENT & ONBOARDING",
+      "checks": 52,
+      "failures": 0
+    },
+    {
+      "suite": "WORKSHOP",
+      "checks": 42,
+      "failures": 0
+    },
+    {
+      "suite": "COMPANION",
+      "checks": 23,
+      "failures": 0
+    },
+    {
+      "suite": "WORLD LIFE",
+      "checks": 30,
+      "failures": 0
+    },
+    {
+      "suite": "TOWN",
+      "checks": 215,
+      "failures": 0
+    },
+    {
+      "suite": "VALLEY",
+      "checks": 177,
+      "failures": 0
+    },
+    {
+      "suite": "CRAFTED WORLD",
+      "checks": 128,
+      "failures": 0
+    },
+    {
+      "suite": "DELIVERY",
+      "checks": 6057,
+      "failures": 0
+    },
+    {
+      "suite": "CONSTRUCTION",
+      "checks": 56,
+      "failures": 0
+    },
+    {
+      "suite": "LOGISTICS FIX",
+      "checks": 1025,
+      "failures": 0
+    },
+    {
+      "suite": "CITY UX",
+      "checks": 797,
+      "failures": 0
+    },
+    {
+      "suite": "BUILDING CARD",
+      "checks": 437,
+      "failures": 0
+    },
+    {
+      "suite": "JOURNEY",
+      "checks": 215,
+      "failures": 0
+    },
+    {
+      "suite": "TRAFFIC & TOUCH",
+      "checks": 1494,
+      "failures": 0
+    },
+    {
+      "suite": "FIRE SAFETY",
+      "checks": 24,
+      "failures": 0
+    },
+    {
+      "suite": "FIRE PROTECTION",
+      "checks": 38,
+      "failures": 0
+    },
+    {
+      "suite": "STONE INDUSTRY",
+      "checks": 4870,
+      "failures": 0
+    },
+    {
+      "suite": "QUALITY FEEDBACK",
+      "checks": 32,
+      "failures": 0
+    },
+    {
+      "suite": "PRESENTATION 26",
+      "checks": 46,
+      "failures": 0
+    },
+    {
+      "suite": "STARTUP",
+      "checks": 12,
+      "failures": 0
+    }
+  ],
+  "opengl": [
+    {
+      "suite": "VISUAL TRAFFIC RECOVERY 0.29.4",
+      "checks": 103,
+      "failures": 0
+    },
+    {
+      "suite": "VISUAL TRAFFIC FLOW 0.29.3",
+      "checks": 5,
+      "failures": 0
+    },
+    {
+      "suite": "VISUAL ALPHA 29",
+      "checks": 25,
+      "failures": 0
+    },
+    {
+      "suite": "FIRE & RESPONSIVE UI OPENGL",
+      "checks": 50,
+      "failures": 0
+    },
+    {
+      "suite": "VISUAL CITY UX",
+      "checks": 45,
+      "failures": 0
+    }
+  ],
+  "full_stress": [
+    {
+      "suite": "TRAFFIC STRESS 0.29.4",
+      "checks": 80,
+      "failures": 0
+    }
+  ],
+  "android_device_tested": false,
+  "scope": "Complete headless suite, targeted OpenGL traffic/fire/city suites and extended 16-city stress matrix. Existing ObjectDB cleanup warnings in VisualAlpha29 and VisualFireUI."
+}

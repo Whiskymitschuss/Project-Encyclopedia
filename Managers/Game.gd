@@ -125,6 +125,7 @@ func restore(saved: Dictionary) -> void:
   if not state.trade.has(key): state.trade[key]=ExportTrade.initial()[key]
  for key in ForemanRules.initial():
   if not state.foreman.has(key): state.foreman[key]=ForemanRules.initial()[key]
+ TrafficRules.migrate(state)
  for key in TrafficRules.initial():
   if not state.traffic.has(key): state.traffic[key]=TrafficRules.initial()[key]
  ExportTrade.route_cache.clear()

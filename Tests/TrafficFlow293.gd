@@ -35,14 +35,19 @@ func run() -> void:
   var sold=int(game.state.delivery.sold)
   var stale=0
   var longest=0
+  var first_sale=-1
   for second in 600:
    game.step(1)
-   stale=stale+1 if int(game.state.delivery.sold)==sold else 0
+   if int(game.state.delivery.sold)>sold and first_sale<0: first_sale=second
+   stale=stale+1 if int(game.state.delivery.sold)==sold and second>=180 else 0
    sold=int(game.state.delivery.sold)
    longest=maxi(longest,stale)
    check(absf(units()-initial)<0.00001,"Gridlock recovery conserves actual wood, boards, furniture and sales (tier %s, %s)" % [tier,second])
    check(game.state.delivery.shipments.size()<=int(game.state.trucks),"Recovery uses only the purchased fleet")
-  check(longest<120 and sold>10,"Saved opposing queues resume sustained sales, including long trailers (tier %s)" % tier)
+  # 0.29.4 re-dispatches old pending cargo once in depot order. Check the
+  # bounded recovery separately from sustained flow after that initial queue.
+  check(first_sale>=0 and first_sale<180,"Re-dispatched saved cargo reaches the shop within three simulated minutes")
+  check(longest<120 and sold>10,"Saved opposing queues resume sustained sales after depot recovery, including long trailers (tier %s): sold %s, longest gap %s" % [tier,sold,longest])
   check(game.state.delivery.shipments.all(func(t): return not int(t.id) in original_ids),"Every originally blocked truck delivers and returns; no permanent hostage load")
   check(game.state.delivery.on_time>0,"Recovered production can complete real orders on time")
  # Both directions of the same road can use a green phase together.

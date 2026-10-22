@@ -183,6 +183,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  var jobs = state.jobs.duplicate()
  jobs.sort_custom(func(a,b): return int(a.get("priority",false))>int(b.get("priority",false)))
  var result = 0.0
+ var line_holds={}
  for job in jobs:
   var id = int(job.get("id",-1))
   if not job.has("phases") or job.get("paused",false) or (only_job>=0 and id!=only_job): continue
@@ -193,6 +194,9 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
   for key in material_keys:
    var missing = maxf(0,phase_need(job,key)-incoming(state,id,key))
    for source in sources(state,key):
+    var source_index=int(source.index)
+    if not line_holds.has(source_index): line_holds[source_index]=ForemanRules.hold_source_for_line(state,source_index)
+    if line_holds[source_index]: continue
     var amount = minf(missing,minf(float(source.stock.get(key,0)),float(4+int(state.vehicle)*2)))
     if amount<=0 or free<=0: continue
     var route = LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job))
@@ -206,6 +210,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
     state.next_shipment += 1
     free-=1
     if state.has("foreman"): state.foreman.transport_turn="line"
+    if state.has("foreman"): state.foreman.yard_turns[str(int(source.index))]="line"
     missing-=amount
     result+=amount
  return result

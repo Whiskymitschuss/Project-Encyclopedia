@@ -2,6 +2,23 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Der frühere Quellstand ist nicht verfügbar; dieses Projekt setzt die Anforderungen aus dem Chat neu um. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
+## Ladehöfe und Rückstau — 0.29.4-alpha.2
+
+Weitere Staus aus der veröffentlichten 0.29.3 nachgestellt: Hofzufahrten konnten
+sich gegenseitig blockieren; abbiegende Fahrzeuge fuhren trotz voller Ausfahrt
+in die Kreuzung. Ladehöfe disponieren nun eine laufende Frachttour und halten
+weitere reservierte Ladungen im Depot. Einfahrt und leere Rückfahrt erhalten
+getrennte Hofseiten. Baustellen und Ladenlinie wechseln sich pro Ladehof ab.
+
+Beim Update werden noch nicht angelieferte alte Frachten einmal vom bisherigen
+Depot neu disponiert. Ladungsmengen, Vorräte, bereits gutgeschriebene Lieferungen
+und Baustellenfortschritt bleiben erhalten. Die vorige Kreuzungskorrektur allein
+hatte diesen Fehler nicht beseitigt.
+
+[Änderungen und Nachweise](docs/TRAFFIC-294.md) ·
+[Installation](docs/alpha2-yard/START-HIER.txt) ·
+[Testplan](docs/alpha2-yard/TESTPLAN.txt) · [Downloads](releases/README.md).
+
 ## Verkehrsfix — 0.29.3-alpha.2
 
 Die Teststadt konnte sich an benachbarten Ampeln dauerhaft selbst blockieren:

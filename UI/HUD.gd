@@ -1393,7 +1393,7 @@ func game_menu() -> void:
 
 func traffic_menu() -> void:
  modal_title.text="VERKEHR & AMPELTECHNIK"
- var summary=card("Freie Fahrt mit Abstand","Grün gibt beide Fahrspuren einer Richtung frei. LKWs halten Abstand und lassen Querverkehr räumen. Anrückende Löschfahrzeuge fordern Grün an; vorausfahrende LKWs können zuerst abfließen. Wartezeit verzögert auch die wirkliche Lieferung.")
+ var summary=card("Freie Fahrt mit Abstand","Grün gibt beide Fahrspuren einer Richtung frei. LKWs fahren erst in eine Kreuzung, wenn die Ausfahrt Platz hat. Zusätzliche Ladungen warten am Ladehof; Einfahrt und leere Rückfahrt nutzen getrennte Hofseiten. Anrückende Löschfahrzeuge fordern Grün an.")
  dynamic_text(summary,func(): return "%s Kreuzungen · %s Störungen · %s repariert" % [TrafficRules.junctions(Game.state).size(),Game.state.traffic.faults.size(),int(Game.state.traffic.repaired)])
  var tech=card("Technikdienst · automatisch","Bei einem Ausfall blinkt die Ampel gelb. Wechselverkehr hält die Stadt beweglich. Ein Techniker fährt von der Fahrzeuggarage oder der Nachbargemeinde hin, repariert vor Ort und fährt zurück. Der Dienst benötigt keinen Fracht-LKW.")
  dynamic_text(tech,func():

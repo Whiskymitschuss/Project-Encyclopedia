@@ -2,7 +2,7 @@ class_name ForemanRules
 extends RefCounted
 
 static func initial() -> Dictionary:
- return {"enabled":true,"reassignments":0,"transport_turn":"construction"}
+ return {"enabled":true,"reassignments":0,"transport_turn":"construction","yard_turns":{}}
 
 static func managed(job: Dictionary) -> bool:
  return job.has("phases") and bool(job.get("auto_crew",true))
@@ -58,12 +58,27 @@ static func order_status(state: Dictionary) -> String:
   for trip in state.delivery.shipments:
    if trip.target==link[1] and not trip.arrived:
     return "Lieferung zum %s · %s" % [Catalog.BUILDINGS[link[1]].name,trip.get("traffic_wait","unterwegs") if not str(trip.get("traffic_wait","")).is_empty() else "unterwegs"]
+  if TrafficRules.source_busy(state,int(state.delivery.nodes[link[0]])):
+   return "Ladehof %s belegt · laufende Tour kehrt zuerst zurück." % Catalog.BUILDINGS[link[0]].name
   if LogisticsRoutes.road_route(state,int(state.delivery.nodes[link[0]]),int(state.delivery.nodes[link[1]])).size()<2:
    return "Straße zwischen %s und %s fehlt." % [Catalog.BUILDINGS[link[0]].name,Catalog.BUILDINGS[link[1]].name]
   return "Ware bereit · wartet auf einen freien LKW. Baustellen teilen die Flotte."
  if float(buffers.sawmill.wood)>=2: return "Sägewerk verarbeitet Holz · Bretter gehen zuerst an aktive Bauteams."
  if float(buffers.furniture.boards)>=2: return "Möbel werden produziert · danach zum Laden gefahren."
  return "Holz fehlt an der Linie · Sammelstation versorgen. Baustoffe bleiben reserviert."
+
+static func hold_source_for_line(state: Dictionary, index: int) -> bool:
+ if not state.foreman.enabled or state.foreman.get("yard_turns",{}).get(str(index),"construction")!="line": return false
+ var data=state.delivery
+ if not data.active or data.paused: return false
+ for kind in DeliveryChain.KINDS:
+  if state.buildings[int(data.nodes[kind])].get("paused",false): return false
+ for link in DeliveryChain.LINKS:
+  if int(data.nodes[link[0]])!=index or float(data.buffers[link[0]][link[2]])<1: continue
+  var room=DeliveryChain.capacity(state,link[1])-float(data.buffers[link[1]][link[2]])-DeliveryChain.reserved(data,link[1],link[2])
+  if room<1: continue
+  return LogisticsRoutes.road_route(state,index,int(data.nodes[link[1]])).size()>1
+ return false
 
 static func hold_for_line(state: Dictionary) -> bool:
  if not state.get("foreman",{}).get("enabled",false) or state.foreman.get("transport_turn","")!="line": return false
@@ -72,7 +87,8 @@ static func hold_for_line(state: Dictionary) -> bool:
  for kind in DeliveryChain.KINDS:
   if state.buildings[int(data.nodes[kind])].get("paused",false): return false
  for link in DeliveryChain.LINKS:
-  if float(data.buffers[link[0]][link[2]])<1: continue
+  if TrafficRules.source_busy(state,int(data.nodes[link[0]])): continue
+  if float(data.buffers[link[0]][link[2]])<(2 if link[2] in ["wood","boards"] else 1): continue
   var room=DeliveryChain.capacity(state,link[1])-float(data.buffers[link[1]][link[2]])-DeliveryChain.reserved(data,link[1],link[2])
   if room<1: continue
   if LogisticsRoutes.road_route(state,int(data.nodes[link[0]]),int(data.nodes[link[1]])).size()>1: return true

@@ -14,7 +14,32 @@ static var path_cache={}
 static var bus_cache={}
 
 static func initial() -> Dictionary:
- return {"enabled":true,"clock":0.0,"fault_clock":0.0,"faults":[],"next_fault":1,"repaired":0}
+ return {"enabled":true,"clock":0.0,"fault_clock":0.0,"faults":[],"next_fault":1,"repaired":0,"dock_revision":1,"next_ticket":1}
+
+static func migrate(state: Dictionary) -> void:
+ if int(state.traffic.get("dock_revision",0))>=1: return
+ # Old fleets can already be locked nose-to-nose. Re-dispatch pending loads
+ # once from their existing origin without changing cargo or crediting arrival.
+ # Empty return trips and work already performed remain untouched.
+ for group in [state.construction_shipments,state.stone.shipments,state.trade.shipments,state.delivery.shipments]:
+  for trip in group:
+   if trip.get("mode","")!="truck" or trip.get("arrived",false): continue
+   trip.age=0.0
+   trip.traffic_hidden=true
+   for field in ["traffic_previous_age","traffic_delta","traffic_speed","traffic_blocker"]: trip.erase(field)
+ state.traffic.dock_revision=1
+
+static func source_key(state: Dictionary, trip: Dictionary) -> String:
+ var index=int(trip.get("origin",-1))
+ if index<0 and state.delivery.nodes.has(trip.get("source","")): index=int(state.delivery.nodes[trip.source])
+ return "building:%s" % index if index>=0 else "point:%s" % hash(trip.path[0])
+
+static func source_busy(state: Dictionary, index: int) -> bool:
+ var key="building:%s" % index
+ for group in [state.construction_shipments,state.stone.shipments,state.trade.shipments,state.delivery.shipments]:
+  for trip in group:
+   if trip.get("mode","")=="truck" and source_key(state,trip)==key: return true
+ return false
 
 static func junctions(state: Dictionary) -> Array:
  var signature=hash([state.town.roads,state.town.districts])
@@ -115,6 +140,7 @@ static func sample(trip: Dictionary, age: float, service: bool = false, prepared
  var path: Array=trip.outward if service else trip.path
  var line_key="outward" if service else "path"
  var direction_sign=1.0
+ var bay_turn=-1.0
  var moving=true
  var amount=0.0
  if service:
@@ -141,6 +167,9 @@ static func sample(trip: Dictionary, age: float, service: bool = false, prepared
   else:
    amount=(age-load)/drive
    moving=amount>0 and amount<1
+   if age>=load+drive:
+    bay_turn=clampf((age-load-drive)/maxf(0.001,float(trip.travel)-load-drive),0,1)
+    moving=bay_turn<1
  var line=prepared[line_key] if prepared.has(line_key) else compiled(path)
  var value=point_on(line,amount)
  # Pull into the delivery bay rather than parking across the road lane. This
@@ -155,8 +184,15 @@ static func sample(trip: Dictionary, age: float, service: bool = false, prepared
  if not service:
   # Separate goods-in and goods-out bays prevent a long trailer arriving at
   # the sawmill from blocking the truck already loading its board output.
-  value.position-=Vector3(start_dir.z,0,-start_dir.x)*3.5*(1-smoothstep(0,12,along))
-  value.position-=Vector3(end_dir.z,0,-end_dir.x)*3.5*(1-smoothstep(0,12,length_value-along))
+  value.position-=Vector3(start_dir.z,0,-start_dir.x)*3.5*direction_sign*(1-smoothstep(0,12,along))
+  value.position-=Vector3(end_dir.z,0,-end_dir.x)*3.5*direction_sign*(1-smoothstep(0,12,length_value-along))
+  # Goods-in and the empty return use different sides of the apron. During
+  # unloading, turn through the courtyard instead of reversing the heading
+  # in the same narrow driveway and locking an approaching truck in place.
+  if bay_turn>=0:
+   var across=Vector3(end_dir.z,0,-end_dir.x)
+   value.position+=across*3.5*(1-cos(bay_turn*PI))+end_dir*3.5*sin(bay_turn*PI)
+   value.direction=end_dir*cos(bay_turn*PI)+across*sin(bay_turn*PI)
  if service:
   var start_ref=trip.source_ref
   var end_ref=trip.target_ref
@@ -171,7 +207,43 @@ static func sample(trip: Dictionary, age: float, service: bool = false, prepared
  var lane=LANE*smoothstep(0,0.03,clampf(amount,0,1))*smoothstep(0,0.03,1-clampf(amount,0,1))
  value.position+=Vector3(value.direction.z,0,-value.direction.x)*lane
  value.moving=moving
+ value.dock=along<12 or length_value-along<12
  return value
+
+static func body_clearance(a: Dictionary, a_entry: Dictionary, b: Dictionary, b_entry: Dictionary) -> float:
+ # Oriented vehicle footprints, including the trailer's offset behind its cab.
+ # A circle sized for a long truck wrongly blocks clear neighbouring driveways.
+ var a_long=not a_entry.service and a_entry.length>=14
+ var b_long=not b_entry.service and b_entry.length>=14
+ var a_center: Vector3=a.position-a.direction*(1.8 if a_long else 0.0)
+ var b_center: Vector3=b.position-b.direction*(1.8 if b_long else 0.0)
+ var offset=b_center-a_center
+ var a_side=Vector3(a.direction.z,0,-a.direction.x)
+ var b_side=Vector3(b.direction.z,0,-b.direction.x)
+ var a_half=5.85 if a_long else 3.25 if a_entry.service else 3.7
+ var b_half=5.85 if b_long else 3.25 if b_entry.service else 3.7
+ var a_width=1.45 if a_long else 1.15 if a_entry.service else 1.35
+ var b_width=1.45 if b_long else 1.15 if b_entry.service else 1.35
+ var clearance=-INF
+ for axis in [a.direction,a_side,b.direction,b_side]:
+  var radius=absf(axis.dot(a.direction))*a_half+absf(axis.dot(a_side))*a_width+absf(axis.dot(b.direction))*b_half+absf(axis.dot(b_side))*b_width
+  clearance=maxf(clearance,absf(offset.dot(axis))-radius)
+ return clearance
+
+static func junction_exit(entry: Dictionary, center: Vector3) -> Dictionary:
+ # Keep the box clear: do not start a turn when the receiving lane is full.
+ # Otherwise a turning truck can stop across the opposite lane and form a
+ # circular queue with the next junction even though both signals work.
+ var entered=false
+ for i in range(1,65):
+  var age=float(entry.age)+i*STEP
+  if age>=float(entry.trip.get("total",INF)): return {}
+  var at=bus_sample(entry.plan,age) if entry.get("bus",false) else sample(entry.trip,age,entry.service,entry.routes)
+  var distance=Vector2(at.position.x-center.x,at.position.z-center.z).length()
+  if distance<12: entered=true
+  elif entered: return at
+  if entered and not at.moving: return {}
+ return {}
 
 static func prepare(state: Dictionary, delta: float) -> void:
  if not state.has("traffic"): state.traffic=initial()
@@ -185,22 +257,39 @@ static func prepare(state: Dictionary, delta: float) -> void:
  for domain in groups.size():
   for trip in groups[domain]:
    if trip.get("mode","")!="truck" or not trip.has("drive"): continue
-   entries.append({"trip":trip,"service":false,"age":float(trip.age),"start":float(trip.age),"key":"%s:%010d" % [domain,int(trip.id)],"length":14.0 if int(state.vehicle)>=4 else 8.0,"priority":1,"readonly":domain==3 and not line_active})
+   var readonly=domain==3 and not line_active
+   if not readonly and not trip.has("traffic_ticket"):
+    trip.traffic_ticket=int(traffic.get("next_ticket",1))
+    traffic.next_ticket=int(trip.traffic_ticket)+1
+   entries.append({"trip":trip,"service":false,"age":float(trip.age),"start":float(trip.age),"key":"%s:%010d" % [domain,int(trip.id)],"source":source_key(state,trip),"ticket":int(trip.get("traffic_ticket",2147483647)),"length":14.0 if int(state.vehicle)>=4 else 8.0,"priority":1,"readonly":readonly})
  for trip in state.city_services.missions:
   entries.append({"trip":trip,"service":true,"age":float(trip.age),"start":float(trip.age),"key":"s:%010d" % int(trip.id),"length":6.5,"priority":0 if trip.has("fire_id") else 1})
  for line in state.town.lines:
   var plan=bus_plan(state,line)
   if plan.is_empty(): continue
   entries.append({"trip":line,"bus":true,"plan":plan,"service":false,"age":float(line.phase),"start":float(line.phase),"key":"b:%010d" % int(line.id),"length":8.3,"priority":1})
- entries.sort_custom(func(a,b): return a.priority<b.priority if a.priority!=b.priority else a.key<b.key)
+ entries.sort_custom(func(a,b):
+  if a.priority!=b.priority: return a.priority<b.priority
+  if a.has("ticket") and b.has("ticket"): return a.ticket<b.ticket
+  return a.key<b.key)
+ # One circulating freight vehicle per loading yard. Additional real loads
+ # wait inside their depot, in FIFO order, rather than filling the short road
+ # with half-empty lorries and blocking its own receiving/return driveway.
+ var yards={}
+ for entry in entries:
+  if entry.has("source") and entry.age>0.001 and entry.age<float(entry.trip.total): yards[entry.source]=true
+ for entry in entries:
+  if not entry.has("source") or entry.age>0.001: continue
+  entry.depot_wait=yards.has(entry.source)
+  yards[entry.source]=true
  for entry in entries:
   if not entry.get("bus",false):
    entry.routes={}
    for key in (["outward","second","back"] if entry.service else ["path"]):
     if entry.trip[key].size()>1: entry.routes[key]=compiled(entry.trip[key])
   if entry.get("readonly",false): continue
-  entry.trip.traffic_wait=""
-  entry.trip.traffic_hidden=false
+  entry.trip.traffic_wait="Verladung belegt" if entry.get("depot_wait",false) else ""
+  if entry.get("depot_wait",false): entry.trip.traffic_hidden=true
  var remaining=delta
  var elapsed=0.0
  var crossings=junctions(state)
@@ -216,7 +305,7 @@ static func prepare(state: Dictionary, delta: float) -> void:
   var dt=minf(STEP,remaining)
   for index in entries.size():
    var entry=entries[index]
-   if entry.get("readonly",false) or entry.age>=float(entry.trip.get("total",INF)): continue
+   if entry.get("readonly",false) or entry.get("depot_wait",false) or entry.age>=float(entry.trip.get("total",INF)): continue
    var now=entry.sample
    var next_age=float(entry.age)+dt
    if not entry.has("next_age") or entry.next_age!=next_age:
@@ -224,6 +313,7 @@ static func prepare(state: Dictionary, delta: float) -> void:
     entry.next_sample=bus_sample(entry.plan,next_age) if entry.get("bus",false) else sample(entry.trip,next_age,entry.service,entry.routes)
    var next=entry.next_sample
    var reason=""
+   entry.trip.erase("traffic_blocker")
    var old: Vector3=now.position
    var target: Vector3=next.position
    var direction: Vector3=next.direction
@@ -242,6 +332,19 @@ static func prepare(state: Dictionary, delta: float) -> void:
       var fallback=fposmod(float(traffic.clock)+elapsed,40)
       phase="x" if fallback<14 else "z" if fallback>=20 and fallback<34 else "red"
      if phase!=axis: reason="Ampel · Rot" if fault_at(state,cell).is_empty() else "Ampelstörung · Wechselverkehr"; break
+     var exit=junction_exit(entry,center)
+     if not exit.is_empty():
+      for j in entries.size():
+       if j==index: continue
+       var other=entries[j]
+       if other.age>=float(other.trip.get("total",INF)) or other.trip.get("traffic_hidden",false): continue
+       var offset: Vector3=other.sample.position-exit.position
+       var ahead=offset.dot(exit.direction)
+       var lateral=absf(offset.dot(Vector3(exit.direction.z,0,-exit.direction.x)))
+       var gap=(float(entry.length)+float(other.length))*0.5+1.5
+       if exit.direction.dot(other.sample.direction)>0.6 and lateral<3.3 and ahead>-gap and ahead<gap:
+        reason="Ausfahrt freihalten"; entry.trip.traffic_blocker=other.key; break
+     if not reason.is_empty(): break
      for other_index in entries.size():
       if other_index==index: continue
       var other=entries[other_index]
@@ -252,13 +355,23 @@ static func prepare(state: Dictionary, delta: float) -> void:
       # vehicle as a crossing conflict made queues at adjacent signals wait
       # for one another forever. Docked vehicles also occupy their own bay.
       if other.sample.moving and absf(direction.dot(other.sample.direction))<0.6 and Vector2(at.x-center.x,at.z-center.z).length()<12:
-       reason="Kreuzung räumt"; break
+       reason="Kreuzung räumt"; entry.trip.traffic_blocker=other.key; break
      if not reason.is_empty(): break
    if reason.is_empty() and (next.moving or entry.age<=0.001):
     for j in entries.size():
      if j==index: continue
      var other=entries[j]
      if other.age>=float(other.trip.get("total",INF)): continue
+     if now.get("dock",false) or next.get("dock",false) or other.sample.get("dock",false):
+      if other.trip.get("traffic_hidden",false): continue
+      if other.sample.position.distance_squared_to(target)>324: continue
+      var clearance=body_clearance(next,entry,other.sample,other)
+      if clearance>=0.05: continue
+      var before_clearance=body_clearance(now,entry,other.sample,other)
+      # Existing saves may already contain overlapping bounds. A separating
+      # manoeuvre is allowed; driving farther into a vehicle is never a cure.
+      if clearance>before_clearance+0.001: continue
+      if before_clearance<0 and now.position.distance_squared_to(other.sample.position)<0.25 and j>index: continue
      var offset: Vector3=other.sample.position-target
      var ahead=offset.dot(direction)
      var lateral=absf(offset.dot(Vector3(direction.z,0,-direction.x)))
@@ -268,13 +381,14 @@ static func prepare(state: Dictionary, delta: float) -> void:
       # Old saves may contain coincident trucks. The leading stable ID exits
       # first, and queued vehicles remain hidden in their loading depot.
       if ahead<0.5 and j>index: continue
-      reason="Abstand halten"; break
+      reason="Abstand halten"; entry.trip.traffic_blocker=other.key; break
      if j<index and not same and direction.dot(other.sample.direction)>-0.6 and offset.length()<gap*0.65 and (other.sample.position-old).dot(direction)>0:
-      reason="Vorfahrt gewähren"; break
+      reason="Vorfahrt gewähren"; entry.trip.traffic_blocker=other.key; break
    if reason.is_empty():
     entry.age+=dt
     entry.sample=next
     entry.trip.traffic_wait=""
+    entry.trip.erase("traffic_blocker")
     entry.trip.traffic_hidden=false
    else:
     entry.trip.traffic_wait=reason

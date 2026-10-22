@@ -12,7 +12,7 @@ func fresh() -> void:
  game.state.workers=0
  game.state.traffic.enabled=false
 func trip(id: int, path: Array) -> Dictionary:
- return {"id":id,"job":1,"source":"warehouse","origin":2,"target":"construction","mode":"truck","key":"wood","amount":2.0,"path":path,"age":0.0,"load":2.0,"drive":10.0,"unload":2.0,"travel":14.0,"total":26.0,"arrived":false}
+ return {"id":id,"job":1,"source":"warehouse","target":"construction","mode":"truck","key":"wood","amount":2.0,"path":path,"age":0.0,"load":2.0,"drive":10.0,"unload":2.0,"travel":14.0,"total":26.0,"arrived":false}
 func advance(seconds: int) -> void:
  for i in seconds:
   TrafficRules.prepare(game.state,1)
@@ -45,7 +45,9 @@ func run() -> void:
  TrafficRules.prepare(game.state,1)
  check(game.state.construction_shipments[1].traffic_hidden,"A queued truck stays inside its depot instead of occupying the loading truck")
  ConstructionRules.transport_tick(game.state,1)
- advance(100)
+ # One circulating truck per yard now includes its empty return. Allow all
+ # three complete round trips and their real red-light waits to drain.
+ advance(180)
  check(game.state.construction_shipments.is_empty() and game.state.jobs[0].delivered.wood==6,"Three trucks from the same depot drain their queue without losing cargo")
  fresh()
  var cell=Vector2i(-80,-60)

@@ -1,0 +1,107 @@
+LADEHÖFE UND RÜCKSTAU 0.29.4 – MIT DER FESTGEFAHRENEN FIRMA TESTEN
+[ ] Update direkt über die vorhandene Alpha installieren; nicht deinstallieren.
+[ ] Münzen, Materialien, Gebäude und Baustellenfortschritt sind erhalten.
+[ ] Alte noch offene Frachttouren beginnen einmal wieder am bisherigen Depot.
+[ ] Reservierte weitere Ladungen warten im Depot statt auf der Durchgangsstraße.
+[ ] Eine laufende Tour liefert wirklich an und kehrt leer zurück.
+[ ] Danach verlässt die nächste Tour denselben Ladehof.
+[ ] Fahrzeuge bleiben vor einer Kreuzung stehen, wenn ihre Ausfahrt voll ist.
+[ ] Nach mehreren Ampelphasen steigen Verkaufszahl und angeliefertes Baumaterial.
+[ ] Auch bei zwei Baustellen erhält die Ladenlinie wieder Bretter und Möbel.
+[ ] Kleine LKW und lange Anhänger beobachten: Einfahrt und Rückfahrt sind getrennt.
+[ ] Feuerwehr erreicht den Brand, löscht und kehrt zurück.
+[ ] Während einer wartenden Depotladung speichern, schließen und erneut öffnen.
+[ ] Dabei wird die Tour nicht bei jedem Start erneut von vorn begonnen.
+[ ] App-Wechsel, Intro, Touch-Bedienung und bisherige Menüs funktionieren weiter.
+
+Bitte bei einer weiterhin stehenden Schlange Ort, ungefähre Dauer, Handymodell
+und Spielversion nennen. Ein kurzes Video zeigt, ob dieselben Fahrzeuge warten.
+Ein echter Android-Test dieser Fassung steht noch aus.
+
+VERKEHRSFIX 0.29.3 – MIT BESTEHENDER FIRMA TESTEN
+[ ] Update über die vorhandene Alpha installieren, nicht deinstallieren.
+[ ] Firma, Vorräte, Baustellen und Ladungen sind weiterhin vorhanden.
+[ ] Bei ausreichend Holz eine festgefahrene Lieferkette weiterlaufen lassen.
+[ ] LKW bei Grün beobachten: Gegenverkehr fährt auf seiner eigenen Spur mit.
+[ ] Nach einigen Ampelzyklen kommen neue Waren an; die Verkaufszahl steigt.
+[ ] Kleine LKW und lange Anhänger halten weiter Abstand.
+[ ] Beim Brand fordert der anrückende Löschwagen Grün an.
+[ ] Fahrzeuge auf der Kreuzung fahren zuerst heraus, dann kommt die Feuerwehr.
+[ ] Feuerwehr löscht und kehrt zurück; der nächste Einsatz kann beginnen.
+[ ] Ampelstörung: Techniker repariert weiterhin vor Ort.
+[ ] Während einer Schlange speichern, schließen und wieder öffnen.
+[ ] Danach fließt der Verkehr weiter und keine Ware ist doppelt vorhanden.
+
+Bitte Handymodell, Version, Ort und Dauer eines verbleibenden Staus notieren.
+Ein kurzes Video hilft, Abbiegemanöver und Rückstau auseinanderzuhalten.
+Ein echter Android-Gerätetest dieser Fassung steht noch aus.
+
+SCHNELLSTART 0.29.2 – APP-WECHSEL ZUERST PRÜFEN
+[ ] Update über die vorhandene Alpha installieren, keine Daten löschen.
+[ ] Nach längerer Pause: Laden ist gegenüber 0.29.1 spürbar kürzer.
+[ ] Während der Ladeanzeige zu einer anderen App wechseln, 5–10 Sekunden warten.
+[ ] Zurückkehren: Fortschritt ist weiter oder das Intro ist bereits bereit.
+[ ] Noch einmal für 30–60 Sekunden minimieren und zurückwechseln.
+[ ] Firma, Vorräte, Baustellen und Lieferungen sind nach dem Laden vorhanden.
+[ ] „Spiel schließen“ während des Ladens beendet die App ohne Zurücksetzen.
+[ ] Erneuter Start übernimmt keine doppelten Waren oder Münzen.
+[ ] Nach dem Laden: Karte verschieben, Fällen und Menü öffnen funktionieren.
+Notiere Handymodell, Android-Version, Akkusparmodus, Offline-Dauer und Wartezeit.
+Android kann Hintergrundprozesse anhalten/beenden. Teile mit, ob dies auf deinem
+Gerät auftritt; ein echter Android-Gerätetest dieser Fassung steht noch aus.
+
+ALPHA 2 – KURZER TESTPLAN (10–20 MINUTEN)
+
+Bitte spiele zuerst ohne zusätzliche Erklärung. Notiere, wo du suchen musstest.
+
+START UND ERSTER EINDRUCK
+[ ] Intro sieht richtig aus; Logo und Welt sind nicht verzerrt.
+[ ] Spielen funktioniert; Intro überspringen funktioniert.
+[ ] Bennos nächste Handlung war verständlich und erreichbar.
+[ ] Fällen, Abliefern und erster Verkauf funktionieren.
+[ ] Erste Hütte lässt sich setzen und drehen; Geld wird erst nach Bestätigung abgezogen.
+[ ] Fertigstellung und nächste Kapitelziele sind verständlich.
+
+BEDIENUNG UND SPEICHERUNG
+[ ] Karte verschieben und mit zwei Fingern zoomen.
+[ ] Bauvorschau abbrechen: kein Kauf, kein Geldverlust.
+[ ] Gesperrtes Biom verhindert den Bau mit verständlichem Hinweis.
+[ ] Ein Menü mit der Android-Zurück-Taste schließen.
+[ ] Über das Spielmenü speichern und zum Startbildschirm zurückkehren.
+[ ] Weiterspielen: Firma und Vorräte sind erhalten.
+[ ] App kurz in den Hintergrund schicken und wieder öffnen.
+[ ] Große Schrift und Akkumodus in den Einstellungen ausprobieren.
+[ ] Testbericht bearbeiten, kopieren und in eine Nachricht einfügen.
+
+WENN DU WEITERSPIELST
+[ ] Kapitelbelohnungen abholen und das erste Rathaus bauen.
+[ ] Produktion und Miete wirken nachvollziehbar.
+[ ] Eigene Straße bauen und Autobahnexport verbinden.
+[ ] Feuerwehr fährt über Straßen zum Brand; Rauch und Löschwasser sind sichtbar.
+
+DEIN EINDRUCK
+Was hat Spaß gemacht?
+Wo wusstest du nicht weiter?
+Welches Ziel wolltest du als Nächstes erreichen?
+Würdest du morgen wieder spielen – und warum?
+
+Handymodell, Android-Version, Spielversion und genaue Schritte helfen bei Fehlern.
+Bitte keine Passwörter, privaten Schlüssel oder persönlichen Dateien beilegen.
+
+NEU IN ALPHA 2 – MIT DER VORHANDENEN FIRMA TESTEN
+[ ] Haus auf Waldfläche bauen: Bäume und der BOSS-Baum bleiben außerhalb des Grundstücks.
+[ ] Forstmaschinen arbeiten nicht mehr zwischen neu gebauten Häusern.
+[ ] Zwei Baustellen gleichzeitig starten: Bauleitung verteilt vorhandene Teams.
+[ ] Baustelle ohne Material antippen: fehlender Baustoff oder Transportgrund wird erklärt.
+[ ] Manuell zugeteilte Bauarbeiter bleiben zugeteilt; Automatik lässt sich wieder aktivieren.
+[ ] Bauarbeiter laufen beim Wechsel zur nächsten Baustelle.
+[ ] Mehrere LKW beobachten: getrennte Spuren, Abstand und Halt an roten Ampeln.
+[ ] Wartender LKW liefert seine Ladung erst nach wirklicher Ankunft.
+[ ] Nach ungefähr 15 Spielminuten: Ampelstörung, Techniker fährt hin und repariert.
+[ ] Während eines Staus oder Technikereinsatzes speichern, schließen und weiterspielen.
+[ ] Brand: flackernde Flammen, Rauch mit Wind und sichtbares Löschwasser.
+[ ] Einsatzanzeige bleibt klein und lesbar, auch beim Heranzoomen.
+[ ] Akkumodus und reduzierte Bewegung funktionieren weiter.
+
+Bitte bei Stau Ort, betroffene Fahrzeuge und ungefähre Dauer nennen.
+Ein kurzes Video ist dafür besonders hilfreich.

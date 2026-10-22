@@ -1,0 +1,14 @@
+{
+  "previous_version": "0.29.3-alpha.2",
+  "previous_apk_sha256": "b8f6a3cbcd4be3efd2b21204c39d89d934e3dfb6f5e86434826a8a9071a7d9f4",
+  "previous_source_commit": "129dcbe0a6a59f8647c7c7d1cabcbc1f5f04a030",
+  "fixtures": [
+    "Tests/Fixtures/traffic294-yard.json",
+    "Tests/Fixtures/traffic294-junction.json"
+  ],
+  "method": "Generated firms captured from unchanged exported APK assets on desktop Godot. Driver supplied outside the APK; no private player save.",
+  "checks": 2420,
+  "previous_failures": 11,
+  "corrected_failures": 0,
+  "android_device_tested": false
+}

@@ -1,3 +1,12 @@
+# Prüfung 0.29.4 — Ladehöfe und Rückstau
+
+- Vollständiger Lauf `bash scripts/test.sh`: **25,466 Prüfungen in 32 Headless-Suiten**, keine fehlgeschlagenen Prüfungen oder Skript-/Ladefehler; zusätzlich natürliche Ersthaus-/Rathausprogression, Acht-Stunden-Worker und Hauptwelt-/Intro-Smokes.
+- Fünf gezielte OpenGL-Suiten: **228 Prüfungen**, einschließlich 103 neuer Prüfungen der wirklichen 3D-Stadt über 300 Simulationstakte. Keine fehlgeschlagenen Prüfungen oder Skript-/Ladefehler. Bestehende ObjectDB-Aufräumhinweise in VisualAlpha29/VisualFireUI bleiben zu beobachten. Kein erneuter vollständiger Lauf aller Grafik-Suiten beansprucht.
+- Zusätzliche Matrix: **16 Städte × 1.200 simulierte Sekunden**, 8/16 LKW, Fahrzeugstufen 2/3/4/6, zwei vollständige Stadtausrichtungen, 14 parallele Upgrades und zwei anfängliche Brände. Alle **80 Prüfungen** bestehen; keine 180 Sekunden dauerhaft blockierten ausgefahrenen Fahrzeuge. Verkäufe, Baustellen und Löscheinsätze gehen weiter.
+- Gespeicherte alte Staus: **2.420 Prüfungen** auf Materialerhaltung, einmalige Neu-Disposition, identische Ladungen und abgeschlossene Originaltouren. Gegen unveränderte entpackte 0.29.3-Assets scheitern **11** Prüfungen, mit der Korrektur keine. Zusätzlich fortgeführte 0.29.2-Schlange mit getrennten Bedingungen für Depotanlauf und anschließende Versorgung.
+- [Einzelergebnisse](alpha2-yard/automated-checks.json), [Stadtmatrix](alpha2-yard/stress-matrix.json), [Reproduktion](alpha2-yard/legacy-reproduction.json), [Änderungen](TRAFFIC-294.md), [3D-Ansicht](alpha2-yard/preview-traffic.png).
+- Alle Profile und Firmen wurden künstlich und isoliert erzeugt. **Kein tatsächlicher Android-Gerätetest dieser Fassung** und kein Zugriff auf die konkrete Firma des Spielers. Die Depot-Neu-Disposition ist einmalig und lässt Ladungsmengen sowie bereits abgeschlossene Lieferungen bestehen.
+
 ## Externe Downloads Verkehrsfix 0.29.3 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.3-alpha.2` vollständig per

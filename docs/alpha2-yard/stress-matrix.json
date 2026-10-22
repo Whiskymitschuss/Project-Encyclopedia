@@ -1,0 +1,134 @@
+{
+  "version": "0.29.4-alpha.2",
+  "simulated_seconds_per_city": 1200,
+  "fleet_sizes": [
+    8,
+    16
+  ],
+  "vehicle_tiers": [
+    2,
+    3,
+    4,
+    6
+  ],
+  "layouts": 2,
+  "parallel_upgrades": 14,
+  "initial_fire_incidents": 2,
+  "checks": 80,
+  "failures": 0,
+  "results": [
+    {
+      "variant": 0,
+      "remaining_jobs": 11,
+      "sold": 32.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 1,
+      "remaining_jobs": 11,
+      "sold": 34.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 2,
+      "remaining_jobs": 11,
+      "sold": 46.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 3,
+      "remaining_jobs": 11,
+      "sold": 47.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 4,
+      "remaining_jobs": 11,
+      "sold": 33.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 5,
+      "remaining_jobs": 11,
+      "sold": 42.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 6,
+      "remaining_jobs": 11,
+      "sold": 35.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 7,
+      "remaining_jobs": 11,
+      "sold": 43.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 8,
+      "remaining_jobs": 11,
+      "sold": 48.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 9,
+      "remaining_jobs": 11,
+      "sold": 49.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 10,
+      "remaining_jobs": 11,
+      "sold": 53.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 11,
+      "remaining_jobs": 11,
+      "sold": 48.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 12,
+      "remaining_jobs": 11,
+      "sold": 46.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 13,
+      "remaining_jobs": 11,
+      "sold": 58.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 14,
+      "remaining_jobs": 11,
+      "sold": 53.0,
+      "extinguished": 4,
+      "stuck": false
+    },
+    {
+      "variant": 15,
+      "remaining_jobs": 11,
+      "sold": 63.0,
+      "extinguished": 4,
+      "stuck": false
+    }
+  ],
+  "android_device_tested": false
+}

@@ -1,0 +1,28 @@
+{
+ "behavior_version": "0.29.4",
+ "cases": {
+  "basic": [
+   "bbad6f64f72b7c29756958587ac225f23f2f9083e4047aa96347bebeda6fe37f",
+   "2573aa7c57697d051d7087bd321cb32468d8dd928e3134aeb3dc3ca625182c10",
+   "f7e2624f644aeb99519922bb7731582a37a0ec00d948f1c06e725227a12f8a88",
+   "c8239402806e56b931f089fcf61b47aa73902339e826bd394e391b9cb23f0f03",
+   "b1501936ef660b919eb20831c4fcc08b9b818e37a3f5be4a622ec7a3ccc223d1"
+  ],
+  "city": [
+   "cb8547f696f373b9a5dfd6a9aa9be9fa08dfa3e1f375b1c2ef56cec2071b4d10",
+   "d193b2e837e47856d51c8515172bad9cbe4b5769ff514beeab8401d4b6620fbf",
+   "d15443cf9310435ef8ce7fd7517eae1f30ba3f2f4d689e0eaa5fb1891370949a",
+   "4d9c958eef63d659ca0c68aecab49ff77b66ca4b39ff430dcc3f8cd8048b5bd1",
+   "bcab14cb654ee520ea8156090a4e1db80b669a899bbbfe2ffa2011ad0302dc83"
+  ]
+ },
+ "reason": "FIFO loading yards, separate return bays, receiving-lane clearance, per-yard construction/line fairness and once-only pending-cargo rescheduling.",
+ "seconds": [
+  1,
+  11,
+  101,
+  1000,
+  3600
+ ],
+ "supersedes": "offline292-reference.json and offline293-reference.json (unchanged archives)"
+}

@@ -27,6 +27,8 @@ check --script res://Tests/OfflineReplay292.gd
 check --script res://Tests/StartupRecovery291.gd
 check --script res://Tests/TrafficMaintenance29.gd
 check --script res://Tests/TrafficFlow293.gd
+check --script res://Tests/TrafficRecovery294.gd
+check --script res://Tests/TrafficStress294.gd
 check --script res://Tests/Alpha28.gd
 check --script res://Tests/AlphaProgression.gd
 check --script res://Tests/Rules.gd
