@@ -1,3 +1,10 @@
+## Externe Downloads Startfix 0.29.1 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.1-alpha.2` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha291.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Startdateien aus der tatsächlichen APK geprüft
 
 Die unverändert extrahierten APK-Assets wurden mit Desktop-Godot 4.6.3 ausgeführt.
