@@ -1,3 +1,10 @@
+## Externe Downloads Waldleben · 0.28.2 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.2-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha282.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Auslieferung Waldleben · 0.28.2-alpha.1
 
 APK aus `0215505adc1f92566f53577f4700666608706ea6`, 63211086 Bytes,
