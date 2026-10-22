@@ -1,3 +1,10 @@
+## Externe Downloads Verkehrsfix 0.29.3 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.3-alpha.2` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha293.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Auslieferung Verkehrsfix 0.29.3
 
 APK aus `129dcbe0a6a59f8647c7c7d1cabcbc1f5f04a030`, 63219229 Bytes,
