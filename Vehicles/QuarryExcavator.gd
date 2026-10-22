@@ -23,9 +23,7 @@ func _ready() -> void:
  turret.position.y=1.3
  Models.cylinder(turret,1.1,0.4,Vector3.ZERO,Color("6c7b7b"))
  Models.box(turret,Vector3(2.8,1.1,2.6),Vector3(0,0.65,-0.4),yellow)
- Models.box(turret,Vector3(1.6,1.9,1.9),Vector3(-0.5,1.7,-0.25),yellow)
- Models.box(turret,Vector3(1.45,1.2,0.12),Vector3(-0.5,1.9,0.75),Color("78c9dd"))
- Models.box(turret,Vector3(1.9,0.22,2.1),Vector3(-0.5,2.7,-0.25),Color("f8cd6d"))
+ BeaverModels.cockpit(turret,Vector3(-0.5,1.2,-0.25),Vector3(1.6,1.5,1.9),yellow,7,"industry")
  boom=Node3D.new()
  turret.add_child(boom)
  boom.position=Vector3(0.8,0.8,0.7)

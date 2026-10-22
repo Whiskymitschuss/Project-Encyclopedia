@@ -1,0 +1,14 @@
+1. Als Update installieren. Stimmen Geld, Gebäude, Material und laufende Lieferungen?
+2. Asphalt, Bordsteine und Zebrastreifen nah und weit ansehen, Kamera drehen/verschieben.
+   Keine beige Überdeckung oder große graue Gesamtplatte? Keine flackernden Flächen?
+3. Holzfäller, Bewohner, Bauarbeiter, Feuerwehr, Stapler und LKW ansehen:
+   erkennbare Biber, sichtbare Schwänze und korrekt sitzende Fahrer?
+4. Eine bestehende Fabrik aufwerten. Neue Architektur erst nach Bauabschluss?
+5. Stapler bei tatsächlicher Lieferung beobachten: aufnehmen, heben, fahren,
+   Ware erst nach Übergabe verbuchen, leer zurückfahren und parken.
+6. Zentrallager mit zwei Staplern: bearbeitet nur einer denselben Auftrag?
+7. Volles Lager: keine verlorene/verdoppelte Ware, beladener Stapler wartet.
+8. Akkumodus und reduzierte Bewegung einschalten. Fortschritt läuft korrekt weiter?
+9. Spiel beenden/minimieren und wieder öffnen. Firma und Fracht erhalten?
+10. S26 Ultra und S24 FE: jeweils Gerät, Modus, Startdauer, FPS-Eindruck und
+    Erwärmung nach 5/15 Minuten angeben. Automatische Desktopprüfungen ersetzen das nicht.

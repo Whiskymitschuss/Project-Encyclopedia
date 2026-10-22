@@ -57,6 +57,7 @@ func _ready() -> void:
  add_child(crane)
  Models.box(crane,Vector3(12,0.45,0.6),Vector3(-4,0,0),Color("f3c55d"))
  Models.box(crane,Vector3(0.1,5,0.1),Vector3(-8,-2.5,0),Color("47636d"))
+ BeaverModels.cockpit(crane,Vector3(-0.8,-1.8,0.7),Vector3(1.7,1.6,1.8),Color("f3c55d"),job_id,"industry")
  Models.bake(crane)
  for i in mini(int(job.get("workers",0)),2 if Game.state.quality==0 else 5):
   var worker=load("res://NPCs/ConstructionWorker.gd").new()

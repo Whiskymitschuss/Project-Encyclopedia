@@ -107,7 +107,8 @@ func _ready() -> void:
  add_child(sun)
  camera = Camera3D.new()
  camera.projection = Camera3D.PROJECTION_ORTHOGONAL
- camera.far = 2400
+ camera.near = 5.0
+ camera.far = 1800
  add_child(camera)
  set_camera()
  scenery = Node3D.new()
@@ -198,29 +199,7 @@ func rebuild_streets() -> void:
  clear_children(base_streets)
  street_context=StreetScape.context(Game.state)
  ProductionCampus.build(base_streets,street_context)
- for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
- for z in Placement.ROADS:
-  var paved=z in [-28,68,164]
-  for i in Game.state.buildings.size():
-   if absf(Game.building_position(i).z-z)<20: paved=true
-  for i in Game.state.homes.size():
-   if absf(Game.home_position(i).z-z)<20: paved=true
-  for line in Game.state.town.lines:
-   var plan=Game.transit_plan(line.stops)
-   if plan.is_empty(): continue
-   for leg in plan.legs:
-    for point in leg.points:
-     if absf(point.y-z)<1: paved=true; break
-  road(Vector3(0,0.72,z),Vector3(164,0.25,7),false,paved)
- for project in Catalog.PROJECTS:
-  var side=signf(project.position.x)
-  road(Vector3(side*132,0.72,Catalog.project_road_z(project)),Vector3(104,0.25,7),false,int(Game.state.projects.get(str(Catalog.PROJECTS.find(project)),0))>0)
-  Models.cylinder(base_streets,4.7,0.22,Vector3(side*184,0.73,Catalog.project_road_z(project)),Color("b9af8b"))
- for x in [-80,0,80]:
-  for z in [-172,180]:
-   Models.cylinder(base_streets,4.6,0.24,Vector3(x,0.72,z),Color("697f80"))
-   for side in [-1,1]:
-    Models.box(base_streets,Vector3(0.3,1.0,0.3),Vector3(x+side*3.7,1.3,z),Color("d9c397"))
+ StreetSurface.build(base_streets,Game.state,street_context)
  # Small planted verges and benches soften the working street grid.
  for x in [-73,73]:
   for z in [-136,-104,-72,-40,-8,24,56,88,120,152]:
@@ -244,7 +223,6 @@ func rebuild_streets() -> void:
    Models.cylinder(base_streets,0.18,2.5,Vector3(x,1.9,z),Color("a48152"))
    var crown=Models.cylinder(base_streets,1.35,3.2,Vector3(x,4,z),Color("78aa5a"),0.45)
    crown.mesh.radial_segments=8
- StreetScape.junctions(base_streets,street_context)
  Models.bake(base_streets)
 
 func road(at: Vector3, size: Vector3, vertical: bool, paved: bool = true) -> void:
@@ -368,7 +346,7 @@ func rebuild() -> void:
   model.rotation_degrees.y = int(b.get("rotation",0))
   world_buildings.add_child(model)
   var floor_mesh=model.get_node_or_null("FactoryFloor")
-  if floor_mesh!=null: floor_mesh.visible=not ProductionCampus.inside(model.position)
+  if floor_mesh!=null: floor_mesh.visible=true
   var depot_stock=model.get_node_or_null("DepotStock")
   if depot_stock!=null: depot_stock.building_index=i
   var saw = model.get_node_or_null("Saw")
@@ -386,7 +364,7 @@ func rebuild() -> void:
     extra.building_index=i
     yard_handlers.append(extra)
   if not Game.delivery_owns(i):
-   var label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
+   var label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,float(model.get_meta("height",8.6))+1.4,0),24)
    label.set_meta("building_index",i)
    industry_name_labels.append(label)
   add_approach(model.position,int(b.get("rotation",0)))
@@ -442,10 +420,10 @@ func rebuild() -> void:
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation,Game.state.town)
- if path.size()<2 or ProductionCampus.inside(point): return
+ if path.size()<2: return
  var length = path[0].distance_to(path[1])
  if length>0.1:
-  var strip=Models.box(world_buildings,Vector3(3.0,0.12,length),(path[0]+path[1])/2,Color("efe2ae"))
+  var strip=Models.box(world_buildings,Vector3(2.4,0.06,length),Vector3((path[0].x+path[1].x)/2,0.60,(path[0].z+path[1].z)/2),Color("d9cba7"))
   strip.rotation.y=atan2(path[1].x-path[0].x,path[1].z-path[0].z)
 
 func refresh_forest_clearance() -> void:
@@ -490,6 +468,7 @@ func sync_actors() -> void:
  for i in operators:
   var worker = TimberWorker.new()
   worker.role = "operator"
+  worker.variant_id=i
   worker.production_index = factories[i]
   worker.origin_point = Game.building_position(factories[i])+Basis.from_euler(Vector3(0,deg_to_rad(Game.state.buildings[factories[i]].get("rotation",0)),0))*Vector3(-3.5,0,2.7)
   worker.facing = deg_to_rad(Game.state.buildings[factories[i]].get("rotation",0))+PI/2
@@ -507,6 +486,7 @@ func sync_actors() -> void:
   var worker = TimberWorker.new()
   worker.origin_point = Catalog.biome_position(int(Game.state.biome))+Vector3((i%4)*5-10,0,18)
   worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
+  worker.variant_id=i+operators
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1
   if neighbor:
@@ -527,6 +507,7 @@ func sync_actors() -> void:
  for i in mini(Game.residents(),6):
   var resident = TimberWorker.new()
   resident.role = "resident"
+  resident.variant_id=i+staff
   var home_index=inhabited[i%inhabited.size()]
   var turn=Basis.from_euler(Vector3(0,deg_to_rad(Game.state.homes[home_index].get("rotation",0)),0))
   var point=Game.home_position(home_index)

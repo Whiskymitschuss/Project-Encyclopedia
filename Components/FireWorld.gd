@@ -66,15 +66,13 @@ func create_incident(roof: float) -> Node3D:
  crew.name="Crew"
  node.add_child(crew)
  for x in [-2.0,2.0]:
-  var person=Node3D.new()
+  var person=BeaverModels.create(1 if x<0 else 5,"fire")
   crew.add_child(person)
-  person.position=Vector3(x,0,12)
-  Models.box(person,Vector3(0.9,1.2,0.6),Vector3(0,1.3,0),Color("253d55"))
-  Models.box(person,Vector3(0.96,0.18,0.65),Vector3(0,1.3,0),Color("f2db70"))
-  sphere(person,0.42,Vector3(0,2.2,0),Color("f2db70"))
-  for side in [-0.23,0.23]:
-   Models.box(person,Vector3(0.32,0.7,0.4),Vector3(side,0.45,0),Color("253d55"))
-  Models.box(person,Vector3(0.18,0.18,1.3),Vector3(0,1.5,-0.8),Color("b9d5df"))
+  person.position=Vector3(x,StreetSurface.ROAD_Y+0.02,12)
+  person.rotation.y=PI
+  person.get_node("LeftArm").rotation.x=-1.3
+  person.get_node("RightArm").rotation.x=-1.3
+  Models.box(person,Vector3(0.18,0.18,1.3),Vector3(0,1.5,0.8),Color("b9d5df"))
  var water=Node3D.new()
  water.name="Water"
  node.add_child(water)

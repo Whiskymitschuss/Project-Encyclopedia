@@ -1,0 +1,16 @@
+TIMBER LOOT TYCOON · BIBERWELT · 0.28.5-alpha.1 (2991)
+
+Die APK als Update über die vorhandene Alpha installieren.
+Nicht deinstallieren, keine App-Daten löschen. Paket und Testzertifikat bleiben gleich.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+Neu: getrennte Straßen und Grundstücke, zehn Biberformen statt Menschen,
+Biberfahrer, drei Berufsausstattungen, tatsächliche Staplerphasen und zehn
+Architekturmodule für 14 bestehende Betriebsarten. Kein Zurücksetzen der Firma.
+
+Dies ist ein integrierter Zwischenstand des großen Weltumbaus. Neue Stahl-,
+Beton-, Paletten- und Ziegelketten sowie vollständige neue Gebäude-/Berufsanimationen
+sind noch nicht fertig. Den genauen Stand beschreibt WORLD-REWORK-285.md im Quellcode.
+
+Echte Android-Ausführung und Temperaturmessung dieser Version stehen aus.
+Der Downloadlink ist öffentlich; er begrenzt den Zugriff nicht auf eingeladene Tester.

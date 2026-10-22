@@ -37,10 +37,7 @@ func _ready() -> void:
  add_child(turret)
  turret.position.y=1.8
  Models.box(turret,Vector3(3.3,1.3,3.1),Vector3(0,0.6,0),color)
- Models.box(turret,Vector3(2.2,2.5,2.0),Vector3(-0.4,2,-0.5),color)
- Models.box(turret,Vector3(2.05,1.7,0.12),Vector3(-0.4,2.3,0.55),Color("74c7dc"))
- for x in [-1.2,0.45]: Models.box(turret,Vector3(0.13,1.9,2.1),Vector3(x,2.3,-0.5),Color("345563"))
- Models.box(turret,Vector3(2.5,0.25,2.3),Vector3(-0.4,3.4,-0.5),color.lightened(0.18))
+ BeaverModels.cockpit(turret,Vector3(-0.4,1.3,-0.5),Vector3(2.2,2.1,2.0),color,tier,"forester")
  Models.cylinder(turret,0.28,0.4,Vector3(-0.4,3.8,-0.5),Color("ffc94f"))
  boom=Node3D.new()
  turret.add_child(boom)

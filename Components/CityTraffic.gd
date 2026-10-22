@@ -29,7 +29,9 @@ func obtain(key: String) -> Node3D:
   node.show()
   return node
  var node: Node3D
- if key=="person": node=load("res://NPCs/Citizen.gd").new()
+ if key=="person":
+  node=load("res://NPCs/Citizen.gd").new()
+  node.variant_id=posmod(get_child_count(),10)
  else:
   node=load("res://Vehicles/ServiceVehicle.gd").new()
   node.kind=key
@@ -51,6 +53,7 @@ func _process(_delta: float) -> void:
   var node: Node3D=vehicles[id]
   var sample=CityServices.sample(mission,extra)
   node.position=sample.position+Vector3(sample.direction.z,0,-sample.direction.x)*1.1
+  if node.position.y<=1.1: node.position.y=StreetSurface.ROAD_Y-0.10
   node.rotation.y=atan2(sample.direction.x,sample.direction.z)
   node.moving=sample.moving
   node.emergency=sample.lights

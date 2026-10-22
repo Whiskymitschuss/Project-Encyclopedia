@@ -1195,6 +1195,9 @@ func welcome_menu() -> void:
  companion.portrait.greet()
  var stories=["Hi, ich bin Benno! Hier wächst mehr als ein Wald: Hier beginnt deine eigene Holzfirma.","Vom Wald zum Hof: Dein Team sammelt Holz, Transporte bringen es zu den offenen Arbeitsplätzen.","Schau den Maschinen zu: Aus Stämmen werden Bretter und später Möbel. Du entscheidest, wie deine Firma wächst."]
  story_detail=text(contents,stories[story_step],15 if size.x<430 else 17,CREAM)
+ # Shape the full paragraph before revealing it. Typing must never move the
+ # action under a finger between touch-down and touch-up.
+ story_detail.visible_characters_behavior=TextServer.VC_CHARS_AFTER_SHAPING
  story_shown=0
  story_detail.visible_ratio=0 if Game.state.ux.motion else 1
  var choices=row(contents)

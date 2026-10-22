@@ -8,6 +8,7 @@ var hammer: Node3D
 
 func _ready() -> void:
  role = "construction"
+ variant_id=posmod(job_id+work_index,10)
  super._ready()
  board=Node3D.new()
  body.add_child(board)

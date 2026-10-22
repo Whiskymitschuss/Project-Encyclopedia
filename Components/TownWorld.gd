@@ -10,30 +10,10 @@ func rebuild() -> void:
   remove_child(node)
   node.queue_free()
  rent_labels.clear()
- var roads=Node3D.new()
- roads.set_meta("street_context",world.street_context)
- add_child(roads)
+ # All permanent and player-built roads share the canonical surface in World.
  for i in int(Game.state.town.districts):
   var side=1 if i==0 else -1
-  draw_strip(roads,Vector3(side*188,0.74,-160),Vector3(216,0.22,6),"asphalt")
-  draw_strip(roads,Vector3(side*200,0.74,-6),Vector3(6,0.22,308),"asphalt")
   Models.label(self,"Ostviertel" if i==0 else "Westviertel",Vector3(side*248,2,-148),36)
-
- for record in Game.state.town.roads:
-  var cells=record.cells
-  var start=TownRules.point(TownRules.cell(cells[0]))
-  var previous=start
-  var last_direction=Vector3.ZERO
-  for i in range(1,cells.size()):
-   var p=TownRules.point(TownRules.cell(cells[i]))
-   var direction=(p-previous).normalized()
-   if last_direction!=Vector3.ZERO and direction!=last_direction:
-    draw_segment(roads,start,previous,record.kind)
-    start=previous
-   last_direction=direction
-   previous=p
-  draw_segment(roads,start,previous,record.kind)
- Models.bake(roads)
  var cells=TownRules.road_cells(Game.state.town)
  var waiting_count=0
  for stop in Game.state.town.stops:

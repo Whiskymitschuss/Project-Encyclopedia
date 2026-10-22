@@ -1,0 +1,12 @@
+Version: 0.28.5-alpha.1 (2991)
+Handy / Android:
+Bestehende Version / Update oder neue Installation:
+Grafikmodus / reduzierte Bewegung:
+Startdauer / Dauer bis zur Erwärmung:
+Was habe ich gemacht?
+Was sollte passieren?
+Was ist tatsächlich passiert?
+Wiederholbar? Schritte:
+Bild / Video bei Grafik- oder Verkehrsproblemen:
+
+Keine Passwörter, Signaturschlüssel oder privaten Daten beilegen.

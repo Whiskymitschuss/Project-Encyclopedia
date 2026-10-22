@@ -41,7 +41,7 @@ func run() -> void:
  var hud=scene.hud
  await settle()
  check(game.state==before,"New yard, forest compartments and HUD never migrate positions, change stocks or award progress")
- check(scene.base_streets.get_node_or_null("OpenProductionYard")!=null,"The actual world contains one continuous production yard")
+ check(scene.base_streets.get_node_or_null("OpenProductionYard")!=null,"The actual world retains the forest and production detail root without a blanket slab")
  var trees=scene.trees[0]
  check(trees.size()==100 and absf(trees[0].point.z-trees[9].point.z)<1.5 and trees[10].point.z>trees[0].point.z+3,"The working forest has ten coherent planted rows, retaining its hundred harvestable trees")
  check(TownRules.road_cells(game.state.town)==TownRules.base_cells(),"Presentation leaves the real freight graph intact")
@@ -62,18 +62,28 @@ func run() -> void:
  var machine=handler.get_parent().get_node("Processing")
  game.flow["building:%s" % machine.building_index]=1
  var position=handler.position
+ handler._process(0.8)
+ check(not handler.active and handler.position==position,"Production alone never invents a loaded forklift trip")
+ var dock_trip={"id":883,"source":"station","origin":0,"destination":machine.building_index,"target":"sawmill","mode":"truck","key":"wood","amount":6,"path":LogisticsRoutes.road_route(game.state,0,machine.building_index),"age":8.0,"load":2.0,"drive":5.0,"unload":2.0,"travel":9.0,"total":16.0,"arrived":false}
+ game.state.hub.shipments=[dock_trip]
  var stock=game.state.duplicate(true)
  handler._process(0.8)
- check(handler.active and handler.position!=position and handler.travelled>0,"A working machine drives the actual forklift, wheels and pallet lift")
- check(game.state==stock,"Forklift animation cannot duplicate materials or invent a shipment")
- game.state.buildings[machine.building_index].paused=true
+ check(handler.active and handler.position!=position and handler.payload.visible,"An actual unloading phase drives the forklift with the real cargo type")
+ check(game.state==stock,"Forklift presentation cannot duplicate materials or book a shipment")
+ dock_trip.age=9
+ handler._process(1)
+ check(handler.payload.visible,"Unaccepted cargo stays on the forks while the destination inventory is full")
+ game.state.ux.motion=false
  position=handler.position
  handler._process(1)
- check(not handler.active and handler.position==position,"Pausing the real workshop parks its forklift immediately")
- game.state.buildings[machine.building_index].paused=false
- game.state.ux.motion=false
- handler._process(1)
  check(handler.position==position,"Reduced motion freezes the new handler")
+ game.state.ux.motion=true
+ dock_trip.arrived=true
+ handler._process(0.1)
+ check(not handler.payload.visible,"The pallet disappears only after the authoritative inventory transfer")
+ for i in 40: handler._process(0.25)
+ check(handler.position==handler.points[0] and not handler.cycle_running,"The unloaded forklift returns empty to its own parking position")
+ game.state.hub.shipments=[]
  game.state.ux.motion=true
  var worker=scene.actors.get_child(0)
  worker.set_process(false)
@@ -123,6 +133,12 @@ func run() -> void:
  await settle()
  check(hud.coach.portrait.is_visible_in_tree() and hud.companion.portrait.running,"World introduction uses the animated existing Benno portrait")
  var content=hud.story_detail.text
+ var initial_action=find(hud.contents,"LOS GEHT’S")
+ var action_rect=initial_action.get_global_rect()
+ for ratio in [0.0,0.25,0.6,1.0]:
+  hud.story_detail.visible_ratio=ratio
+  await settle()
+  check(initial_action.get_global_rect()==action_rect,"Typewriter progress keeps the tutorial touch action stationary")
  await tap(find(hud.contents,"HOF ENTDECKEN"))
  check(hud.story_step==1 and hud.story_detail.text!=content and scene.focus==game.building_position(0),"Physical story touch advances the dialogue and focuses the actual depot")
  await tap(find(hud.contents,"HOF ENTDECKEN"))

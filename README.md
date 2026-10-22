@@ -2,7 +2,25 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.4-alpha.1 · Fabrik und Zentrallogistik
+## Aktuell: 0.28.5-alpha.1 · Biberwelt – erster Meilenstein
+
+Straßen und Gehwege entstehen aus einer gemeinsamen Fläche des tatsächlichen
+Straßengraphen. Die beige Überdeckung und die graue Gesamtplatte sind entfernt.
+Zehn körperlich unterschiedliche Biber ersetzen die bisherigen Menschenmodelle,
+mit drei unabhängig kombinierbaren Berufsausstattungen und sichtbaren Fahrzeugfahrern.
+14 bestehende Betriebsarten erhalten zehn bauliche Ergänzungsstufen. Stapler fahren
+bei tatsächlichen Lieferungen; die Palette bleibt bis zur bestätigten Übergabe sichtbar.
+
+**Der vollständige Masterauftrag ist noch nicht abgeschlossen.** Neue Industriezweige,
+alle gewünschten Gebäude und Berufsabläufe sowie die durchgängige Fußgängernavigation
+stehen noch aus. [Exakter Stand, Änderungen und Nutzen](docs/WORLD-REWORK-285.md).
+
+Weiterhin 0.28-Spielbasis, Android-Code **2991**, gleiches Paket und Testzertifikat.
+Als Update installieren; **nicht deinstallieren und keine App-Daten löschen**.
+[Installation](docs/alpha1-beavers/START-HIER.txt) · [Downloads](releases/README.md).
+Echte Android-Prüfung und Temperaturmessung dieser Fassung stehen aus.
+
+## Vorher: 0.28.4-alpha.1 · Fabrik und Zentrallogistik
 
 Überarbeitete Map mit durchgehendem Hofboden, flachen Fahrgassen, freigehaltenen
 Kreuzungen und kleineren Fahrzeugen. Lesbare Materialwerte in zwei Reihen, helle

@@ -206,7 +206,8 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
   if kind == "clinic":
    box(root,Vector3(2.8,0.6,0.2),Vector3(0,height+0.1,5.8),Color("e37e73"))
    box(root,Vector3(0.6,2.8,0.2),Vector3(0,height+0.1,5.9),Color("e37e73"))
- root.set_meta("height",height+4.2)
+ if not city: IndustryEvolution.add_to(root,kind,level)
+ root.set_meta("height",maxf(float(root.get_meta("height",0)),height+4.2))
  CraftedFrontage.decorate(root,kind,level,false)
  bake(root)
  return root
@@ -244,6 +245,7 @@ static func construction(progress: float) -> Node3D:
  box(root,Vector3(0.7,13,0.7),Vector3(8,6.5,-5),Color("ecc263"))
  var arm = box(root,Vector3(15,0.6,0.6),Vector3(3,13,-5),Color("ecc263"))
  arm.name = "Crane"
+ BeaverModels.cockpit(root,Vector3(6.5,11.2,-4.3),Vector3(1.7,1.6,1.8),Color("ecc263"),3,"industry")
  box(root,Vector3(0.1,7,0.1),Vector3(-3,9.5,-5),Color("485d61"))
  log_pile(root,Vector3(-6,0.4,7),5)
  bake(root)

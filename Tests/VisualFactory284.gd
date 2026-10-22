@@ -42,9 +42,9 @@ func run() -> void:
  scene.hud.ux.set_process(false)
  await settle()
  var depot=scene.world_buildings.get_child(center)
- check(depot.get_node("FactoryFloor").visible==false,"The central yard shares one visible floor with the campus")
- var planted_on_floor=scene.landscape.records.filter(func(record): return load("res://Components/ProductionCampus.gd").YARD.has_point(record.point) and not record.blocked)
- check(planted_on_floor.is_empty(),"No decorative flowers, grass or rocks grow through the shared factory concrete")
+ check(depot.get_node("FactoryFloor").visible,"The central yard retains a bounded visible loading floor")
+ var planted_on_floor=scene.landscape.records.filter(func(record): return Placement.bounds(game.building_position(center),0,"central_depot").has_point(record.point) and not record.blocked)
+ check(planted_on_floor.is_empty(),"Decorative plants stay clear of the actual central-depot floor")
  check(depot.get_node_or_null("DepotHandler0")!=null and depot.get_node_or_null("DepotHandler1")!=null,"The larger loading hall contains two independently animated forklift operators")
  var rack=depot.get_node("DepotStock")
  rack.set_process(false)
@@ -68,6 +68,7 @@ func run() -> void:
  scene.delivery_world._process(0.1)
  var visual=scene.delivery_world.visuals["central:881"]
  check(visual.fleet=="central" and visual.visible,"The real depot trip uses its distinct white-blue road model")
+ check(not visual.cargo.visible,"A loading truck starts empty while the handler owns the pallet")
  check(not visual.get_node("RouteLabel").visible,"Loading text cannot expand across the world view")
  var before=game.state.duplicate(true)
  var rest=visual.cargo.get_meta("rest_position")
@@ -76,10 +77,14 @@ func run() -> void:
  check(game.state==before,"Cargo presentation never changes inventory or shipment state")
  trip.age=8
  scene.delivery_world._process(0.1)
- var handler=depot.get_node("DepotHandler0")
+ check(not visual.cargo.visible,"Unloading hands the visible cargo from the truck to its handler")
+ var handler=depot.get_node("DepotHandler%s" % (int(trip.id)%2))
  handler.set_process(false)
  var parked=handler.position
  handler._process(1)
+ var other=depot.get_node("DepotHandler%s" % (1-int(trip.id)%2))
+ other._process(0.1)
+ check(not other.active,"Only one depot handler owns a shipment at a time")
  check(handler.active and handler.position!=parked,"An actual central unloading phase starts the depot forklift")
  trip.arrived=true
  for tick in 40: handler._process(0.25)

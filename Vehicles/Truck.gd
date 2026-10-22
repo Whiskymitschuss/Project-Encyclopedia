@@ -37,14 +37,12 @@ func _ready() -> void:
    for x in [-1.1,1.1]: wheel(Vector3(x,0.7,0),0.7)
   else: wheel(Vector3(0,0.65,1.1),0.65)
   for x in [-0.7,0.7]: Models.box(self,Vector3(0.1,0.1,2),Vector3(x,1.4,2),Color("b28b54"))
-  Models.box(self,Vector3(0.8,1.2,0.65),Vector3(0,1.9,3.2),Color("2e9cba"))
-  Models.box(self,Vector3(0.65,0.7,0.6),Vector3(0,2.8,3.2),Color("f2c99e"))
-  Models.cylinder(self,0.48,0.35,Vector3(0,3.2,3.2),Color("ffcf54"),0.32)
-  for x in [-0.25,0.25]: Models.box(self,Vector3(0.3,0.8,0.4),Vector3(x,0.95,3.2),Color("3d5c70"))
+  var pusher=BeaverModels.create(tier,"logistics")
+  pusher.position=Vector3(0,0.1,3.2)
+  add_child(pusher)
  elif tier==2:
   Models.box(self,Vector3(2.8,0.9,5.7),Vector3(0,1.25,0),Color("ea8558"))
-  Models.box(self,Vector3(2.6,1.8,2.2),Vector3(0,2.3,0.9),Color("e9b95e"))
-  Models.box(self,Vector3(2.4,1,0.14),Vector3(0,2.7,2.05),Color("8bd2d7"))
+  hollow_cab(Vector3(0,1.7,0.9),Vector3(2.6,1.8,2.2),Color("e9b95e"),tier)
   make_cargo(Vector3(-0.8,1.7,-1.7),3)
   for x in [-1.5,1.5]:
    for z in [-1.9,1.9]: wheel(Vector3(x,0.8,z),0.75)
@@ -53,8 +51,7 @@ func _ready() -> void:
   var length=10.5 if tier==4 else 7.0
   var color=Color("eac170") if tier<5 else Color("e7a839") if tier<8 else Color("68bbce")
   Models.box(self,Vector3(3.2,1.1,length),Vector3(0,1.2,0),Color("476775"))
-  Models.box(self,Vector3(3.2,2.7,2.4),Vector3(0,2.3,length/2-1.2),color)
-  Models.box(self,Vector3(2.9,1.2,0.15),Vector3(0,2.9,length/2+0.05),Color("9ed2d4"))
+  hollow_cab(Vector3(0,1.6,length/2-1.2),Vector3(3.2,2.7,2.4),color,tier)
   for x in [-1.1,1.1]: Models.box(self,Vector3(0.65,0.45,0.2),Vector3(x,1.6,length/2+0.1),Color("fff1b2"))
   make_cargo(Vector3(-0.8,1.6,-1.2),9 if tier==4 else 6)
   for x in [-1.8,1.8]:
@@ -132,13 +129,9 @@ func build_rig() -> void:
  for x in [-0.95,0.95]:
   for z in [1.25,2.85]: Models.box(self,Vector3(0.13,0.85,0.13),Vector3(x,2.0,z),color)
  for side in [-1,1]: Models.box(self,Vector3(0.04,0.35,1.6),Vector3(side*1.04,1.35,2.05),accent)
- var driver=Node3D.new()
- driver.name="Driver"
- add_child(driver)
- Models.box(driver,Vector3(0.45,0.55,0.35),Vector3(0.45,1.4,2.4),accent)
- Models.box(driver,Vector3(0.35,0.35,0.35),Vector3(0.45,1.85,2.45),Color("f1c39a"))
- Models.bake(driver)
- Models.box(self,Vector3(1.8,0.75,0.08),Vector3(0,2.2,2.98),Color("a5e6ef"))
+ BeaverModels.driver(self,Vector3(0.45,0.88,2.0),0.55,tier)
+ # Open glazing exposes the driver without transparent sorting or hidden faces.
+ Models.box(self,Vector3(1.8,0.16,0.08),Vector3(0,1.73,2.98),Color("a5e6ef"))
  Models.box(self,Vector3(1.85,0.28,0.12),Vector3(0,0.85,3.02),Color("f2efe0"))
  for x in [-0.7,0.7]: Models.box(self,Vector3(0.35,0.22,0.1),Vector3(x,1.13,3.06),Color("fff8c5"))
  for x in [-1.0,1.0]:
@@ -185,3 +178,10 @@ func follow_heading(direction: Vector3, delta: float) -> void:
   var turn=clampf(wrapf(trailer_heading-heading,-PI,PI),-0.45,0.45)
   trailer.rotation.y=lerp_angle(turn,0,minf(delta*3,1))
  previous_heading=heading
+
+func hollow_cab(at: Vector3,size: Vector3,color: Color,id: int) -> void:
+ Models.box(self,Vector3(size.x,0.5,size.z),at,color)
+ Models.box(self,Vector3(size.x,0.15,size.z),at+Vector3(0,size.y-0.5,0),color)
+ for side in [-1,1]:
+  for end in [-1,1]: Models.box(self,Vector3(0.13,size.y-0.5,0.13),at+Vector3(side*(size.x/2-0.08),(size.y-0.5)/2,end*(size.z/2-0.08)),color)
+ BeaverModels.driver(self,at+Vector3(0.45,0.2,0),minf(0.67,(size.y-0.6)/2.55),id)

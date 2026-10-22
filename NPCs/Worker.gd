@@ -6,6 +6,7 @@ var destination = Vector3.ZERO
 var phase = 0.0
 var pace = 1.0
 var role = "forester"
+var variant_id = -1
 var production_index = -1
 var facing = 0.0
 var working = false
@@ -23,27 +24,11 @@ var axe: Node3D
 
 func _ready() -> void:
  position=origin_point+Vector3(0,0.6,0)
- body=Node3D.new()
+ if variant_id<0: variant_id=posmod(roundi(origin_point.x*3+origin_point.z)+production_index,10)
+ var profession="forester" if role=="forester" else "industry" if role in ["operator","construction"] else "civilian"
+ body=BeaverModels.create(variant_id,profession)
  add_child(body)
- var shirt=Color("209ec7") if role!="resident" else Color("af79ba")
- Models.box(body,Vector3(0.88,1.2,0.65),Vector3(0,1.65,0),shirt)
- for x in [-0.27,0.27]: Models.box(body,Vector3(0.13,1.1,0.07),Vector3(x,1.7,0.36),Color("efdc59"))
- Models.box(body,Vector3(0.9,0.15,0.1),Vector3(0,1.3,0.36),Color("efdc59"))
- Models.box(body,Vector3(0.66,0.7,0.64),Vector3(0,2.58,0),Color("f3cd9e"))
- if role!="resident":
-  Models.cylinder(body,0.52,0.22,Vector3(0,3,0),Color("ffc43e"))
-  Models.cylinder(body,0.43,0.3,Vector3(0,3.17,0),Color("ffd45b"),0.28)
- else: Models.box(body,Vector3(0.73,0.22,0.73),Vector3(0,2.98,0),Color("62493c"))
- for x in [-0.17,0.17]: Models.box(body,Vector3(0.08,0.1,0.04),Vector3(x,2.65,0.34),Color("344f5b"))
- for i in 4:
-  var limb=Node3D.new()
-  body.add_child(limb)
-  var arm=i>=2
-  limb.position=Vector3((-1 if i%2==0 else 1)*(0.59 if arm else 0.24),2.1 if arm else 1.1,0)
-  Models.box(limb,Vector3(0.3,0.65 if arm else 0.85,0.4),Vector3(0,-0.35,0),shirt if arm else Color("355d78"))
-  Models.box(limb,Vector3(0.31,0.28,0.43 if arm else 0.58),Vector3(0,-0.78,0.03),Color("f3cd9e") if arm else Color("334449"))
-  Models.bake(limb)
-  limbs.append(limb)
+ for part_name in ["LeftLeg","RightLeg","LeftArm","RightArm"]: limbs.append(body.get_node(part_name))
  mug=Node3D.new()
  limbs[2].add_child(mug)
  Models.cylinder(mug,0.16,0.28,Vector3(0,-0.77,0.2),Color("fff0ce"))
@@ -55,6 +40,7 @@ func _ready() -> void:
  if role=="forester":
   Models.log_pile(pack,Vector3(-0.6,1,-0.8),2)
   pack.scale=Vector3.ONE*0.45
+  pack.position=Vector3(0,1.05,-0.2)
  if role=="forester":
   axe=Node3D.new()
   limbs[3].add_child(axe)

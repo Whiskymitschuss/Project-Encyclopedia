@@ -22,21 +22,14 @@ static func build(parent: Node3D,ctx: Dictionary) -> void:
  var yard=Node3D.new()
  yard.name="OpenProductionYard"
  parent.add_child(yard)
- Models.paving_box(yard,Vector3(YARD.size.x,0.12,YARD.size.y),Vector3(YARD.get_center().x,0.48,YARD.get_center().y),CONCRETE,"plaster",1.5)
- # Low white walls with a red band frame the shared yard, leaving real access open.
- for x in range(-60,61,4):
-  for z in [int(YARD.position.y),int(YARD.end.y)]:
-   var at=Vector2(x,z)
-   if clear(at,ctx): wall(yard,at,true)
- for z in range(int(YARD.position.y)+4,int(YARD.end.y),4):
-  for x in [int(YARD.position.x),int(YARD.end.x)]:
-   var at=Vector2(x,z)
-   if clear(at,ctx): wall(yard,at,false)
+ # Each factory keeps its own paving. A blanket slab hid vacant lots and
+ # visually joined homes, public streets and workshops into one grey carpet.
+ yard.set_meta("shared_slab",false)
  # Forest compartments have broad sandy rims, with removable fences away from lots/roads.
  for biome in 10:
   var p=Catalog.biome_position(biome)
-  Models.paving_box(yard,Vector3(76,0.05,66),p+Vector3(0,0.40,0),SAND,"plaster",2)
-  Models.paving_box(yard,Vector3(69,0.07,59),p+Vector3(0,0.45,0),Color(Catalog.BIOMES[biome].ground).lerp(Color("98ce65"),0.55),"plaster",1.8)
+  Models.paving_box(yard,Vector3(76,0.05,66),p+Vector3(0,0.46,0),SAND,"plaster",2)
+  Models.paving_box(yard,Vector3(69,0.07,59),p+Vector3(0,0.56,0),Color(Catalog.BIOMES[biome].ground).lerp(Color("98ce65"),0.55),"plaster",1.8)
   for x in range(-32,33,8):
    var at=Vector2(p.x+x,p.z+31)
    if not clear(at,ctx,1.2): continue

@@ -6,7 +6,7 @@ static func create(kind: String,level: int) -> Node3D:
  root.set_meta("kind",kind)
  root.set_meta("height",7.5)
  var width=31.0 if central else 19.0
- var floor_mesh=Models.paving_box(root,Vector3(width,0.4,23),Vector3(0,0.2,0),ProductionCampus.CONCRETE,"plaster",0.8)
+ var floor_mesh=Models.paving_box(root,Vector3(width,0.16,23),Vector3(0,0.46,0),ProductionCampus.CONCRETE,"plaster",0.8)
  floor_mesh.name="FactoryFloor"
  floor_mesh.set_meta("animated",true)
  var blue=Color("328dd2") if central else Color("eea642")
@@ -36,6 +36,8 @@ static func create(kind: String,level: int) -> Node3D:
   var handler=load("res://Components/YardHandling.gd").new()
   handler.name="DepotHandler%s" % i
   handler.depot_handler=true
+  handler.handler_lane=i
+  handler.handler_lanes=2 if central else 1
   handler.points=[Vector3(-7 if i==0 else 7,0.6,-4),Vector3(-7 if i==0 else 7,0.6,3),Vector3(-4 if i==0 else 4,0.6,6),Vector3(-7 if i==0 else 7,0.6,3),Vector3(-7 if i==0 else 7,0.6,-4)]
   root.add_child(handler)
  var stock=load("res://Components/DepotStock.gd").new()

@@ -5,9 +5,9 @@ func _ready() -> void:
  set_meta("transport_tier",tier)
  if road_freight: scale=Vector3.ONE*0.62
  Models.box(self,Vector3(3.2,0.7,7.2),Vector3(0,1.1,0),Color("496477"))
- Models.box(self,Vector3(3,2.6,2.2),Vector3(0,2.4,2.3),Color("ffffff") if fleet in ["central","construction"] else Color("f6be4a"))
+ hollow_cab(Vector3(0,1.6,2.3),Vector3(3,2.6,2.2),Color("ffffff") if fleet in ["central","construction"] else Color("f6be4a"),tier)
  for side in [-1,1]: Models.box(self,Vector3(0.04,0.55,1.8),Vector3(side*1.52,2,2.3),Color("338fd6") if fleet=="central" else Color("303941"))
- Models.box(self,Vector3(2.75,1.1,0.12),Vector3(0,2.8,3.45),Color("9fdce0"))
+
  for x in [-1.7,1.7]:
   for z in [-2.4,-0.7,2.4]: wheel(Vector3(x,0.85,z),0.82)
  bed=Node3D.new()

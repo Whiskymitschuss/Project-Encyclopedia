@@ -303,7 +303,7 @@ func clear_at(point: Vector2, radius: float, bounds: Array, routes: Array) -> bo
  for rectangle in bounds:
   if rectangle.grow(radius).has_point(point): return false
  for span in routes:
-  var clearance=float(span[2]) if span.size()>2 else 4.7
+  var clearance=float(span[2]) if span.size()>2 else 5.5
   if point.distance_to(Geometry2D.get_closest_point_to_segment(point,span[0],span[1]))<clearance+radius: return false
  if absf(point.x+92)<6+radius and absf(point.y-river_z(-92))<14+radius: return false
  if point.distance_to(Vector2(-137,242))<7+radius: return false
@@ -311,7 +311,7 @@ func clear_at(point: Vector2, radius: float, bounds: Array, routes: Array) -> bo
  return true
 
 func refresh() -> void:
- var bounds=[ProductionCampus.YARD,WorldAccess.HIGHWAY_SITE,Rect2(319,72,24,136)]
+ var bounds=[WorldAccess.HIGHWAY_SITE,Rect2(319,72,24,136)]
  for i in Game.state.buildings.size(): bounds.append(Placement.bounds(Game.building_position(i),int(Game.state.buildings[i].get("rotation",0)),Game.state.buildings[i].kind))
  for i in Game.state.homes.size(): bounds.append(Placement.bounds(Game.home_position(i),int(Game.state.homes[i].get("rotation",0))))
  for job in Game.state.jobs:

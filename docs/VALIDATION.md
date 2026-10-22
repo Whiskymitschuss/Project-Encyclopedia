@@ -1,3 +1,28 @@
+## Biberwelt · 0.28.5-alpha.1
+
+20.722 Einzelprüfungen in 30 Headless-Suiten einschließlich zweier natürlicher
+Progressionsläufe; Hauptwelt- und Titelstart ebenfalls bestanden.
+932 OpenGL-Prüfungen in 21 unterschiedlichen Suiten bestanden.
+Betroffene Suiten nach Änderungen erneut ausgeführt; erfolgreiche Wiederholungen
+werden nicht doppelt addiert. [Prüfbericht](alpha1-beavers/automated-checks.json).
+
+Im ersten Grafikdurchlauf misslang ein Anleitungstipp; außerdem wurde Steinladung
+an einer Station ohne Stapler ausgeblendet. Textlayout und Ladungsübergabe korrigiert;
+Anleitung, Stapler, Steinwirtschaft und Verkehr anschließend erfolgreich geprüft.
+Die neue Architekturprüfung fand einen Dachüberstand von 0,15 Einheiten außerhalb
+der reservierten Fläche; Position korrigiert und alle Stufen erneut geprüft.
+
+[Hauptwelt](alpha1-beavers/world.png) · [Stufe-10-Sägewerk](alpha1-beavers/sawmill-level10.png) ·
+[Biberformen – QA-Aufstellung](alpha1-beavers/beavers.png) ·
+[Fahrzeugfamilien – QA-Aufstellung](alpha1-beavers/drivers.png).
+Die QA-Aufstellungen sind Testansichten zusätzlich zur geprüften Hauptweltintegration.
+Sie ersetzen keine Spielwelt und werden nicht als getrennte Demo ausgeliefert.
+
+Der große Masterauftrag ist **noch nicht vollständig umgesetzt**.
+[Exakter Stand je Phase](WORLD-REWORK-285.md). Kein privater Spielstand verwendet;
+kein echter Android-Lauf und keine Temperaturmessung. Die automatischen Prüfungen
+weisen keine flächendeckende Fehlerfreiheit oder Langzeitperformance nach.
+
 ## Externe Downloads Zentrallogistik · 0.28.4 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.4-alpha.1` vollständig per

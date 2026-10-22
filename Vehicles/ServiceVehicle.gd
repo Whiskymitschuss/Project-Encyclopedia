@@ -8,15 +8,15 @@ var moving=true
 var emergency=true
 
 func _ready() -> void:
+ scale=Vector3.ONE*0.84
  var fire=kind=="fire"
  var medical=kind=="ambulance"
  var length=6.2 if fire else 5.6 if medical else 4.6
  var color=Color("ef6050") if fire else Color("fff1d4") if medical else Color("f8c657") if kind=="taxi" else Color("428fae")
  Models.box(self,Vector3(2.5,0.75,length),Vector3(0,1.05,0),color)
- Models.box(self,Vector3(2.3,1.6,2.3 if not medical else 3.8),Vector3(0,1.9,-0.3),color)
- Models.box(self,Vector3(2.15,0.9,0.12),Vector3(0,2.15,1.1 if not medical else 1.65),Color("8fd8df"))
+ BeaverModels.cockpit(self,Vector3(0,1.4,0.15),Vector3(2.3,1.3,2.1),color,3 if fire else 8,"industry" if fire else "logistics")
+ if medical: Models.box(self,Vector3(2.3,1.6,2.0),Vector3(0,1.9,-1.6),color)
  for x in [-1.28,1.28]:
-  Models.box(self,Vector3(0.12,0.7,1.6),Vector3(x,2.1,0),Color("91ced9"))
   for z in [-length*0.31,length*0.31]:
    var wheel=Models.cylinder(self,0.58,0.3,Vector3(x,0.7,z),Color("34505b"))
    wheel.rotation.z=PI/2
@@ -39,12 +39,14 @@ func _ready() -> void:
   for x in [-1.29,1.29]:
    Models.box(self,Vector3(0.07,0.35,1.1),Vector3(x,2,-0.9),Color("ed7563"))
    Models.box(self,Vector3(0.07,1.1,0.35),Vector3(x,2,-0.9),Color("ed7563"))
- passenger=Node3D.new()
- passenger.set_meta("animated",true)
+ passenger=BeaverModels.create(5,"civilian",true)
+ passenger.name="Passenger"
+ passenger.position=Vector3(0.62,1.46,0)
+ passenger.scale=Vector3.ONE*0.43
  add_child(passenger)
- Models.box(passenger,Vector3(0.45,0.7,0.5),Vector3(0.65,1.9,0),Color("ae8cc8"))
- Models.box(passenger,Vector3(0.4,0.4,0.4),Vector3(0.65,2.45,0),Color("f0cda4"))
- Models.bake(passenger)
+ # Move the driver into the other seat so taxi passengers never intersect it.
+ get_node("Driver").position.x=-0.58
+ get_node("Driver").scale=Vector3.ONE*0.43
  passenger.hide()
  Models.bake(self)
 

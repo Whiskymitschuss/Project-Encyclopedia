@@ -213,14 +213,22 @@ func _process(delta: float) -> void:
   var sample = LogisticsRoutes.presentation_sample(shipment.path,progress)
   node.position = sample.position
   if absf(node.position.y-0.95)<0.01:
-   node.position.y=0.61 if ProductionCampus.inside(node.position) else 0.87 if node.position.z<=-60 else 0.94
+   node.position.y=StreetSurface.ROAD_Y+0.02
   var direction = -sample.direction if returning else sample.direction
   node.follow_heading(direction,delta)
   node.position+=Vector3(direction.z,0,-direction.x)*1.5
   truck_visual_count += 1
   if running and progress>0 and progress<1:
    for wheel in node.wheels: wheel.rotate_object_local(Vector3.UP,delta*6)
-  if node.cargo!=null: node.cargo.visible = not shipment.arrived
+  if node.cargo!=null:
+   node.cargo.visible=not shipment.arrived
+   if shipment.has("drive"):
+    # Cargo changes visual owner at the same milestones as the dock handler.
+    # Loading starts with an empty deck; unloading hands the parcel to the forks.
+    var load_end=float(shipment.get("load",0))
+    var pickup=load_end+float(shipment.drive)+float(shipment.get("unload",0))/2.05
+    if age<load_end and CargoTransfer.has_forklift(Game.state,shipment,true): node.cargo.visible=false
+    if age>=pickup and CargoTransfer.has_forklift(Game.state,shipment,false): node.cargo.visible=false
   var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
   cargo_label.visible=false # Detail belongs in the bounded selection sheet, never across the world.
