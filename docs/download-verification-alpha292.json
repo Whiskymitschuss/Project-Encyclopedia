@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-22T05:27:33.939452+00:00",
+  "tag": "v0.29.2-alpha.2",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-v0.29.2-alpha.2.apk",
+      "http_status": 200,
+      "bytes": 63219125,
+      "sha256": "f36640a234aa690387de47586de56d4adb6e5ab8482b393c5d1f9e34763f2317",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-v0.29.2-source.zip",
+      "http_status": 200,
+      "bytes": 23013601,
+      "sha256": "e32d81c72eb035f3a59e8401fe08326c9613502754c19c8b5a3fdbfdfba43934",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.2-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Schnellstart-Testerpaket.zip",
+      "http_status": 200,
+      "bytes": 62601176,
+      "sha256": "38d5cab37171083fd4dc2f5173a1dcd596e5b99962045f69efc2be287956e6d3",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}

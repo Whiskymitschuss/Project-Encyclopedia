@@ -1,3 +1,10 @@
+## Externe Downloads Schnellstart 0.29.2 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.29.2-alpha.2` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha292.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Verpackte 0.29.2-Startdateien geprüft
 
 Die unverändert extrahierten Assets der gebauten APK laufen in Desktop-Godot 4.6.3:
