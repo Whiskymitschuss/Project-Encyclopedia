@@ -1,3 +1,26 @@
+## Startdateien aus der tatsächlichen APK geprüft
+
+Die unverändert extrahierten APK-Assets wurden mit Desktop-Godot 4.6.3 ausgeführt.
+Ein Abbruch nach zehn Frames änderte die bisherigen Test-Speicherbytes nicht.
+Anschließender vollständiger Kaltstart mit acht Stunden Abwesenheit: 11 Prüfungen,
+keine Fehler; 533 fortlaufende Frames während der Berechnung. Ein frisches Profil
+startete ebenfalls ohne Skript-/Ladefehler. Alle Profile wurden neu in /tmp erzeugt.
+[Prüfbericht](alpha2-startfix/packaged-startup.json). Das ist keine Ausführung der
+Android-Binärdateien auf einem Gerät und keine Messung der Handy-Leistung.
+
+## Auslieferung Startfix 0.29.1
+
+APK aus Quell-Commit `8ecab481388911558235eab22a6e670705a47849`, 63214766 Bytes,
+SHA256 `a097af44c678fa4b41f0e6366e81a16d6e32d66edbab70cdd93dbdb3b422d847`. Version 0.29.1-alpha.2 / Code 2912; gleiches Paket und
+Testzertifikat wie Alpha 2. V2-Signatur, 16-KB-ZIP-Ausrichtung, API 24+, ARM64/ARMv7,
+OpenGL, Hochformat und ausschließlich optionale Vibration geprüft.
+
+Ladeanzeige, aktualisierter Spielmanager, Intro und bisherige Alpha-Ressourcen
+sind wirklich in der APK enthalten. Tests, Dokumentation und Release-Dateien sind
+ausgeschlossen. Quell-ZIP: 436 Dateien, SHA256 `49765db0c715f8bf12ff20576ca3a5459d2439a8ed5bae823d5774f89ac23300`.
+Tester-ZIP: 6 Einträge, SHA256 `90c7e0b1d867b52c67356d18948189b23479ba08df99a341b4b880748757b0e8`.
+Der private Testschlüssel wird nicht mitgeliefert. Downloads werden separat geprüft.
+
 # Prüfung Startfix — 0.29.1-alpha.2
 
 - `bash scripts/test.sh`: **20,160 Prüfungen in 27 Headless-Suiten**,

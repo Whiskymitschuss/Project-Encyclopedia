@@ -1,3 +1,30 @@
+# Alpha 2 · Startfix 0.29.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.1-alpha.2/releases/Timber-Loot-Tycoon-v0.29.1-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.1-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Startfix-Testerpaket.zip)**
+
+[Passender Quellcode](Timber-Loot-Tycoon-v0.29.1-source.zip) · [Änderungen](../docs/STARTFIX-291.md) · [Testplan](../docs/alpha2-startfix/TESTPLAN.txt)
+
+Version **0.29.1-alpha.2**, Code **2912**, Launchername **Timber Loot Alpha**.
+Direkt über die vorhandene Alpha installieren; vorher nicht deinstallieren und
+keine App-Daten löschen. Gleiches Paket `com.whiskymitschuss.timberloot.reborn`,
+gleiches Testzertifikat und Speicherverzeichnis. Android 7.0+, ARM64/ARMv7,
+OpenGL ES 3.0, nur optionale Vibration.
+
+Beim Start erscheinen ein Logo und eine Ladeanzeige. Offline-Fortschritt wird in
+kurzen Abschnitten verarbeitet. Ein Abbruch überschreibt den bisherigen Stand
+nicht. Auch die Rückkehr aus dem Hintergrund läuft über diesen Ablauf.
+
+20,160 Headless- und 517 OpenGL-Prüfungen bestanden.
+Debug-signierte Alpha; ein Test dieser Fassung auf dem betroffenen Android-Handy
+steht noch aus. Es gibt keine zugesicherte maximale Ladezeit auf jedem Gerät.
+
+APK-Quellstand `8ecab481388911558235eab22a6e670705a47849`. Quell-ZIP: 436 Dateien einzeln gegen Git-Blobs
+geprüft. Testerpaket: 6 Einträge mit identischer APK und Prüfsummen.
+Ein öffentlicher Download ist kein Zugang nur für eingeladene Tester.
+Private Schlüssel, Spielerprofile und Testberichte sind nicht enthalten.
+
+## Vorherige Veröffentlichungen
+
 # Alpha 2 — Feuer, Bauleitung und Verkehr
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.0-alpha.2/releases/Timber-Loot-Tycoon-v0.29-alpha.2.apk)** · **[Testerpaket mit Anleitung](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.29.0-alpha.2/releases/Timber-Loot-Tycoon-Alpha-2-Testerpaket.zip)**

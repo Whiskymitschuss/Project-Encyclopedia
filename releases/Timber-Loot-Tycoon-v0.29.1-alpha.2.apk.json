@@ -1,0 +1,52 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.29.1-alpha.2.apk",
+  "bytes": 63214766,
+  "sha256": "a097af44c678fa4b41f0e6366e81a16d6e32d66edbab70cdd93dbdb3b422d847",
+  "version": "0.29.1-alpha.2",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "8ecab481388911558235eab22a6e670705a47849",
+  "device_install_or_launch_tested": false,
+  "version_code": 2912,
+  "alpha": 2,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "packaged_alpha_resources_verified": true,
+  "automated_headless_checks": 20160,
+  "automated_opengl_checks": 517,
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.29.1-source.zip",
+    "bytes": 22915754,
+    "sha256": "49765db0c715f8bf12ff20576ca3a5459d2439a8ed5bae823d5774f89ac23300",
+    "verified_files": 436
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-2-Startfix-Testerpaket.zip",
+    "bytes": 62596561,
+    "sha256": "90c7e0b1d867b52c67356d18948189b23479ba08df99a341b4b880748757b0e8",
+    "verified_entries": 6
+  },
+  "packaged_desktop_startup": {
+    "apk_sha256": "a097af44c678fa4b41f0e6366e81a16d6e32d66edbab70cdd93dbdb3b422d847",
+    "method": "Extract assets unchanged from built APK; execute with desktop Godot 4.6.3 headless and isolated generated profiles",
+    "device_tested": false,
+    "interrupted_start_old_save_bytes_unchanged": true,
+    "cold_start_checks": 11,
+    "failures": 0,
+    "offline_seconds": 28800,
+    "responsive_frames": 533,
+    "max_host_frame_usec": 9756,
+    "fresh_profile_boot_smoke_passed": true,
+    "limitations": "No native Android execution, driver or handset performance verification."
+  }
+}
