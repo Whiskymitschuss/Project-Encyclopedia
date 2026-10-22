@@ -1,0 +1,22 @@
+TIMBER LOOT · OFFENER WERKSHOF 0.28.3-alpha.1
+
+Gerät / Android / vorherige Spielversion:
+Firma: Betriebe / Häuser / LKW:
+Profil: Standard oder Akku / Helligkeit / Ladegerät:
+
+Hof und Wald gut lesbar? Gefallen Aufbau und Farben?
+Maschinen / Stapler / Kran / Holzfäller: Was bewegt sich falsch oder bleibt stehen?
+Produktionsstatus / Materialbestände währenddessen:
+Pause / reduzierte Bewegung funktionieren?
+HUD auf deinem Display / mit großer Schrift:
+Benno-Einführung verständlich und gut bedienbar?
+Alte Standorte, Miete und Waren korrekt erhalten?
+
+Zeit bis Logo / Titel / Welt:
+LKW-Verhalten (mit Quelle, Ziel und Lagerkapazität):
+Wärme / Akku nach 5 und 15 Minuten:
+Kamerarunde: FPS / 95%-Framezeit / verwendetes Profil:
+
+Schritte zum Fehler / erwartet / tatsächlich:
+Screenshot oder Video bewusst beifügen:
+Freiwilliger Bericht, keine automatische Übermittlung.

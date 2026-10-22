@@ -159,6 +159,10 @@ func _notification(what: int) -> void:
    last_resume=now
 
 func _process(delta: float) -> void:
+ avatar.offset_top=hud.bottom_panel.offset_top-126
+ avatar.offset_bottom=hud.bottom_panel.offset_top-6
+ bubble.offset_top=hud.bottom_panel.offset_top-160
+ bubble.offset_bottom=hud.bottom_panel.offset_top-12
  var enabled=bool(Game.state.get("companion_enabled",true))
  if not enabled:
   remaining=0
@@ -167,10 +171,11 @@ func _process(delta: float) -> void:
  enabled_before=enabled
  var available=enabled and not Game.state.get("onboarding",{}).get("active",false) and not hud.overlay.visible and not hud.placement_panel.visible and (hud.get("ux")==null or not hud.ux.panels_visible())
  avatar.visible=available
- portrait.running=available
+ var guided=hud.current=="welcome" and hud.overlay.visible or (hud.coach!=null and hud.coach.panel.visible)
+ portrait.running=available or guided
  if not available:
   bubble.hide()
-  portrait.render_target_update_mode=SubViewport.UPDATE_DISABLED
+  if not guided: portrait.render_target_update_mode=SubViewport.UPDATE_DISABLED
   return
  cooldown=maxf(0,cooldown-delta)
  idle+=delta

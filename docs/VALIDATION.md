@@ -1,3 +1,21 @@
+## Prüfung Offener Werkshof · 0.28.3-alpha.1
+
+19.767 Einzelprüfungen in 28 Headless-Suiten einschließlich zweier natürlicher
+Progressionsläufe; zusätzlich Hauptwelt-/Intro-Starttests. 695 bestandene
+OpenGL-Prüfungen in 15 unterschiedlichen Suiten. Betroffene Suiten nach den
+letzten Korrekturen erneut ausgeführt; [genaue Abfolge](alpha1-campus/automated-checks.json).
+
+47 neue Grafikprüfungen: unveränderte Firmen-/Straßendaten, gepflanzte Waldreihen,
+freier Fußweg, bewegte Stapler und Kräne bei echter Arbeit, Pause/reduzierte Bewegung,
+Holzfäller-Ladungsrichtung, sechs/zwei Stapler, physische Dialogtasten und Tutorial,
+Wiederholung mit bestehender Firma ohne Zurücksetzen sowie kleine Touchziele.
+
+[Änderungen und Designnutzen](CAMPUS-283.md), [Hofansicht](alpha1-campus/yard.png),
+[Einführung](alpha1-campus/story.png). Künstliche isolierte Profile, keine echten
+Spielstände. Desktop-OpenGL und Headless sind kein Android-Gerätetest. Temperatur
+und nachhaltige Leistung auf S26 Ultra/S24 FE stehen aus. Bestehende ObjectDB-
+Aufräumhinweise einiger älterer Grafiktests bleiben zu beobachten.
+
 ## Externe Downloads Waldleben · 0.28.2 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.2-alpha.1` vollständig per

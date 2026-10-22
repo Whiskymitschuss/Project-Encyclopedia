@@ -54,7 +54,7 @@ func run() -> void:
   check(hud.bottom_panel.get_global_rect().end.x<=hud.size.x+1,"Bottom navigation fits "+str(resolution))
   hud.open_menu("services")
   await settle()
-  check(hud.overlay.size.x<=760 and hud.overlay.get_global_rect().position.y>=168,"Readable bounded incident panel "+str(resolution))
+  check(hud.overlay.size.x<=760 and hud.overlay.get_global_rect().position.y>=hud.mission_button.get_global_rect().end.y+4,"Readable bounded incident panel below the compact HUD "+str(resolution))
   check(hud.scroll.size.y>100,"Incident list scrolls inside panel "+str(resolution))
   for large in [true,false]:
    game.state.ux.large_text=large

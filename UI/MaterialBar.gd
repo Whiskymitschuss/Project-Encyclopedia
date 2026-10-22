@@ -7,7 +7,7 @@ var counters={}
 var controls={}
 var captions={}
 func _ready() -> void:
- columns=3
+ columns=6 if hud.size.x>=430 else 3
  size_flags_horizontal=Control.SIZE_EXPAND_FILL
  add_theme_constant_override("h_separation",4)
  add_theme_constant_override("v_separation",4)
@@ -16,7 +16,7 @@ func _ready() -> void:
   var item=hud.button(self,"",func(): hud.ux.open_material(key))
   item.custom_minimum_size=Vector2(0,44)
   item.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-  hud.compact_style(item,Color("24433f"))
+  hud.compact_style(item,Color("80543c"))
   var box=VBoxContainer.new()
   box.mouse_filter=Control.MOUSE_FILTER_IGNORE
   item.add_child(box)
@@ -39,6 +39,7 @@ func _ready() -> void:
   controls[key]=item
  refresh()
 func refresh() -> void:
+ columns=6 if hud.size.x>=430 and not Game.state.ux.large_text else 3
  for key in counters:
   var stock=UXRules.material_stock(Game.state,key)
   counters[key].text=Catalog.number(stock.stored)

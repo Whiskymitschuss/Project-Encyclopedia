@@ -1,5 +1,5 @@
 extends Control
-const BACKGROUND=Color("102c29")
+const BACKGROUND=Color("704b31")
 const GOLD=Color("f3c779")
 const WHITE=Color("f7faf5")
 const STEPS=["Ein Wald voller Möglichkeiten.","Aus Holz werden Ideen.","Aus deiner Firma wird eine Stadt."]
@@ -49,8 +49,8 @@ func _ready() -> void:
  returning=int(Game.state.tutorial)>0 or float(Game.state.elapsed)>0 or int(Game.state.trees)>0
  var texture=GradientTexture2D.new()
  var gradient=Gradient.new()
- gradient.set_color(0,Color("214c48"))
- gradient.set_color(1,Color("0b211f"))
+ gradient.set_color(0,Color("e6a35b"))
+ gradient.set_color(1,Color("845433"))
  texture.gradient=gradient
  texture.fill_from=Vector2.ZERO
  texture.fill_to=Vector2(0.65,1)
@@ -120,7 +120,7 @@ func _ready() -> void:
  for state in ["normal","hover","pressed","focus"]: play.add_theme_stylebox_override(state,button_skin(GOLD.darkened(0.12) if state=="pressed" else GOLD))
  play.pressed.connect(start_game)
  column.add_child(play)
- label(column,"ALPHA 1 · TESTFASSUNG · 0.28.2",12,Color("bdd4c5"))
+ label(column,"ALPHA 1 · TESTFASSUNG · 0.28.3",12,Color("bdd4c5"))
  skip=Button.new()
  skip.text="Intro überspringen  ›"
  skip.flat=true

@@ -1,0 +1,24 @@
+TIMBER LOOT TYCOON · 0.28.3-alpha.1 · OFFENER WERKSHOF
+
+APK direkt als Update über die vorhandene Alpha installieren.
+Nicht deinstallieren und keine App-Daten löschen. Gleiches Paket, Speicherordner
+und Testzertifikat. Android-Code 2971 erlaubt Updates über die bisherigen Fassungen.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+NEU
+- Zusammenhängender offener Produktionshof mit internen Fahrgassen.
+- Geordnete Waldparzellen und breite sandfarbene Transportwege.
+- Kompakte warme Oberfläche, direkter Teamzugang links oben.
+- Einführung mit animiertem Benno direkt in der Welt. Bei neuen Firmen sichtbar;
+  bestehende Firmen können sie unter Mehr > Bennos Werkshof-Runde öffnen.
+- Animierte Stapler, Verladekräne und verbesserte Holzfällerabläufe.
+
+Materialwerte antippen: Quellen und Lieferungen. Mehr > Betriebsübersicht:
+Engpässe und LKW. Die Verbesserungen von 0.28.2 bleiben enthalten.
+Unter Einstellungen reduziert der Akkumodus die zusätzlichen Stapler auf zwei;
+Bewegung reduzieren friert die neuen Bewegungen ein. Android bleibt bei maximal 30 FPS.
+
+Gespeicherte Gebäude und Waren bleiben an ihren Standorten erhalten. Der Werkshof
+verändert die Darstellung der Startfläche, nicht den Inhalt deiner Firma.
+Reale Android-Temperatur und Leistung dieser Fassung müssen am Gerät geprüft werden.
+Feedback wird nicht automatisch versendet. Öffentliche Links haben keinen Zugangsschutz.

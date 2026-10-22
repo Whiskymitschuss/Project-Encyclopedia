@@ -15,19 +15,37 @@ static func context(state: Dictionary) -> Dictionary:
   plots.append(Placement.bounds(Placement.position_of(job,fallback),int(job.get("rotation",0))))
  for stop in state.town.stops: plots.append(Rect2(Vector2(TownRules.cell(stop.cell))-Vector2(5,5),Vector2(10,10)))
  var cells=TownRules.road_cells(state.town)
+ var walkways=[]
+ for road in state.town.roads:
+  if road.kind=="path":
+   for cell in road.cells: walkways.append(Vector2(TownRules.cell(cell)))
  var junctions=[]
  for cell in cells:
   var count=0
   for d in [Vector2i(4,0),Vector2i(-4,0),Vector2i(0,4),Vector2i(0,-4)]:
    if cells.has(cell+d): count+=1
   if count>=3: junctions.append(Vector2(cell))
- return {"plots":plots,"junctions":junctions,"cells":cells}
+ return {"plots":plots,"junctions":junctions,"cells":cells,"walkways":walkways}
 
 static func strip(parent: Node3D,at: Vector3,size: Vector3,paved: bool,ctx: Dictionary={}) -> void:
+ var vertical=size.z>size.x
+ if vertical and size.z>300:
+  for section in [[-172.0,-58.0],[-58.0,30.0],[30.0,180.0]]:
+   strip(parent,Vector3(at.x,at.y,(section[0]+section[1])*0.5),Vector3(size.x,size.y,section[1]-section[0]),paved,ctx)
+  return
+ if at.z<=-60:
+  var haul_size=Vector3(10,size.y,size.z) if vertical else Vector3(size.x,size.y,10)
+  Models.paving_box(parent,haul_size,at,ProductionCampus.SAND,"plaster",0.8)
+  return
+ if ProductionCampus.inside(at):
+  Models.box(parent,size,at,ProductionCampus.CONCRETE)
+  for side in [-1,1]:
+   var p=at+Vector3(side*(size.x/2-0.3),size.y/2+0.02,0) if vertical else at+Vector3(0,size.y/2+0.02,side*(size.z/2-0.3))
+   Models.box(parent,Vector3(0.15,0.03,size.z) if vertical else Vector3(size.x,0.03,0.15),p,Color("fff4df"))
+  return
  Models.paving_box(parent,size+Vector3(1.0,-0.04,1.0),at-Vector3(0,0.09,0),Color("b0b79c"),"plaster",0.8)
  Models.paving_box(parent,size,at,ASPHALT if paved else Color("b5a78a"),"asphalt" if paved else "plaster",0.65)
  if not paved: return
- var vertical=size.z>size.x
  var length=size.z if vertical else size.x
  var width=size.x if vertical else size.z
  var forward=Vector3.BACK if vertical else Vector3.RIGHT
@@ -56,6 +74,10 @@ static func strip(parent: Node3D,at: Vector3,size: Vector3,paved: bool,ctx: Dict
 
 static func junctions(parent: Node3D,ctx: Dictionary) -> void:
  for p in ctx.junctions:
+  if ProductionCampus.YARD.has_point(p): continue
+  if p.y<=-60:
+   Models.box(parent,Vector3(10,0.1,10),Vector3(p.x,0.87,p.y),ProductionCampus.SAND)
+   continue
   # A single flush cap removes crossing lane dashes and rounds the corners.
   Models.paving_box(parent,Vector3(7.3,0.10,7.3),Vector3(p.x,0.87,p.y),ASPHALT,"asphalt",0.65)
   for side in [-1,1]:

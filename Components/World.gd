@@ -2,8 +2,8 @@ extends Node3D
 
 var camera: Camera3D
 var sun: DirectionalLight3D
-var focus = Vector3(-21,0,-43)
-var zoom = 96.0
+var focus = Vector3(-58,0,-78)
+var zoom = 145.0
 var world_buildings: Node3D
 var actors: Node3D
 var tree_batches: Array = []
@@ -57,8 +57,8 @@ var spatial_audio: Node3D
 var stump_batches=[]
 var fauna: Node3D
 var upgrade_reveal: Node3D
-var view_focus=Vector3(-21,0,-43)
-var view_zoom=96.0
+var view_focus=Vector3(-58,0,-78)
+var view_zoom=145.0
 var camera_yaw=0.0
 var camera_transition=false
 var pan_velocity=Vector3.ZERO
@@ -75,6 +75,8 @@ var hold_started=0
 var hold_point=Vector2.ZERO
 var hold_consumed=false
 var industry_name_labels=[]
+var yard_handlers=[]
+var handler_clock=0.0
 
 func _ready() -> void:
  Game.live_world=true
@@ -195,6 +197,7 @@ func build_landscape() -> void:
 func rebuild_streets() -> void:
  clear_children(base_streets)
  street_context=StreetScape.context(Game.state)
+ ProductionCampus.build(base_streets,street_context)
  for x in [-80,0,80]: road(Vector3(x,0.7,4),Vector3(7,0.25,352),true)
  for z in Placement.ROADS:
   var paved=z in [-28,68,164]
@@ -302,10 +305,8 @@ func build_forest() -> void:
    add_child(node)
    batch_nodes.append(node)
   for i in 100:
-   var angle=random.randf_range(0,TAU)
-   var radius=sqrt(random.randf())
-   var fringe=0.92+sin(angle*3.0+biome)*0.08
-   var point=center+Vector3(cos(angle)*37*radius*fringe,0,sin(angle)*32*radius*fringe)
+   # A recognisable managed forest: ten rows with small natural offsets.
+   var point=center+Vector3((i%10-4.5)*6.0+random.randf_range(-0.65,0.65),0,(int(i/10.0)-4.5)*5.2+random.randf_range(-0.65,0.65))
    # Keep the north road and the center boulevards clear.
    if absf(point.x-80)<8: point.x = 90
    if absf(point.x+80)<8: point.x = -90
@@ -359,6 +360,7 @@ func rebuild() -> void:
  bins.clear()
  town_name_labels.clear()
  industry_name_labels.clear()
+ yard_handlers.clear()
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
   var model = Models.building(b.kind,int(b.level))
@@ -371,6 +373,8 @@ func rebuild() -> void:
   if mineral!=null: mineral.building_index=i
   var processing = model.get_node_or_null("Processing")
   if processing != null: processing.building_index = i
+  var handler=model.get_node_or_null("YardHandling")
+  if handler!=null: yard_handlers.append(handler)
   if not Game.delivery_owns(i):
    var label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,10,0),24)
    label.set_meta("building_index",i)
@@ -422,6 +426,7 @@ func rebuild() -> void:
  refresh_forest_clearance()
  if landscape!=null: landscape.refresh()
  if delivery_world!=null: delivery_world.rebuild()
+ update_yard_handlers()
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation,Game.state.town)
@@ -546,6 +551,10 @@ func _process(delta: float) -> void:
  if hold_pointer>=0 and not hold_consumed and touches.size()==1 and not pinch_active and drag_distance<8 and placement.is_empty() and Time.get_ticks_msec()-hold_started>=550:
   hold_consumed=pick_tall_home(hold_point,0,true)
  update_camera(delta)
+ handler_clock+=delta
+ if handler_clock>=0.5:
+  handler_clock=0
+  update_yard_handlers()
  time += delta
  var animate=bool(Game.state.ux.motion) and bool(Game.state.ambient_enabled)
  if animate: wind_clock+=delta
@@ -694,6 +703,10 @@ func make_chip_pool() -> void:
   effect.mesh = mesh
   add_child(effect)
   chip_pool.append(effect)
+
+func update_yard_handlers() -> void:
+ yard_handlers.sort_custom(func(a,b): return a.global_position.distance_squared_to(view_focus)<b.global_position.distance_squared_to(view_focus))
+ for i in yard_handlers.size(): yard_handlers[i].presentation_enabled=i<(2 if Game.state.quality==0 else 6)
 
 func clamp_camera() -> void:
  focus.x=clampf(focus.x,-350,350)

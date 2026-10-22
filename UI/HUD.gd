@@ -5,12 +5,12 @@ signal focus_requested(point: Vector3)
 signal placement_requested(request: Dictionary)
 signal placement_action(action: String)
 
-const INK = Color("142d32")
-const PANEL = Color("27645b")
-const GOLD = Color("f3c779")
-const CREAM = Color("f7faf5")
-const MUTED = Color("b5ccc2")
-const PAPER = Color("f2f3e9")
+const INK = Color("533b30")
+const PANEL = Color("ad602f")
+const GOLD = Color("ffd06d")
+const CREAM = Color("fff8ed")
+const MUTED = Color("ebcdb0")
+const PAPER = Color("fff4df")
 const Surface = preload("res://UI/SculptedSurface.gd")
 var money: Label
 var diamonds: Label
@@ -65,6 +65,10 @@ var income_label: Label
 var income_left=0.0
 var quest_target=0.0
 var last_goal=""
+var story_step=0
+var story_detail: Label
+var story_shown=0.0
+var stock_strip: PanelContainer
 
 func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxFlat:
  var skin=StyleBoxFlat.new()
@@ -105,27 +109,29 @@ func _ready() -> void:
  header.offset_right = -14
  header.offset_top = 14
  header.offset_bottom = 114
- header.add_theme_stylebox_override("panel",style(INK,24))
- var top = VBoxContainer.new()
- header.add_child(top)
- var brand = row(top)
- var title = text(brand,"TIMBER · WALDSTADT",16)
- title.autowrap_mode = TextServer.AUTOWRAP_OFF
- title.clip_text=true
- title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
- title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- edition = text(brand,"WALDKONTO",11,GOLD)
- edition.autowrap_mode = TextServer.AUTOWRAP_OFF
- edition.custom_minimum_size.x=0
- edition.clip_text=true
- edition.size_flags_horizontal=Control.SIZE_EXPAND_FILL
- edition.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
- var counters=row(top)
- money=resource_counter(counters,"coin",22)
+ var header_skin=style(Color("e58a3c"),14)
+ header_skin.content_margin_top=6
+ header_skin.content_margin_bottom=6
+ header_skin.content_margin_left=6
+ header_skin.content_margin_right=6
+ header.add_theme_stylebox_override("panel",header_skin)
+ var top = row(header)
+ var profile=button(top,"",func(): open_menu("team"))
+ profile.custom_minimum_size=Vector2(44,44)
+ profile.size_flags_horizontal=Control.SIZE_SHRINK_BEGIN
+ compact_style(profile,GOLD)
+ profile.icon=load("res://Assets/Brand/timber-icon.png")
+ profile.expand_icon=true
+ profile.add_theme_constant_override("icon_max_width",40)
+ profile.tooltip_text="Dein Team und Werkzeuge"
+ money=resource_counter(top,"coin",21)
  money.size_flags_horizontal=Control.SIZE_EXPAND_FILL
- diamonds=resource_counter(counters,"gem",17)
- loot_counter=resource_counter(counters,"more",17)
- subtitle = text(top,"",12,MUTED)
+ diamonds=resource_counter(top,"gem",17)
+ loot_counter=resource_counter(top,"more",17)
+ subtitle=text(self,"",12,MUTED)
+ subtitle.hide()
+ edition=text(self,"",11,GOLD)
+ edition.hide()
  mission_button = button(self,"",func(): open_menu("guide" if int(Game.state.tutorial)<=4 and not Game.state.onboarding.paused else "journey"))
  mission_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
  mission_button.offset_left = 14
@@ -176,9 +182,10 @@ func _ready() -> void:
  bottom.offset_bottom = -12
  bottom.add_theme_constant_override("separation",6)
  var strip = PanelContainer.new()
- var strip_style=style(INK,14)
- strip_style.content_margin_top=6
- strip_style.content_margin_bottom=6
+ stock_strip=strip
+ var strip_style=style(INK,12)
+ strip_style.content_margin_top=4
+ strip_style.content_margin_bottom=4
  strip.add_theme_stylebox_override("panel",strip_style)
  bottom.add_child(strip)
  var supply_row = row(strip)
@@ -190,18 +197,19 @@ func _ready() -> void:
  supply_column.add_child(material_bar)
  supply = text(supply_column,"",11,MUTED)
  supply.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
- var stock_actions=VBoxContainer.new()
+ var stock_actions=HBoxContainer.new()
+ stock_actions.add_theme_constant_override("separation",4)
  supply_row.add_child(stock_actions)
  sawdust_button = button(stock_actions,"SPÄNEBOX",func():
   if float(Game.state.resources.sawdust)>0: Game.sell("sawdust"); Game.save(true)
   else: open_menu("sawdust"))
  sawdust_button.size_flags_horizontal=Control.SIZE_SHRINK_END
- sawdust_button.custom_minimum_size=Vector2(92,44)
+ sawdust_button.custom_minimum_size=Vector2(64,44)
  sawdust_button.add_theme_font_size_override("font_size",11)
  compact_style(sawdust_button,PANEL)
- var all_stock=button(stock_actions,"ALLE\nWAREN ›",func(): open_menu("stock"))
+ var all_stock=button(stock_actions,"WAREN",func(): open_menu("stock"))
  all_stock_button=all_stock
- all_stock.custom_minimum_size=Vector2(92,44)
+ all_stock.custom_minimum_size=Vector2(64,44)
  all_stock.add_theme_font_size_override("font_size",12)
  compact_style(all_stock,PANEL)
  var actions = row(bottom)
@@ -224,7 +232,7 @@ func _ready() -> void:
    else: open_menu("overview" if tab=="world" else tab))
   navigation_buttons.append({"button":nav_button,"name":str(entry[0])})
   nav_button.text="\n\n"+str(entry[0])
-  nav_button.custom_minimum_size.y=68
+  nav_button.custom_minimum_size.y=60
   nav_button.add_theme_font_size_override("font_size",12)
   nav_button.add_theme_color_override("font_color",INK)
   compact_style(nav_button,PAPER)
@@ -236,10 +244,10 @@ func _ready() -> void:
   nav_button.add_child(icon)
   icon.anchor_left=0.5
   icon.anchor_right=0.5
-  icon.offset_left=-23
-  icon.offset_right=23
+  icon.offset_left=-19
+  icon.offset_right=19
   icon.offset_top=0
-  icon.offset_bottom=46
+  icon.offset_bottom=38
  toast = text(self,"",15,CREAM)
  toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
  toast.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
@@ -298,6 +306,7 @@ func _ready() -> void:
 
 # Keep a consistent, centered reading width on tablets without stretching controls.
 func layout_interface() -> void:
+ if material_bar!=null: material_bar.columns=6 if size.x>=430 and not Game.state.ux.large_text else 3
  # On short screens an open detail sheet gets the reading space. Main play
  # always shows all six counters; detail mode keeps a compact stock summary.
  var compact=placement_panel.visible or (size.y<750 and (overlay.visible or ux.panels_visible()))
@@ -328,11 +337,12 @@ func layout_interface() -> void:
  if camera_controls!=null:
   camera_controls.offset_right=-inset
   camera_controls.offset_left=-inset-52
- bottom_panel.offset_top=-maxf(184,bottom_panel.get_combined_minimum_size().y+12)
- mission_button.offset_top=maxf(122,header_panel.get_global_rect().end.y+8)
+ bottom_panel.offset_top=-maxf(156,bottom_panel.get_combined_minimum_size().y+12)
+ header_panel.offset_bottom=header_panel.offset_top+56
+ mission_button.offset_top=header_panel.get_global_rect().end.y+6
  mission_button.offset_bottom=mission_button.offset_top+44
- overlay.offset_top=maxf(168,mission_button.offset_bottom+6) if current!="building" else maxf(168,size.y-574)
- overlay.offset_bottom=-maxf(192,bottom_panel.get_combined_minimum_size().y+20)
+ overlay.offset_top=maxf(118,mission_button.offset_bottom+6) if current!="building" else maxf(118,size.y-574)
+ overlay.offset_bottom=-maxf(164,bottom_panel.get_combined_minimum_size().y+20)
  if placement_panel!=null:
   placement_panel.offset_bottom=overlay.offset_bottom
   placement_panel.offset_top=maxf(placement_panel.offset_bottom-268,mission_button.offset_bottom+6-size.y)
@@ -342,6 +352,10 @@ func layout_interface() -> void:
   ux.event_button.offset_top=mission_button.offset_bottom+8
   ux.event_button.offset_bottom=ux.event_button.offset_top+44
   ux.layout_sheet()
+  if current=="welcome" and overlay.visible:
+   overlay.offset_left=inset+66
+   overlay.offset_top=maxf(mission_button.offset_bottom+60,size.y+overlay.offset_bottom-minf(300,size.y*0.45))
+   if coach!=null: coach.refresh()
   ux.palette.offset_left=inset
   ux.palette.offset_right=-inset
  toast.offset_top=bottom_panel.offset_top-56
@@ -406,7 +420,7 @@ func compact_style(control: Button, color: Color) -> void:
 func resource_counter(parent: Control, key: String, font_size: int) -> Label:
  var panel=PanelContainer.new()
  panel.size_flags_horizontal=Control.SIZE_EXPAND_FILL if key=="coin" else Control.SIZE_FILL
- var skin=style(Color("24433f"),12)
+ var skin=style(Color("825031"),8)
  skin.content_margin_left=8
  skin.content_margin_right=8
  skin.content_margin_top=4
@@ -419,7 +433,7 @@ func resource_counter(parent: Control, key: String, font_size: int) -> Label:
  icon.texture=spatial_icons.texture_for(key)
  icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
  icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- icon.custom_minimum_size=Vector2(24,28)
+ icon.custom_minimum_size=Vector2(20,24)
  icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
  line.add_child(icon)
  var value=text(line,"",font_size,GOLD if key=="coin" else CREAM)
@@ -492,7 +506,7 @@ func update_goal_progress(goal: Dictionary) -> void:
  quest_target=value
  if not Game.state.ux.motion or id!=last_goal: quest_progress.value=value
  last_goal=id
- compact_style(mission_button,Color("47694c") if goal.get("ready",false) else PANEL)
+ compact_style(mission_button,Color("628840") if goal.get("ready",false) else Color("825031"))
 
 func update_stats() -> void:
  emergency_button.visible=not Game.state.city_services.fires.is_empty()
@@ -512,7 +526,7 @@ func update_stats() -> void:
  if compact_materials:
   supply.text="Holz %s · Bretter %s\nMöbel %s" % [Catalog.number(UXRules.material_stock(Game.state,"wood").stored),Catalog.number(UXRules.material_stock(Game.state,"boards").stored),Catalog.number(UXRules.material_stock(Game.state,"furniture").stored)]
  var fill = float(Game.state.resources.sawdust)/Game.capacity()
- sawdust_button.text="Späne %s %%\nLeeren" % int(fill*100)
+ sawdust_button.text="Späne %s%%\nLeeren" % int(fill*100)
  compact_style(sawdust_button,Color("e78a45") if fill>=0.8 else Color("258f8d"))
  mission_button.text = "MISSIONEN · Dein nächster Meilenstein"
  for m in Game.mission_definitions():
@@ -538,6 +552,9 @@ func update_stats() -> void:
  mission_button.add_theme_font_size_override("font_size",12 if mission_button.text.length()>60 else 14)
 
 func _process(delta: float) -> void:
+ if current=="welcome" and overlay.visible and is_instance_valid(story_detail):
+  story_shown+=delta*42
+  story_detail.visible_characters=floori(story_shown) if Game.state.ux.motion else -1
  # Smooth the one existing meter without allocating a new Tween on every refresh.
  if Game.state.ux.motion:
   quest_progress.value=lerpf(quest_progress.value,quest_target,minf(1,delta*12))
@@ -551,7 +568,7 @@ func _process(delta: float) -> void:
  income_left=maxf(0,income_left-delta)
  income_label.visible=income_left>0 and not overlay.visible
  income_label.modulate.a=minf(1,income_left*2)
- income_label.position=subtitle.global_position
+ income_label.position=header_panel.global_position+Vector2(64,8)
  subtitle.modulate.a=0 if income_left>0 and not overlay.visible else 1
  if Game.company_level()>=4 and not Game.state.construction_intro and not overlay.visible and not placement_panel.visible:
   Game.state.construction_intro=true
@@ -617,6 +634,10 @@ func materials_text(materials: Dictionary) -> String:
 
 func render_menu() -> void:
  var old_scroll = scroll.scroll_vertical
+ contents.set_meta("light_card",current=="welcome")
+ overlay.add_theme_stylebox_override("panel",style(PAPER,16) if current=="welcome" else style(INK,22))
+ modal_title.add_theme_color_override("font_color",INK if current=="welcome" else GOLD)
+ modal_title.set_meta("ux_base_font",18 if current=="welcome" else 23)
  for child in contents.get_children():
   contents.remove_child(child)
   child.queue_free()
@@ -800,6 +821,13 @@ func building_menu() -> void:
 
 func team_menu() -> void:
  modal_title.text = "DEIN TEAM"
+ var hero=card("Gemeinsam wächst dein Werkshof","Holzfäller sammeln, das Werk verarbeitet und Transporte verbinden deine Firma. Stelle Helfer ein und verbessere ihre Werkzeuge.")
+ var portrait=TextureRect.new()
+ portrait.texture=load("res://Assets/Brand/timber-icon.png")
+ portrait.custom_minimum_size=Vector2(64,64)
+ portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+ portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ hero.add_child(portrait)
  var box = card("%s / %s Arbeiter" % [Game.state.workers,Game.worker_capacity()],"Helfer fällen und liefern Holz automatisch. Hütten und Stadtbewohner schaffen zusätzlichen Wohnraum. Forschungsboni erhöhen die Leistung.")
  text(box,"Einstellung: %s Münzen" % Catalog.number(Game.hire_cost()),17,GOLD)
  button(box,"ARBEITER EINSTELLEN",func(): action(func(): Game.hire()))
@@ -916,6 +944,7 @@ func world_menu() -> void:
 
 func more_menu() -> void:
  modal_title.text = "DEIN IMPERIUM"
+ button(contents,"BENNOS WERKSHOF-RUNDE",func(): story_step=0; focus_requested.emit(Catalog.biome_position(int(Game.state.biome))); open_menu("welcome"))
  button(contents,"BETRIEBSÜBERSICHT · ENGPÄSSE & LKW",func(): open_menu("operations"))
  button(contents,"LEISTUNGSVERGLEICH · KAMERARUNDE",func(): open_menu("performance"))
  var groups=[
@@ -1084,7 +1113,7 @@ func settings_menu() -> void:
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality); Game.apply_device_profile()))
  text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich Schatten und Umwelteffekte.",14,MUTED)
  if ux!=null: ux.settings_controls(box)
- text(contents,"Alpha 1 · 0.28.2 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Alpha 1 · 0.28.3 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()
@@ -1159,11 +1188,29 @@ func sawdust_menu() -> void:
  button(box,"Überlauf-Autoverkauf: AN" if Game.state.auto_sawdust else "Überlauf-Autoverkauf: AUS",func(): action(func(): Game.state.auto_sawdust=not Game.state.auto_sawdust))
 
 func welcome_menu() -> void:
- modal_title.text="DEIN WALD WARTET"
- var box=card("Hi, ich bin Benno!","Lass uns deine ersten Bretter machen und etwas Eigenes bauen.")
- button(box,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.begin_tutorial(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
- button(box,"Direkt frei spielen",func(): Game.end_tutorial(); close_menu())
- text(contents,"ALPHA 1 · Danke fürs Mittesten! Dein Fortschritt bleibt auf diesem Gerät. Feedback findest du unter Mehr → Alpha 1.",14,MUTED)
+ modal_title.text="BENNO · DEIN ANFANG"
+ companion.portrait.greet()
+ var stories=["Hi, ich bin Benno! Hier wächst mehr als ein Wald: Hier beginnt deine eigene Holzfirma.","Vom Wald zum Hof: Dein Team sammelt Holz, Transporte bringen es zu den offenen Arbeitsplätzen.","Schau den Maschinen zu: Aus Stämmen werden Bretter und später Möbel. Du entscheidest, wie deine Firma wächst."]
+ story_detail=text(contents,stories[story_step],15 if size.x<430 else 17,CREAM)
+ story_shown=0
+ story_detail.visible_ratio=0 if Game.state.ux.motion else 1
+ var choices=row(contents)
+ if story_step<2:
+  var next=button(choices,"HOF ENTDECKEN ›",func():
+   story_step+=1
+   var point=Game.building_position(0 if story_step==1 else mini(1,Game.state.buildings.size()-1))
+   focus_requested.emit(point)
+   render_menu())
+  next.add_theme_font_size_override("font_size",13)
+ var resumable=TutorialRules.can_resume(Game.state)
+ var free=button(choices,"Frei spielen" if resumable else "Zurück",func():
+  if resumable: Game.end_tutorial()
+  close_menu())
+ free.add_theme_font_size_override("font_size",13)
+ if resumable:
+  button(contents,"LOS GEHT’S · KURZE ANLEITUNG",func(): Game.begin_tutorial(); close_menu(); focus_requested.emit(Catalog.biome_position(int(Game.state.biome))))
+ else: button(contents,"WEITERSPIELEN",close_menu)
+ call_deferred("layout_interface")
 
 func guide_menu() -> void:
  if int(Game.state.tutorial)==0: welcome_menu(); return

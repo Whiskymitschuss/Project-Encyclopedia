@@ -59,6 +59,8 @@ func _process(delta: float) -> void:
  var occupied=[]
  for control in [world.hud.ux.sheet,world.hud.ux.palette,world.hud.ux.event_button,world.hud.camera_controls,world.hud.emergency_button]:
   if control.visible: occupied.append(control.get_global_rect())
+ for control in [world.hud.coach.panel,world.hud.coach.portrait,world.hud.companion.bubble,world.hud.companion.avatar]:
+  if control.is_visible_in_tree(): occupied.append(control.get_global_rect())
  for badge in world.delivery_world.badges:
   if badge.button.visible: occupied.append(badge.button.get_global_rect())
  for i in pool.size():

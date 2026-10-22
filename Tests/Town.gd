@@ -212,6 +212,9 @@ func run() -> void:
   Game.state.town.lines[0].phase=6.0
   actual_bus._process(0.1)
   check(actual_bus.moving and actual_bus.position.distance_to(Vector3(0,0,68))>10,"Bus visibly moves along the economic route")
+ scene.focus=Game.home_position(0)
+ scene.zoom=96
+ scene.set_camera()
  scene.town_layer.refresh_rents()
  var label=scene.town_layer.rent_labels[0].label
  var projected=scene.camera.unproject_position(label.global_position)

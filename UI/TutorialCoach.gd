@@ -9,6 +9,7 @@ var progress: ProgressBar
 var marker: ReferenceRect
 var last_phase=""
 var clock=0.0
+var portrait: TextureRect
 
 func _ready() -> void:
  set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -45,12 +46,23 @@ func _ready() -> void:
  marker.border_color=hud.GOLD
  marker.mouse_filter=Control.MOUSE_FILTER_IGNORE
  add_child(marker)
+ portrait=TextureRect.new()
+ portrait.texture=hud.companion.portrait.get_texture()
+ portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+ portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ portrait.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ add_child(portrait)
  Game.changed.connect(refresh)
  resized.connect(refresh)
  refresh()
 
 func refresh() -> void:
- if panel==null: return
+ if panel==null or portrait==null: return
+ var story=hud.current=="welcome" and hud.overlay.visible
+ portrait.visible=story
+ if story:
+  portrait.position=Vector2(hud.overlay.position.x-72,hud.overlay.get_global_rect().end.y-112)
+  portrait.size=Vector2(76,112)
  var info=TutorialRules.info(Game.state)
  if not info.is_empty() and last_phase=="sell" and str(info.phase)=="build" and hud.current=="market" and hud.overlay.visible: hud.call_deferred("close_menu")
  var available=not info.is_empty() and not hud.overlay.visible and not hud.placement_panel.visible and not hud.ux.panels_visible()
@@ -71,9 +83,13 @@ func refresh() -> void:
  progress.max_value=float(info.target)
  progress.value=float(info.value)
  var inset=maxf(14,(hud.size.x-760)/2)
- panel.position=Vector2(inset,hud.mission_button.get_global_rect().end.y+8)
- var limit=hud.bottom_panel.get_global_rect().position.y-8
- panel.size=Vector2(maxf(220,minf(400,hud.size.x-inset*2-66)),minf(190,maxf(100,limit-panel.position.y)))
+ var limit=hud.bottom_panel.get_global_rect().position.y-10
+ var height=minf(180,maxf(120,limit-hud.mission_button.get_global_rect().end.y-60))
+ panel.position=Vector2(inset+66,limit-height)
+ panel.size=Vector2(maxf(200,minf(440,hud.size.x-inset*2-66)),height)
+ portrait.position=Vector2(inset-6,limit-112)
+ portrait.size=Vector2(76,112)
+ portrait.show()
  detail.visible=panel.size.y>=165
  var target: Control=hud.chop_button if phase=="chop" else hud.deposit_button if phase=="deposit" else hud.sell_button if phase=="sell" else null
  if target!=null:

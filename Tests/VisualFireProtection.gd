@@ -92,7 +92,7 @@ func run() -> void:
   await settle()
   hud.open_menu("fire_protection")
   await settle()
-  check(hud.overlay.get_global_rect().position.y>=168 and hud.overlay.size.x<=760,"Protection menu fits "+str(resolution))
+  check(hud.overlay.get_global_rect().position.y>=hud.mission_button.get_global_rect().end.y+4 and hud.overlay.size.x<=760,"Protection menu fits below the compact HUD "+str(resolution))
   check(hud.scroll.size.y>100,"Protection list stays scrollable "+str(resolution))
   state.ux.large_text=true
   hud.ux.apply_accessibility()

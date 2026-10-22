@@ -1,8 +1,32 @@
-# Timber Loot Tycoon — Alpha 1 · Waldleben
+# Timber Loot Tycoon — Alpha 1 · Offener Werkshof
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.2-alpha.1 · weiterhin auf 0.28-Basis
+## Aktuell: 0.28.3-alpha.1 · Offener Werkshof
+
+Der zentrale Betrieb ist jetzt ein zusammenhängender offener Hof mit markierten
+Fahrgassen und niedrigen Randmauern. Geordnete Waldparzellen mit sandfarbenen
+Rändern und breite nördliche Transportwege gliedern die Welt.
+
+Das kompakte warme HUD lässt mehr Platz für die Arbeit. Benno erklärt die
+Firma in animierten Dialogen direkt am Schauplatz. Bestehende Firmen können
+unter **Mehr → Bennos Werkshof-Runde** jederzeit zuschauen, ohne ihren Fortschritt
+zurückzusetzen. Neue Firmen gelangen von dort in die spielbare Anleitung.
+
+Neue Stapler mit Rad-/Hubbewegung, fahrende Laufkatzen und überarbeitete
+Holzfäller zeigen die tatsächlichen Arbeitsphasen. Standardmodus: höchstens
+sechs nahe Stapler; Akkumodus: zwei. Reduzierte Bewegung friert die Animationen
+ein. Gespeicherte Standorte, Material, Fracht und Straßen bleiben erhalten.
+
+Weiterhin auf 0.28-Basis mit den Start- und Verkehrsfixes aus 0.28.2.
+Android-Code 2971, gleiches Paket und Testzertifikat. **Als Update installieren;
+nicht deinstallieren und keine App-Daten löschen.** Geräteprüfung, Temperatur
+und langfristige mobile Leistung dieser Fassung stehen aus.
+
+[Änderungen und Nutzen](docs/CAMPUS-283.md) ·
+[Installation](docs/alpha1-campus/START-HIER.txt) · [Downloads](releases/README.md).
+
+## Vorher: 0.28.2-alpha.1 · weiterhin auf 0.28-Basis
 
 Wärmere Betriebshöfe mit sandfarbenem Boden, blauen/kupferroten Dächern,
 Holzzäunen und klaren Straßen. Zeitversetzte Depotabfahrten für alle Frachtarten;

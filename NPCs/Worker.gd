@@ -19,6 +19,7 @@ var social_cooldown=0.0
 var resting=false
 var rest_via=Vector3.ZERO
 var mug: Node3D
+var axe: Node3D
 
 func _ready() -> void:
  position=origin_point+Vector3(0,0.6,0)
@@ -54,9 +55,17 @@ func _ready() -> void:
  if role=="forester":
   Models.log_pile(pack,Vector3(-0.6,1,-0.8),2)
   pack.scale=Vector3.ONE*0.45
+ if role=="forester":
+  axe=Node3D.new()
+  limbs[3].add_child(axe)
+  Models.box(axe,Vector3(0.12,1.1,0.12),Vector3(0,-0.6,0.35),Color("a97542"))
+  Models.box(axe,Vector3(0.6,0.36,0.12),Vector3(0.2,-0.1,0.35),Color("b6c4ca"))
+  Models.bake(axe)
  Models.bake(body)
 
 func _process(delta: float) -> void:
+ if not Game.state.ux.motion: return
+ if axe!=null: axe.hide()
  social_cooldown=maxf(0,social_cooldown-delta)
  body.position=Vector3.ZERO
  body.rotation.z=0
@@ -86,13 +95,20 @@ func _process(delta: float) -> void:
   for i in [2,3]: limbs[i].rotation.x=-0.8+sin(phase+(i%2)*PI)*0.35 if working else -0.1
   return
  phase+=delta*pace*Game.boost("workers")
- var travel=fmod(phase,18.0)/18.0
- var amount=travel*2.0 if travel<0.5 else (1.0-travel)*2.0
- position=origin_point.lerp(destination,smoothstep(0,1,amount))
- position.y=0.6+absf(sin(phase*5))*0.09
- body.rotation.y=atan2(destination.x-origin_point.x,destination.z-origin_point.z)+(PI if travel>0.5 else 0)
- for i in limbs.size(): limbs[i].rotation.x=sin(phase*5+(i%2)*PI)*0.45
- pack.visible=role=="forester" and travel>0.5
+ var cycle=fmod(phase,18.0)
+ var travel=clampf((cycle-3)/6,0,1) if cycle<11 else 1-clampf((cycle-11)/7,0,1)
+ position=origin_point.lerp(destination,smoothstep(0,1,travel))
+ position.y=0.6+absf(sin(phase*5))*0.09 if cycle>=3 else 0.6
+ body.rotation.y=atan2(destination.x-origin_point.x,destination.z-origin_point.z)+(PI if cycle>=11 else 0)
+ for i in limbs.size(): limbs[i].rotation.x=sin(phase*5+(i%2)*PI)*0.45 if cycle>=3 else 0
+ if role=="forester":
+  working=cycle<3
+  axe.visible=working
+  pack.visible=cycle>=3 and cycle<10
+  if working:
+   limbs[3].rotation.x=-1.2+sin(phase*8)*0.75
+   body.rotation.z=sin(phase*8)*0.06
+ else: pack.hide()
 
 func begin_social(kind: String, towards: Vector3) -> void:
  social_kind=kind

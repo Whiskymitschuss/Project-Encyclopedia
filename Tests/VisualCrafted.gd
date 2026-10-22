@@ -48,7 +48,7 @@ func run() -> void:
  var before=game.state.duplicate(true)
  scene.hud.ux.select_building(1,true)
  await draw()
- check(scene.hud.ux.sheet.visible and scene.hud.ux.sheet.get_global_rect().position.y>=168,"New houses retain the bounded building card")
+ check(scene.hud.ux.sheet.visible and scene.hud.ux.sheet.get_global_rect().position.y>=scene.hud.mission_button.get_global_rect().end.y+4,"New houses retain the bounded building card below the compact HUD")
  check(game.state==before,"Selecting the detailed building does not change rent or construction")
  scene.hud.ux.hide_panels(true)
  game.state.time=23

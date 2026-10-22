@@ -1,0 +1,83 @@
+{
+  "headless_checks": 19767,
+  "headless_suites": 28,
+  "headless_numeric_suites": {
+    "FOREST 282": 22,
+    "ROLLBACK 028": 43,
+    "ALPHA 1": 35,
+    "RULES": 233,
+    "SCENE": 4080,
+    "WORLD & HIGHWAY TRADE 27": 61,
+    "PLACEMENT & ONBOARDING": 52,
+    "WORKSHOP": 42,
+    "COMPANION": 23,
+    "WORLD LIFE": 30,
+    "TOWN": 215,
+    "VALLEY": 177,
+    "CRAFTED WORLD": 128,
+    "DELIVERY": 6057,
+    "CONSTRUCTION": 56,
+    "LOGISTICS FIX": 548,
+    "CITY UX": 797,
+    "BUILDING CARD": 437,
+    "JOURNEY": 215,
+    "TRAFFIC & TOUCH": 1494,
+    "FIRE SAFETY": 24,
+    "FIRE PROTECTION": 38,
+    "STONE INDUSTRY": 4870,
+    "QUALITY FEEDBACK": 32,
+    "PRESENTATION 26": 46,
+    "STARTUP": 12
+  },
+  "additional_headless_suites": [
+    "AlphaProgression: real first hut/town hall and 8 offline hours",
+    "Progression: real first home without grants"
+  ],
+  "main_and_boot_smokes_passed": true,
+  "visual_checks": 695,
+  "visual_suites": 15,
+  "visual_results": {
+    "VISUAL CAMPUS 283": 47,
+    "VISUAL COLD START 282": 8,
+    "VISUAL FOREST 282": 28,
+    "VISUAL ROLLBACK 028": 146,
+    "VISUAL UI": 23,
+    "STARTUP OPENGL": 28,
+    "VISUAL BUILDING CARD": 87,
+    "VISUAL CITY UX": 45,
+    "FIRE & RESPONSIVE UI OPENGL": 50,
+    "FIRE PROTECTION OPENGL": 36,
+    "VISUAL CRAFTED WORLD": 14,
+    "VISUAL QUALITY": 41,
+    "VISUAL PRESENTATION 26": 37,
+    "VISUAL WORLD & TRADE 27": 45,
+    "VISUAL ALPHA 1": 60
+  },
+  "validation_sequence": "Complete headless run; affected Scene/Town/Placement/Crafted repeated after pedestrian clearance. OpenGL run through CityUX, then all six remaining suites and Alpha28 rerun. Fire panel bounds now assert separation from the actual compact goal bar rather than the obsolete fixed 168px header. Latest 47-check Campus run includes footpath clearance and completed-company replay.",
+  "new_coverage": [
+    "Shared yard and planted forest retain company data and street graph",
+    "Actual forklift, wheels, mast, load and workshop pause",
+    "Loading hoist follows real cargo loading phase",
+    "Forester chops, carries outbound, returns empty",
+    "Six/two nearby handler budgets and reduced motion",
+    "Actual story touches and tutorial transition",
+    "Completed company replays introduction without state changes",
+    "Touch targets at 360x640, 540x960 and 1100x700",
+    "New pedestrian paths remain clear of forest fences"
+  ],
+  "cold_process_desktop": {
+    "first_script_frame_ms": 427,
+    "total_ms": 14402,
+    "responsive_frames": 833,
+    "offline_seconds": 28800,
+    "fixture": "Generated saved city only"
+  },
+  "fixture": "Synthetic disposable profiles only; no private player save",
+  "rendering": "Godot 4.6.3, Xvfb and Mesa llvmpipe GL Compatibility",
+  "android_device_tested": false,
+  "temperature_measured": false,
+  "limitations": [
+    "Older suites may report ObjectDB cleanup warnings at exit; software X11 does not support changing VSync.",
+    "Android startup, sustained temperature, battery and physical touch require actual device tests."
+  ]
+}

@@ -36,7 +36,7 @@ func greet(celebrate: bool=false) -> void:
  render_target_update_mode=UPDATE_ONCE
 
 func _process(delta: float) -> void:
- if not running: return
+ if not running or not Game.state.ux.motion: return
  actor.animate(delta)
  clock+=delta
  var interval=0.1 if Game.state.quality==0 or actor.wave_left<=0 else 0.04

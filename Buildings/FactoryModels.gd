@@ -19,7 +19,7 @@ static func create(kind: String, level: int) -> Node3D:
  var root=Node3D.new()
  root.set_meta("open_factory",true)
  root.set_meta("kind",kind)
- Models.paving_box(root,Vector3(19,0.4,23),Vector3(0,0.2,0),Color("c9af7c"),"plaster",1.0)
+ Models.paving_box(root,Vector3(19,0.4,23),Vector3(0,0.2,0),ProductionCampus.CONCRETE,"plaster",1.0)
  for x in [-9,9]: block(root,Vector3(0.25,0.12,22.8),Vector3(x,0.48,0),Color("f4edcc"))
  for z in [-11,11]: block(root,Vector3(18,0.12,0.25),Vector3(0,0.48,z),Color("f4edcc"))
  for side in [-1,1]:
@@ -27,25 +27,29 @@ static func create(kind: String, level: int) -> Node3D:
  for x in [-7,-4,4,7]:
   var dash=block(root,Vector3(1.5,0.07,0.3),Vector3(x,0.48,10),Color("ffe58e"))
   dash.rotation.y=-0.5
- # A short rear canopy leaves the complete work line visible from above.
- for x in [-8,8]: block(root,Vector3(0.35,5.4,0.35),Vector3(x,3,-9),BLUE)
- var canopy=Node3D.new()
- canopy.position.z=-9
- root.add_child(canopy)
- Models.roof(canopy,17,3.4,5.8,Color("597c92") if kind in ["station","warehouse"] else Color("bd7145"))
- for side in [-1,1]:
-  for z in [-8,-4,0]: block(root,Vector3(0.35,1.7,0.35),Vector3(side*9,1.3,z),WOOD)
-  for y in [1.0,1.9]: block(root,Vector3(0.2,0.2,8.0),Vector3(side*9,y,-4),WOOD)
- block(root,Vector3(17,0.25,0.3),Vector3(0,6,-7.3),Color("fff0c1"))
- block(root,Vector3(16.5,4.1,0.25),Vector3(0,2.6,-10.5),Color("bda780"))
- for x in [-3,1,5]:
-  block(root,Vector3(2.4,1.4,0.18),Vector3(x,3.6,-10.25),DARK)
-  Models.crafted_box(root,Vector3(2.05,1.1,0.16),Vector3(x,3.6,-10.13),Color("62b9c8"),"glass",0.035)
+ if kind in ["station","warehouse"]:
+  # A short rear canopy leaves the complete work line visible from above.
+  for x in [-8,8]: block(root,Vector3(0.35,5.4,0.35),Vector3(x,3,-9),BLUE)
+  var canopy=Node3D.new()
+  canopy.position.z=-9
+  root.add_child(canopy)
+  Models.roof(canopy,17,3.4,5.8,Color("597c92") if kind in ["station","warehouse"] else Color("bd7145"))
+  for side in [-1,1]:
+   for z in [-8,-4,0]: block(root,Vector3(0.35,1.7,0.35),Vector3(side*9,1.3,z),WOOD)
+   for y in [1.0,1.9]: block(root,Vector3(0.2,0.2,8.0),Vector3(side*9,y,-4),WOOD)
+  block(root,Vector3(17,0.25,0.3),Vector3(0,6,-7.3),Color("fff0c1"))
+  block(root,Vector3(16.5,4.1,0.25),Vector3(0,2.6,-10.5),Color("bda780"))
+  for x in [-3,1,5]:
+   block(root,Vector3(2.4,1.4,0.18),Vector3(x,3.6,-10.25),DARK)
+   Models.crafted_box(root,Vector3(2.05,1.1,0.16),Vector3(x,3.6,-10.13),Color("62b9c8"),"glass",0.035)
  if kind in ["station","warehouse"]:
   depot(root,kind,level)
   CraftedFrontage.decorate(root,kind,level,false)
   Models.bake(root)
   return root
+ var handler=load("res://Components/YardHandling.gd").new()
+ handler.name="YardHandling"
+ root.add_child(handler)
  var input=Node3D.new()
  input.name="InputStock"
  root.add_child(input)
@@ -206,8 +210,9 @@ static func depot(root: Node3D, kind: String, level: int) -> void:
  for x in [-8,8]:
   block(root,Vector3(0.6,5.5,0.6),Vector3(x,3,0),Color("f5bd49"))
  block(root,Vector3(16.4,0.6,0.7),Vector3(0,5.8,0),Color("f5bd49"))
- block(root,Vector3(3,0.7,2.0),Vector3(0,5.2,0),DARK)
- block(root,Vector3(0.1,3,0.1),Vector3(0,3.3,0),DARK)
+ var hoist=load("res://Components/LoadingHoist.gd").new()
+ hoist.name="LoadingHoist"
+ root.add_child(hoist)
  if kind=="warehouse":
   for x in [-7,0,7]:
    block(root,Vector3(0.3,4.8,0.3),Vector3(x,2.9,7),BLUE)

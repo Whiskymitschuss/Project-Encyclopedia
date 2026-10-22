@@ -91,7 +91,7 @@ func run() -> void:
  await tap(hud.material_bar.controls.boards)
  check(hud.current=="material_help" and hud.overlay.visible,"Physical stock tap opens sources and deliveries")
  hud.close_menu()
- await tap(find_button(hud,"ALLE\nWAREN ›"))
+ await tap(find_button(hud,"WAREN"))
  check(hud.current=="stock" and hud.contents.get_child_count()==Catalog.RESOURCES.size()+1,"Every material, including stone and hardware, is accessible without selling anything")
  hud.close_menu()
  hud.ux.select_building(0,true)

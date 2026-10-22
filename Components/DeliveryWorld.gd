@@ -134,6 +134,8 @@ func _process(delta: float) -> void:
   var ux=world.hud.ux
   for control in [ux.event_button,ux.sheet,ux.palette]:
    if control.visible: occupied.append(control.get_global_rect())
+ for control in [world.hud.coach.panel,world.hud.coach.portrait,world.hud.companion.bubble,world.hud.companion.avatar]:
+  if control.is_visible_in_tree(): occupied.append(control.get_global_rect())
  var priority_count=0
  for b in badges:
   b.button.visible = not world.hud.overlay.visible and world.placement.is_empty() and world.view_zoom<260 and not world.camera.is_position_behind(b.at)

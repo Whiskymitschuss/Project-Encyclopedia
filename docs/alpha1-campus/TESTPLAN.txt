@@ -1,0 +1,41 @@
+TIMBER LOOT · 0.28.3-alpha.1 · GERÄTETEST
+
+Als Update installieren. Bestehende Firma vor/nach Update vergleichen:
+Standorte, Stufen, Miete, Waren, Fracht und Straßen unverändert?
+Kein Löschen von App-Daten nötig. Für einen neuen Einstieg ein separates Testgerät
+oder ein bewusst neues Profil verwenden; einen vorhandenen Spielstand nicht opfern.
+
+1. WELTAUFBAU
+Offener zentraler Hof, graue Fahrgassen, freie Zufahrten und weiß-rote Randmauern.
+Wälder in Reihen mit sandfarbenen Rändern; nördliche Wege breit und sandfarben.
+Mehrere Biomfarben, gesperrte Regionen und freie Grundstücke weiterhin korrekt?
+Nach freiem Versetzen dürfen keine Zäune durch Gebäude oder neue Straßen laufen.
+
+2. ARBEIT UND ANIMATION
+Holzfäller beim Axtschwung beobachten: Holz auf dem Weg zum Lager, leer zurück.
+Sägewerk mit wirklichem Input laufen lassen: Werkzeug/Fördergut und Stapler bewegen sich.
+Stapler fährt am Warenausgang, Räder drehen, Gabel hebt sich. Betrieb pausieren:
+Stapler parkt. Leeres/volles Lager: Produktionsstatus und Bewegung stimmen überein?
+Bei tatsächlichem Beladen/Entladen am Lager: Laufkatze/Haken bewegen sich.
+LKW-Fracht, Rückfahrt, Dampf, Späne, Rauch und Löschwasser weiterhin sichtbar?
+Einstellungen > Bewegung reduzieren: neue Bewegungen bleiben stehen.
+Akkumodus: höchstens zwei nahe Stapler, Standard höchstens sechs.
+
+3. HUD UND EINFÜHRUNG
+Kleines Display und große Schrift: Materialwerte sowie alle Aktionen erreichbar?
+Links oben auf Profil tippen: Team, Einstellung und Werkzeuge funktionieren?
+Neue Firma: Benno-Text baut sich auf; Hof entdecken führt zu Lager und Sägewerk.
+Kurze Anleitung sofort erreichbar, freies Spiel möglich. Fünf Bäume fällen,
+abliefern, Bretter produzieren/verkaufen, erste Hütte tatsächlich errichten.
+Kein Hinweis oder Frachtknopf darf Dialog, Figuren oder Anleitungstaste überlagern.
+Bestehende Firma erhält keine erzwungene Wiederholung der Einführung.
+
+4. START, VERKEHR UND LEISTUNG
+Kaltstart sowie Rückkehr nach kurzer/langer Abwesenheit messen. Minimieren und
+Wiederöffnen prüfen. Android kann den ganzen Prozess suspendieren/beenden.
+Mehrere kreuzende LKW mit realer Ladung beobachten, auch bei Produktionspause.
+Mehr > Leistungsvergleich: gleiche Firma/Profil/Helligkeit, ohne Ladegerät.
+S26 Ultra/S24 FE nach 5 und 15 Minuten: Wärme, Akkustand, Ruckler dokumentieren.
+
+Fehler mit Version, Gerät, konkreten Schritten, Beständen und Video melden.
+Keine Berichte werden automatisch versendet.
