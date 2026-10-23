@@ -1,3 +1,10 @@
+## Externe Downloads Biberwelt · 0.28.5 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.5-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha285.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Ressourcen · 0.28.5-alpha.1
 
 Die unveränderten Ressourcen aus der tatsächlich gebauten APK wurden zusätzlich

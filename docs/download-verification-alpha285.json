@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-23T04:09:12.832803+00:00",
+  "tag": "v0.28.5-alpha.1",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-v0.28.5-alpha.1.apk",
+      "http_status": 200,
+      "bytes": 63274883,
+      "sha256": "750141cd8871c344d6b9a33b4a6bafbb61c04f5c53f9ea3b284ce0379e54c243",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-v0.28.5-source.zip",
+      "http_status": 200,
+      "bytes": 28040674,
+      "sha256": "cbc31a898ad9b419847b7e65d7dd1a180415a6d3b03a455f27840fdbfd8d4811",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Biberwelt-Testerpaket.zip",
+      "http_status": 200,
+      "bytes": 62654180,
+      "sha256": "1d8cb3efe8a10faa97b414c1ccf95c69281643a66da8fcbc95aa817d307ac041",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}
