@@ -104,7 +104,10 @@ func run() -> void:
  CentralLogistics.stock(s,0).wood=120
  var second=s.buildings.size()-1
  game.step(1)
- check(float(s.gathered)>0 and float(s.hub.outputs.get(str(second),{}).get("wood",0))>0,"A free second collection station accepts real wood when the first one is full")
+ var collected_second=0.0
+ for trip in s.hub.shipments:
+  if int(trip.origin)==second and trip.key=="wood" and not trip.arrived: collected_second+=float(trip.amount)
+ check(float(s.gathered)>0 and float(s.hub.outputs.get(str(second),{}).get("wood",0))+collected_second>0,"A free second collection station accepts real wood when the first one is full, including output already picked up")
  check(float(game.flow.get("harvest:%s" % second,0))>0 and float(game.flow.get("harvest:0",0))==0,"Each collection station reports its own accepted yield")
  var result=ForestryFlow.harvest(s,10000,1)
  check(float(result.amount)<=70 and CentralLogistics.output_room(s,second,"wood")>=0,"Harvest never exceeds actual active stations' work rate or output capacity")

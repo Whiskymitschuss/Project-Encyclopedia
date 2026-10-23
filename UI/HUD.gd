@@ -835,7 +835,9 @@ func team_menu() -> void:
  portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
  portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
  hero.add_child(portrait)
- var box = card("%s / %s Arbeiter" % [Game.state.workers,Game.worker_capacity()],"Helfer fällen und liefern Holz automatisch. Hütten und Stadtbewohner schaffen zusätzlichen Wohnraum. Forschungsboni erhöhen die Leistung.")
+ var box = card("%s / %s Arbeiter" % [int(Game.state.workers),Game.worker_capacity()],"Helfer fällen und liefern Holz automatisch. Hütten und Stadtbewohner schaffen zusätzlichen Wohnraum. Forschungsboni erhöhen die Leistung.")
+ dynamic_text(box,func(): return ForestryFlow.team_status(Game.state,Game.flow))
+ button(box,"HOLZFÄLLER ANSEHEN",func(): focus_requested.emit(ForestryFlow.work_position(Game.state)); close_menu())
  text(box,"Einstellung: %s Münzen" % Catalog.number(Game.hire_cost()),17,GOLD)
  button(box,"ARBEITER EINSTELLEN",func(): action(func(): Game.hire()))
  var tool = card(Catalog.TOOLS[int(Game.state.tool)],"Aktiver Ertrag: %s Holz · Boss-Schaden: %s" % [int((4+int(Game.state.tool)*3)*(1+int(Game.state.biome)*0.4)),Catalog.number(pow(2.0,int(Game.state.tool))*10)])

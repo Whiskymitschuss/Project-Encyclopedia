@@ -1,0 +1,33 @@
+extends SceneTree
+func _initialize(): call_deferred("run")
+func run():
+ await process_frame
+ var g=root.get_node("Game")
+ g.set_process(false)
+ g.restore(JSON.parse_string(FileAccess.get_file_as_string("res://Tests/Fixtures/forestry288-company.json")))
+ var s=g.state
+ s.workers=31.0
+ s.tool=11.0
+ s.resources.wood=802
+ s.resources.boards=200
+ s.resources.dry=6
+ s.resources.furniture=0
+ s.resources.walls=211
+ s.resources.roofs=282
+ var before=float(s.gathered)
+ var silent=0
+ var longest=0
+ var active=0
+ var collected=0.0
+ var old_id=0
+ var begun=Time.get_ticks_msec()
+ for tick in 1800:
+  g.step(1)
+  if float(g.flow.harvest)>0: active+=1;silent=0
+  else: silent+=1;longest=maxi(longest,silent)
+  for t in s.hub.shipments:
+   if int(t.id)>old_id:
+    if t.key=="wood" and t.target=="central": collected+=float(t.amount)
+    old_id=maxi(old_id,int(t.id))
+ print("RESULT ",JSON.stringify({"automatic_harvest":float(s.gathered)-before,"harvesting_seconds":active,"max_no_harvest_seconds":longest,"wood_dispatched":collected,"warehouse":s.resources.wood,"forest":s.hub.outputs["0"].wood,"ms":Time.get_ticks_msec()-begun}))
+ quit()

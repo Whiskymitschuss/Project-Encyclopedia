@@ -2,7 +2,26 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.8-alpha.1 · Waldabholung und Startzeit
+## Aktuell: 0.28.9-alpha.1 · Holzfäller und automatische Ernte
+
+Auch mit manuell gefülltem Zentralbestand erhalten volle Sammelstationen eine
+reale Holzabholung. Größere Bündelladungen und begrenzte Warenannahme lassen die
+bestehende Flotte weiter für Werke und Baustellen arbeiten. Gekaufte Forstmaschinen
+entfernen die Biber-Holzfäller nicht mehr. Waldcrew und Ladebewegungen bleiben
+sichtbar; Team → Holzfäller ansehen fokussiert den Arbeitsbereich.
+
+Team zeigt die **automatisch gewonnene Holzmenge seit Update** getrennt von
+manuellem Fällen und Abliefern. Kontrollfall mit 31 Helfern und Werkzeugstufe 11:
+**72 → 1.544 automatisch gewonnene Holz in 30 Minuten**, ohne manuelle Aktionen.
+Simulation einer generierten Firma, keine Messung des privaten Spielstands.
+
+Android-Code **3004**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-workers/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Ursachen, Prüfungen und Grenzen](docs/WORKERS-289.md).
+Keine neue Zusicherung zur Handy-Ladezeit oder Temperatur. Masterumbau weiter offen.
+
+## Vorher: 0.28.8-alpha.1 · Waldabholung und Startzeit
 
 Bei leerem zentralem Holzbestand darf die Abholflotte den Wald nicht mehr durch
 andere Lieferungen verdrängen. Stabile Quellenreihenfolge erhält die Disposition

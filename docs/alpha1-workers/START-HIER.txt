@@ -1,0 +1,21 @@
+Timber Loot Tycoon · 0.28.9-alpha.1 (Android-Code 3004)
+
+Die APK als Update installieren. Nicht deinstallieren und keine App-Daten löschen.
+Paketkennung und Testzertifikat bleiben gleich. Dein Firmenstand bleibt erhalten.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+Team öffnen: Dort steht die automatisch gewonnene Holzmenge seit diesem Update.
+Manuelles Fällen und Abliefern zählen ausdrücklich nicht dazu.
+Mit „Holzfäller ansehen“ direkt zu den Bibern am vorderen Waldrand wechseln.
+
+Ein voller Sammelplatz wird jetzt auch abgeholt, wenn bereits Holz im Lager ist.
+Die realen Holz-LKW tragen größere Bündelladungen. Biber bleiben neben den
+gekauften Forstmaschinen sichtbar. Ein wirklich volles Zentrallager, fehlende
+Straßen oder pausierte Stationen können Arbeit weiterhin unterbrechen.
+
+Eigene Firma mindestens fünf Minuten ohne FÄLLEN/Abliefern beobachten.
+Wenn der automatische Zähler stillsteht: Status der Sammelstation, Lageranteil
+und Versionsnummer unter Mehr festhalten. Keine Spielstände oder App-Daten löschen.
+
+Automatisch und grafisch am Desktop geprüft; kein physischer Android-/Hitzetest.
+Der vollständige Weltumbau ist noch nicht fertig.

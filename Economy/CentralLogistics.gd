@@ -31,10 +31,15 @@ static func storage_room(state: Dictionary,key: String) -> float:
  return maxf(0,capacity(state)-float(state.resources.get(key,0))-float(state.hub.get("receiving",{}).get(key,0))-incoming(state,depot(state),key))
 
 static func receiving_capacity(state: Dictionary) -> float:
- return maxf(96,fleet_size(state)*(12+int(state.vehicle)*2))
+ return maxf(96,fleet_size(state)*pickup_capacity(state,"wood"))
 
 static func output_room(state: Dictionary,index: int,key: String) -> float:
  return maxf(0,64+int(state.buildings[index].level)*8-float(state.hub.outputs.get(str(index),{}).get(key,0)))
+
+static func pickup_capacity(state: Dictionary,key: String) -> float:
+ # A forestry transporter carries bundled logs. The former crate-sized load
+ # emptied less than one manually cut tree and throttled whole forest crews.
+ return (12+int(state.vehicle)*2)*(4 if key=="wood" else 1)
 
 static func fleet_size(state: Dictionary) -> int:
  var index=depot(state)
@@ -55,17 +60,21 @@ static func factory_busy(state: Dictionary) -> int:
 
 static func urgent_wood(state: Dictionary) -> Dictionary:
  # A busy furniture/board loop must not consume the final truck while the
- # forest has real output and the central wood shelf is empty. An existing
+ # forest has real output and its collection point is filling. An existing
  # wood shuttle fulfils this priority; its empty return owns the same truck.
  var center=depot(state)
  if center<0 or state.buildings[center].get("paused",false): return {}
- if float(state.resources.wood)>=12+int(state.vehicle)*2 or storage_room(state,"wood")<0.25: return {}
+ if storage_room(state,"wood")<0.25: return {}
  for trip in state.hub.shipments:
   if trip.target=="central" and trip.key=="wood": return {}
  for source in pickup_sources(state):
   if float(source.stock.get("wood",0))<0.25: continue
   if source.has("only") and source.only!="wood": continue
   if source.has("keys") and "wood" not in source.keys: continue
+  var limit=64+int(state.buildings[int(source.index)].level)*8
+  if source.has("only") and source.only=="wood": limit=DeliveryChain.capacity(state,"station")
+  var ready=minf(pickup_capacity(state,"wood"),limit*0.75)
+  if float(state.resources.wood)>=12+int(state.vehicle)*2 and float(source.stock.wood)<ready: continue
   if LogisticsRoutes.road_route(state,int(source.index),center).size()>=2: return source
  return {}
 
@@ -203,7 +212,7 @@ static func dispatch(state: Dictionary) -> void:
  if free<=0: return
  var urgent=urgent_wood(state)
  if not urgent.is_empty():
-  var amount=minf(float(urgent.stock.wood),minf(12+int(state.vehicle)*2,storage_room(state,"wood")))
+  var amount=minf(float(urgent.stock.wood),minf(pickup_capacity(state,"wood"),storage_room(state,"wood")))
   if launch(state,int(urgent.index),center,"wood",amount,"central",urgent.stock): free-=1
  # Long-distance replenishment has priority, but cannot consume pickup capacity.
  var express_budget=maxi(1,fleet_size(state)/2)
@@ -233,7 +242,7 @@ static func dispatch(state: Dictionary) -> void:
    var key=keys[(key_cursor+key_offset)%keys.size()]
    if source.has("only") and key!=source.only: continue
    if source.has("keys") and key not in source.keys: continue
-   var amount=minf(float(source.stock[key]),minf(12+int(state.vehicle)*2,maxf(0,storage_room(state,key))))
+   var amount=minf(float(source.stock[key]),minf(pickup_capacity(state,key),maxf(0,storage_room(state,key))))
    if amount<0.25 or free<=0: continue
    if launch(state,int(source.index),center,key,amount,"central",source.stock):
     free-=1

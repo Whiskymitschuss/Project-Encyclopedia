@@ -435,6 +435,7 @@ func step(delta: float) -> void:
  var accepted=float(forest.amount)
  state.gathered += accepted
  Journey.add(state,"gathered",accepted)
+ Journey.add(state,"automatic_wood",accepted)
  flow = {"harvest":accepted/maxf(delta,0.001)}
  for station in forest.sources: flow["harvest:%s" % station]=float(forest.sources[station])/maxf(delta,0.001)
  flow.merge(StoneIndustry.tick(state,delta,(1+research_level("production")*0.12)*multiplier()*boost("processing")),true)

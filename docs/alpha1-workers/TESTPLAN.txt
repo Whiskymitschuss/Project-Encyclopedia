@@ -1,0 +1,13 @@
+1. Über Mehr installierte Version 0.28.9-alpha.1 prüfen.
+2. Vorhandene Firma öffnen. Team → automatisch gewonnene Holzmenge notieren.
+3. Fünf Minuten weder FÄLLEN noch Abliefern drücken. Zähler erneut vergleichen.
+4. Team → Holzfäller ansehen: Biber bleiben neben Forstmaschinen sichtbar.
+5. Bei Abholauftrag tragen Biber Holz; ohne Ernte oder Ladeauftrag kein Schein-Fällen.
+6. Sammelplatz wird auch bei vorhandenem zentralem Holz abgeholt.
+7. Werke, Verkauf und Baustellen erhalten parallel weiter echte Waren.
+8. Speichern, App schließen, wieder öffnen: Firma und automatische Ernte erhalten.
+9. Bei Stillstand Station anklicken: Abholvorrat und Wartegrund festhalten.
+10. Startdauer, Handy-Modell und Wärme nach fünf Minuten getrennt berichten.
+
+Volles Lager, pausierte Station, fehlende Straße und ausgeschaltete Animationen
+sind eigene Zustände. Nicht durch Zurücksetzen oder Löschen der App-Daten testen.

@@ -453,7 +453,16 @@ func refresh_forest_clearance() -> void:
    set_tree_visible(biome,i,not tree.blocked and tree.regrow<=0)
 
 func sync_actors() -> void:
- var signature = "%s/%s/%s/%s/%s/%s" % [Game.state.workers,Game.state.trucks,Game.state.biome,Game.state.quality,Game.state.tool,str(Game.state.vehicle)+str(Game.state.delivery.active)+str(not Game.state.construction_shipments.is_empty())]
+ var stations=[]
+ var station_policy=[]
+ for index in Game.state.buildings.size():
+  if Game.state.buildings[index].kind!="station": continue
+  var paused=bool(Game.state.buildings[index].get("paused",false))
+  station_policy.append([index,paused])
+  if not paused: stations.append(index)
+ if stations.is_empty():
+  for entry in station_policy: stations.append(entry[0])
+ var signature = "%s/%s/%s/%s/%s/%s" % [Game.state.workers,Game.state.biome,Game.state.quality,Game.state.tool,Game.state.delivery.active,station_policy]
  if signature == actor_signature: return
  actor_signature = signature
  clear_children(actors)
@@ -465,6 +474,8 @@ func sync_actors() -> void:
  var cabin_index=-1
  for i in Game.state.buildings.size():
   if Game.state.buildings[i].kind=="cabin": cabin_index=i; break
+ var forestry_slots=staff-operators-(1 if staff>=4 and cabin_index>=0 else 0)
+ var forestry_machines=mini(2 if Game.state.quality==0 else 4,forestry_slots/3) if int(Game.state.tool)>=10 else 0
  for i in operators:
   var worker = TimberWorker.new()
   worker.role = "operator"
@@ -475,17 +486,24 @@ func sync_actors() -> void:
   actors.add_child(worker)
  for i in staff-operators:
   var neighbor = i==staff-operators-1 and staff>=4 and cabin_index>=0
-  if int(Game.state.tool)>=10 and not neighbor:
-   if i<mini(staff-operators,2 if Game.state.quality==0 else 4):
-    var machine=ForestryMachine.new()
-    machine.tier=int(Game.state.tool)
-    machine.origin_point=Catalog.biome_position(int(Game.state.biome))+Vector3([-26,-10,10,26][i%4],0,-5)
-    machine.phase=i*4.5
-    actors.add_child(machine)
+  if i<forestry_machines and not neighbor:
+   var machine=ForestryMachine.new()
+   machine.tier=int(Game.state.tool)
+   machine.station_index=stations[i%stations.size()] if not stations.is_empty() else -1
+   machine.origin_point=Catalog.biome_position(int(Game.state.biome))+Vector3([-26,-10,10,26][i%4],0,-5)
+   machine.phase=i*4.5
+   actors.add_child(machine)
    continue
   var worker = TimberWorker.new()
-  worker.origin_point = Catalog.biome_position(int(Game.state.biome))+Vector3((i%4)*5-10,0,18)
-  worker.destination = Game.building_position(0)+Vector3((i%3)*2,0,9)
+  worker.production_index=stations[i%stations.size()] if not stations.is_empty() else -1
+  var forester=i-forestry_machines
+  var forester_count=maxi(1,forestry_slots-forestry_machines)
+  var across=(forester-(forester_count-1)*0.5)*minf(7,56.0/maxi(1,forester_count-1))
+  # Work on the near edge of the actual tree rows: the old deep-forest
+  # positions hid a whole beaver behind each nine-metre canopy.
+  worker.origin_point = ForestryFlow.work_position(Game.state)+Vector3(across,0,0)
+  worker.destination = Catalog.biome_position(int(Game.state.biome))+Vector3(across*0.8,0,ForestryFlow.LANDING_EDGE)
+  worker.facing=PI
   worker.variant_id=i+operators
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1

@@ -1,5 +1,10 @@
 class_name ForestryFlow
 extends RefCounted
+const WORK_EDGE=34.0
+const LANDING_EDGE=39.0
+
+static func work_position(state: Dictionary) -> Vector3:
+ return Catalog.biome_position(int(state.biome))+Vector3(0,0,WORK_EDGE)
 
 # The simulation owns forest output. Animation reads the accepted quantity;
 # an invisible or reduced-motion worker must never change the company's yield.
@@ -46,3 +51,20 @@ static func describe(state: Dictionary,index: int,flow: Dictionary={}) -> Dictio
   for trip in state.hub.shipments:
    if int(trip.origin)==index and trip.key=="wood": reason="Abholung disponiert · "+FreightFlow.status(trip); break
  return {"kind":"full","text":"%s · %s" % [stock,reason],"key":"wood"}
+
+static func loading(state: Dictionary,index: int) -> bool:
+ for trip in state.hub.shipments:
+  if int(trip.origin)==index and trip.target=="central" and trip.key=="wood" and not trip.arrived and float(trip.age)<float(trip.get("load",0)):
+   return true
+ return false
+
+static func team_status(state: Dictionary,flow: Dictionary) -> String:
+ var amount=float(state.journey.stats.get("automatic_wood",0))
+ var rows=["Automatisch gewonnen seit Update: %s Holz" % Catalog.number(amount)]
+ if int(state.workers)<=0: rows.append("Keine Holzfäller eingestellt")
+ else:
+  rows.append("Automatische Ernte: %.1f Holz/s" % float(flow.get("harvest",0)))
+  for index in state.buildings.size():
+   if state.buildings[index].kind=="station": rows.append(describe(state,index,flow).text)
+ if not state.ux.motion: rows.append("Arbeitsanimationen sind ausgeschaltet")
+ return "\n".join(rows)

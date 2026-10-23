@@ -22,6 +22,7 @@ var rest_via=Vector3.ZERO
 var mug: Node3D
 var axe: Node3D
 var work_left=0.0
+var handling=false
 
 func _ready() -> void:
  position=origin_point+Vector3(0,0.6,0)
@@ -49,9 +50,14 @@ func _ready() -> void:
   Models.box(axe,Vector3(0.6,0.36,0.12),Vector3(0.2,-0.1,0.35),Color("b6c4ca"))
   Models.bake(axe)
  Models.bake(body)
+ if role=="forester":
+  # The bounded hired crew must not disappear just because an orthographic
+  # camera moves backwards while zooming out. Frustum culling still applies.
+  for mesh in body.find_children("*","MeshInstance3D",true,false): mesh.visibility_range_end=0
 
 func _process(delta: float) -> void:
  if not Game.state.ux.motion: return
+ handling=false
  if axe!=null: axe.hide()
  social_cooldown=maxf(0,social_cooldown-delta)
  body.position=Vector3.ZERO
@@ -82,10 +88,22 @@ func _process(delta: float) -> void:
   for i in [2,3]: limbs[i].rotation.x=-0.8+sin(phase+(i%2)*PI)*0.35 if working else -0.1
   return
  if role=="forester":
-  if float(Game.flow.get("harvest",0))>0: work_left=maxf(work_left,18.0-fposmod(phase,18.0))
+  var rate=float(Game.flow.get("harvest:%s" % production_index,Game.flow.get("harvest",0)))
+  if float(Game.flow.get("harvest",0))<=0: rate=0
+  if production_index>=0 and Game.state.buildings[production_index].get("paused",false): rate=0
+  if rate>0: work_left=maxf(work_left,18.0-fposmod(phase,18.0))
   if work_left<=0:
    working=false
-   pack.hide()
+   handling=production_index>=0 and ForestryFlow.loading(Game.state,production_index)
+   if handling:
+    phase+=delta*pace
+    var hauling=fposmod(phase,12.0)
+    var progress=hauling/6 if hauling<6 else (12-hauling)/6
+    position=origin_point.lerp(destination,smoothstep(0,1,progress))+Vector3.UP*0.6
+    body.rotation.y=atan2(destination.x-origin_point.x,destination.z-origin_point.z)+(PI if hauling>=6 else 0)
+    for i in limbs.size(): limbs[i].rotation.x=sin(phase*5+(i%2)*PI)*0.4
+    pack.visible=hauling<6
+   else: pack.hide()
    return
   work_left=maxf(0,work_left-delta*pace*Game.boost("workers"))
  phase+=delta*pace*Game.boost("workers")
@@ -94,6 +112,7 @@ func _process(delta: float) -> void:
  position=origin_point.lerp(destination,smoothstep(0,1,travel))
  position.y=0.6+absf(sin(phase*5))*0.09 if cycle>=3 else 0.6
  body.rotation.y=atan2(destination.x-origin_point.x,destination.z-origin_point.z)+(PI if cycle>=11 else 0)
+ if role=="forester" and cycle<3: body.rotation.y=facing
  for i in limbs.size(): limbs[i].rotation.x=sin(phase*5+(i%2)*PI)*0.45 if cycle>=3 else 0
  if role=="forester":
   working=cycle<3

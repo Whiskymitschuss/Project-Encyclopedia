@@ -1,0 +1,19 @@
+{
+  "automatic_harvest": 72.0,
+  "forest": 104.0,
+  "harvesting_seconds": 4,
+  "max_no_harvest_seconds": 586,
+  "ms": 1164,
+  "warehouse": 151.000000000001,
+  "wood_dispatched": 78.0,
+  "fixture": "forestry288-company",
+  "workers": 31,
+  "tool": 11,
+  "initial_warehouse_wood": 802,
+  "initial_forest_wood": 104,
+  "seconds_simulated": 1800,
+  "manual_actions_during_run": 0,
+  "private_player_save_used": false,
+  "baseline_commit": "b08f092b6d1dd60bd178dcfe49d3929ca71deaec",
+  "run": "before fixes"
+}

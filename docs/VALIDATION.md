@@ -1,3 +1,15 @@
+## Automatische Holzfäller mit manuell gefülltem Lager · 0.28.9-alpha.1
+
+Vollständiger Headless-Lauf: **20.889 numerische Prüfungen**, 34 numerische und
+zwei natürliche Progressionssuiten, zusätzlich Haupt-/Startszene. Grafiklauf und
+ergänzende Szenen: **1.024 Prüfungen in 27 unterschiedlichen Suiten**.
+[Prüfbericht](alpha1-workers/automated-checks.json) · [Änderungen](WORKERS-289.md).
+
+Generierte Firma, 31 Helfer, Werkzeugstufe 11, 802 beziehungsweise 1.015 zuvor
+vorbelegte Holz in der Zentrale. Ohne manuelle Aktionen: jeweils 1.544 echte
+Ernte in 30 Minuten, längste Pause 125 Sekunden. Alter Kontrolllauf: 72 Holz,
+längste Pause 586 Sekunden. Kein privater Spielstand und kein Handy-Gerätetest.
+
 ## Externe Downloads Waldabholung und Startzeit · 0.28.8 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.8-alpha.1` vollständig per

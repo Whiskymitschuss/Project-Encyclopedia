@@ -1,0 +1,13 @@
+Installierte Version:
+Handy / Android:
+Startdauer:
+Holzfäller eingestellt:
+Werkzeug:
+Automatisch gewonnen vor / nach fünf Minuten ohne manuelle Aktionen:
+Station: Status und Abholvorrat:
+Holz gesamt / Lageranteil:
+Holz-LKW unterwegs:
+Arbeitsanimationen an / aus:
+Erhalten Werke und Baustellen ihre Ware:
+Wärme nach fünf Minuten:
+Weitere Beobachtungen:

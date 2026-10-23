@@ -17,6 +17,8 @@ var saw: Node3D
 var cargo: Node3D
 var working = false
 var work_left=0.0
+var station_index=-1
+var handling=false
 
 func _ready() -> void:
  set_meta("forestry_tier",tier)
@@ -80,9 +82,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
  # Finish the already earned load cycle before parking; never start a cycle
  # just to make an actually blocked forest look productive.
- if float(Game.flow.get("harvest",0))>0: work_left=maxf(work_left,20.0-fposmod(phase,20.0))
+ var rate=float(Game.flow.get("harvest:%s" % station_index,Game.flow.get("harvest",0)))
+ if float(Game.flow.get("harvest",0))<=0: rate=0
+ if station_index>=0 and Game.state.buildings[station_index].get("paused",false): rate=0
+ if rate>0: work_left=maxf(work_left,20.0-fposmod(phase,20.0))
  working=work_left>0
- if not working or not Game.state.ux.motion: return
+ handling=station_index>=0 and ForestryFlow.loading(Game.state,station_index)
+ if not working and not handling:
+  cargo.hide()
+  return
+ if not Game.state.ux.motion: return
  work_left=maxf(0,work_left-delta)
  phase+=delta
  var travel=fmod(phase,20.0)
@@ -92,6 +101,6 @@ func _process(delta: float) -> void:
  turret.rotation.y=sin(phase*0.32)*0.65
  boom.rotation.x=-0.65+sin(phase*0.9)*0.16
  forearm.rotation.x=1.85+sin(phase*0.9+1)*0.2
- saw.rotation.y+=delta*12
- cargo.visible=travel>7 and travel<17
+ if working: saw.rotation.y+=delta*12
+ cargo.visible=handling or (travel>7 and travel<17)
  for wheel in wheels: wheel.rotate_object_local(Vector3.UP,delta*1.4)
