@@ -1,3 +1,10 @@
+## Externe Downloads Leistung und Holzproduktionsstraße · 0.28.11 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.11-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2811.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.11-alpha.1
 
 1491 Headless- und 418 OpenGL-Prüfungen mit unveränderten,
