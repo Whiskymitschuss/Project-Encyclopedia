@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.11-alpha.1
+
+1491 Headless- und 418 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Eingeschlossen sind Detailentlastung, Leistungswerte, Holzlinie, Vorschau,
+Fotomodus, alle Produktionsfamilien, regionale Transporte und Bauteams.
+[Paketprüfbericht](alpha1-timberline/packaged-checks.json).
+
+APK-SHA256 `8a914b83ef7cc66a6e373ec777926af61df6c40a6c316e04e695add039896b42`. Quellstand `3f45d0c616e1225724144021a002e128edaaefb0`.
+Paket, Versionscode 3006, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Leistung und Holzproduktionsstraße · 0.28.11-alpha.1
 
 20.976 numerische Headless-Prüfungen in 36 Modulen, zwei natürliche Fortschritts-

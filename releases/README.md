@@ -1,4 +1,29 @@
-# Aktuell: Automatische Werkslogistik und Bauteams · 0.28.10-alpha.1
+# Aktuell: Leistung und Holzproduktionsstraße · 0.28.11-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.11-alpha.1/releases/Timber-Loot-Tycoon-v0.28.11-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.11-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Holzlinie-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.11-source.zip) · [Änderungen und Grenzen](../docs/TIMBERLINE-2811.md)
+
+Unsichtbare Maschinen und Stapler sparen Detailarbeit. Adaptive Darstellung und
+Akkumodus reduzieren nur die Weltauflösung; Menü und Schrift bleiben scharf.
+Start-, Offline- und FPS-Messungen sind im Spiel sichtbar. Hofmarkierungen,
+Sägeabdeckung und Produktionsleuchten machen die vorhandene Holzlinie lesbarer.
+Die Holzkette zeigt echte Betriebe; Gebäudevorschauen markieren den LKW-Anschluss.
+Die Logistik und die Wirtschaft aus 0.28.10 bleiben erhalten.
+
+Android-Code **3006**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+20976 Headless- und 1090 OpenGL-Prüfungen des Quellstands;
+zusätzlich 1491 Headless- und 418 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-timberline/automated-checks.json).
+
+APK-Quellstand `3f45d0c616e1225724144021a002e128edaaefb0`. Quell-ZIP: 684 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Automatische Werkslogistik und Bauteams · 0.28.10-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.10-alpha.1/releases/Timber-Loot-Tycoon-v0.28.10-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.10-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Logistik-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.10-source.zip) · [Änderungen und Grenzen](../docs/LOGISTICS-2810.md)

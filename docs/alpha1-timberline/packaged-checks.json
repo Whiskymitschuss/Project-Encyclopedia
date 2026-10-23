@@ -1,0 +1,41 @@
+{
+  "apk": "Timber-Loot-Tycoon-v0.28.11-alpha.1.apk",
+  "apk_sha256": "8a914b83ef7cc66a6e373ec777926af61df6c40a6c316e04e695add039896b42",
+  "apk_source_commit": "3f45d0c616e1225724144021a002e128edaaefb0",
+  "headless_checks": 1491,
+  "headless_results": {
+    "Performance2811": 19,
+    "Logistics2810": 65,
+    "Construction": 56,
+    "Forestry289": 26,
+    "Forestry288": 22,
+    "Forestry287": 23,
+    "FactorySupply286": 34,
+    "Supply286": 32,
+    "Infrastructure286": 161,
+    "WorldRework285": 907,
+    "Central284": 34,
+    "Forest282": 22,
+    "Rollback028": 51,
+    "Alpha28": 39
+  },
+  "visual_checks": 418,
+  "visual_results": {
+    "VisualPerformance2811": 26,
+    "VisualLogistics2810": 40,
+    "VisualFactory284": 48,
+    "VisualForestry289": 25,
+    "VisualForestry288": 11,
+    "VisualColdStart288": 10,
+    "VisualForestry287": 17,
+    "VisualFactorySupply286": 11,
+    "VisualSupply286": 13,
+    "VisualRollback028": 146,
+    "VisualColdStart282": 8,
+    "VisualAlpha28": 63
+  },
+  "fixture": "Generated test companies only; no private player save",
+  "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+  "android_device_tested": false,
+  "temperature_measured": false
+}
