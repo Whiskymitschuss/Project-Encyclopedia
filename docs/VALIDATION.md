@@ -1,3 +1,10 @@
+## Externe Downloads Waldabholung und Startzeit · 0.28.8 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.8-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha288.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.8-alpha.1
 
 1322 Headless- und 279 OpenGL-Prüfungen mit unveränderten,
