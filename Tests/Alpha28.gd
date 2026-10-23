@@ -19,6 +19,7 @@ func run() -> void:
  var boot=load("res://Scenes/Boot.tscn").instantiate()
  root.add_child(boot)
  await process_frame
+ check(boot.find_children("*","Label",true,false).any(func(label): return label.text.contains(str(ProjectSettings.get_setting("application/config/version")))),"The title displays the actual installed app version")
  var state=game.snapshot()
  game._process(10)
  check(game.state.elapsed==state.elapsed and game.state.resources==state.resources,"Title screen cannot simulate the company before the world opens")
@@ -67,8 +68,10 @@ func run() -> void:
  check(scene.hud.alpha_desk.report.text.contains("TESTBERICHT"),"Test feedback produces a local editable report")
  scene.hud.alpha_desk.report.text+="\nMein Entwurf bleibt erhalten."
  scene.hud.open_menu("settings")
+ check(scene.hud.contents.find_children("*","Label",true,false).any(func(label): return label.text.begins_with("Alpha 1 · "+str(ProjectSettings.get_setting("application/config/version")))),"Settings show the same actual version as the generated feedback report")
  scene.hud.open_menu("alpha")
  check(scene.hud.alpha_desk.report.text.ends_with("Mein Entwurf bleibt erhalten."),"Changing menus preserves an unfinished feedback draft")
+ check(scene.hud.contents.find_children("*","Label",true,false).any(func(label): return label.text=="Installiert: "+str(ProjectSettings.get_setting("application/config/version"))),"The current version remains visible independently of an older saved feedback draft")
  var private_state=game.snapshot()
  private_state.unexpected_secret="DO_NOT_INCLUDE"
  private_state.username="DO_NOT_INCLUDE"

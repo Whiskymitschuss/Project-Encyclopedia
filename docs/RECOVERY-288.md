@@ -30,6 +30,15 @@ Entladezeiten bleiben gültig. Ein voller Wald-Ausgang kann weiterhin zeitweise
 warten; die Produktion folgt echten Lager- und Transportkapazitäten. Die Darstellung
 bucht keine zusätzlichen Bäume oder Waren.
 
+## Verlässliche Versionsanzeige
+
+Die Rückmeldung „0.28.3“ machte zwei fest eingetragene historische Anzeigen in
+Startbildschirm und Einstellungen sichtbar. Beide lesen jetzt die tatsächliche
+Projektversion. Im Feedback-Menü steht zusätzlich „Installiert: …“ außerhalb des
+bearbeitbaren Berichts. Ein alter gespeicherter Bericht darf seinen ursprünglichen
+Text behalten; er verdeckt die aktuelle installierte Versionsnummer nicht mehr.
+Die gemeldete Zahl allein beweist deshalb keinen veralteten installierten Stand.
+
 ## Startzeit
 
 Die Offline-Simulation berechnet weiterhin jede tatsächlich vergangene Sekunde

@@ -1,7 +1,7 @@
 ## Waldabholung und Startzeit · 0.28.8-alpha.1
 
-20.869 numerische Prüfungen in 35 Headless-Suiten inklusive zweier natürlicher
-Progressionsläufe, Hauptwelt und Titelstart bestanden. 996 OpenGL-Prüfungen in
+20.872 numerische Prüfungen in 35 Headless-Suiten inklusive zweier natürlicher
+Progressionsläufe, Hauptwelt und Titelstart bestanden. 999 OpenGL-Prüfungen in
 26 unterschiedlichen Suiten bestanden. Keine Wiederholungen doppelt gezählt.
 [Prüfbericht und genaue Laufreihenfolge](alpha1-recovery/automated-checks.json).
 
@@ -18,6 +18,11 @@ beide vollständigen Firmenstände identisch. [Messdaten](alpha1-recovery/startu
 Der grafische Sammellauf meldete nach allen bestandenen Suiten einen Shell-EOF,
 weil das Laufskript währenddessen erweitert worden war. Das endgültige Skript
 wurde syntaktisch und mit einem frischen unveränderten Aufruf geprüft.
+
+Drei zusätzliche Headless- und drei zusätzliche Grafikprüfungen sichern die
+tatsächliche Version in Start, Einstellungen und Feedback ab. Die zuvor fest
+eingetragene Zahl 0.28.3 erlaubte keine sichere Bestimmung des installierten Builds.
+Alpha28/Startup nach der Korrektur erneut bestanden; alte Zahlen ersetzt.
 
 Keine privaten Profile verwendet. Kein Android-Gerätelauf und keine Temperaturmessung.
 Der Gesamtumbau bleibt offen. [Änderungen und Grenzen](RECOVERY-288.md).

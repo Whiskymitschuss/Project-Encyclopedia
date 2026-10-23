@@ -6,6 +6,7 @@ var original=""
 
 func populate() -> void:
  hud.modal_title.text="ALPHA · FEEDBACK"
+ hud.text(hud.contents,"Installiert: %s" % ProjectSettings.get_setting("application/config/version"),14,hud.MUTED)
  # Keep the useful actions and editor above the longer test tips on small phones.
  var actions=hud.row(hud.contents)
  hud.button(actions,"Text kopieren",copy_report)

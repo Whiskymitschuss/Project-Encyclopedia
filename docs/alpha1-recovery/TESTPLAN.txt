@@ -1,4 +1,6 @@
-1. Als Update installieren; Firma und Version unter Mehr prüfen.
+1. Als Update installieren; Firma prüfen. Titel, Einstellungen und Feedback müssen
+   die tatsächliche Version 0.28.8-alpha.1 zeigen. Im Feedback gilt „Installiert: …“,
+   auch wenn ein alter gespeicherter Bericht eine frühere Version nennt.
 2. Bei Holz „Lager 0“ die Holzkarte antippen. Volle Sammelstation und Status ansehen.
 3. Bei erreichbarer aktiver Zentrale muss eine weiß-blaue Abholung disponiert werden,
    auch wenn Bretter, Möbel und angeforderte Werkszutaten parallel unterwegs sind.

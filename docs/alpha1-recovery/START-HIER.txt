@@ -2,6 +2,8 @@ TIMBER LOOT TYCOON · 0.28.8-alpha.1 (3003)
 
 Diese Fassung korrigiert die Verdrängung der Waldabholung durch andere Lieferungen,
 stabilisiert die Abholreihenfolge beim Speichern und verkürzt die Offline-Berechnung.
+Die alte feste Anzeige 0.28.3 wurde durch die wirkliche installierte Version ersetzt.
+Im Feedback steht sie außerhalb alter Berichtsentwürfe als „Installiert: …“.
 
 Timber-Loot-Tycoon-v0.28.8-alpha.1.apk als Update über die vorhandene Alpha installieren.
 Nicht deinstallieren und keine App-Daten löschen. Paket und Testzertifikat bleiben gleich.

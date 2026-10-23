@@ -1120,7 +1120,7 @@ func settings_menu() -> void:
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality); Game.apply_device_profile()))
  text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich Schatten und Umwelteffekte.",14,MUTED)
  if ux!=null: ux.settings_controls(box)
- text(contents,"Alpha 1 · 0.28.3 · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft.",14,MUTED)
+ text(contents,"Alpha 1 · %s · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft." % ProjectSettings.get_setting("application/config/version"),14,MUTED)
 
 func build_placement_bar() -> void:
  placement_panel=PanelContainer.new()

@@ -8,6 +8,7 @@ Bei leerem zentralem Holzbestand darf die Abholflotte den Wald nicht mehr durch
 andere Lieferungen verdrängen. Stabile Quellenreihenfolge erhält die Disposition
 beim Speichern. Express-Zufuhren respektieren ihre gebuchten Entladeplätze.
 Der Hauptbildschirm zeigt wartende Waldabholung direkt auf der Holzkarte.
+Start, Einstellungen und Feedback zeigen die echte installierte Version.
 
 Die Offline-Berechnung vermeidet doppelte Prüfungen. Isolierter Desktop-Vergleich
 für acht Stunden: **17,2 → 12,1 s** und **24,3 → 14,3 s**, vollständig identischer

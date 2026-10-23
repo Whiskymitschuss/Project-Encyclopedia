@@ -1,6 +1,6 @@
 {
   "version": "0.28.8-alpha.1",
-  "headless_checks": 20869,
+  "headless_checks": 20872,
   "headless_suites": 35,
   "headless_numeric_results": {
     "FORESTRY 288": 22,
@@ -12,7 +12,7 @@
     "CENTRAL LOGISTICS 284": 34,
     "FOREST 282": 22,
     "ROLLBACK 028": 51,
-    "ALPHA 1": 35,
+    "ALPHA 1": 38,
     "RULES": 233,
     "SCENE": 4080,
     "WORLD & HIGHWAY TRADE 27": 61,
@@ -42,7 +42,7 @@
     "Progression: first home without grants"
   ],
   "main_and_boot_smokes_passed": true,
-  "visual_checks": 996,
+  "visual_checks": 999,
   "visual_suites": 26,
   "visual_results": {
     "VISUAL FORESTRY 288": 11,
@@ -66,7 +66,7 @@
     "VISUAL QUALITY": 41,
     "VISUAL PRESENTATION 26": 37,
     "VISUAL WORLD & TRADE 27": 45,
-    "VISUAL ALPHA 1": 60,
+    "VISUAL ALPHA 1": 63,
     "VISUAL STONE": 27,
     "VISUAL TRAFFIC": 27,
     "VISUAL VALLEY": 9,
@@ -76,7 +76,7 @@
   "new_forestry_visual_checks": 11,
   "new_advanced_cold_start_checks": 10,
   "fixture_origin": "Generated companies only; private player save and installed version unavailable",
-  "validation_sequence": "Full headless runner including Main/Boot passed. Every standard graphical suite plus advanced cold start and Stone/Traffic/Valley passed. The full graphical runner emitted an EOF shell error after all its suites completed because its file was extended while running; current script passes bash -n and a fresh unchanged VisualAlpha28 invocation. Standalone advanced cold-start and extra-suite runners returned zero. No duplicate results counted.",
+  "validation_sequence": "Full headless runner including Main/Boot passed. Every standard graphical suite plus advanced cold start and Stone/Traffic/Valley passed. The full graphical runner emitted an EOF shell error after all its suites completed because its file was extended while running; current script passes bash -n and a fresh unchanged VisualAlpha28 invocation. Standalone advanced cold-start and extra-suite runners returned zero. No duplicate results counted. After the user reported 0.28.3, corrected the hardcoded title/settings labels and added an installed-version label outside feedback drafts. A fresh Alpha28/Startup headless run and VisualAlpha28 run passed, superseding their earlier numeric results.",
   "resolved_findings": [
     "The advanced JSON continuation test initially diverged because dictionary insertion order changed; pickup sources are now numerically stable. The corrected test passes.",
     "The older disconnected-station status fixture now explicitly fills its output after the new priority collection; no assumption of an unchanged stock after dispatch.",
@@ -87,7 +87,8 @@
     "Conserved goods, finite real fleet, full express receiving reservations, paused and unreachable depots",
     "Thirty-minute advanced-company run with twelve homes and many sites: repeated harvest, actual furniture sales, site freight and full-precision JSON continuation",
     "Main-world beaver machinery, falling trees, real road cargo, pickup wait on the wood tile and large fonts on narrow screens",
-    "Eight-hour cold process reaches ready title, commits complete valid company and resumes harvest; partial saves remain blocked"
+    "Eight-hour cold process reaches ready title, commits complete valid company and resumes harvest; partial saves remain blocked",
+    "Current installed version on the real title, settings and feedback, independent of a saved historic report; existing drafts remain intact"
   ],
   "cold_start_desktop_sample": {
     "first_script_frame_ms": 528,
@@ -107,5 +108,8 @@
     "Genuinely full storage, missing roads and explicit pauses still limit harvesting; real transport capacity is finite.",
     "No physical Android boot, temperature, battery or sustained mobile FPS measurement.",
     "Some existing graphical tests retain ObjectDB shutdown warnings; software X11 cannot change VSync."
-  ]
+  ],
+  "version_display_headless_checks": 3,
+  "version_display_opengl_checks": 3,
+  "reported_version": "User reported 0.28.3; startup/settings had hardcoded 0.28.3 labels, so the installed build remains unconfirmed."
 }
