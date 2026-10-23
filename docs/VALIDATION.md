@@ -1,3 +1,10 @@
+## Externe Downloads Holzfäller und automatische Ernte · 0.28.9 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.9-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha289.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.9-alpha.1
 
 1348 Headless- und 304 OpenGL-Prüfungen mit unveränderten,
