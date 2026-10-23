@@ -53,6 +53,26 @@ static func collection_busy(state: Dictionary) -> int:
 static func factory_busy(state: Dictionary) -> int:
  return DeliveryChain.central_busy(state)+state.hub.shipments.size()-collection_busy(state)
 
+static func urgent_wood(state: Dictionary) -> Dictionary:
+ # A busy furniture/board loop must not consume the final truck while the
+ # forest has real output and the central wood shelf is empty. An existing
+ # wood shuttle fulfils this priority; its empty return owns the same truck.
+ var center=depot(state)
+ if center<0 or state.buildings[center].get("paused",false): return {}
+ if float(state.resources.wood)>=12+int(state.vehicle)*2 or storage_room(state,"wood")<0.25: return {}
+ for trip in state.hub.shipments:
+  if trip.target=="central" and trip.key=="wood": return {}
+ for source in pickup_sources(state):
+  if float(source.stock.get("wood",0))<0.25: continue
+  if source.has("only") and source.only!="wood": continue
+  if source.has("keys") and "wood" not in source.keys: continue
+  if LogisticsRoutes.road_route(state,int(source.index),center).size()>=2: return source
+ return {}
+
+static func collection_reserve(state: Dictionary) -> int:
+ if not urgent_wood(state).is_empty(): return 1
+ return 1 if collection_busy(state)==0 and work_pending(state) else 0
+
 static func work_pending(state: Dictionary) -> bool:
  var center=depot(state)
  if center<0 or state.buildings[center].get("paused",false): return false
@@ -69,6 +89,7 @@ static func work_pending(state: Dictionary) -> bool:
    var sources=construction_sources(state,job,key)
    if sources.is_empty() or sources[0].kind!="express": continue
    var source=sources[0]
+   if float(source.stock.get(key,0))+incoming(state,int(source.index),key)>=96: continue
    if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)-float(source.stock.get(key,0))-incoming(state,int(source.index),key)>0: return true
  return false
 
@@ -109,12 +130,19 @@ static func tick(state: Dictionary,delta: float) -> void:
   if trip.arrived and float(trip.age)>=float(trip.total): completed.append(trip)
  for trip in completed: state.hub.shipments.erase(trip)
 
+static func source_ids(group: Dictionary) -> Array:
+ # JSON serializers may sort dictionary keys. A saved round-robin cursor must
+ # refer to the same producer order before and after loading (2 precedes 10).
+ var ids=group.keys()
+ ids.sort_custom(func(a,b): return int(a)<int(b))
+ return ids
+
 static func pickup_sources(state: Dictionary) -> Array:
  var result=[]
- for id in state.hub.outputs:
+ for id in source_ids(state.hub.outputs):
   var index=int(id)
   if index>=0 and index<state.buildings.size(): result.append({"index":index,"stock":state.hub.outputs[id],"kind":state.buildings[index].kind})
- for id in state.stone.sites:
+ for id in source_ids(state.stone.sites):
   if state.buildings[int(id)].kind=="quarry":
    for order in state.hub.requests:
     if order.key=="rock" and float(order.remaining)>0:
@@ -124,10 +152,10 @@ static func pickup_sources(state: Dictionary) -> Array:
   for entry in [["station","wood"],["sawmill","boards"],["furniture","furniture"]]:
    var index=int(state.delivery.nodes.get(entry[0],-1))
    if index>=0: result.append({"index":index,"stock":state.delivery.buffers[entry[0]],"kind":entry[0],"only":entry[1]})
- for id in state.hub.inputs:
+ for id in source_ids(state.hub.inputs):
   if DeliveryChain.owns(state,int(id)):
    result.append({"index":int(id),"stock":state.hub.inputs[id],"kind":state.buildings[int(id)].kind})
- for id in state.stone.sites:
+ for id in source_ids(state.stone.sites):
   var index=int(id)
   if state.buildings[index].kind=="stoneworks": result.append({"index":index,"stock":state.stone.sites[id].stock,"kind":"stoneworks","keys":["stone","gravel"]})
  return result
@@ -173,17 +201,23 @@ static func dispatch(state: Dictionary) -> void:
  # collections are busy, without allocating an extra truck or holding a mutex.
  if factory_busy(state)==0 and (DeliveryChain.supply_pending(state) or FactorySupply.pending(state)): free=maxi(0,free-1)
  if free<=0: return
+ var urgent=urgent_wood(state)
+ if not urgent.is_empty():
+  var amount=minf(float(urgent.stock.wood),minf(12+int(state.vehicle)*2,storage_room(state,"wood")))
+  if launch(state,int(urgent.index),center,"wood",amount,"central",urgent.stock): free-=1
  # Long-distance replenishment has priority, but cannot consume pickup capacity.
  var express_budget=maxi(1,fleet_size(state)/2)
  for job in state.jobs:
   if not job.has("phases") or job.get("paused",false) or int(job.get("workers",0))<=0: continue
   for key in job.materials:
    if free<=0 or express_budget<=0: break
+   if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)<=0: continue
    var sources=construction_sources(state,job,key)
    if sources.is_empty() or sources[0].kind!="express": continue
    var source=sources[0]
    var needed=maxf(0,ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)-float(source.stock.get(key,0))-incoming(state,int(source.index),key))
-   var amount=minf(needed,minf(float(state.resources.get(key,0)),12+int(state.vehicle)*2))
+   var room=maxf(0,96-float(source.stock.get(key,0))-incoming(state,int(source.index),key))
+   var amount=minf(room,minf(needed,minf(float(state.resources.get(key,0)),12+int(state.vehicle)*2)))
    if amount>0 and launch(state,center,int(source.index),key,amount,"express",state.resources): free-=1; express_budget-=1
  var sources=pickup_sources(state)
  if sources.is_empty(): return
@@ -204,7 +238,10 @@ static func dispatch(state: Dictionary) -> void:
    if launch(state,int(source.index),center,key,amount,"central",source.stock):
     free-=1
     state.hub.key_cursors[source_id]=(key_cursor+key_offset+1)%keys.size()
- state.hub.cursor=(cursor+1)%sources.size()
+    state.hub.cursor=(cursor+offset+1)%sources.size()
+    # Move past the producer that actually received a truck, including when
+    # earlier candidates were empty. One assignment per source in this round.
+    break
 
 static func target_name(state: Dictionary,trip: Dictionary) -> String:
  return UXRules.factory_name(state,int(trip.destination)) if trip.target in ["central","express","factory"] else ""

@@ -2,7 +2,25 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.7-alpha.1 · Holzfäller und Abholung
+## Aktuell: 0.28.8-alpha.1 · Waldabholung und Startzeit
+
+Bei leerem zentralem Holzbestand darf die Abholflotte den Wald nicht mehr durch
+andere Lieferungen verdrängen. Stabile Quellenreihenfolge erhält die Disposition
+beim Speichern. Express-Zufuhren respektieren ihre gebuchten Entladeplätze.
+Der Hauptbildschirm zeigt wartende Waldabholung direkt auf der Holzkarte.
+
+Die Offline-Berechnung vermeidet doppelte Prüfungen. Isolierter Desktop-Vergleich
+für acht Stunden: **17,2 → 12,1 s** und **24,3 → 14,3 s**, vollständig identischer
+Firmenstand. Neue Dispositionsentscheidungen werden separat geprüft.
+Keine zugesicherte Handyzeit; echter Android-/Hitzetest steht aus.
+
+Android-Code **3003**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-recovery/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Ursachen, Änderungen und Grenzen](docs/RECOVERY-288.md).
+Der gesamte Masterumbau bleibt offen.
+
+## Vorher: 0.28.7-alpha.1 · Holzfäller und Abholung
 
 Ein voller Zentralbestand kann bereits beladene Abhol-LKW nicht mehr dauerhaft
 festhalten. Eine begrenzte Warenannahme erhält die Ladung; die zurückgekehrte

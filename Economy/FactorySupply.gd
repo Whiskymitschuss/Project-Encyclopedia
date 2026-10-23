@@ -97,8 +97,9 @@ static func pending(state: Dictionary) -> bool:
 
 static func dispatch(state: Dictionary,immediate: bool=false,preferred: int=-1) -> void:
  var free=CentralLogistics.available_trucks(state)
+ if free<=0 or state.hub.requests.is_empty(): return
  if not immediate:
-  if CentralLogistics.collection_busy(state)==0 and CentralLogistics.work_pending(state): free-=1
+  free-=CentralLogistics.collection_reserve(state)
   if DeliveryChain.central_busy(state)==0 and DeliveryChain.supply_pending(state): free-=1
  var center=CentralLogistics.depot(state)
  var orders=state.hub.requests

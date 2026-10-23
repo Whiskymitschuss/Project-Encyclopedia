@@ -131,6 +131,7 @@ static func route(state: Dictionary, source: int, target: int, cache: Dictionary
 static func requests(state: Dictionary, cache: Dictionary) -> Array:
  synchronize(state)
  var result=[]
+ if state.stone.sites.is_empty(): return result
  var depot=-1
  for i in state.buildings.size():
   if state.buildings[i].kind=="warehouse" and not state.buildings[i].get("paused",false): depot=i; break

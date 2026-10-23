@@ -1,0 +1,12 @@
+Version / Android / Handy:
+Grafikmodus / große Schrift:
+Abwesenheit:
+Zeit bis Logo / bis spielbereit:
+Minimieren während Aktualisierung:
+Holz insgesamt / Lager / lokal / im LKW:
+Status der Sammelstation:
+Zentrallager aktiv und erreichbar:
+LKW: reserviert / fährt / entlädt / zurück:
+Andere Werke und Baustellen werden versorgt:
+Wärme nach 5 / 15 / 30 Minuten:
+Beobachtung / Screenshot oder Video:

@@ -117,6 +117,7 @@ func run() -> void:
  s.workers=0
  check(ForestryFlow.describe(s,0).text.contains("Keine Holzfäller"),"Missing workers have a clear reason in the actual station status")
  s.workers=17
+ CentralLogistics.stock(s,0).wood=120
  s.buildings[0].position=[900,900]
  check(ForestryFlow.describe(s,0).text.contains("Straßenverbindung"),"A full disconnected collection point identifies the missing route")
  # A factory inventory above today's capacity is owned legacy stock, not trash.

@@ -2,6 +2,7 @@ class_name ConstructionRules
 extends RefCounted
 
 const HARDWARE = {"nuts":8.0,"screws":6.0}
+static var ingredient_cache={}
 
 static func materials(kind: String, level: int = 1, industrial: bool = false) -> Dictionary:
  var size = 1+floori((level-1)/5.0)
@@ -26,21 +27,33 @@ static func reserved_materials(state: Dictionary,key: String) -> float:
   if job.has("district_group"):
    if not job.get("paused",false): district+=remaining(job,key)
   else: ordinary+=remaining(job,key)
- return ordinary+minf(district,StoneIndustry.warehouse_capacity(state)*0.5)
+ return ordinary+(minf(district,StoneIndustry.warehouse_capacity(state)*0.5) if district>0 else 0.0)
 
-static func processing_reserve(state: Dictionary,key: String,available: float=-1) -> float:
+static func processing_reserve(state: Dictionary,key: String,available: float=-1,needed: float=-1) -> float:
  # Keep afforded bills safe, including a deliberately paused site, but never
  # embargo ingredients needed to manufacture a staffed site's missing products.
- var needed=reserved_materials(state,key)
+ if needed<0: needed=reserved_materials(state,key)
  for trip in state.construction_shipments:
   if trip.key==key and not trip.arrived: needed-=float(trip.amount)
  needed=maxf(0,needed)
+ if needed==0: return 0.0
  if not processing_required(state,key): return needed
  var stock=float(state.resources.get(key,0)) if available<0 else available
  var working=float({"wood":4,"boards":6,"dry":4,"furniture":2,"sawdust":5,"paper":2,"parts":1}.get(key,1))
  return minf(needed,maxf(0,stock-working))
 
 static func uses_input(product: String,key: String,visited: Array=[]) -> bool:
+ # Recipe dependencies are constant. Cache only complete root queries: caching
+ # a recursive branch with an incomplete visited set could hide another route.
+ if visited.is_empty():
+  var id=product+":"+key
+  if ingredient_cache.has(id): return ingredient_cache[id]
+  var result=uses_input_uncached(product,key,[])
+  ingredient_cache[id]=result
+  return result
+ return uses_input_uncached(product,key,visited)
+
+static func uses_input_uncached(product: String,key: String,visited: Array) -> bool:
  if product in visited: return false
  for recipe in Catalog.RECIPES.values():
   if not recipe.out.has(product): continue
@@ -54,6 +67,7 @@ static func processing_required(state: Dictionary,key: String) -> bool:
   if job.get("paused",false) or (job.has("phases") and int(job.get("workers",0))<=0): continue
   for product in job.get("materials",{}): demand[product]=float(demand.get(product,0))+remaining(job,product)
  for product in demand:
+  if float(demand[product])<=0.00001: continue
   if not uses_input(product,key): continue
   var available=0.0
   for source in sources(state,product): available+=float(source.stock.get(product,0))
@@ -239,6 +253,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
   material_keys.sort()
   for key in material_keys:
    var missing = maxf(0,phase_need(job,key)-incoming(state,id,key))
+   if missing<=0 or free<=0: continue
    var pickup_sources=CentralLogistics.construction_sources(state,job,key) if CentralLogistics.active(state) else sources(state,key)
    for source in pickup_sources:
     var amount = minf(missing,minf(float(source.stock.get(key,0)),float(4+int(state.vehicle)*2)))

@@ -62,6 +62,7 @@ static func supply_pending(state: Dictionary) -> bool:
   var index=int(data.nodes[target])
   if state.buildings[index].get("paused",false): continue
   var room=capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
+  if room<1 or float(state.resources.get(key,0))<1: continue
   var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key)
   if room>=1 and float(state.resources.get(key,0))-protected>=1 and LogisticsRoutes.road_route(state,center,index).size()>=2: return true
  return false
@@ -75,6 +76,7 @@ static func reserved(data: Dictionary, kind: String, key: String) -> float:
 static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonus: float = 1.0) -> Dictionary:
  var report = {"coins":0.0,"sold":0,"tickets":0,"sawdust":0.0,"produced":{},"orders":0,"flow":{}}
  var data = state.delivery
+ var centralized=CentralLogistics.active(state)
  var finished = []
  for shipment in data.shipments:
   FreightFlow.advance(shipment,delta)
@@ -98,8 +100,8 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    data.buffers[kind][key] += amount
  # Arrival precedes production and dispatch. A dispatch can never teleport goods
  # into a downstream recipe in the same simulation tick.
- var protected_wood = ConstructionRules.processing_reserve(state,"wood")
- var take = 0.0 if CentralLogistics.active(state) or state.buildings[int(data.nodes.station)].get("paused",false) else minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
+ var protected_wood = 0.0 if centralized else ConstructionRules.processing_reserve(state,"wood")
+ var take = 0.0 if centralized or state.buildings[int(data.nodes.station)].get("paused",false) else minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
  data.buffers.station.wood += take
  state.resources.wood -= take
  for kind in ["sawmill","furniture"]:
@@ -148,10 +150,10 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   else:
    order.left = maxf(0,float(order.left)-delta)
    if order.left<=0: order.late = true
- var free = CentralLogistics.available_trucks(state) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
+ var free = CentralLogistics.available_trucks(state) if centralized else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
  # Keep one pickup/replenishment in service when both duties need the central
  # fleet. Existing hub assignments already satisfy that share, including returns.
- if free>0 and CentralLogistics.active(state) and CentralLogistics.collection_busy(state)==0 and CentralLogistics.work_pending(state): free=maxi(0,free-1)
+ if free>0 and centralized: free=maxi(0,free-CentralLogistics.collection_reserve(state))
  # Start downstream, then rotate after successful assignments so permanently
  # stocked shop orders cannot starve a sawmill's next ingredient delivery.
  var order_of_links=[2,1,0]
@@ -162,12 +164,12 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   var target = LINKS[i][1]
   var key = LINKS[i][2]
   var route = routes.get(target,[])
-  if route.size()<2 and not CentralLogistics.active(state): continue
+  if route.size()<2 and not centralized: continue
   if free<=0 or state.buildings[int(data.nodes[target])].get("paused",false): continue
   var room = capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
-  var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key,float(data.buffers[source][key]))
+  var protected=0.0 if centralized else ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key,float(data.buffers[source][key]))
   var batch = mini(4+int(state.vehicle)*2,mini(floori(maxf(0,float(data.buffers[source][key])-protected)),floori(room)))
-  if CentralLogistics.active(state): batch=0
+  if centralized: batch=0
   var origin=-1
   var warehouse_load=false
   if batch<=0 and room>=1:
@@ -176,7 +178,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    batch=mini(4+int(state.vehicle)*2,mini(floori(available),floori(room)))
    if batch>0:
     for index in state.buildings.size():
-     if state.buildings[index].kind!=("central_depot" if CentralLogistics.active(state) else "warehouse") or state.buildings[index].get("paused",false): continue
+     if state.buildings[index].kind!=("central_depot" if centralized else "warehouse") or state.buildings[index].get("paused",false): continue
      var supply_route=LogisticsRoutes.road_route(state,index,int(data.nodes[target]))
      if supply_route.size()<2: continue
      route=supply_route
@@ -188,12 +190,12 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   var travel = maxf(2,LogisticsRoutes.length(route)/(12.0+int(state.vehicle)))
   # The truck remains assigned while unloading and driving back empty.
   var drive = travel
-  var handling=6.0 if CentralLogistics.active(state) else 2.0
+  var handling=6.0 if centralized else 2.0
   travel+=handling*2
   var total = travel+drive+2
   if warehouse_load: state.resources[key]-=batch
   else: data.buffers[source][key] -= batch
-  FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"origin":origin,"source":"central_depot" if CentralLogistics.active(state) and warehouse_load else "warehouse" if warehouse_load else source,"fleet":"central" if CentralLogistics.active(state) and warehouse_load else "general","target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":handling,"drive":drive,"unload":handling,"travel":travel,"total":total,"age":0.0,"arrived":false})
+  FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"origin":origin,"source":"central_depot" if centralized and warehouse_load else "warehouse" if warehouse_load else source,"fleet":"central" if centralized and warehouse_load else "general","target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":handling,"drive":drive,"unload":handling,"travel":travel,"total":total,"age":0.0,"arrived":false})
   FactorySupply.fulfilled(state,int(data.nodes[target]),key,batch)
   data.next_id += 1
   state.hub.supply_cursor=(cursor+offset+1)%3

@@ -1,0 +1,25 @@
+{
+  "baseline_commit": "248ac96030956bcb6584fcd75e3e861addf69e0e",
+  "seconds_simulated": 28800,
+  "scope": "Pure optimization patch applied to the 0.28.7 baseline; later priority/fairness/order fixes deliberately excluded from this identical-state comparison",
+  "patch_sha256": "caf80a3cd488da874d64d94e73a320f2cbb5fb1294677c065d743e4edbac4846",
+  "fixtures": {
+    "rollback028-from029": {
+      "before_ms": 17233,
+      "optimized_ms": 12116,
+      "complete_state_identical": true,
+      "state_sha256": "4d906dded859eb573113ff300ac6b31a7d8e42be5e0acc0037bcfe75050736c3",
+      "fixture_sha256": "665514e37b5ef7c87f2e948e5e80ec833b026ef5801744f83eb3c82429e6be15"
+    },
+    "forestry288-company": {
+      "before_ms": 24252,
+      "optimized_ms": 14265,
+      "complete_state_identical": true,
+      "state_sha256": "8339f82c4c39914eba937b780558288980d18c75b003337628563cf74fc5285b",
+      "fixture_sha256": "9dddec207c4487df35390af568fced752d5a23b679bf10b0f68a46fecf4bced8"
+    }
+  },
+  "desktop_only": true,
+  "android_device_tested": false,
+  "fixture_origin": "Generated test companies, no private player save"
+}

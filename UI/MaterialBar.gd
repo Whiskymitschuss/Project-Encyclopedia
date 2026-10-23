@@ -55,6 +55,14 @@ func refresh() -> void:
   var stock=UXRules.material_stock(Game.state,key)
   counters[key].text=compact_number(stock.stored)
   warehouse_counts[key].text="Lager "+compact_number(stock.warehouse)
+  if key=="wood" and int(Game.state.workers)>0 and float(Game.flow.get("harvest",0))<=0 and CentralLogistics.active(Game.state):
+   var waiting=false
+   var working=false
+   for index in Game.state.buildings.size():
+    if Game.state.buildings[index].kind!="station" or Game.state.buildings[index].get("paused",false): continue
+    if CentralLogistics.output_room(Game.state,index,"wood")>0.00001: working=true
+    else: waiting=true
+   if waiting and not working: warehouse_counts[key].text+=" · Abholung"
   var trend=Game.material_trend(key)
   captions[key].text=NAMES[key]+(" "+str(trend.arrow) if trend.ready else "")
   controls[key].tooltip_text="%s: %s im Lager · %s in Betrieben · %s unterwegs. Antippen für Quellen und Lieferungen." % [Catalog.RESOURCES[key],Catalog.number(stock.warehouse),Catalog.number(stock.local),Catalog.number(stock.transit)]

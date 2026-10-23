@@ -1,3 +1,27 @@
+## Waldabholung und Startzeit · 0.28.8-alpha.1
+
+20.869 numerische Prüfungen in 35 Headless-Suiten inklusive zweier natürlicher
+Progressionsläufe, Hauptwelt und Titelstart bestanden. 996 OpenGL-Prüfungen in
+26 unterschiedlichen Suiten bestanden. Keine Wiederholungen doppelt gezählt.
+[Prüfbericht und genaue Laufreihenfolge](alpha1-recovery/automated-checks.json).
+
+22 neue Wirtschaftsprüfungen untersuchen volle Sammelstation bei leerem
+Zentralbestand, konkurrierende Abholungen/Werkszutaten, Flottenlimit, Mengenbilanz,
+Baulieferungen und identische Speicherung. Die anfängliche Abweichung nach JSON
+wurde durch numerisch stabile Abholquellen behoben. Elf neue Grafikprüfungen
+zeigen wirkliche Ernte und Fracht in der Hauptwelt sowie die bedienbare Holzkarte.
+Zehn neue Kaltstartprüfungen verwenden die größere Firma mit acht Offline-Stunden.
+
+Der vergleichende Optimierungsversuch verwendet die reine Leistungsänderung ohne
+spätere Dispositionskorrekturen: 17.233 → 12.116 ms und 24.252 → 14.265 ms,
+beide vollständigen Firmenstände identisch. [Messdaten](alpha1-recovery/startup-benchmark.json).
+Der grafische Sammellauf meldete nach allen bestandenen Suiten einen Shell-EOF,
+weil das Laufskript währenddessen erweitert worden war. Das endgültige Skript
+wurde syntaktisch und mit einem frischen unveränderten Aufruf geprüft.
+
+Keine privaten Profile verwendet. Kein Android-Gerätelauf und keine Temperaturmessung.
+Der Gesamtumbau bleibt offen. [Änderungen und Grenzen](RECOVERY-288.md).
+
 ## Externe Downloads Holzfäller und Abholung · 0.28.7 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.7-alpha.1` vollständig per

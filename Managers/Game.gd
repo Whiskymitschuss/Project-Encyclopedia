@@ -372,8 +372,8 @@ func earn(amount: float) -> void:
  state.coins += amount
  state.earned += amount
 
-func reserve_for(key: String) -> float:
- var building_need = ConstructionRules.reserved_materials(state,key)
+func reserve_for(key: String,building_need: float=-1) -> float:
+ if building_need<0: building_need=ConstructionRules.reserved_materials(state,key)
  if building_need>0: return maxf(building_need,float(plan_materials().get(key,0)))
  var planned = float(plan_materials().get(key,0))
  if not state.plan.is_empty(): return maxf(planned,10.0 if key == "boards" else 5.0 if key == "dry" else 0.0)
@@ -381,7 +381,8 @@ func reserve_for(key: String) -> float:
  return {"boards":10.0,"dry":5.0,"furniture":4.0,"walls":2.0,"roofs":2.0,"parts":2.0,"paper":2.0}.get(key,0.0)
 
 func processing_reserve_for(key: String) -> float:
- return ConstructionRules.processing_reserve(state,key) if ConstructionRules.reserved_materials(state,key)>0 else reserve_for(key)
+ var needed=ConstructionRules.reserved_materials(state,key)
+ return ConstructionRules.processing_reserve(state,key,-1,needed) if needed>0 else reserve_for(key,needed)
 
 func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
@@ -444,14 +445,18 @@ func step(delta: float) -> void:
  var proposals = []
  var demand = {}
  var output_demand = {}
+ var centralized=CentralLogistics.active(state)
+ var production_capacity=capacity()
+ var production_bonus=1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5)
  for building_index in state.buildings.size():
   var b = state.buildings[building_index]
   if b.get("paused",false) or delivery_owns(building_index) or not Catalog.RECIPES.has(b.kind): continue
   var recipe = Catalog.RECIPES[b.kind]
-  var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")*delta
-  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles,"local_inputs":FactorySupply.managed(state,building_index)})
+  var cycles = float(recipe.speed)*int(b.level)*production_bonus*multiplier()*boost("processing")*delta
+  var local_inputs=FactorySupply.managed(state,building_index)
+  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles,"local_inputs":local_inputs})
   for key in recipe["in"]:
-   if not FactorySupply.managed(state,building_index): demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
+   if not local_inputs: demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out:
    output_demand[key] = float(output_demand.get(key,0))+float(recipe.out[key])*cycles
  # Allocate scarce shared inputs proportionally from one common snapshot.
@@ -459,7 +464,7 @@ func step(delta: float) -> void:
  var produced = {}
  var consumed = {}
  var processing_reserves={}
- for key in demand: processing_reserves[key]=processing_reserve_for(key)
+ for key in demand: processing_reserves[key]=processing_reserve_for(key) if float(state.resources[key])>0 else 0.0
  for proposal in proposals:
   var recipe = proposal.recipe
   var fraction = 1.0
@@ -467,8 +472,9 @@ func step(delta: float) -> void:
    if proposal.local_inputs: fraction=minf(fraction,float(FactorySupply.stock(state,int(proposal.index)).get(key,0))/maxf(float(recipe["in"][key])*float(proposal.cycles),0.0001))
    else: fraction = minf(fraction,maxf(0.0,float(state.resources[key])-float(processing_reserves[key]))/maxf(float(demand[key]),0.0001))
   for key in recipe.out:
+   if fraction<=0: break
    if key in recipe.get("overflow_sell",[]): continue
-   var room=CentralLogistics.output_room(state,int(proposal.index),key) if CentralLogistics.active(state) else capacity()-float(state.resources[key])
+   var room=CentralLogistics.output_room(state,int(proposal.index),key) if centralized else production_capacity-float(state.resources[key])
    fraction = minf(fraction,room/maxf(float(output_demand[key]),0.0001))
   var cycles = float(proposal.cycles)*maxf(0,fraction)
   for key in recipe["in"]:
@@ -478,7 +484,7 @@ func step(delta: float) -> void:
    else: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out:
    var amount=float(recipe.out[key])*cycles
-   if CentralLogistics.active(state) and key!="sawdust":
+   if centralized and key!="sawdust":
     var output=CentralLogistics.stock(state,int(proposal.index))
     output[key]=float(output.get(key,0))+amount
     Journey.add(state,key,amount)
@@ -1795,9 +1801,12 @@ func undo_road() -> bool:
 
 func allocate_group_crews() -> bool:
  var assigned=false
+ var free=free_builders()
+ if free<=0: return false
  for queued in state.jobs:
-  if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free_builders()>0:
+  if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free>0:
    queued.workers=1
+   free-=1
    assigned=true
  return assigned
 

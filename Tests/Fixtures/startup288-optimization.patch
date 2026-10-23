@@ -1,0 +1,302 @@
+--- a/Managers/Game.gd
++++ b/Managers/Game.gd
+@@ -372,8 +372,8 @@
+  state.coins += amount
+  state.earned += amount
+ 
+-func reserve_for(key: String) -> float:
+- var building_need = ConstructionRules.reserved_materials(state,key)
++func reserve_for(key: String,building_need: float=-1) -> float:
++ if building_need<0: building_need=ConstructionRules.reserved_materials(state,key)
+  if building_need>0: return maxf(building_need,float(plan_materials().get(key,0)))
+  var planned = float(plan_materials().get(key,0))
+  if not state.plan.is_empty(): return maxf(planned,10.0 if key == "boards" else 5.0 if key == "dry" else 0.0)
+@@ -381,7 +381,8 @@
+  return {"boards":10.0,"dry":5.0,"furniture":4.0,"walls":2.0,"roofs":2.0,"parts":2.0,"paper":2.0}.get(key,0.0)
+ 
+ func processing_reserve_for(key: String) -> float:
+- return ConstructionRules.processing_reserve(state,key) if ConstructionRules.reserved_materials(state,key)>0 else reserve_for(key)
++ var needed=ConstructionRules.reserved_materials(state,key)
++ return ConstructionRules.processing_reserve(state,key,-1,needed) if needed>0 else reserve_for(key,needed)
+ 
+ func production_status(index: int) -> String:
+  if index < 0 or index >= state.buildings.size(): return ""
+@@ -444,14 +445,18 @@
+  var proposals = []
+  var demand = {}
+  var output_demand = {}
++ var centralized=CentralLogistics.active(state)
++ var production_capacity=capacity()
++ var production_bonus=1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5)
+  for building_index in state.buildings.size():
+   var b = state.buildings[building_index]
+   if b.get("paused",false) or delivery_owns(building_index) or not Catalog.RECIPES.has(b.kind): continue
+   var recipe = Catalog.RECIPES[b.kind]
+-  var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")*delta
+-  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles,"local_inputs":FactorySupply.managed(state,building_index)})
++  var cycles = float(recipe.speed)*int(b.level)*production_bonus*multiplier()*boost("processing")*delta
++  var local_inputs=FactorySupply.managed(state,building_index)
++  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles,"local_inputs":local_inputs})
+   for key in recipe["in"]:
+-   if not FactorySupply.managed(state,building_index): demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
++   if not local_inputs: demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
+   for key in recipe.out:
+    output_demand[key] = float(output_demand.get(key,0))+float(recipe.out[key])*cycles
+  # Allocate scarce shared inputs proportionally from one common snapshot.
+@@ -459,7 +464,7 @@
+  var produced = {}
+  var consumed = {}
+  var processing_reserves={}
+- for key in demand: processing_reserves[key]=processing_reserve_for(key)
++ for key in demand: processing_reserves[key]=processing_reserve_for(key) if float(state.resources[key])>0 else 0.0
+  for proposal in proposals:
+   var recipe = proposal.recipe
+   var fraction = 1.0
+@@ -467,8 +472,9 @@
+    if proposal.local_inputs: fraction=minf(fraction,float(FactorySupply.stock(state,int(proposal.index)).get(key,0))/maxf(float(recipe["in"][key])*float(proposal.cycles),0.0001))
+    else: fraction = minf(fraction,maxf(0.0,float(state.resources[key])-float(processing_reserves[key]))/maxf(float(demand[key]),0.0001))
+   for key in recipe.out:
++   if fraction<=0: break
+    if key in recipe.get("overflow_sell",[]): continue
+-   var room=CentralLogistics.output_room(state,int(proposal.index),key) if CentralLogistics.active(state) else capacity()-float(state.resources[key])
++   var room=CentralLogistics.output_room(state,int(proposal.index),key) if centralized else production_capacity-float(state.resources[key])
+    fraction = minf(fraction,room/maxf(float(output_demand[key]),0.0001))
+   var cycles = float(proposal.cycles)*maxf(0,fraction)
+   for key in recipe["in"]:
+@@ -478,7 +484,7 @@
+    else: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
+   for key in recipe.out:
+    var amount=float(recipe.out[key])*cycles
+-   if CentralLogistics.active(state) and key!="sawdust":
++   if centralized and key!="sawdust":
+     var output=CentralLogistics.stock(state,int(proposal.index))
+     output[key]=float(output.get(key,0))+amount
+     Journey.add(state,key,amount)
+@@ -1795,9 +1801,12 @@
+ 
+ func allocate_group_crews() -> bool:
+  var assigned=false
++ var free=free_builders()
++ if free<=0: return false
+  for queued in state.jobs:
+-  if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free_builders()>0:
++  if queued.has("phases") and queued.get("auto_crew",false) and not queued.get("paused",false) and int(queued.workers)==0 and free>0:
+    queued.workers=1
++   free-=1
+    assigned=true
+  return assigned
+ 
+--- a/Economy/ForestryFlow.gd
++++ b/Economy/ForestryFlow.gd
+@@ -6,23 +6,24 @@
+ static func harvest(state: Dictionary,potential: float,delta: float) -> Dictionary:
+  var stations=[]
+  var room=0.0
++ var centralized=CentralLogistics.active(state)
+  for index in state.buildings.size():
+   var b=state.buildings[index]
+   if b.kind!="station" or b.get("paused",false): continue
+   var available=float(b.level)*5*maxf(0,delta)
+-  if CentralLogistics.active(state): available=minf(available,CentralLogistics.output_room(state,index,"wood"))
++  if centralized: available=minf(available,CentralLogistics.output_room(state,index,"wood"))
+   stations.append({"index":index,"room":available})
+   room+=available
+  var amount=minf(maxf(0,potential),room)
+- if not CentralLogistics.active(state): amount=minf(amount,maxf(0,CentralLogistics.capacity(state)-float(state.resources.wood)))
++ if not centralized: amount=minf(amount,maxf(0,CentralLogistics.capacity(state)-float(state.resources.wood)))
+  var sources={}
+  for station in stations:
+   var share=amount*float(station.room)/maxf(room,0.000001)
+-  if CentralLogistics.active(state) and share>0:
++  if centralized and share>0:
+    var output=CentralLogistics.stock(state,int(station.index))
+    output.wood=float(output.get("wood",0))+share
+   sources[str(station.index)]=share
+- if not CentralLogistics.active(state): state.resources.wood+=amount
++ if not centralized: state.resources.wood+=amount
+  return {"amount":amount,"sources":sources}
+ 
+ static func describe(state: Dictionary,index: int,flow: Dictionary={}) -> Dictionary:
+--- a/Economy/ConstructionRules.gd
++++ b/Economy/ConstructionRules.gd
+@@ -2,6 +2,7 @@
+ extends RefCounted
+ 
+ const HARDWARE = {"nuts":8.0,"screws":6.0}
++static var ingredient_cache={}
+ 
+ static func materials(kind: String, level: int = 1, industrial: bool = false) -> Dictionary:
+  var size = 1+floori((level-1)/5.0)
+@@ -26,21 +27,33 @@
+   if job.has("district_group"):
+    if not job.get("paused",false): district+=remaining(job,key)
+   else: ordinary+=remaining(job,key)
+- return ordinary+minf(district,StoneIndustry.warehouse_capacity(state)*0.5)
+-
+-static func processing_reserve(state: Dictionary,key: String,available: float=-1) -> float:
++ return ordinary+(minf(district,StoneIndustry.warehouse_capacity(state)*0.5) if district>0 else 0.0)
++
++static func processing_reserve(state: Dictionary,key: String,available: float=-1,needed: float=-1) -> float:
+  # Keep afforded bills safe, including a deliberately paused site, but never
+  # embargo ingredients needed to manufacture a staffed site's missing products.
+- var needed=reserved_materials(state,key)
++ if needed<0: needed=reserved_materials(state,key)
+  for trip in state.construction_shipments:
+   if trip.key==key and not trip.arrived: needed-=float(trip.amount)
+  needed=maxf(0,needed)
++ if needed==0: return 0.0
+  if not processing_required(state,key): return needed
+  var stock=float(state.resources.get(key,0)) if available<0 else available
+  var working=float({"wood":4,"boards":6,"dry":4,"furniture":2,"sawdust":5,"paper":2,"parts":1}.get(key,1))
+  return minf(needed,maxf(0,stock-working))
+ 
+ static func uses_input(product: String,key: String,visited: Array=[]) -> bool:
++ # Recipe dependencies are constant. Cache only complete root queries: caching
++ # a recursive branch with an incomplete visited set could hide another route.
++ if visited.is_empty():
++  var id=product+":"+key
++  if ingredient_cache.has(id): return ingredient_cache[id]
++  var result=uses_input_uncached(product,key,[])
++  ingredient_cache[id]=result
++  return result
++ return uses_input_uncached(product,key,visited)
++
++static func uses_input_uncached(product: String,key: String,visited: Array) -> bool:
+  if product in visited: return false
+  for recipe in Catalog.RECIPES.values():
+   if not recipe.out.has(product): continue
+@@ -54,6 +67,7 @@
+   if job.get("paused",false) or (job.has("phases") and int(job.get("workers",0))<=0): continue
+   for product in job.get("materials",{}): demand[product]=float(demand.get(product,0))+remaining(job,product)
+  for product in demand:
++  if float(demand[product])<=0.00001: continue
+   if not uses_input(product,key): continue
+   var available=0.0
+   for source in sources(state,product): available+=float(source.stock.get(product,0))
+@@ -239,6 +253,7 @@
+   material_keys.sort()
+   for key in material_keys:
+    var missing = maxf(0,phase_need(job,key)-incoming(state,id,key))
++   if missing<=0 or free<=0: continue
+    var pickup_sources=CentralLogistics.construction_sources(state,job,key) if CentralLogistics.active(state) else sources(state,key)
+    for source in pickup_sources:
+     var amount = minf(missing,minf(float(source.stock.get(key,0)),float(4+int(state.vehicle)*2)))
+--- a/Economy/DeliveryChain.gd
++++ b/Economy/DeliveryChain.gd
+@@ -62,6 +62,7 @@
+   var index=int(data.nodes[target])
+   if state.buildings[index].get("paused",false): continue
+   var room=capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
++  if room<1 or float(state.resources.get(key,0))<1: continue
+   var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key)
+   if room>=1 and float(state.resources.get(key,0))-protected>=1 and LogisticsRoutes.road_route(state,center,index).size()>=2: return true
+  return false
+@@ -75,6 +76,7 @@
+ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonus: float = 1.0) -> Dictionary:
+  var report = {"coins":0.0,"sold":0,"tickets":0,"sawdust":0.0,"produced":{},"orders":0,"flow":{}}
+  var data = state.delivery
++ var centralized=CentralLogistics.active(state)
+  var finished = []
+  for shipment in data.shipments:
+   FreightFlow.advance(shipment,delta)
+@@ -98,8 +100,8 @@
+    data.buffers[kind][key] += amount
+  # Arrival precedes production and dispatch. A dispatch can never teleport goods
+  # into a downstream recipe in the same simulation tick.
+- var protected_wood = ConstructionRules.processing_reserve(state,"wood")
+- var take = 0.0 if CentralLogistics.active(state) or state.buildings[int(data.nodes.station)].get("paused",false) else minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
++ var protected_wood = 0.0 if centralized else ConstructionRules.processing_reserve(state,"wood")
++ var take = 0.0 if centralized or state.buildings[int(data.nodes.station)].get("paused",false) else minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
+  data.buffers.station.wood += take
+  state.resources.wood -= take
+  for kind in ["sawmill","furniture"]:
+@@ -148,10 +150,10 @@
+   else:
+    order.left = maxf(0,float(order.left)-delta)
+    if order.left<=0: order.late = true
+- var free = CentralLogistics.available_trucks(state) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
++ var free = CentralLogistics.available_trucks(state) if centralized else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
+  # Keep one pickup/replenishment in service when both duties need the central
+  # fleet. Existing hub assignments already satisfy that share, including returns.
+- if free>0 and CentralLogistics.active(state) and CentralLogistics.collection_busy(state)==0 and CentralLogistics.work_pending(state): free=maxi(0,free-1)
++ if free>0 and centralized and CentralLogistics.collection_busy(state)==0 and CentralLogistics.work_pending(state): free=maxi(0,free-1)
+  # Start downstream, then rotate after successful assignments so permanently
+  # stocked shop orders cannot starve a sawmill's next ingredient delivery.
+  var order_of_links=[2,1,0]
+@@ -162,12 +164,12 @@
+   var target = LINKS[i][1]
+   var key = LINKS[i][2]
+   var route = routes.get(target,[])
+-  if route.size()<2 and not CentralLogistics.active(state): continue
++  if route.size()<2 and not centralized: continue
+   if free<=0 or state.buildings[int(data.nodes[target])].get("paused",false): continue
+   var room = capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
+-  var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key,float(data.buffers[source][key]))
++  var protected=0.0 if centralized else ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key,float(data.buffers[source][key]))
+   var batch = mini(4+int(state.vehicle)*2,mini(floori(maxf(0,float(data.buffers[source][key])-protected)),floori(room)))
+-  if CentralLogistics.active(state): batch=0
++  if centralized: batch=0
+   var origin=-1
+   var warehouse_load=false
+   if batch<=0 and room>=1:
+@@ -176,7 +178,7 @@
+    batch=mini(4+int(state.vehicle)*2,mini(floori(available),floori(room)))
+    if batch>0:
+     for index in state.buildings.size():
+-     if state.buildings[index].kind!=("central_depot" if CentralLogistics.active(state) else "warehouse") or state.buildings[index].get("paused",false): continue
++     if state.buildings[index].kind!=("central_depot" if centralized else "warehouse") or state.buildings[index].get("paused",false): continue
+      var supply_route=LogisticsRoutes.road_route(state,index,int(data.nodes[target]))
+      if supply_route.size()<2: continue
+      route=supply_route
+@@ -188,12 +190,12 @@
+   var travel = maxf(2,LogisticsRoutes.length(route)/(12.0+int(state.vehicle)))
+   # The truck remains assigned while unloading and driving back empty.
+   var drive = travel
+-  var handling=6.0 if CentralLogistics.active(state) else 2.0
++  var handling=6.0 if centralized else 2.0
+   travel+=handling*2
+   var total = travel+drive+2
+   if warehouse_load: state.resources[key]-=batch
+   else: data.buffers[source][key] -= batch
+-  FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"origin":origin,"source":"central_depot" if CentralLogistics.active(state) and warehouse_load else "warehouse" if warehouse_load else source,"fleet":"central" if CentralLogistics.active(state) and warehouse_load else "general","target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":handling,"drive":drive,"unload":handling,"travel":travel,"total":total,"age":0.0,"arrived":false})
++  FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"origin":origin,"source":"central_depot" if centralized and warehouse_load else "warehouse" if warehouse_load else source,"fleet":"central" if centralized and warehouse_load else "general","target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":handling,"drive":drive,"unload":handling,"travel":travel,"total":total,"age":0.0,"arrived":false})
+   FactorySupply.fulfilled(state,int(data.nodes[target]),key,batch)
+   data.next_id += 1
+   state.hub.supply_cursor=(cursor+offset+1)%3
+--- a/Economy/CentralLogistics.gd
++++ b/Economy/CentralLogistics.gd
+@@ -179,6 +179,7 @@
+   if not job.has("phases") or job.get("paused",false) or int(job.get("workers",0))<=0: continue
+   for key in job.materials:
+    if free<=0 or express_budget<=0: break
++   if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)<=0: continue
+    var sources=construction_sources(state,job,key)
+    if sources.is_empty() or sources[0].kind!="express": continue
+    var source=sources[0]
+--- a/Economy/Journey.gd
++++ b/Economy/Journey.gd
+@@ -119,12 +119,13 @@
+ 
+ static func refresh(state: Dictionary) -> void:
+  # Latch achievements at the time they happen, even before opening the UI.
++ var hall=townhall_level(state)
+  for c in CHAPTERS.size():
+   for i in CHAPTERS[c].goals.size():
+    var goal=CHAPTERS[c].goals[i]
+    var id=goal_id(c,i)
+    if not state.journey.reached.has(id) and value(state,goal[0])+0.00001>=float(goal[1]): state.journey.reached[id]=true
+-  if townhall_level(state)>=c+1: state.journey.reached[hall_id(c)]=true
++  if hall>=c+1: state.journey.reached[hall_id(c)]=true
+ 
+ static func hall_id(chapter: int) -> String:
+  return str(CHAPTERS[chapter].id)+":hall"
+--- a/Economy/StoneIndustry.gd
++++ b/Economy/StoneIndustry.gd
+@@ -131,6 +131,7 @@
+ static func requests(state: Dictionary, cache: Dictionary) -> Array:
+  synchronize(state)
+  var result=[]
++ if state.stone.sites.is_empty(): return result
+  var depot=-1
+  for i in state.buildings.size():
+   if state.buildings[i].kind=="warehouse" and not state.buildings[i].get("paused",false): depot=i; break

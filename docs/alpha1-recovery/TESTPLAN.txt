@@ -1,0 +1,12 @@
+1. Als Update installieren; Firma und Version unter Mehr prüfen.
+2. Bei Holz „Lager 0“ die Holzkarte antippen. Volle Sammelstation und Status ansehen.
+3. Bei erreichbarer aktiver Zentrale muss eine weiß-blaue Abholung disponiert werden,
+   auch wenn Bretter, Möbel und angeforderte Werkszutaten parallel unterwegs sind.
+4. Beobachten: Abfahrt, Anfahrt, Entladung, zentraler Holzbestand, leere Rückfahrt.
+   Das Team muss bei freiem Sammelplatz neue echte Holzmenge liefern.
+5. Mehrere Betriebe und Baustellen mindestens 30 Minuten betreiben. Kein dauerhafter
+   Holzstillstand allein durch die anderen Lieferungen. Volle Lager/Pausen unterscheiden.
+6. Speichern, App neu starten: Vorräte, LKW und Reihenfolge bleiben erhalten.
+7. Spiel nach längerer Abwesenheit öffnen: Zeit bis Logo und bis spielbereit getrennt
+   messen. Prozentfortschritt muss arbeiten. Währenddessen minimieren und zurückkehren.
+8. S26 Ultra/S24 FE: Version, Grafikmodus, Abwesenheit, Startzeiten und Wärme notieren.

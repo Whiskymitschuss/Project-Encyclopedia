@@ -119,12 +119,13 @@ static func goal_id(chapter: int,index: int) -> String:
 
 static func refresh(state: Dictionary) -> void:
  # Latch achievements at the time they happen, even before opening the UI.
+ var hall=townhall_level(state)
  for c in CHAPTERS.size():
   for i in CHAPTERS[c].goals.size():
    var goal=CHAPTERS[c].goals[i]
    var id=goal_id(c,i)
    if not state.journey.reached.has(id) and value(state,goal[0])+0.00001>=float(goal[1]): state.journey.reached[id]=true
-  if townhall_level(state)>=c+1: state.journey.reached[hall_id(c)]=true
+  if hall>=c+1: state.journey.reached[hall_id(c)]=true
 
 static func hall_id(chapter: int) -> String:
  return str(CHAPTERS[chapter].id)+":hall"

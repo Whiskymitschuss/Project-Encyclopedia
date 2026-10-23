@@ -1,0 +1,15 @@
+TIMBER LOOT TYCOON · 0.28.8-alpha.1 (3003)
+
+Diese Fassung korrigiert die Verdrängung der Waldabholung durch andere Lieferungen,
+stabilisiert die Abholreihenfolge beim Speichern und verkürzt die Offline-Berechnung.
+
+Timber-Loot-Tycoon-v0.28.8-alpha.1.apk als Update über die vorhandene Alpha installieren.
+Nicht deinstallieren und keine App-Daten löschen. Paket und Testzertifikat bleiben gleich.
+
+Bei leeren zentralen Holzbeständen erhält die erreichbare Holzabholung einen eigenen
+freien Platz in der bestehenden Zentrallager-Flotte. Waren werden erst beim tatsächlichen
+Entladen gutgeschrieben. Holz antippen zeigt Quelle, Zustand und tatsächliche Fracht.
+
+Desktop-Vergleich für acht Offline-Stunden: 17,2 → 12,1 bzw. 24,3 → 14,3 Sekunden,
+vollständig identischer Firmenstand im isolierten Optimierungsvergleich. Die Handyzeit
+muss am Gerät geprüft werden. Keine Behauptung, dass der gesamte Weltumbau fertig ist.

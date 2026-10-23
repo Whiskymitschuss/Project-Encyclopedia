@@ -6,23 +6,24 @@ extends RefCounted
 static func harvest(state: Dictionary,potential: float,delta: float) -> Dictionary:
  var stations=[]
  var room=0.0
+ var centralized=CentralLogistics.active(state)
  for index in state.buildings.size():
   var b=state.buildings[index]
   if b.kind!="station" or b.get("paused",false): continue
   var available=float(b.level)*5*maxf(0,delta)
-  if CentralLogistics.active(state): available=minf(available,CentralLogistics.output_room(state,index,"wood"))
+  if centralized: available=minf(available,CentralLogistics.output_room(state,index,"wood"))
   stations.append({"index":index,"room":available})
   room+=available
  var amount=minf(maxf(0,potential),room)
- if not CentralLogistics.active(state): amount=minf(amount,maxf(0,CentralLogistics.capacity(state)-float(state.resources.wood)))
+ if not centralized: amount=minf(amount,maxf(0,CentralLogistics.capacity(state)-float(state.resources.wood)))
  var sources={}
  for station in stations:
   var share=amount*float(station.room)/maxf(room,0.000001)
-  if CentralLogistics.active(state) and share>0:
+  if centralized and share>0:
    var output=CentralLogistics.stock(state,int(station.index))
    output.wood=float(output.get("wood",0))+share
   sources[str(station.index)]=share
- if not CentralLogistics.active(state): state.resources.wood+=amount
+ if not centralized: state.resources.wood+=amount
  return {"amount":amount,"sources":sources}
 
 static func describe(state: Dictionary,index: int,flow: Dictionary={}) -> Dictionary:
