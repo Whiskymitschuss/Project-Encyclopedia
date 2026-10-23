@@ -54,7 +54,7 @@ func refresh() -> void:
  for key in counters:
   var stock=UXRules.material_stock(Game.state,key)
   counters[key].text=compact_number(stock.stored)
-  warehouse_counts[key].text="Lager "+compact_number(stock.warehouse)
+  warehouse_counts[key].text="Lager "+compact_number(float(stock.warehouse)+float(stock.regional)+float(stock.receiving))
   if key=="wood" and int(Game.state.workers)>0 and float(Game.flow.get("harvest",0))<=0 and CentralLogistics.active(Game.state):
    var waiting=false
    var working=false
@@ -65,7 +65,7 @@ func refresh() -> void:
    if waiting and not working: warehouse_counts[key].text+=" · Abholung"
   var trend=Game.material_trend(key)
   captions[key].text=NAMES[key]+(" "+str(trend.arrow) if trend.ready else "")
-  controls[key].tooltip_text="%s: %s im Lager · %s in Betrieben · %s unterwegs. Antippen für Quellen und Lieferungen." % [Catalog.RESOURCES[key],Catalog.number(stock.warehouse),Catalog.number(stock.local),Catalog.number(stock.transit)]
+  controls[key].tooltip_text="%s: %s Zentrale · %s Abhol-Express · %s Betriebe · %s unterwegs. Antippen für Quellen und Lieferungen." % [Catalog.RESOURCES[key],Catalog.number(float(stock.warehouse)+float(stock.receiving)),Catalog.number(stock.regional),Catalog.number(float(stock.local)-float(stock.regional)-float(stock.receiving)),Catalog.number(stock.transit)]
 
 func compact_number(value: float) -> String:
  if value<10000: return str(int(value))

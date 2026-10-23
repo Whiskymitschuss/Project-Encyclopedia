@@ -84,6 +84,9 @@ func _ready() -> void:
    Models.bake(variant)
    variant.hide()
    payload_variants[key_name]=variant
+  var stone=CargoModels.create(payload,"stone")
+  stone.hide()
+  payload_variants.stone=stone
  Models.bake(forks)
  Models.bake(chassis)
  payload.hide()
@@ -117,12 +120,13 @@ func _process(delta: float) -> void:
      var rack=points[1]
      if get_parent().has_node("Processing"):
       rack=Vector3(6.3,0.6,5.5) if cycle_loading else Vector3(-6.3,0.6,-4.5)
+     elif str(get_parent().get_meta("kind",""))=="stoneworks": rack=Vector3(6.6,0.6,7) if cycle_loading else Vector3(-6,0.6,-6)
      cycle_route=[points[0],rack if cycle_loading else bay,bay if cycle_loading else rack,points[0],points[0]]
      cycle_legs=[]
      if get_parent().has_node("Processing"):
       for leg in 4: cycle_legs.append(YardRoutes.route(cycle_route[leg],cycle_route[leg+1]))
      cycle_key=str(trip.key)
-     if cycle_key not in ["wood","boards","furniture"]: cycle_key="crates"
+     if cycle_key not in ["wood","boards","furniture","stone"]: cycle_key="crates"
     break
  if active: cycle_running=true
  if not cycle_running: return

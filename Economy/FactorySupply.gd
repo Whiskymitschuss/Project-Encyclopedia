@@ -46,6 +46,11 @@ static func blocked(state: Dictionary,index: int) -> String:
  if requirements(state,index).is_empty(): return "Dieser Betrieb benötigt keine Warenlieferung"
  var center=CentralLogistics.depot(state)
  if center<0: return "Zentrallager bauen"
+ if LogisticsDispatch.enabled(state):
+  if state.buildings[index].get("paused",false) or (DeliveryChain.owns(state,index) and state.delivery.paused): return "Betrieb pausiert · zuerst fortsetzen"
+  for depot in DepotNetwork.depots(state):
+   if LogisticsRoutes.road_route(state,int(depot),index).size()>=2: return ""
+  return "Straßenanschluss oder aktives Lager fehlt"
  if state.buildings[center].get("paused",false): return "Zentrallager pausiert"
  if state.buildings[index].get("paused",false) or (DeliveryChain.owns(state,index) and state.delivery.paused): return "Betrieb pausiert · zuerst fortsetzen"
  if LogisticsRoutes.road_route(state,center,index).size()<2: return "Straßenverbindung zum Zentrallager fehlt"
@@ -72,9 +77,18 @@ static func request(state: Dictionary,index: int) -> String:
  return status(state,index)
 
 static func maintain(state: Dictionary) -> void:
+ if LogisticsDispatch.enabled(state):
+  # Normal replenishment is derived by the shared dispatcher. Do not rebuild
+  # road queries and full-capacity orders for every plant on every offline tick.
+  for order in state.hub.requests:
+   var index=int(order.index)
+   if index<0 or index>=state.buildings.size(): order.remaining=0; continue
+   order.remaining=minf(float(order.remaining),maxf(0,capacity(state,index)-float(stock(state,index).get(order.key,0))-incoming(state,index,order.key)))
+  state.hub.requests=state.hub.requests.filter(func(order): return requirements(state,int(order.index)).has(order.key) and float(order.remaining)>0.00001)
+  return
  # Continue the requested supply service without converting untouched legacy
  # factories or preloading their inputs by teleportation during migration.
- for id in state.hub.inputs:
+ for id in CentralLogistics.source_ids(state.hub.inputs):
   var index=int(id)
   if index<0 or index>=state.buildings.size() or DeliveryChain.owns(state,index) or not blocked(state,index).is_empty(): continue
   for key in requirements(state,index):
@@ -96,6 +110,9 @@ static func pending(state: Dictionary) -> bool:
  return false
 
 static func dispatch(state: Dictionary,immediate: bool=false,preferred: int=-1) -> void:
+ if LogisticsDispatch.enabled(state):
+  if immediate: LogisticsDispatch.request_supply(state,preferred)
+  return
  var free=CentralLogistics.available_trucks(state)
  if free<=0 or state.hub.requests.is_empty(): return
  if not immediate:
@@ -140,16 +157,21 @@ static func status(state: Dictionary,index: int) -> String:
   var inbound=incoming(state,index,key)
   var waiting=queued(state,index,key)
   if inbound>0: text+=" · %s im LKW" % Catalog.number(inbound)
+  if LogisticsDispatch.enabled(state) and waiting<=0 and float(stock(state,index).get(key,0))+inbound<maxf(float(requirements(state,index)[key])*2,capacity(state,index)*0.5):
+   text+=" · automatischer Nachschub"
+   if DepotNetwork.supply_sources(state,LogisticsRoutes.building_position(state,index),key).is_empty(): text+=" (Lagerbestand fehlt/reserviert)"
+   elif CentralLogistics.available_trucks(state)<=0: text+=" (wartet auf freien LKW)"
   if waiting>0:
    text+=" · %s angefordert" % Catalog.number(waiting)
    var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key)
-   if float(state.resources.get(key,0))<=protected: text+=" (im Zentrallager fehlend/reserviert)"
+   if LogisticsDispatch.enabled(state) and DepotNetwork.supply_sources(state,LogisticsRoutes.building_position(state,index),key).is_empty(): text+=" (im Lager fehlend/reserviert)"
+   elif not LogisticsDispatch.enabled(state) and float(state.resources.get(key,0))<=protected: text+=" (im Zentrallager fehlend/reserviert)"
    elif CentralLogistics.available_trucks(state)<=0: text+=" (wartet auf freien LKW)"
    else: text+=" (Disposition läuft)"
   parts.append(text)
  return "\n".join(parts)
 
-static func busy_inputs(state: Dictionary) -> bool:
+static func busy_inputs(state: Dictionary,indices: Array=[]) -> bool:
  for trip in state.hub.shipments:
-  if trip.target=="factory": return true
+  if trip.target=="factory" and (indices.is_empty() or indices.any(func(index): return int(index)==int(trip.destination))): return true
  return false

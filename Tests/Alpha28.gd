@@ -78,7 +78,11 @@ func run() -> void:
  var report=AlphaReport.build(private_state,{"os":"TestOS","model":"Testgerät","unique_id":"DO_NOT_INCLUDE","save_path":"DO_NOT_INCLUDE"},"current")
  check(not report.contains("DO_NOT_INCLUDE") and not report.contains("last_seen") and not report.contains("resources"),"Diagnostic allowlist cannot attach raw save, personal fields or unique identifiers")
  scene.hud.back()
- check(not scene.hud.overlay.visible,"Back closes the current menu")
+ check(scene.hud.overlay.visible,"Back returns through nested menus before closing the overlay")
+ for i in 13:
+  if not scene.hud.overlay.visible: break
+  scene.hud.back()
+ check(not scene.hud.overlay.visible,"Repeated Back closes the complete menu history")
  game.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
  check(scene.hud.current=="game_menu" and scene.hud.overlay.visible,"Android back opens the game menu instead of terminating")
  scene.hud.close_menu()

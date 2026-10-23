@@ -34,6 +34,10 @@ static func create(kind: String, level: int) -> Node3D:
   Models.box(root,Vector3(3.7,0.15,4.7),Vector3(0,1.5,3),Color("ab9b72"))
   for i in 6: Models.cylinder(stock,0.85,1.2,Vector3((i%2)*1.1-0.5,1+(i/2)*0.25,(i%3)*0.9-0.9),Color("b9ae90"),0.4)
  else:
+  var handler=load("res://Components/YardHandling.gd").new()
+  handler.name="YardHandling"
+  handler.points=[Vector3(-7,0.6,7),Vector3(6.6,0.6,7),Vector3(7,0.6,10),Vector3(-7,0.6,7),Vector3(-7,0.6,7)]
+  root.add_child(handler)
   Models.box(root,Vector3(5.5,3.3,5),Vector3(-1,2.2,-3),Color("e5954d"))
   Models.box(root,Vector3(4.7,0.4,4.3),Vector3(-1,4,-3),Color("f8d077"))
   Models.cylinder(root,2,1.8,Vector3(-1,4.8,-3),Color("62898e"),2.7)

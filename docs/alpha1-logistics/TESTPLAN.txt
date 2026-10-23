@@ -1,0 +1,19 @@
+1. Version unter Mehr → Alpha-Testen prüfen: 0.28.10-alpha.1.
+2. Mit fertigem Zentrallager fünf Minuten ohne manuelle Warenanforderungen spielen.
+3. Logistik → Betriebe: Eingang, Fertigwaren und tatsächliche Abholungen vergleichen.
+4. Sägewerk, Trocknung, Möbel, Fertighauswerk, Tischlerei, Papier, Pellets, Design
+   sowie Steinbruch und Steinwerk beobachten, soweit in deiner Firma gebaut.
+5. Nahe Fabrikprodukte müssen den Abhol-Express tatsächlich erreichen können.
+6. Baustellen bekommen Material vom geeigneten Lager; keine Fabrik überspringt es.
+7. Eine kleine Baustelle neben einem großen Auftrag bekommt ebenfalls Lieferungen.
+8. Bauteam startet an der Arbeiterhütte im Sprinter. Kein Baufortschritt vor Ankunft.
+9. Mitarbeiter tragen Werkzeug, bearbeiten angeliefertes Material und nutzen Leitern.
+10. Nach Fertigstellung muss ein echter Rücktransport die Mitarbeiter freigeben.
+11. Bei Stillstand den Wortlaut des Wartegrunds notieren. Volle Gesamtlager brauchen
+    Verarbeitung, Verkauf oder Ausbau; fehlende Kleinteile einen bestätigten Einkauf.
+12. Speichern, beenden, wieder öffnen: laufende Waren- und Mitarbeiterfahrten erhalten.
+13. Logistik → Bestände → Zurück führt zur vorigen Ansicht. Menüsuche findet Forschung,
+    Hilfe und die übrigen Funktionen. Kleine Schrift und große Schrift ausprobieren.
+14. Startdauer und Wärme nach fünf Minuten am Gerät getrennt berichten.
+
+Keine App-Daten löschen und nicht neu anfangen, um einen Fehler zu umgehen.

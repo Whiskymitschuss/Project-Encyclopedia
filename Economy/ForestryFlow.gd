@@ -44,6 +44,18 @@ static func describe(state: Dictionary,index: int,flow: Dictionary={}) -> Dictio
  if amount<maximum-0.00001: return {"kind":"running","text":"Holzfäller arbeiten · %.2f Holz/s · %s" % [rate,stock],"key":""}
  var center=CentralLogistics.depot(state)
  var reason="Wartet auf freien Lager-LKW"
+ if LogisticsDispatch.enabled(state):
+  for trip in state.hub.shipments:
+   if int(trip.origin)==index and trip.key=="wood" and trip.target in ["central","express"]: return {"kind":"full","text":"%s · Abholung disponiert · %s" % [stock,FreightFlow.status(trip)],"key":"wood"}
+  var destination=DepotNetwork.pickup(state,index,"wood")
+  if not destination.is_empty(): reason+=" → "+UXRules.factory_name(state,int(destination.index))
+  else:
+   var depots=DepotNetwork.depots(state)
+   var connected=false
+   for depot in depots:
+    if LogisticsRoutes.road_route(state,index,int(depot)).size()>=2: connected=true; break
+   reason="Erreichbare Lager voll · Holz verarbeiten oder verkaufen" if connected else "Straßenverbindung zum Lager fehlt" if not depots.is_empty() else "Alle Lager pausiert · Betrieb fortsetzen"
+  return {"kind":"full","text":"%s · %s" % [stock,reason],"key":"wood"}
  if state.buildings[center].get("paused",false): reason="Zentrallager pausiert · fortsetzen"
  elif LogisticsRoutes.road_route(state,index,center).size()<2: reason="Straßenverbindung zum Zentrallager fehlt"
  elif CentralLogistics.storage_room(state,"wood")<=0: reason="Zentrallager voll/reserviert · Holz weiterverarbeiten"

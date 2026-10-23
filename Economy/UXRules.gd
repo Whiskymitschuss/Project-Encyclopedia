@@ -57,6 +57,7 @@ static func material_sources(state: Dictionary,key: String) -> Array:
  for id in state.hub.express:
   result.append({"index":int(id),"amount":float(state.hub.express[id].get(key,0)),"name":factory_name(state,int(id)),"kind":"express"})
  for source in ConstructionRules.sources(state,key):
+  if LogisticsDispatch.enabled(state) and source.get("storage","") in ["regional","receiving"]: continue
   result.append({"index":int(source.index),"amount":float(source.stock.get(key,0)),"name":factory_name(state,int(source.index)),"kind":source.kind})
  for i in state.buildings.size():
   var b=state.buildings[i]
@@ -80,6 +81,8 @@ static func material_counts(state: Dictionary,job: Dictionary,key: String) -> Di
 static func material_stock(state: Dictionary,key: String) -> Dictionary:
  var warehouse=float(state.resources.get(key,0))
  var receiving=float(state.hub.get("receiving",{}).get(key,0))
+ var regional=0.0
+ for stock in state.hub.express.values(): regional+=float(stock.get(key,0))
  var local=receiving
  for group in [state.delivery.buffers,state.delivery.recovered]:
   for stock in group.values(): local+=float(stock.get(key,0))
@@ -91,7 +94,7 @@ static func material_stock(state: Dictionary,key: String) -> Dictionary:
   if trip.key==key and not trip.arrived: transit+=float(trip.amount)
  # A truck's cargo was already withdrawn. An arrived truck has already
  # credited its destination; neither may be counted twice as available stock.
- return {"warehouse":warehouse,"local":local,"transit":transit,"stored":warehouse+local,"receiving":receiving}
+ return {"warehouse":warehouse,"regional":regional,"local":local,"transit":transit,"stored":warehouse+local,"receiving":receiving}
 static func build_quote(state: Dictionary,key: String,needed: float) -> Dictionary:
  var pickup=0.0
  for source in ConstructionRules.sources(state,key): pickup+=float(source.stock.get(key,0))

@@ -85,6 +85,7 @@ func run() -> void:
  # Touch the public menu entry, then exercise every photo control on phone/tablet.
  hud.open_menu("more")
  await settle()
+ await tap(find_button(hud.contents,"Hilfe"))
  var entry=find_button(hud.contents,"Fotomodus")
  check(entry!=null,"The photo mode has a discoverable public menu entry")
  if entry==null: scene.queue_free(); await process_frame; quit(1); return

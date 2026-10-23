@@ -17,7 +17,7 @@ static func has_forklift(state: Dictionary,shipment: Dictionary,loading: bool) -
  var index=int(shipment.get("origin",-1)) if loading else int(shipment.get("destination",-1))
  var kind=str(shipment.get("source","") if loading else shipment.get("target",""))
  if index>=0 and index<state.buildings.size(): kind=str(state.buildings[index].kind)
- return Catalog.RECIPES.has(kind) or kind in ["central_depot","express"]
+ return Catalog.RECIPES.has(kind) or kind in ["central_depot","express","stoneworks"]
 
 static func dock(game: Node, shipment: Dictionary, loading: bool) -> Vector3:
  var state=game.state

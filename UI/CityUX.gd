@@ -169,8 +169,8 @@ func find_job() -> Dictionary:
   if int(job.get("id",-1))==int(selection.get("id",-2)): return job
  return {}
 func find_trip() -> Dictionary:
- for s in FreightFlow.all_trips(Game.state):
-  var domain="central" if s.target in ["central","express","factory"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+ for s in FreightFlow.traffic_trips(Game.state):
+  var domain="crew" if s.target=="crew" else "central" if s.target in ["central","express","factory"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
   if domain==selection.get("domain","") and int(s.id)==int(selection.get("id",-1)): return s
  return {}
 func clear_box(box: Node) -> void:
@@ -225,6 +225,9 @@ func render_sheet() -> void:
   if not city and not FactorySupply.requirements(Game.state,index).is_empty():
    hud.button(sheet_body,"WARE ANFORDERN · ZENTRALLAGER → WERK",func(): Game.request_material(index); refresh())
    hud.text(sheet_body,FactorySupply.status(Game.state,index),12,hud.MUTED)
+  if not city and LogisticsDispatch.enabled(Game.state) and not LogisticsDispatch.outputs(Game.state,index).is_empty():
+   hud.text(sheet_body,LogisticsDispatch.collection_status(Game.state,index),12,hud.MUTED)
+   hud.button(sheet_body,"LOGISTIK & ABHOLUNG",func(): hud.open_menu("logistics"))
   var other=sheet_actions()
   hud.button(other,"Details ↑",func(): expand_selection())
   hud.button(other,"Verschieben",func(): hud.request_placement({"kind":b.kind,"city":city,"index":index}))
@@ -242,6 +245,7 @@ func render_sheet() -> void:
   if job.is_empty(): hide_panels(true); return
   title.text="Baustelle · "+str(Catalog.HOMES[job.kind].name if job.type in ["home","home_upgrade"] else Catalog.BUILDINGS.get(job.kind,{"name":"Bauprojekt"}).name)
   hud.text(sheet_body,ConstructionRules.status(job),14,hud.MUTED)
+  hud.text(sheet_body,CrewTransport.status(Game.state,job),13,hud.MUTED)
   var row=hud.row(sheet_body)
   for resource in job.get("materials",{}):
    var key=str(resource)
@@ -258,6 +262,12 @@ func render_sheet() -> void:
   var s=find_trip()
   title.text="Lieferfahrzeug"
   if s.is_empty(): hud.text(sheet_body,"Fahrt abgeschlossen · Fahrzeug wieder verfügbar",15,hud.INK)
+  elif s.target=="crew":
+   title.text="BAUTEAM · SPRINTER"
+   var seated=int(s.workers) if (s.kind=="dropoff" and not s.arrived) or (s.kind=="pickup" and s.arrived) else 0
+   hud.text(sheet_body,"%s Mitarbeiter an Bord\n%s\nArbeiterhütte ↔ Baustelle" % [seated,"Rückfahrt zur Arbeiterhütte" if s.arrived else "Bauteam zur Baustelle" if s.kind=="dropoff" else "Bauteam abholen"],15,hud.INK)
+   hud.text(sheet_body,FreightFlow.status(s),14,hud.MUTED)
+   hud.button(sheet_body,"BAUSTELLEN & BAUTEAM",func(): hud.logistics_tab="sites"; hud.open_menu("logistics"))
   else:
    var target="Baustelle" if s.target=="construction" else ("Lager" if int(s.destination)<0 else UXRules.title(Game.state,false,int(s.destination))) if s.target=="mineral" else "Autobahnexport" if s.target=="export" else CentralLogistics.target_name(Game.state,s) if s.target in ["central","express","factory"] else Catalog.BUILDINGS[s.target].name
    var stage="Leere Rückfahrt" if s.arrived else "Beladen" if float(s.age)<float(s.load) else "Entladen" if float(s.age)>=float(s.load)+float(s.drive) else "Unterwegs"
@@ -277,8 +287,8 @@ func expand_selection() -> void:
  match str(selection.kind):
   "building": hud.show_building(int(selection.index))
   "home": hud.show_plot(int(Game.state.homes[int(selection.index)].plot))
-  "job": hud.open_menu("construction")
-  "truck": hud.open_menu("export" if selection.get("domain","")=="export" else "delivery")
+  "job": hud.open_menu("construction",-2,int(selection.id))
+  "truck": hud.open_menu("export" if selection.get("domain","")=="export" else "logistics" if selection.get("domain","")=="crew" else "delivery")
 func toggle_routes() -> void:
  if world().get("selection_world")==null: return
  world().selection_world.show_routes=not world().selection_world.show_routes

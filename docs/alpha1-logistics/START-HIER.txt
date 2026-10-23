@@ -1,0 +1,22 @@
+Timber Loot Tycoon · 0.28.10-alpha.1 · Android-Code 3005
+
+Als Update installieren. Nicht deinstallieren und keine App-Daten löschen.
+Paketkennung und Testzertifikat bleiben gleich. Die vorhandene Firma bleibt erhalten.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+Unten findest du jetzt LOGISTIK. Die Ansichten zeigen Betriebe, Baustellen und Fahrten.
+Mit fertigem Zentrallager werden alle vorhandenen Produktionsarten automatisch
+abgeholt und mit eigenen lokalen Eingängen versorgt. Nahe Werke liefern zum
+Abhol-Express; Baustellen bekommen ihre Ware aus dem geeigneten Lager.
+
+Bauteams reisen aus der Arbeiterhütte im Sprinter an. Erst angekommene Mitarbeiter
+verarbeiten vorhandenes Material. Nach dem Einsatz werden sie wieder abgeholt.
+Ein wirklich volles Lager oder eine fehlende Straße bleibt ein echter Engpass.
+
+Bei fehlenden Muttern/Schrauben bietet die Baustellenansicht den Einkauf gegen
+angezeigte Spielmünzen an. Es wird nicht stillschweigend Geld ausgegeben.
+Mehr → Menüsuche hilft beim Finden der übrigen Funktionen. Zurück bleibt im Menü.
+
+Prüfung mit generierten Firmen und Desktop-Godot, zusätzlich mit den APK-Dateien.
+Kein physischer Android-/Hitzetest und kein Test des privaten Spielstands.
+Der vollständige Masterumbau ist noch nicht fertig.

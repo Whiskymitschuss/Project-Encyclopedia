@@ -1,0 +1,72 @@
+--- a/Economy/ConstructionRules.gd
++++ b/Economy/ConstructionRules.gd
+@@ -249,6 +249,9 @@
+  for s in done: state.construction_shipments.erase(s)
+ 
+ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
++ if state.jobs.is_empty():
++  state.hub.site_last_served.clear()
++  return 0.0
+  if LogisticsDispatch.enabled(state): return dispatch_network(state,only_job)
+  var busy = state.construction_shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
+  for s in state.delivery.shipments:
+--- a/Economy/CrewTransport.gd
++++ b/Economy/CrewTransport.gd
+@@ -67,6 +67,7 @@
+ 
+ static func tick(state: Dictionary,delta: float) -> void:
+  if not enabled(state): return
++ if state.jobs.is_empty() and state.crew.missions.is_empty() and state.crew.assignments.is_empty(): return
+  var completed=[]
+  for mission in state.crew.missions:
+   FreightFlow.advance(mission,delta)
+@@ -98,6 +99,7 @@
+ 
+ static func dispatch(state: Dictionary) -> void:
+  if not enabled(state): return
++ if state.jobs.is_empty() and state.crew.assignments.is_empty(): return
+  var free=maxi(0,fleet_size(state)-state.crew.missions.size())
+  if free<=0: return
+  # Real people at completed/paused/reassigned sites must be driven home before
+--- a/Economy/LogisticsDispatch.gd
++++ b/Economy/LogisticsDispatch.gd
+@@ -22,6 +22,7 @@
+  # Existing warehouse contents stay where they are. Empty local inputs enroll
+  # every workshop in automatic, physically transported replenishment.
+  for i in state.buildings.size():
++  if not Catalog.RECIPES.has(state.buildings[i].kind) and state.buildings[i].kind!="stoneworks": continue
+   if not FactorySupply.requirements(state,i).is_empty() and not DeliveryChain.owns(state,i): state.hub.inputs.get_or_add(str(i),{})
+ 
+ static func source_limit(state: Dictionary,source: Dictionary,key: String) -> float:
+@@ -116,6 +117,7 @@
+   for key in keys:
+    if not Catalog.RESOURCES.has(key): continue
+    var quantity=float(regional[key])
++   if quantity<0.25: continue
+    var held=regional_reserve(state,int(index),key)
+    var excess=maxf(0,quantity-held)
+    var room=CentralLogistics.storage_room(state,key)
+@@ -177,11 +179,13 @@
+   if not forest.is_empty():
+    forest.sort_custom(func(a,b): return float(a.score)>float(b.score) if not is_equal_approx(float(a.score),float(b.score)) else str(a.id)<str(b.id))
+    var task=forest[0]
+-   if CentralLogistics.launch(state,int(task.origin),int(task.destination),"wood",float(task.amount),str(task.target),task.stock): state.hub.waiting.erase(task.id)
++   if CentralLogistics.launch(state,int(task.origin),int(task.destination),"wood",float(task.amount),str(task.target),task.stock):
++    state.hub.waiting.erase(task.id)
++    if CentralLogistics.available_trucks(state)>0: candidates=tasks(state)
+  # Recompute real capacity after every withdrawal; no task list can reserve
+  # stale warehouse stock or an express shelf twice in the same tick.
+  while CentralLogistics.available_trucks(state)>0:
+-  candidates=tasks(state).filter(func(task): return task.ready and float(task.amount)>=0.25)
++  candidates=candidates.filter(func(task): return task.ready and float(task.amount)>=0.25)
+   if candidates.is_empty(): break
+   var selected={}
+   for offset in CLASSES.size():
+@@ -196,6 +200,7 @@
+   if not CentralLogistics.launch(state,int(selected.origin),int(selected.destination),str(selected.key),float(selected.amount),str(selected.target),selected.stock): break
+   if selected["class"]=="supply": FactorySupply.fulfilled(state,int(selected.destination),str(selected.key),float(selected.amount))
+   state.hub.waiting.erase(selected.id)
++  if CentralLogistics.available_trucks(state)>0: candidates=tasks(state)
+ 
+ static func request_supply(state: Dictionary,index: int) -> void:
+  if index<0: return

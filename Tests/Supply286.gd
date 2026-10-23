@@ -82,7 +82,7 @@ func run() -> void:
   recipes.jobs=[home]
   for i in 8: recipes.jobs.append(site(61+i,{"wood":300.0,"boards":80.0},0))
   game.step(1)
-  check(float(game.flow.get("building:5",0))>0 and ProductionPresentation.describe(game,5).kind=="running","Legacy recipe workers and their status use ingredients needed by construction, central=%s" % central)
+  check((FactorySupply.managed(recipes,5) and float(game.flow.get("building:5",0))==0) if central else (float(game.flow.get("building:5",0))>0 and ProductionPresentation.describe(game,5).kind=="running"),"A central network enrolls legacy recipes for real input transport; the noncentral shared recipe remains compatible, central=%s" % central)
   for tick in 600: game.step(1)
   check(float(home.delivered.get("furniture",0))==6 and not home in recipes.jobs,"A legacy recipe company supplies its real waiting construction without switching delivery modes, central=%s" % central)
  # Newly harvested fractional input must also reach preparation, rather than
@@ -132,6 +132,8 @@ func run() -> void:
  for tick in 600:
   game.step(1)
   for trip in s.delivery.shipments: served[trip.target]=true
+  for trip in s.hub.shipments:
+   if trip.target=="factory": served[str(s.buildings[int(trip.destination)].kind)]=true
  check(served.has("sawmill") and served.has("furniture") and served.has("market"),"Every connected branch receives service while warehouse goods and shop demand stay available")
  check(float(roof_site.delivered.get("roofs",0))==8,"Mixed factory output and construction pickups cannot starve behind continuous shop replenishment")
  var roof_stock=UXRules.material_stock(s,"roofs")

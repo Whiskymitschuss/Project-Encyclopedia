@@ -2,7 +2,30 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.9-alpha.1 · Holzfäller und automatische Ernte
+## Aktuell: 0.28.10-alpha.1 · Logistik und Bauteams
+
+Alle vorhandenen Produktionsarten werden mit fertigem Zentrallager automatisch
+abgeholt und mit lokalen Wareneingängen versorgt. Abhol-Express sammelt regionale
+Fabrikprodukte, liefert Baustellen und fährt Überschüsse zur Zentrale zurück.
+Eine gemeinsame Disposition verteilt die Fahrzeuge fair; Baustellen-LKW bedienen
+auch kleine Nachbarn großer Aufträge.
+
+Bauteams fahren aus der Arbeiterhütte im Sprinter an. Erst angekommene Biber
+verarbeiten geliefertes Material, tragen Werkzeug, hämmern und nutzen Leitern.
+Nach dem Einsatz werden sie abgeholt. Sprinter sind auf der Karte auswählbar.
+
+**Logistik** ist direkt in der Hauptnavigation erreichbar. Betriebe, Baustellen
+und Fahrten haben eigene Ansichten. Menüsuche, Kategorien, Zurück-Navigation
+und eindeutige Bestands-/Wartegründe erleichtern die Bedienung.
+
+Android-Code **3005**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-logistics/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Änderungen, Prüfungen und Grenzen](docs/LOGISTICS-2810.md).
+Echte Android-Leistung und der private Spielstand bleiben ungeprüft.
+Der vollständige Masterumbau bleibt offen.
+
+## Vorher: 0.28.9-alpha.1 · Holzfäller und automatische Ernte
 
 Auch mit manuell gefülltem Zentralbestand erhalten volle Sammelstationen eine
 reale Holzabholung. Größere Bündelladungen und begrenzte Warenannahme lassen die

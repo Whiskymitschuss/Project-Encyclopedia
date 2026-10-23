@@ -42,6 +42,7 @@ var road_horizontal = true
 var landscape: ValleyLandscape
 var city_traffic: Node3D
 var delivery_world: Node3D
+var crew_world: Node3D
 var selection_world: Node3D
 var preview_history=[]
 var pinch_active=false
@@ -137,6 +138,9 @@ func _ready() -> void:
  delivery_world=load("res://Components/DeliveryWorld.gd").new()
  delivery_world.world=self
  add_child(delivery_world)
+ crew_world=load("res://Components/CrewWorld.gd").new()
+ crew_world.world=self
+ add_child(crew_world)
  city_traffic=load("res://Components/CityTraffic.gd").new()
  city_traffic.world=self
  add_child(city_traffic)
@@ -615,7 +619,7 @@ func _process(delta: float) -> void:
   if animate and float(Game.flow.get("building:%s" % machine.index,0))>0: machine.node.rotate_y(delta*8)
  for crane in cranes:
   var job=crane.job
-  if animate and (not job.has("phases") or (not job.paused and int(job.workers)>0 and ConstructionRules.phase_ready(job))):
+  if animate and (not job.has("phases") or (not job.paused and CrewTransport.working(Game.state,job)>0 and ConstructionRules.phase_ready(job))):
    crane.node.rotation.y = sin(time*0.45)*0.2
  for item in moving_goods:
   if float(Game.flow.get("building:%s" % item.index,0)) > 0:

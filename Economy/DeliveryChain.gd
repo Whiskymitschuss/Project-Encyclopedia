@@ -11,11 +11,8 @@ static func initial() -> Dictionary:
 
 static func start(state: Dictionary) -> bool:
  if state.delivery.active: return false
- var nodes = {}
- for kind in KINDS:
-  for i in state.buildings.size():
-   if state.buildings[i].kind==kind and not state.buildings[i].get("paused",false): nodes[kind]=i; break
-  if not nodes.has(kind): return false
+ var nodes=choose_nodes(state)
+ if nodes.is_empty(): return false
  var data = initial()
  data.active = true
  data.nodes = nodes
@@ -23,6 +20,14 @@ static func start(state: Dictionary) -> bool:
  data.order = next_order(state,data)
  state.delivery = data
  return true
+
+static func choose_nodes(state: Dictionary) -> Dictionary:
+ var nodes = {}
+ for kind in KINDS:
+  for i in state.buildings.size():
+   if state.buildings[i].kind==kind and not state.buildings[i].get("paused",false): nodes[kind]=i; break
+  if not nodes.has(kind): return {}
+ return nodes
 
 static func next_order(state: Dictionary, data: Dictionary) -> Dictionary:
  return {"amount":3+mini(int(data.orders)/3,5),"delivered":0,"left":maxf(150,300-int(state.prestige)*10-mini(int(data.orders)*3,90)),"late":false}
@@ -150,6 +155,9 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   else:
    order.left = maxf(0,float(order.left)-delta)
    if order.left<=0: order.late = true
+ # The unified network dispatches these same local input buffers alongside
+ # every other factory. Do not race it with a second independently greedy loop.
+ if LogisticsDispatch.enabled(state): return report
  var free = CentralLogistics.available_trucks(state) if centralized else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
  # Keep one pickup/replenishment in service when both duties need the central
  # fleet. Existing hub assignments already satisfy that share, including returns.

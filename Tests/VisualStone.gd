@@ -70,7 +70,8 @@ func run() -> void:
  check(excavator.load_mesh.visible==(StoneIndustry.site(game.state,5).bucket>0),"The visible shovel load follows its actual saved material")
  for shipment in game.state.stone.shipments:
   var truck=scene.delivery_world.visuals[scene.delivery_world.visual_key(shipment)]
-  check(truck.cargo.visible==not shipment.arrived,"Every rendered truck shows loaded or empty status from the simulation")
+  var loading_pallet=shipment.key=="stone" and not shipment.arrived and float(shipment.age)+game.tick_clock<float(shipment.load)
+  check(truck.cargo.visible==(not shipment.arrived and not loading_pallet),"A stone pallet stays off the deck during real forklift loading, travels on the truck afterwards and returns empty")
   if shipment.key in ["rock","gravel"]: check(truck.get("bed")!=null,"Bulk raw material uses a real tipper model")
   if shipment.key=="stone": check(truck.cargo_stone and truck.trailer!=null,"Palletized building stones travel on the upgraded flatbed trailer")
  for shipment in game.state.stone.shipments:

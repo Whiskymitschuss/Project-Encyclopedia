@@ -15,19 +15,19 @@ func choose(value: Dictionary) -> void:
  signature=""
  refresh()
 func trip_domain(s: Dictionary) -> String:
- return "central" if s.target in ["central","express","factory"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+ return "crew" if s.target=="crew" else "central" if s.target in ["central","express","factory"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
 func trips() -> Array:
- return FreightFlow.all_trips(Game.state)
+ return FreightFlow.traffic_trips(Game.state)
 func matches(s: Dictionary) -> bool:
  if selection.is_empty(): return false
  match str(selection.get("kind","")):
-  "job": return s.target=="construction" and int(s.job)==int(selection.id)
+  "job": return s.target in ["construction","crew"] and int(s.job)==int(selection.id)
   "truck": return trip_domain(s)==selection.domain and int(s.id)==int(selection.id)
   "building":
    var index=int(selection.index)
    if int(s.get("origin",-1))==index or int(s.get("dock",-1))==index or int(s.get("destination",-2))==index: return true
    for kind in Game.state.delivery.nodes:
-    if int(Game.state.delivery.nodes[kind])==index and (s.source==kind or s.target==kind): return true
+    if int(Game.state.delivery.nodes[kind])==index and (s.get("source","")==kind or s.target==kind): return true
  return false
 func refresh() -> void:
  if route_root==null: return
@@ -74,6 +74,13 @@ func refresh() -> void:
  Models.bake(route_root)
 func delivery_pulse(at: Vector3,key: String,amount: float) -> void:
  if not Game.state.ux.motion or world.camera.is_position_behind(at) or world.zoom>200: return
+ var relevant=false
+ if selection.get("kind","")=="building" and int(selection.get("index",-1))>=0:
+  relevant=Game.building_position(int(selection.index)).distance_to(at)<28
+ elif selection.get("kind","")=="job":
+  for job in Game.state.jobs:
+   if int(job.get("id",-1))==int(selection.id): relevant=ConstructionRules.job_position(Game.state,job).distance_to(at)<28; break
+ if not relevant: return
  var node: Node3D
  if pulses.size()>=12:
   var entry=pulses.pop_front()
@@ -82,8 +89,8 @@ func delivery_pulse(at: Vector3,key: String,amount: float) -> void:
  node=Node3D.new()
  add_child(node)
  node.position=at
- var mark=Models.label(node,"+%s %s" % [Catalog.number(amount),Catalog.RESOURCES[key]],Vector3(0,5,0),32)
- mark.pixel_size=0.065
+ var mark=Models.label(node,"+%s %s" % [Catalog.number(amount),Catalog.RESOURCES[key]],Vector3(0,4,0),20)
+ mark.pixel_size=0.025
  mark.modulate=Color("fff2a1")
  pulses.append({"node":node,"age":0.0,"label":mark})
 func _process(delta: float) -> void:
@@ -99,9 +106,15 @@ func pick_truck(screen: Vector2) -> Dictionary:
  var best={}
  var distance=24.0
  for s in trips():
-  var key=world.delivery_world.visual_key(s)
-  if not world.delivery_world.visuals.has(key): continue
-  var node=world.delivery_world.visuals[key]
+  var node: Node3D
+  if s.target=="crew":
+   if world.crew_world==null or not world.crew_world.vans.has(int(s.id)): continue
+   node=world.crew_world.vans[int(s.id)]
+  else:
+   var key=world.delivery_world.visual_key(s)
+   if not world.delivery_world.visuals.has(key): continue
+   node=world.delivery_world.visuals[key]
+  if not node.is_visible_in_tree(): continue
   if world.camera.is_position_behind(node.global_position): continue
   var d=screen.distance_to(world.camera.unproject_position(node.global_position+Vector3(0,2,0)))
   if d<distance: distance=d; best={"kind":"truck","domain":trip_domain(s),"id":int(s.id)}

@@ -59,7 +59,7 @@ func _ready() -> void:
  Models.box(crane,Vector3(0.1,5,0.1),Vector3(-8,-2.5,0),Color("47636d"))
  BeaverModels.cockpit(crane,Vector3(-0.8,-1.8,0.7),Vector3(1.7,1.6,1.8),Color("f3c55d"),job_id,"industry")
  Models.bake(crane)
- for i in mini(int(job.get("workers",0)),2 if Game.state.quality==0 else 5):
+ for i in mini(maxi(int(job.get("workers",0)),CrewTransport.onsite(Game.state,job)),2 if Game.state.quality==0 else 5):
   var worker=load("res://NPCs/ConstructionWorker.gd").new()
   worker.job_id=job_id
   worker.work_index=i
@@ -90,7 +90,7 @@ func refresh() -> void:
 
 func _process(delta: float) -> void:
  var job=current_job()
- var working=not job.is_empty() and not job.get("paused",false) and int(job.get("workers",0))>0 and ConstructionRules.phase_ready(job)
+ var working=not job.is_empty() and not job.get("paused",false) and CrewTransport.working(Game.state,job)>0 and ConstructionRules.phase_ready(job)
  dust.emitting=working and FeedbackFX.allowed(self)
  dust.visible=dust.emitting
  var count=4 if Game.state.quality==0 else 10

@@ -1,3 +1,20 @@
+## Automatische Werkslogistik und Bauteams · 0.28.10-alpha.1
+
+20.957 numerische Headless-Prüfungen in 35 Modulen sowie zwei natürliche
+Fortschrittsszenarien und Haupt-/Startszene bestanden. 1.064 OpenGL-Prüfungen in
+28 Modulen bestanden. Generierte Firmen, isolierte Profile, kein privater Spielstand.
+[Ergebnisse und Grenzen](alpha1-logistics/automated-checks.json).
+
+Alle zehn Produktionsfamilien liefern volle Ausgänge ab. Regionale Lager nehmen
+wirkliche Ladungen an, versorgen Baustellen und geben Überschüsse zurück.
+Baustellenflotte und Sprinter bleiben begrenzt; Material und angekommene
+Mitarbeiter sind beide Voraussetzung für den Baufortschritt.
+
+Die reine Offline-Optimierung innerhalb dieser Fassung verringerte den Desktop-
+Durchlauf für acht Stunden von 22,1 auf 17,9 Sekunden bei bytegleichem Firmenstand.
+[Messung](alpha1-logistics/offline-optimization.json). Kein Versionsvergleich
+gegenüber 0.28.9 und keine zugesicherte Android-Zeit.
+
 ## Externe Downloads Holzfäller und automatische Ernte · 0.28.9 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.9-alpha.1` vollständig per

@@ -148,6 +148,7 @@ static func requests(state: Dictionary, cache: Dictionary) -> Array:
    var path=route(state,i,depot,cache)
    if path.size()>1: result.append({"origin":i,"destination":-1,"dock":depot,"key":key,"amount":amount,"path":path})
  for target in state.buildings.size():
+  if LogisticsDispatch.enabled(state): break
   if state.buildings[target].kind!="stoneworks" or state.buildings[target].get("paused",false) or FactorySupply.managed(state,target): continue
   var room=capacity(state,target)-float(site(state,target).stock.rock)-incoming(state,target,"rock")
   if room<1: continue

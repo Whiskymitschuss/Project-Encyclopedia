@@ -183,6 +183,7 @@ func run() -> void:
  var existing=game.state.duplicate(true)
  hud.open_menu("more")
  await settle()
+ await tap(find(hud.contents,"Hilfe"))
  await tap(find(hud.contents,"BENNOS WERKSHOF"))
  check(hud.current=="welcome" and hud.story_step==0,"An existing company can revisit the new world introduction through More")
  await tap(find(hud.contents,"WEITERSPIELEN"))

@@ -1,0 +1,52 @@
+{
+  "fixture": "Tests/Fixtures/forestry288-company.json",
+  "simulated_seconds": 28800,
+  "before": {
+    "jobs_left": 0,
+    "shipments": 4,
+    "total_ms": 22111,
+    "us": {
+      "arrivals_services": 801926,
+      "export_dispatch": 679034,
+      "first_site_dispatch": 1150735,
+      "harvest": 453787,
+      "harvest_setup": 80096,
+      "input_maintenance": 298912,
+      "line_tick": 1824689,
+      "network_dispatch": 6218072,
+      "other_plan": 12444,
+      "production_and_export": 3443014,
+      "second_site_and_stone_dispatch": 1175507,
+      "stone_tick": 380737,
+      "sync_and_crew": 1763888,
+      "work_and_crew": 1741041
+    }
+  },
+  "after": {
+    "jobs_left": 0,
+    "shipments": 4,
+    "total_ms": 17918,
+    "us": {
+      "arrivals_services": 805441,
+      "export_dispatch": 688323,
+      "first_site_dispatch": 765885,
+      "harvest": 462141,
+      "harvest_setup": 80010,
+      "input_maintenance": 306539,
+      "line_tick": 1453375,
+      "network_dispatch": 3534408,
+      "other_plan": 11865,
+      "production_and_export": 3462106,
+      "second_site_and_stone_dispatch": 814669,
+      "stone_tick": 383757,
+      "sync_and_crew": 1466261,
+      "work_and_crew": 1573909
+    }
+  },
+  "complete_state_byte_identical": true,
+  "state_sha256": "1ea72c84c874bdaebb76245f20b19a8efdf9f2a06b67764e5fedc0195b5d3ef5",
+  "execution": "Desktop Godot 4.6.3, headless; same new-network semantics on both sides; profiling marks are outside company state",
+  "scope": "Pure redundant-work optimization within 0.28.10, not a cross-version performance promise",
+  "android_measurement": false,
+  "private_player_save_used": false
+}

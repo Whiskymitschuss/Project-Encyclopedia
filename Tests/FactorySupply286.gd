@@ -141,13 +141,23 @@ func run() -> void:
  check(saw_pickup and saw_delivery,"Rock is physically collected into central stock then trucked to the requested works")
  var stone=UXRules.material_stock(s,"stone")
  check(float(stone.stored)+float(stone.transit)>0,"Requested stoneworks actually processes delivered material")
- # Untouched generic factories retain the compatible legacy mode.
+ # The all-factory network now enrolls untouched workshops as well. Migration
+ # creates empty racks, followed by real delivery, rather than remote input use.
  s=company()
  s.resources.dry=4
  s.resources.boards=4
  game.step(1)
- check(not FactorySupply.managed(s,5) and float(game.flow.get("building:5",0))>0,"Existing unrequested factories keep working without migration or forced stock loss")
+ check(FactorySupply.managed(s,5) and float(game.flow.get("building:5",0))==0,"Unrequested factories enroll automatically without consuming remote stock on the first tick")
+ for tick in 180: game.step(1)
+ check(total_furniture(s)>0,"A migrated unrequested factory resumes through actual automatic delivery")
+ var boards_stock=UXRules.material_stock(s,"boards")
+ var dry_stock=UXRules.material_stock(s,"dry")
+ check(absf((float(boards_stock.stored)+float(boards_stock.transit))*2+(float(dry_stock.stored)+float(dry_stock.transit))*4+total_furniture(s)*10-24)<0.00001,"Automatic enrollment preserves every original ingredient and manufactured product")
  await process_frame
  await process_frame
  print("FACTORY SUPPLY 286: %s checks, %s failures" % [checks,failures.size()])
  quit(0 if failures.is_empty() else 1)
+
+func total_furniture(s: Dictionary) -> float:
+ var stock=UXRules.material_stock(s,"furniture")
+ return float(stock.stored)+float(stock.transit)

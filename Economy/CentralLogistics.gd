@@ -4,7 +4,7 @@ extends RefCounted
 # Resources belong to the central store; outputs, express stock and road cargo
 # have separate ownership. No credit before unloading and no shared-fleet lock.
 static func initial() -> Dictionary:
- return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0,"receiving":{}}
+ return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0,"receiving":{},"network_version":0,"waiting":{},"service_cursor":0,"site_last_served":{},"site_sequence":0,"site_class_cursor":0}
 
 static func depot(state: Dictionary) -> int:
  for i in state.buildings.size():
@@ -39,11 +39,15 @@ static func output_room(state: Dictionary,index: int,key: String) -> float:
 static func pickup_capacity(state: Dictionary,key: String) -> float:
  # A forestry transporter carries bundled logs. The former crate-sized load
  # emptied less than one manually cut tree and throttled whole forest crews.
- return (12+int(state.vehicle)*2)*(4 if key=="wood" else 1)
+ return (12+int(state.vehicle)*2)*(4 if key=="wood" else 2 if LogisticsDispatch.enabled(state) else 1)
 
 static func fleet_size(state: Dictionary) -> int:
  var index=depot(state)
- return mini(6,2+int(state.buildings[index].level)) if index>=0 else 0
+ var result=mini(6,2+int(state.buildings[index].level)) if index>=0 else 0
+ if result>0 and LogisticsDispatch.enabled(state):
+  for b in state.buildings:
+   if b.kind=="express": result+=1+mini(2,(int(b.level)-1)/4)
+ return mini(12,result)
 
 static func available_trucks(state: Dictionary) -> int:
  var assigned=state.hub.shipments.size()+DeliveryChain.central_busy(state)
@@ -129,8 +133,9 @@ static func tick(state: Dictionary,delta: float) -> void:
     state.resources[trip.key]=float(state.resources.get(trip.key,0))+shelved
     if staged>0: state.hub.receiving[trip.key]=float(state.hub.receiving.get(trip.key,0))+staged
    else:
-    var destination=FactorySupply.stock(state,int(trip.destination)) if trip.target=="factory" else stock(state,int(trip.destination),true)
-    var limit=FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else 96.0
+    var recovered=trip.target=="factory" and not FactorySupply.requirements(state,int(trip.destination)).has(trip.key)
+    var destination=stock(state,int(trip.destination)) if recovered else FactorySupply.stock(state,int(trip.destination)) if trip.target=="factory" else stock(state,int(trip.destination),true)
+    var limit=maxf(64+int(state.buildings[int(trip.destination)].level)*8,float(destination.get(trip.key,0))+float(trip.amount)) if recovered else FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else DepotNetwork.capacity(state,int(trip.destination))
     if float(destination.get(trip.key,0))+float(trip.amount)>limit+0.00001:
      trip.age=float(trip.travel)
      continue
@@ -150,23 +155,26 @@ static func pickup_sources(state: Dictionary) -> Array:
  var result=[]
  for id in source_ids(state.hub.outputs):
   var index=int(id)
-  if index>=0 and index<state.buildings.size(): result.append({"index":index,"stock":state.hub.outputs[id],"kind":state.buildings[index].kind})
+  if index>=0 and index<state.buildings.size(): result.append({"index":index,"stock":state.hub.outputs[id],"kind":state.buildings[index].kind,"owner":"output"})
  for id in source_ids(state.stone.sites):
   if state.buildings[int(id)].kind=="quarry":
+   if LogisticsDispatch.enabled(state):
+    result.append({"index":int(id),"stock":state.stone.sites[id].stock,"kind":"quarry","only":"rock","owner":"mineral"})
+    continue
    for order in state.hub.requests:
     if order.key=="rock" and float(order.remaining)>0:
-     result.append({"index":int(id),"stock":state.stone.sites[id].stock,"kind":"quarry","only":"rock"})
+     result.append({"index":int(id),"stock":state.stone.sites[id].stock,"kind":"quarry","only":"rock","owner":"mineral"})
      break
  if state.delivery.active:
   for entry in [["station","wood"],["sawmill","boards"],["furniture","furniture"]]:
    var index=int(state.delivery.nodes.get(entry[0],-1))
-   if index>=0: result.append({"index":index,"stock":state.delivery.buffers[entry[0]],"kind":entry[0],"only":entry[1]})
+   if index>=0: result.append({"index":index,"stock":state.delivery.buffers[entry[0]],"kind":entry[0],"only":entry[1],"owner":"line"})
  for id in source_ids(state.hub.inputs):
-  if DeliveryChain.owns(state,int(id)):
+  if DeliveryChain.owns(state,int(id)) and not LogisticsDispatch.enabled(state):
    result.append({"index":int(id),"stock":state.hub.inputs[id],"kind":state.buildings[int(id)].kind})
  for id in source_ids(state.stone.sites):
   var index=int(id)
-  if state.buildings[index].kind=="stoneworks": result.append({"index":index,"stock":state.stone.sites[id].stock,"kind":"stoneworks","keys":["stone","gravel"]})
+  if state.buildings[index].kind=="stoneworks": result.append({"index":index,"stock":state.stone.sites[id].stock,"kind":"stoneworks","keys":["stone","gravel"],"owner":"mineral"})
  return result
 
 static func launch(state: Dictionary,origin: int,destination: int,key: String,amount: float,target: String,source_stock: Dictionary) -> bool:
@@ -180,6 +188,7 @@ static func launch(state: Dictionary,origin: int,destination: int,key: String,am
  return true
 
 static func construction_sources(state: Dictionary,job: Dictionary,key: String) -> Array:
+ if LogisticsDispatch.enabled(state): return DepotNetwork.construction_sources(state,job,key)
  var center=depot(state)
  if center<0 or state.buildings[center].get("paused",false): return []
  var position=ConstructionRules.job_position(state,job)
@@ -202,6 +211,9 @@ static func construction_sources(state: Dictionary,job: Dictionary,key: String) 
  return [{"kind":"central_depot","index":center,"stock":state.resources}]
 
 static func dispatch(state: Dictionary) -> void:
+ if LogisticsDispatch.enabled(state):
+  LogisticsDispatch.dispatch(state)
+  return
  var center=depot(state)
  if center<0 or state.buildings[center].get("paused",false): return
  var free=available_trucks(state)
@@ -258,6 +270,7 @@ static func target_name(state: Dictionary,trip: Dictionary) -> String:
 static func recall_express(state: Dictionary,index: int) -> float:
  var center=depot(state)
  if center<0 or state.buildings[index].kind!="express": return 0
+ if state.buildings[center].get("paused",false): return 0
  var available=available_trucks(state)
  var result=0.0
  var regional=stock(state,index,true)

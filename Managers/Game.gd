@@ -56,7 +56,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "hub":CentralLogistics.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "hub":CentralLogistics.initial(), "crew":CrewTransport.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "construction_logistics_version":1, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -92,6 +92,8 @@ func restore(saved: Dictionary) -> void:
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
  for key in CentralLogistics.initial():
   if not state.hub.has(key): state.hub[key]=CentralLogistics.initial()[key]
+ for key in CrewTransport.initial():
+  if not state.crew.has(key): state.crew[key]=CrewTransport.initial()[key]
  for key in TutorialRules.initial():
   if not state.onboarding.has(key): state.onboarding[key]=TutorialRules.initial()[key]
  for key in UXRules.initial():
@@ -401,16 +403,18 @@ func production_status(index: int) -> String:
  var recipe = Catalog.RECIPES[building.kind]
  for key in recipe.out:
   if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key]) >= capacity()-0.0001):
-   return "%s-Lager voll · verkaufen oder weiterverarbeiten" % Catalog.RESOURCES[key]
+   return "%s-Ausgang voll · wartet auf Abholung" % Catalog.RESOURCES[key] if CentralLogistics.active(state) else "%s-Lager voll · verkaufen oder weiterverarbeiten" % Catalog.RESOURCES[key]
  for key in recipe["in"]:
   var local_inputs=FactorySupply.managed(state,index)
   var available=float(FactorySupply.stock(state,index).get(key,0)) if local_inputs else float(state.resources[key])-processing_reserve_for(key)
   if available<=0.0001:
-   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," · Ware anfordern" if local_inputs else " (Baureserve geschützt)" if processing_reserve_for(key)>0 else ""]
+   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," · automatischer Nachschub" if local_inputs and LogisticsDispatch.enabled(state) else " · Ware anfordern" if local_inputs else " (Baureserve geschützt)" if processing_reserve_for(key)>0 else ""]
  if float(flow.get("building:%s" % index,0))>0: return "Läuft · %.2f Zyklen/s" % float(flow["building:%s" % index])
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
 func step(delta: float) -> void:
+ LogisticsDispatch.synchronize(state)
+ CrewTransport.tick(state,delta)
  var stone_before=float(state.stone.delivered)
  var services_before=0
  for total in state.city_services.completed.values(): services_before+=int(total)
@@ -476,7 +480,8 @@ func step(delta: float) -> void:
    if fraction<=0: break
    if key in recipe.get("overflow_sell",[]): continue
    var room=CentralLogistics.output_room(state,int(proposal.index),key) if centralized else production_capacity-float(state.resources[key])
-   fraction = minf(fraction,room/maxf(float(output_demand[key]),0.0001))
+   var requested=float(recipe.out[key])*float(proposal.cycles) if centralized else float(output_demand[key])
+   fraction = minf(fraction,room/maxf(requested,0.0001))
   var cycles = float(proposal.cycles)*maxf(0,fraction)
   for key in recipe["in"]:
    if proposal.local_inputs:
@@ -545,7 +550,7 @@ func step(delta: float) -> void:
  for j in state.jobs:
   if j.has("phases"):
    var old_phase = int(j.phase)
-   var work = delta*(1+research_level("construction")*0.12+minf(public_level("fire")*0.05,0.5))*boost("workers")*maxi(0,int(j.workers))
+   var work = delta*(1+research_level("construction")*0.12+minf(public_level("fire")*0.05,0.5))*boost("workers")*maxi(0,CrewTransport.working(state,j))
    if ConstructionRules.advance(j,work): completed.append(j)
    if int(j.phase)!=old_phase: construction_phase_completed.emit(int(j.id),int(j.phase))
    continue
@@ -558,6 +563,7 @@ func step(delta: float) -> void:
   state.jobs.erase(j)
   finish_job(j)
  if allocate_group_crews(): rebuild_world.emit()
+ CrewTransport.dispatch(state)
  if not state.plan.is_empty() and state.plan.get("auto",false):
   var plan = state.plan.duplicate(true)
   var affordable = state.coins >= float(Catalog.HOMES[plan.kind].cost)*difficulty()
@@ -717,6 +723,8 @@ func move_reason(index: int, city: bool = false) -> String:
  if not city and (delivery_owns(index) or job_for("upgrade",index)):
   return "Vor dem Verschieben die Lieferlinie auflösen oder den laufenden Ausbau abschließen"
  if not city:
+  for mission in state.crew.missions:
+   if int(mission.origin)==index: return "Sprinter zuerst zur Arbeiterhütte zurückkehren lassen"
   for trip in state.hub.shipments:
    if int(trip.origin)==index or int(trip.destination)==index: return "Lager-LKW zuerst entladen und zurückkehren lassen"
   for trip in state.trade.shipments:
@@ -1351,7 +1359,7 @@ func remove_road(index: int) -> bool:
     notice.emit("Export-LKW sind auf dieser Strecke unterwegs")
     return false
  var paths=[]
- for shipment in FreightFlow.all_trips(state): paths.append(shipment.path)
+ for shipment in FreightFlow.traffic_trips(state): paths.append(shipment.path)
  for mission in state.city_services.missions:
   paths.append_array([mission.outward,mission.second,mission.back])
   if not mission.get("water_route",[]).is_empty(): paths.append(mission.water_route)
@@ -1503,7 +1511,8 @@ func delivery_routes() -> Dictionary:
  return delivery_route_cache
 
 func start_delivery() -> bool:
- if FactorySupply.busy_inputs(state):
+ var nodes=DeliveryChain.choose_nodes(state)
+ if not nodes.is_empty() and FactorySupply.busy_inputs(state,nodes.values()):
   notice.emit("Angeforderte Werkslieferungen zuerst entladen und zurückkehren lassen")
   return false
  if not DeliveryChain.start(state):
@@ -1642,6 +1651,7 @@ func add_company_xp(amount: int) -> void:
   notice.emit("Unternehmenslevel %s%s" % [company_level()," · Steinbruch & Baustoffe freigeschaltet" if before<5 and company_level()>=5 else " · Materialbaustellen freigeschaltet" if before<4 and company_level()>=4 else ""])
 
 func free_builders() -> int:
+ if CrewTransport.enabled(state): return maxi(0,int(state.builders)-CrewTransport.reserved(state))
  var assigned = 0
  for job in state.jobs: assigned += int(job.get("workers",0))
  return maxi(0,int(state.builders)-assigned)
@@ -1650,7 +1660,8 @@ func assign_builders(id: int, amount: int) -> bool:
  for job in state.jobs:
   if int(job.get("id",-1))!=id or not job.has("phases"): continue
   var wanted = clampi(amount,0,5)
-  if wanted>int(job.workers)+free_builders(): return false
+  var owned=maxi(int(job.workers),int(CrewTransport.people(state).get(str(id),0))) if CrewTransport.enabled(state) else int(job.workers)
+  if wanted>owned+free_builders(): return false
   job.workers=wanted
   job.auto_crew=false
   rebuild_world.emit()

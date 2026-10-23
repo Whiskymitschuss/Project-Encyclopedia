@@ -10,6 +10,10 @@ static var geometry={}
 static func all_trips(state: Dictionary) -> Array:
  return state.delivery.shipments+state.construction_shipments+state.stone.shipments+state.trade.shipments+state.get("hub",{}).get("shipments",[])
 
+static func traffic_trips(state: Dictionary) -> Array:
+ # Passenger transport reserves road time but is never counted as materials.
+ return all_trips(state)+state.get("crew",{}).get("missions",[])
+
 static func segments(path: Array) -> Array:
  var key=hash(path)
  if geometry.has(key) and geometry[key].path==path: return geometry[key].segments
@@ -115,7 +119,7 @@ static func windows(ours: Dictionary,theirs: Dictionary) -> Array:
 
 static func enqueue(state: Dictionary, fleet: Array, trip: Dictionary) -> void:
  var occupied=[]
- for other in all_trips(state):
+ for other in traffic_trips(state):
   var clock=float(other.get("depart_in",0))-float(other.age)
   for interval in windows(trip,other):
    if interval.y+clock>=0: occupied.append(interval+Vector2.ONE*clock)

@@ -71,10 +71,16 @@ static func processing_required(state: Dictionary,key: String) -> bool:
   if not uses_input(product,key): continue
   var available=0.0
   for source in sources(state,product): available+=float(source.stock.get(product,0))
-  for group in [state.hub.outputs,state.hub.express]:
-   for stock in group.values(): available+=float(stock.get(product,0))
+  if LogisticsDispatch.enabled(state):
+   for source in CentralLogistics.pickup_sources(state):
+    if source.has("only") and source.only!=product: continue
+    if source.has("keys") and product not in source.keys: continue
+    available+=float(source.stock.get(product,0))
+  else:
+   for group in [state.hub.outputs,state.hub.express]:
+    for stock in group.values(): available+=float(stock.get(product,0))
   for trip in FreightFlow.all_trips(state):
-   if trip.key==product and not trip.arrived: available+=float(trip.amount)
+   if trip.key==product and not trip.arrived and (not LogisticsDispatch.enabled(state) or trip.target in ["central","express","construction"]): available+=float(trip.amount)
   if available+0.00001<float(demand[product]): return true
  return false
 
@@ -98,6 +104,7 @@ static func status(job: Dictionary) -> String:
   var phase_title = PHASES[mini(6,int(job.phase))]
   if job.get("paused",false): return "%s · Baustelle pausiert" % phase_title
   if int(job.workers)<=0: return "%s · %s" % [phase_title,"wartet auf freies Bauteam" if job.get("auto_crew",false) else "wartet auf Bauarbeiter"]
+  if int(job.get("crew_present",job.workers))<=0: return "%s · Bauteam reist an" % phase_title
   var work_status = "Bau läuft"
   for key in job.get("materials",{}):
    if phase_need(job,key)>0.00001:
@@ -164,6 +171,12 @@ static func sources(state: Dictionary, key: String) -> Array:
  # Only actual outputs are pickup points. Never reclaim a factory's inputs or
  # goods already on a truck: that would send boards back through the wood line.
  var result = []
+ if LogisticsDispatch.enabled(state):
+  for index in DepotNetwork.depots(state):
+   var inventories=DepotNetwork.inventories(state,int(index))
+   for slot in inventories.size():
+    result.append({"kind":state.buildings[int(index)].kind,"index":int(index),"stock":inventories[slot],"storage":"regional" if state.buildings[int(index)].kind=="express" else "receiving" if slot==0 else "central"})
+  return result
  if state.delivery.active:
   var kind = {"wood":"station","boards":"sawmill","furniture":"furniture"}.get(key,"")
   if not kind.is_empty() and state.delivery.nodes.has(kind):
@@ -192,7 +205,7 @@ static func logistics_status(state: Dictionary, job: Dictionary) -> String:
  if job.get("paused",false): return "Pausiert · laufende LKWs dürfen noch entladen"
  if job.has("phases") and int(job.get("workers",0))<=0:
   return "Wartet auf freies Bauteam · rückt automatisch nach" if job.get("auto_crew",false) else "Keine Bauarbeiter zugewiesen"
- if CentralLogistics.active(state) and state.buildings[CentralLogistics.depot(state)].get("paused",false): return "Zentrallager pausiert · Betrieb dort fortsetzen"
+ if CentralLogistics.active(state) and state.buildings[CentralLogistics.depot(state)].get("paused",false) and (not LogisticsDispatch.enabled(state) or DepotNetwork.depots(state).is_empty()): return "Zentrallager pausiert · Betrieb dort fortsetzen"
  for key in job.get("materials",{}):
   if phase_need(job,key)<=0.00001: continue
   var available = false
@@ -236,6 +249,10 @@ static func transport_tick(state: Dictionary, delta: float) -> void:
  for s in done: state.construction_shipments.erase(s)
 
 static func dispatch(state: Dictionary, only_job: int = -1) -> float:
+ if state.jobs.is_empty():
+  state.hub.site_last_served.clear()
+  return 0.0
+ if LogisticsDispatch.enabled(state): return dispatch_network(state,only_job)
  var busy = state.construction_shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
@@ -273,8 +290,59 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
     result+=amount
  return result
 
+static func dispatch_network(state: Dictionary,only_job: int=-1) -> float:
+ var free=maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size())
+ if free<=0: return 0.0
+ var result=0.0
+ var active={}
+ for job in state.jobs: active[str(int(job.get("id",-1)))]=true
+ for id in state.hub.site_last_served.keys():
+  if not active.has(id): state.hub.site_last_served.erase(id)
+ while free>0:
+  var choices=[]
+  for job in state.jobs:
+   var id=int(job.get("id",-1))
+   if not job.has("phases") or job.get("paused",false) or int(job.get("workers",0))<=0 or (only_job>=0 and only_job!=id): continue
+   var keys=job.materials.keys()
+   keys.sort()
+   for key in keys:
+    var missing=maxf(0,phase_need(job,key)-incoming(state,id,key))
+    if missing<=0.00001: continue
+    for source in DepotNetwork.construction_sources(state,job,key):
+     var amount=minf(missing,minf(float(source.stock.get(key,0)),4+int(state.vehicle)*2))
+     if amount<=0.00001: continue
+     var path=LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job))
+     if path.size()<2: continue
+     choices.append({"job":job,"source":source,"key":key,"amount":amount,"path":path,"served":int(state.hub.site_last_served.get(str(id),0))})
+     break
+  if choices.is_empty(): break
+  var chosen=[]
+  # Explicit priority gets two turns, other paid sites keep a guaranteed turn.
+  for offset in 3:
+   var slot=(int(state.hub.site_class_cursor)+offset)%3
+   chosen=choices.filter(func(choice): return bool(choice.job.get("priority",false))==(slot<2))
+   if chosen.is_empty(): continue
+   state.hub.site_class_cursor=(slot+1)%3
+   break
+  if chosen.is_empty(): break
+  chosen.sort_custom(func(a,b):
+   if int(a.served)!=int(b.served): return int(a.served)<int(b.served)
+   if int(a.job.id)!=int(b.job.id): return int(a.job.id)<int(b.job.id)
+   return str(a.key)<str(b.key))
+  var task=chosen[0]
+  var source=task.source
+  source.stock[task.key]=float(source.stock[task.key])-float(task.amount)
+  var drive=maxf(2,LogisticsRoutes.length(task.path)/(9+int(state.vehicle)))
+  FreightFlow.enqueue(state,state.construction_shipments,{"id":state.next_shipment,"job":int(task.job.id),"source":source.kind,"origin":int(source.index),"target":"construction","fleet":"construction","mode":"truck","key":task.key,"amount":float(task.amount),"path":task.path,"age":0.0,"load":6.0,"drive":drive,"unload":2.0,"travel":drive+8,"total":drive*2+10,"arrived":false})
+  state.next_shipment+=1
+  state.hub.site_sequence+=1
+  state.hub.site_last_served[str(int(task.job.id))]=int(state.hub.site_sequence)
+  result+=float(task.amount)
+  free-=1
+ return result
+
 static func advance(job: Dictionary, work: float) -> bool:
- if job.get("paused",false) or int(job.get("workers",0))<=0 or not phase_ready(job): return false
+ if job.get("paused",false) or int(job.get("workers",0))<=0 or int(job.get("crew_present",job.workers))<=0 or not phase_ready(job): return false
  var amount = minf(work,float(job.phase_left))
  job.phase_left = maxf(0,float(job.phase_left)-amount)
  job.left = maxf(0,float(job.left)-amount)
