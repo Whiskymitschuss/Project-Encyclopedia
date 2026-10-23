@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.9-alpha.1
+
+1348 Headless- und 304 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Eingeschlossen sind die zwei Firmen mit manuell vorbelegtem Holz,
+eigenständiger automatischer Ernte, realen Ladungen und Bibern neben Forstmaschinen.
+[Paketprüfbericht](alpha1-workers/packaged-checks.json).
+
+APK-SHA256 `3c5fbb8b986030e4cd5067e6641baadb359547d72c9f9ec91d1fb99f81b91184`. Quellstand `ce0f6106816c1a3b4431fc0f120590c06d9db3fb`.
+Paket, Versionscode 3004, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Automatische Holzfäller mit manuell gefülltem Lager · 0.28.9-alpha.1
 
 Vollständiger Headless-Lauf: **20.889 numerische Prüfungen**, 34 numerische und

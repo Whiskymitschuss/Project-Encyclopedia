@@ -1,4 +1,34 @@
-# Aktuell: Waldabholung und Startzeit · 0.28.8-alpha.1
+# Aktuell: Holzfäller und automatische Ernte · 0.28.9-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.9-alpha.1/releases/Timber-Loot-Tycoon-v0.28.9-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.9-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Waldarbeit-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.9-source.zip) · [Änderungen und Grenzen](../docs/WORKERS-289.md)
+
+Ein manuell gefüllter Holzbestand ist kein Nachweis für automatische Ernte.
+Team zeigt deshalb einen eigenen automatischen Holzzähler und den Stationsstatus.
+Volle Sammelplätze erhalten auch mit Holz im Zentrallager eine reale Abholung;
+größere Bündelladungen nutzen die bestehende begrenzte Flotte. Biber bleiben neben
+gekauften Forstmaschinen sichtbar. Team → Holzfäller ansehen führt zur Arbeitskante.
+
+Generierter Kontrollfall mit 31 Helfern und Werkzeugstufe 11, jeweils 30 Minuten
+ohne manuelle Aktionen: **72 → 1.544 automatisch gewonnene Holz**, längste Pause
+**586 → 125 Sekunden**. Kein Test des privaten Spielstands und keine zugesicherte
+allgemeine Produktionsrate. Die Startoptimierung aus 0.28.8 bleibt enthalten;
+keine neue Zusicherung zu Handy-Startzeit und Wärme. Masterumbau weiter offen.
+
+Android-Code **3004**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+20889 Headless- und 1024 OpenGL-Prüfungen des Quellstands;
+zusätzlich 1348 Headless- und 304 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-workers/automated-checks.json).
+
+APK-Quellstand `ce0f6106816c1a3b4431fc0f120590c06d9db3fb`. Quell-ZIP: 622 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Waldabholung und Startzeit · 0.28.8-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.8-alpha.1/releases/Timber-Loot-Tycoon-v0.28.8-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.8-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Waldstart-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.8-source.zip) · [Änderungen und Grenzen](../docs/RECOVERY-288.md)
