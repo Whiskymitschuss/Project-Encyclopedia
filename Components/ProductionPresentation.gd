@@ -10,7 +10,7 @@ static func advice(game: Node,index: int) -> Dictionary:
   elif game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).key)
   elif Catalog.RECIPES.has(b.kind):
    for input in Catalog.RECIPES[b.kind]["in"]:
-    if float(game.state.resources[input])<=game.processing_reserve_for(input)+0.0001: key=input; break
+    if (float(FactorySupply.stock(game.state,index).get(input,0)) if FactorySupply.managed(game.state,index) else float(game.state.resources[input])-game.processing_reserve_for(input))<=0.0001: key=input; break
  if status.kind=="full":
   if game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).get("output_key","wood"))
   elif b.kind in StoneIndustry.KINDS: key="rock" if b.kind=="quarry" else "stone"
@@ -47,6 +47,7 @@ static func describe(game: Node,index: int) -> Dictionary:
  for key in recipe.out:
   if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key])>=game.capacity()-0.0001): return {"kind":"full","text":"↑ %s-Lager voll" % Catalog.RESOURCES[key]}
  for key in recipe["in"]:
-  if float(state.resources[key])<=game.processing_reserve_for(key)+0.0001:
-   return {"kind":"missing","text":"! %s reserviert" % Catalog.RESOURCES[key] if game.processing_reserve_for(key)>0 else "! %s fehlt" % Catalog.RESOURCES[key]}
+  var local_inputs=FactorySupply.managed(state,index)
+  if (float(FactorySupply.stock(state,index).get(key,0)) if local_inputs else float(state.resources[key])-game.processing_reserve_for(key))<=0.0001:
+   return {"kind":"missing","text":"! %s reserviert" % Catalog.RESOURCES[key] if not local_inputs and game.processing_reserve_for(key)>0 else "! %s fehlt" % Catalog.RESOURCES[key]}
  return {"kind":"running","text":""}

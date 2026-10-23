@@ -1,33 +1,36 @@
 ## Versorgung und Biberwelt · 0.28.6-alpha.1
 
-20.792 Prüfungen in 32 Headless-Suiten einschließlich zweier natürlicher
-Progressionsläufe; Hauptwelt- und Titelstart bestanden. 947 OpenGL-Prüfungen
-in 22 unterschiedlichen Suiten bestanden. Betroffene Suiten nach Korrekturen
-wiederholt, Wiederholungen nicht doppelt gezählt.
-[Prüfbericht](alpha1-supply/automated-checks.json).
+20.824 numerische Prüfungen in 33 Headless-Suiten einschließlich zweier
+natürlicher Progressionsläufe; Hauptwelt- und Titelstart bestanden.
+958 OpenGL-Prüfungen in 23 unterschiedlichen Suiten bestanden.
+[Prüfbericht](alpha1-supply/automated-checks.json). Wiederholungen nicht doppelt gezählt.
 
-Nachgestellt und korrigiert: blockierte Zutaten trotz vorhandener Vorräte,
-fehlende unabhängige Flottenversorgung, globale Wirkung einer einzelnen Pause,
-nicht nachrückende Bauteams sowie verdrängte Abholung gemischter Fabrikausgänge.
-32 neue Versorgungsprüfungen decken auch alte Firmen ohne zugewiesene Lieferlinie,
-Warenbilanz, kleinen frischen Holzertrag und JSON-Fortsetzung ab.
+Versorgungskorrekturen: blockierte Zutaten trotz vorhandener Vorräte, fehlende
+unabhängige Flotte, globale Wirkung einzelner Pausen, nicht nachrückende Bauteams
+und verdrängte Abholung gemischter Fabrikausgänge.
 
-Die Grafikprüfung fand zunächst abgeschnittene Lagerzeilen und anschließend
-Warenbadges, die die höhere Bedienleiste oder eine offene Detailkarte überdeckten.
-Mindestgrößen, tatsächliche HUD-Grenzen und die Lage des ausgewählten Badges
-korrigiert. Materialtipp, 32 wiederholte Fabriktipps, Großschrift und kleine
-Displays anschließend erfolgreich geprüft. Der unveränderte Rollback-Test
-bestätigt die bisherigen Lieferdaten; neue Reihenfolgen liegen separat im
-Logistikzustand. 161 neue Architekturprüfungen prüfen vier bestehende Familien
-über jeweils zehn Stufen. [Hauptwelt](alpha1-supply/supply.png) ·
-[Zusätzlicher QA-Stufenvergleich](alpha1-supply/infrastructure.png).
+Zusätzlich 32 neue Prüfungen für **WARE ANFORDERN**: tatsächlicher Lager-LKW,
+Entzug aus dem Zentrallager, Buchung erst nach Entladen, Verarbeitung aus lokalem
+Werkseingang, Mehrfachtipps ohne Überfüllung, fehlende Ware/belegte Flotte,
+Straßen/Pausen, echte Gesteinsabholung und JSON-Fortsetzung. Die Warenbilanz bleibt
+auch beim fortlaufenden Nachschub erhalten; alte unberührte Rezeptwerke laufen
+weiter. Elf neue Grafikprüfungen betätigen den echten Touch-Knopf und prüfen den
+sichtbaren Lager-LKW, Frachtauswahl und Erreichbarkeit bei Großschrift.
+[Werksanforderung](alpha1-supply/request.png).
+
+Materiallagerzeilen, 32 wiederholte Fabriktipps und kleine Displays bestanden.
+Ein zusätzlicher Stein-Grafiktest fand eine falsche Zuordnung loser Schüttware
+zum Stapler: korrigiert, Schüttware bleibt im kippenden Muldenaufbau. Stein-,
+Verkehrs-, Tal- und betroffene Fabrik-/Staplerprüfungen danach bestanden.
+161 Architekturprüfungen decken vier bestehende Familien in zehn Stufen ab.
+[Hauptwelt](alpha1-supply/supply.png) · [QA-Stufenvergleich](alpha1-supply/infrastructure.png).
 
 Der gesamte Weltumbau ist **noch nicht fertig**.
 [Änderungen und exakter Reststand](WORLD-REWORK-286.md).
-Kein privater Spielstand benutzt, kein echter Android-/Temperaturtest.
-Desktop-Kaltstartprobe: erster Skriptframe 613 ms, acht Offline-Stunden in
-18,277 s einschließlich Darstellung verarbeitet. Das ist keine zugesicherte
-Handy-Startzeit und kein kontrollierter Geschwindigkeitsvergleich.
+Kein privater Spielstand, kein echter Android-/Temperaturtest.
+Desktop-Kaltstartprobe: erster Skriptframe 585 ms, acht Offline-Stunden in
+18,023 s einschließlich Darstellung verarbeitet. Keine zugesicherte Handy-
+Startzeit und kein kontrollierter Geschwindigkeitsvergleich.
 
 ## Externe Downloads Biberwelt · 0.28.5 geprüft
 

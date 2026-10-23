@@ -48,6 +48,8 @@ static func factory_name(state: Dictionary,index: int) -> String:
  return "%s %s" % [Catalog.BUILDINGS[kind].name,ordinal]
 static func material_sources(state: Dictionary,key: String) -> Array:
  var result=[]
+ for id in state.hub.inputs:
+  if float(state.hub.inputs[id].get(key,0))>0: result.append({"index":int(id),"amount":float(state.hub.inputs[id][key]),"name":factory_name(state,int(id))+" · Werkseingang","kind":state.buildings[int(id)].kind})
  for id in state.hub.outputs:
   if float(state.hub.outputs[id].get(key,0))>0: result.append({"index":int(id),"amount":float(state.hub.outputs[id][key]),"name":factory_name(state,int(id)),"kind":state.buildings[int(id)].kind})
  for id in state.hub.express:
@@ -78,7 +80,7 @@ static func material_stock(state: Dictionary,key: String) -> Dictionary:
  var local=0.0
  for group in [state.delivery.buffers,state.delivery.recovered]:
   for stock in group.values(): local+=float(stock.get(key,0))
- for group in [state.hub.outputs,state.hub.express]:
+ for group in [state.hub.outputs,state.hub.express,state.hub.inputs]:
   for stock in group.values(): local+=float(stock.get(key,0))
  for site in state.stone.sites.values(): local+=float(site.get("stock",{}).get(key,0))
  var transit=0.0

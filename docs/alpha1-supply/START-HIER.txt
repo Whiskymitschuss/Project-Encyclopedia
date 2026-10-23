@@ -10,6 +10,12 @@ alle; einzelne Baustellen bekamen nach Abschluss des Vorgängers kein Bauteam.
 Bestände und tatsächliche Frachten bleiben erhalten. Die große Materialzahl zählt
 Lager plus Betriebe, die Zeile darunter nennt den reinen Lageranteil.
 
+Neu: Werk antippen → WARE ANFORDERN. Ein freier Lager-LKW bringt tatsächliche
+Zutaten vom Zentrallager. Bei fehlender Ware/belegter Flotte bleibt ein Auftrag
+erhalten. Die Anzeige unterscheidet vor Ort, im LKW und noch angefordert.
+Bei frei stehenden Rezeptwerken aktiviert dies auch den automatischen lokalen
+Nachschub. Mehrfachtipps verdoppeln keine Reservierung.
+
 Außerdem zehn Architektur-Erweiterungen für Zentrale, Express, Steinbruch und
 Steinwerk. Kein Zurücksetzen der Firma. Der Gesamtumbau ist noch nicht fertig.
 Genauer Stand und offene Aufgaben: WORLD-REWORK-286.md.

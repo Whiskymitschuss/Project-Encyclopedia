@@ -15,7 +15,7 @@ func choose(value: Dictionary) -> void:
  signature=""
  refresh()
 func trip_domain(s: Dictionary) -> String:
- return "central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+ return "central" if s.target in ["central","express","factory"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
 func trips() -> Array:
  return FreightFlow.all_trips(Game.state)
 func matches(s: Dictionary) -> bool:

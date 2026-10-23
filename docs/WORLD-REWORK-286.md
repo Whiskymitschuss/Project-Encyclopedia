@@ -23,6 +23,31 @@ auf einem bestimmten Handy. Originale private Spielstände wurden nicht verwende
 Ware wird weiterhin erst nach tatsächlichem Entladen gutgeschrieben. Animationen
 und Sichtweite entscheiden nicht über den wirtschaftlichen Fortschritt.
 
+## Ware am Werk anfordern
+
+Im kompakten Werksfenster und in den Gebäudedetails gibt es jetzt
+**WARE ANFORDERN · ZENTRALLAGER → WERK**. Die Aktion füllt die benötigten
+Rezeptzutaten des ausgewählten Werks nach. Ein verfügbarer weiß-blauer
+Zentral-LKW lädt tatsächliche Lagerware, fährt über die Straßen und entlädt
+sie am Werk. Erst danach verarbeitet die Fabrik die lokale Eingangsmenge.
+Auch das Steinwerk kann Gestein über die Zentrale anfordern; vorhandenes
+Gestein wird dafür zuerst tatsächlich am Steinbruch abgeholt.
+
+Fehlende Ware und belegte Fahrzeuge führen zu gespeicherten Aufträgen.
+Die Anzeige nennt die Menge vor Ort, im LKW und noch angefordert sowie
+fehlende/reservierte Lagerware, belegte Flotte, Pause oder fehlende Straße.
+Mehrfaches Tippen bestellt nur den freien Platz nach Abzug laufender Lieferungen.
+Die Disposition wechselt zwischen wartenden Zutaten und Werken. Ein neuer
+sofort ausführbarer Knopfdruck bedient das gerade ausgewählte Werk.
+
+Bei bisher frei stehenden Rezeptfabriken aktiviert die erste Anforderung einen
+lokalen Eingangspuffer mit anschließend automatischem Nachschub bei niedrigem
+Bestand. Unberührte Fabriken behalten ihren bisherigen gemeinsamen Rezeptbestand;
+beim Laden wird nichts umgebucht. Eine pausierte Fabrik fordert nicht neu an,
+laufende LKW dürfen noch entladen. Änderungen an der zugewiesenen Holzlinie
+warten auf laufende Werkseingangslieferungen. Übrige Eingangsvorräte einer neu
+zugewiesenen Fabrik werden körperlich zurück zur Zentrale abgeholt.
+
 ## Fortgesetzter Weltumbau
 
 Zentrallager, Abhol-Express, Steinbruch und Steinwerk erhalten jetzt ebenfalls
@@ -49,12 +74,18 @@ keine getrennte Spielwelt.
 `Tests/Supply286.gd` prüft große konkurrierende Rechnungen, knappe neue Holzernte,
 Warenbilanz, unabhängige Pausen, gemeinsame Kapazität der Lagerflotte, automatische
 und manuelle Bauteams, alte Aufträge, regionale Lieferstatus und JSON-Fortsetzung.
+`Tests/FactorySupply286.gd` prüft reale manuelle Anforderungen, belegte Flotte,
+fehlende Lagerware, Straßen/Pausen, Mehrfachtipps, lokale Verarbeitung, Warenbilanz,
+Gesteinsnachschub, Speichern und die alte Produktionsart.
+`Tests/VisualFactorySupply286.gd` prüft den echten Touch-Knopf, sichtbaren
+Lager-LKW, Auswahl und Erreichbarkeit mit Großschrift in der Hauptwelt.
 `Tests/Infrastructure286.gd` prüft 40 neue Architektur-Konfigurationen auf reale
 Geometrieänderungen, Grundstücksgrenzen und Anschlusspunkte.
 `Tests/VisualSupply286.gd` prüft die Hauptwelt-Integration, tatsächliche Fahrzeuge,
 Lagerzeilen und Touch-Flächen auf kleinen Handyformaten.
 
 Aktuelle vollständige Prüfergebnisse: [automated-checks.json](alpha1-supply/automated-checks.json).
+[Werk mit Anforderung](alpha1-supply/request.png) ·
 [Hauptwelt](alpha1-supply/supply.png) · [Stufenvergleich 1/5/10](alpha1-supply/infrastructure.png).
 
 **Der große Masterauftrag bleibt offen.** Der [Stand von 0.28.5](WORLD-REWORK-285.md)
@@ -64,8 +95,9 @@ Ein-/Aussteige- und Werkzeugwechselabläufe, eigenständige editierbare Szenen f
 jede gewünschte neue Fabrik sowie Paletten-, Ziegel-, Beton-, Erz-, Stahl-,
 Träger- und Schraubenproduktion. Dekorative Aufbauten sind keine zusätzlichen
 wirtschaftlichen Maschinen. Nicht jede allgemeine Fabrik nutzt bereits lokale
-Eingangsfrachten; der bestehende gemeinsame Rezeptbestand bleibt außerhalb der
-zugewiesenen Holzlinie erhalten. Die Holzfällanimation ist noch kein vollständiger
+Eingangsfrachten: außerhalb der zugewiesenen Holzlinie wird der lokale
+Nachschub erst durch „Ware anfordern“ aktiviert. Bis dahin bleibt der bisherige
+gemeinsame Rezeptbestand erhalten. Die Holzfällanimation ist noch kein vollständiger
 Einzelauftrag mit individuell verfolgtem Stamm bis zum Endprodukt.
 
 Nächste Baugruppe: getrennte, hindernisbewusste Arbeits-/Fußwege und weitere

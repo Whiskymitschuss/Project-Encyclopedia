@@ -151,7 +151,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  var free = CentralLogistics.available_trucks(state) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
  # Keep one pickup/replenishment in service when both duties need the central
  # fleet. Existing hub assignments already satisfy that share, including returns.
- if free>0 and CentralLogistics.active(state) and state.hub.shipments.is_empty() and CentralLogistics.work_pending(state): free=maxi(0,free-1)
+ if free>0 and CentralLogistics.active(state) and CentralLogistics.collection_busy(state)==0 and CentralLogistics.work_pending(state): free=maxi(0,free-1)
  # Start downstream, then rotate after successful assignments so permanently
  # stocked shop orders cannot starve a sawmill's next ingredient delivery.
  var order_of_links=[2,1,0]
@@ -194,6 +194,7 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   if warehouse_load: state.resources[key]-=batch
   else: data.buffers[source][key] -= batch
   FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"origin":origin,"source":"central_depot" if CentralLogistics.active(state) and warehouse_load else "warehouse" if warehouse_load else source,"fleet":"central" if CentralLogistics.active(state) and warehouse_load else "general","target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":handling,"drive":drive,"unload":handling,"travel":travel,"total":total,"age":0.0,"arrived":false})
+  FactorySupply.fulfilled(state,int(data.nodes[target]),key,batch)
   data.next_id += 1
   state.hub.supply_cursor=(cursor+offset+1)%3
   free-=1

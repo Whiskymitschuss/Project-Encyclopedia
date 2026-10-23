@@ -1,8 +1,9 @@
 {
   "version": "0.28.6-alpha.1",
-  "headless_checks": 20792,
-  "headless_suites": 32,
+  "headless_checks": 20824,
+  "headless_suites": 33,
   "headless_numeric_results": {
+    "FACTORY SUPPLY 286": 32,
     "SUPPLY 286": 32,
     "INFRASTRUCTURE 286": 161,
     "WORLD REWORK 285": 907,
@@ -39,9 +40,10 @@
     "Progression: first home without grants"
   ],
   "main_and_boot_smokes_passed": true,
-  "visual_checks": 947,
-  "visual_suites": 22,
+  "visual_checks": 958,
+  "visual_suites": 23,
   "visual_results": {
+    "VISUAL FACTORY SUPPLY 286": 11,
     "VISUAL SUPPLY 286": 13,
     "BEAVER WORLD": 88,
     "VISUAL MAP 2842": 32,
@@ -68,7 +70,7 @@
   "new_supply_checks": 32,
   "new_architecture_checks": 161,
   "new_main_world_visual_checks": 13,
-  "validation_sequence": "Full headless set, then Supply/Scene/BuildingCard/Rollback rerun. Complete standard OpenGL sequence run up to a repeat-selection failure; selected badge now stays above its card. Affected BuildingCard and all remaining standard suites rerun successfully. Additional Stone/Traffic/Valley suites passed. Duplicate successful suite results are not added.",
+  "validation_sequence": "Full headless suite including natural progression and Main/Boot smokes passed. FactorySupply rerun after fair request rotation and explicit selected-target priority. Complete standard OpenGL sequence plus Stone/Traffic/Valley passed; affected factory, beaver and campus suites rerun after separating loose mineral cargo from pallet handling. Unique suite results only; no duplicate totals.",
   "resolved_findings": [
     "Future construction bills prevented manufacture of furniture required by the current site; reproduced before repair.",
     "Independent workshop pause, unstaffed legacy jobs and reliance on a general truck reproduced before repair.",
@@ -76,7 +78,8 @@
     "New label footers initially exceeded their buttons; font-aware minimum sizes and compact counter text corrected.",
     "World badges used a fixed 190-pixel lower exclusion and intercepted HUD touches after resizing. Actual HUD bounds now govern placement; selected badges yield above their open card.",
     "New routing metadata originally extended the legacy delivery dictionary; moved into the separate logistics state so the original rollback-preservation test passes unchanged.",
-    "A new QA view initially preloaded model helpers before autoload initialization; it now loads those helpers at runtime."
+    "A new QA view initially preloaded model helpers before autoload initialization; it now loads those helpers at runtime.",
+    "Loose mineral cargo was incorrectly classified as a forklift pallet at a works; bulk cargo now stays in the tipping bed and yard forklifts do not acquire bulk loads. VisualStone passed after repair."
   ],
   "coverage": [
     "Existing local delivery and unassigned legacy recipe companies, with and without a central depot",
@@ -86,14 +89,19 @@
     "Remote express status, read-only inspection and exact JSON restoration",
     "Four existing infrastructure families at ten stages: geometric differences, plot bounds and anchors",
     "Main-world stock displays, animated yard handlers and actual road freight",
-    "Warehouse subtitles, large text, small phones and repeated physical touch selection"
+    "Warehouse subtitles, large text, small phones and repeated physical touch selection",
+    "Manual real central-to-workshop request, warehouse withdrawal, unload-only local input credit and subsequent local manufacture",
+    "No duplicate reservation on repeated taps; explicit missing-stock/busy-fleet/road/pause states; persistent queued orders; true JSON continuation",
+    "Generic local supply is opt-in, untouched legacy shared recipes keep working; switching delivery mode preserves goods",
+    "Physical quarry-to-central-to-stoneworks collection and requested resupply; complete material balance through sustained local manufacture",
+    "Actual screen-touch request button, white/blue truck model with cargo, normal truck inspector and large text on small phones"
   ],
   "fixture": "Generated disposable companies only; no private player profile",
   "rendering": "Godot 4.6.3, Mesa llvmpipe GL Compatibility, Xvfb",
   "cold_start_desktop_sample": {
-    "first_script_frame_ms": 613,
-    "eight_hour_replay_total_ms": 18277,
-    "responsive_frames": 1049,
+    "first_script_frame_ms": 585,
+    "eight_hour_replay_total_ms": 18023,
+    "responsive_frames": 1036,
     "android_measurement": false,
     "controlled_comparative_benchmark": false
   },
@@ -104,5 +112,7 @@
     "Full remaining master phases are documented in WORLD-REWORK-286.md.",
     "No physical Android launch, heat/battery measurement, sustained mobile FPS or startup measurement.",
     "Older graphical suites retain some ObjectDB exit cleanup warnings; software X11 cannot change VSync."
-  ]
+  ],
+  "new_factory_supply_checks": 32,
+  "new_factory_supply_visual_checks": 11
 }

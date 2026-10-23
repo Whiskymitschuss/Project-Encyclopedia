@@ -12,6 +12,8 @@ static func phase(shipment: Dictionary, age: float) -> Dictionary:
  return {"kind":"drive","progress":1.0}
 
 static func has_forklift(state: Dictionary,shipment: Dictionary,loading: bool) -> bool:
+ # Loose bulk stays in the tipper bed; it is never a forklift pallet.
+ if shipment.key in ["rock","gravel"]: return false
  var index=int(shipment.get("origin",-1)) if loading else int(shipment.get("destination",-1))
  var kind=str(shipment.get("source","") if loading else shipment.get("target",""))
  if index>=0 and index<state.buildings.size(): kind=str(state.buildings[index].kind)

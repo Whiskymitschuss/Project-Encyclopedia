@@ -238,7 +238,7 @@ func _process(delta: float) -> void:
   var cargo_stage=CargoTransfer.apply(Game,node,shipment,age)
   var cargo_label: Label3D=node.get_node("RouteLabel")
   cargo_label.visible=false # Detail belongs in the bounded selection sheet, never across the world.
-  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else CentralLogistics.target_name(Game.state,shipment) if shipment.target in ["central","express"] else Catalog.BUILDINGS[shipment.target].name
+  var destination="Bau" if shipment.target=="construction" else ("Lager" if int(shipment.destination)<0 else "Steinwerk") if shipment.target=="mineral" else "Autobahn" if shipment.target=="export" else CentralLogistics.target_name(Game.state,shipment) if shipment.target in ["central","express","factory"] else Catalog.BUILDINGS[shipment.target].name
   cargo_label.text="LEER · zurück" if shipment.arrived else "%s %s → %s" % [int(shipment.amount),Catalog.RESOURCES[shipment.key],destination]
   if cargo_stage=="load": cargo_label.text="BELADEN · "+cargo_label.text
   elif cargo_stage=="unload": cargo_label.text="ENTLADEN · "+cargo_label.text
@@ -258,7 +258,7 @@ func _process(delta: float) -> void:
 func visual_key(shipment: Dictionary) -> String:
  # Saves retain their original IDs. Separate domains prevent two simultaneous
  # jobs with the same numeric ID from sharing a model or swapping cargo types.
- return "%s:%s" % ["central" if shipment.target in ["central","express"] else "construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "export" if shipment.target=="export" else "wood",int(shipment.id)]
+ return "%s:%s" % ["central" if shipment.target in ["central","express","factory"] else "construction" if shipment.target=="construction" else "stone" if shipment.target=="mineral" else "export" if shipment.target=="export" else "wood",int(shipment.id)]
 
 func _exit_tree() -> void:
  if is_instance_valid(overlay): overlay.queue_free()

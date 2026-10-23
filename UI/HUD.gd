@@ -801,6 +801,9 @@ func building_menu() -> void:
  var description = "Lieferbetrieb: 2 Bretter → 1 Möbel. Fertige Möbel werden zum Laden gefahren." if Game.delivery_owns(index) and b.kind=="furniture" else d.desc
  var box = card("Stufe %s / %s" % [b.level,d.max],description)
  dynamic_text(box,func(): return Game.production_status(index))
+ if not FactorySupply.requirements(Game.state,index).is_empty():
+  button(box,"WARE ANFORDERN · ZENTRALLAGER → WERK",func(): action(func(): Game.request_material(index)))
+  dynamic_text(box,func(): return FactorySupply.status(Game.state,index))
  if b.kind == "sawmill":
   text(box,"Leere die sichtbare Spänebox regelmäßig. Ein voller Behälter stoppt die Bretterproduktion nicht; neuer Überlauf wird kompostiert oder auf Wunsch verkauft.",15,MUTED)
   button(box,"SPÄNEBOX LEEREN",func(): open_menu("sawdust"))

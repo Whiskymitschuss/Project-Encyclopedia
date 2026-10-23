@@ -103,6 +103,7 @@ func _process(delta: float) -> void:
    if posmod(int(trip.id),handler_lanes)!=handler_lane: continue
    if cycle_running and int(cycle_trip.get("id",-1))!=int(trip.id): continue
    var stage=CargoTransfer.phase(trip,float(trip.age)+minf(Game.tick_clock,0.99))
+   if not CargoTransfer.has_forklift(Game.state,trip,stage.kind=="load"): continue
    if stage.kind in ["load","unload"] and CargoTransfer.dock(Game,trip,stage.kind=="load").distance_to(get_parent().global_position)<1:
     active=visible
     if not cycle_running:

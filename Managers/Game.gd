@@ -399,8 +399,10 @@ func production_status(index: int) -> String:
   if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key]) >= capacity()-0.0001):
    return "%s-Lager voll · verkaufen oder weiterverarbeiten" % Catalog.RESOURCES[key]
  for key in recipe["in"]:
-  if float(state.resources[key]) <= processing_reserve_for(key)+0.0001:
-   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," (Baureserve geschützt)" if processing_reserve_for(key)>0 else ""]
+  var local_inputs=FactorySupply.managed(state,index)
+  var available=float(FactorySupply.stock(state,index).get(key,0)) if local_inputs else float(state.resources[key])-processing_reserve_for(key)
+  if available<=0.0001:
+   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," · Ware anfordern" if local_inputs else " (Baureserve geschützt)" if processing_reserve_for(key)>0 else ""]
  if float(flow.get("building:%s" % index,0))>0: return "Läuft · %.2f Zyklen/s" % float(flow["building:%s" % index])
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
@@ -452,9 +454,9 @@ func step(delta: float) -> void:
   if b.get("paused",false) or delivery_owns(building_index) or not Catalog.RECIPES.has(b.kind): continue
   var recipe = Catalog.RECIPES[b.kind]
   var cycles = float(recipe.speed)*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")*delta
-  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles})
+  proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles,"local_inputs":FactorySupply.managed(state,building_index)})
   for key in recipe["in"]:
-   demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
+   if not FactorySupply.managed(state,building_index): demand[key] = float(demand.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out:
    output_demand[key] = float(output_demand.get(key,0))+float(recipe.out[key])*cycles
  # Allocate scarce shared inputs proportionally from one common snapshot.
@@ -467,13 +469,18 @@ func step(delta: float) -> void:
   var recipe = proposal.recipe
   var fraction = 1.0
   for key in recipe["in"]:
-   fraction = minf(fraction,maxf(0.0,float(state.resources[key])-float(processing_reserves[key]))/maxf(float(demand[key]),0.0001))
+   if proposal.local_inputs: fraction=minf(fraction,float(FactorySupply.stock(state,int(proposal.index)).get(key,0))/maxf(float(recipe["in"][key])*float(proposal.cycles),0.0001))
+   else: fraction = minf(fraction,maxf(0.0,float(state.resources[key])-float(processing_reserves[key]))/maxf(float(demand[key]),0.0001))
   for key in recipe.out:
    if key in recipe.get("overflow_sell",[]): continue
    var room=CentralLogistics.output_room(state,int(proposal.index),key) if CentralLogistics.active(state) else capacity()-float(state.resources[key])
    fraction = minf(fraction,room/maxf(float(output_demand[key]),0.0001))
   var cycles = float(proposal.cycles)*maxf(0,fraction)
-  for key in recipe["in"]: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
+  for key in recipe["in"]:
+   if proposal.local_inputs:
+    var local_stock=FactorySupply.stock(state,int(proposal.index))
+    local_stock[key]=maxf(0,float(local_stock.get(key,0))-float(recipe["in"][key])*cycles)
+   else: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
   for key in recipe.out:
    var amount=float(recipe.out[key])*cycles
    if CentralLogistics.active(state) and key!="sawdust":
@@ -503,6 +510,8 @@ func step(delta: float) -> void:
  flow["export"]=float(export_report.amount)/maxf(delta,0.001)
  for receipt in export_report.receipts:
   sale_completed.emit(str(receipt.key),float(receipt.coins),LogisticsRoutes.vector(receipt.point))
+ FactorySupply.maintain(state)
+ FactorySupply.dispatch(state)
  var old_dispatch=int(state.delivery.next_id)
  step_delivery(delta)
  if int(state.delivery.next_id)>old_dispatch: state.stone.turn="stone"
@@ -1491,6 +1500,9 @@ func delivery_routes() -> Dictionary:
  return delivery_route_cache
 
 func start_delivery() -> bool:
+ if FactorySupply.busy_inputs(state):
+  notice.emit("Angeforderte Werkslieferungen zuerst entladen und zurückkehren lassen")
+  return false
  if not DeliveryChain.start(state):
   notice.emit("Benötigt: Sammelstation, Sägewerk, Möbelfabrik und Verkaufsstelle ohne Pause")
   return false
@@ -1500,6 +1512,13 @@ func start_delivery() -> bool:
  changed.emit()
  save(true)
  return true
+
+func request_material(index: int) -> String:
+ var result=FactorySupply.request(state,index)
+ notice.emit(result)
+ changed.emit()
+ save(true)
+ return result
 
 func step_delivery(delta: float) -> void:
  if not state.delivery.active: return
@@ -1570,6 +1589,7 @@ func stop_delivery() -> bool:
    notice.emit("Im Lager Platz schaffen, bevor die Linie aufgelöst wird")
    return false
  for key in returned: state.resources[key] += float(returned[key])
+ state.hub.requests=state.hub.requests.filter(func(order): return not delivery_owns(int(order.index)))
  state.delivery = DeliveryChain.initial()
  delivery_route_cache.clear()
  rebuild_world.emit()

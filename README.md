@@ -5,6 +5,8 @@ Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Text
 ## Aktuell: 0.28.6-alpha.1 · Versorgung und Biberwelt
 
 Baurechnungen blockieren nicht mehr die Zutaten für fehlende Baumaterialien.
+Im Werk kann **„Ware anfordern“** einen echten Lager-LKW losschicken.
+Angeforderte Zutaten kommen erst nach dem Entladen in den lokalen Werkseingang.
 Die Zentrale versorgt Fabriken mit ihrer eigenen Flotte. Einzelne Betriebspausen
 stoppen keine unabhängigen Werkstätten; Bauteams rücken auch bei einzelnen
 Aufträgen nach. Lieferstatus und Lageranteil der Materialvorräte sind sichtbar.

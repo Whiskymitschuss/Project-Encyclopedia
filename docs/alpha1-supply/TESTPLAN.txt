@@ -15,3 +15,9 @@
    keine neue Überdeckung von Fahrgassen oder Nachbargrundstücken?
 10. Spiel minimieren/beenden und erneut öffnen: Fortschritt und Lieferungen korrekt fortgesetzt?
 11. S26 Ultra/S24 FE: Gerät, Modus, Startdauer, FPS-Eindruck und Wärme nach 5/15 Minuten notieren.
+12. Werk auswählen → WARE ANFORDERN: weiß-blauer LKW startet vom Zentrallager?
+    Eingang bleibt bis zum Entladen leer, danach arbeitet die Fabrik damit?
+13. Mehrmals anfordern: keine Doppelbuchung/Überfüllung. Ohne Lagerware oder freie
+    LKW: Auftrag und Grund sichtbar? Nachschub startet bei Verfügbarkeit?
+14. Auch frei stehende Fabrik und Steinwerk testen. Spiel während der Fahrt
+    schließen und neu öffnen: Waren, Aufträge und Lieferungen erhalten?

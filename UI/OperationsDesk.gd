@@ -27,7 +27,7 @@ static func populate(hud: Control,tab: String) -> void:
  hud.button(hud.contents,"ALLE BETRIEBE",func(): hud.open_menu("industry"))
  for trip in FreightFlow.all_trips(Game.state):
   var s=trip
-  var domain="central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
+  var domain="central" if s.target in ["central","express","factory"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
   var box=hud.card("%s %s" % [Catalog.number(s.amount),Catalog.RESOURCES[s.key]])
   hud.dynamic_text(box,func(): return FreightFlow.status(s))
   hud.button(box,"LKW & ROUTE",func(): hud.ux.select_truck({"kind":"truck","domain":domain,"id":int(s.id)},true))

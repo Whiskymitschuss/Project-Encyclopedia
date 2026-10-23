@@ -4,7 +4,7 @@ extends RefCounted
 # Resources belong to the central store; outputs, express stock and road cargo
 # have separate ownership. No credit before unloading and no shared-fleet lock.
 static func initial() -> Dictionary:
- return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0}
+ return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0}
 
 static func depot(state: Dictionary) -> int:
  for i in state.buildings.size():
@@ -37,6 +37,15 @@ static func available_trucks(state: Dictionary) -> int:
  var assigned=state.hub.shipments.size()+DeliveryChain.central_busy(state)
  return maxi(0,fleet_size(state)-assigned)
 
+static func collection_busy(state: Dictionary) -> int:
+ var count=0
+ for trip in state.hub.shipments:
+  if trip.target in ["central","express"]: count+=1
+ return count
+
+static func factory_busy(state: Dictionary) -> int:
+ return DeliveryChain.central_busy(state)+state.hub.shipments.size()-collection_busy(state)
+
 static func work_pending(state: Dictionary) -> bool:
  var center=depot(state)
  if center<0 or state.buildings[center].get("paused",false): return false
@@ -67,8 +76,8 @@ static func tick(state: Dictionary,delta: float) -> void:
  for trip in state.hub.shipments:
   FreightFlow.advance(trip,delta)
   if not trip.arrived and float(trip.age)>=float(trip.travel):
-   var destination=state.resources if trip.target=="central" else stock(state,int(trip.destination),true)
-   var limit=capacity(state) if trip.target=="central" else 96.0
+   var destination=FactorySupply.stock(state,int(trip.destination)) if trip.target=="factory" else state.resources if trip.target=="central" else stock(state,int(trip.destination),true)
+   var limit=FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else capacity(state) if trip.target=="central" else 96.0
    if float(destination.get(trip.key,0))+float(trip.amount)>limit+0.00001:
     trip.age=float(trip.travel)
     continue
@@ -82,10 +91,19 @@ static func pickup_sources(state: Dictionary) -> Array:
  for id in state.hub.outputs:
   var index=int(id)
   if index>=0 and index<state.buildings.size(): result.append({"index":index,"stock":state.hub.outputs[id],"kind":state.buildings[index].kind})
+ for id in state.stone.sites:
+  if state.buildings[int(id)].kind=="quarry":
+   for order in state.hub.requests:
+    if order.key=="rock" and float(order.remaining)>0:
+     result.append({"index":int(id),"stock":state.stone.sites[id].stock,"kind":"quarry","only":"rock"})
+     break
  if state.delivery.active:
   for entry in [["station","wood"],["sawmill","boards"],["furniture","furniture"]]:
    var index=int(state.delivery.nodes.get(entry[0],-1))
    if index>=0: result.append({"index":index,"stock":state.delivery.buffers[entry[0]],"kind":entry[0],"only":entry[1]})
+ for id in state.hub.inputs:
+  if DeliveryChain.owns(state,int(id)):
+   result.append({"index":int(id),"stock":state.hub.inputs[id],"kind":state.buildings[int(id)].kind})
  for id in state.stone.sites:
   var index=int(id)
   if state.buildings[index].kind=="stoneworks": result.append({"index":index,"stock":state.stone.sites[id].stock,"kind":"stoneworks","keys":["stone","gravel"]})
@@ -130,7 +148,7 @@ static func dispatch(state: Dictionary) -> void:
  if free<=0: return
  # Symmetric to plant dispatch: keep a factory delivery in service while
  # collections are busy, without allocating an extra truck or holding a mutex.
- if DeliveryChain.central_busy(state)==0 and DeliveryChain.supply_pending(state): free=maxi(0,free-1)
+ if factory_busy(state)==0 and (DeliveryChain.supply_pending(state) or FactorySupply.pending(state)): free=maxi(0,free-1)
  if free<=0: return
  # Long-distance replenishment has priority, but cannot consume pickup capacity.
  var express_budget=maxi(1,fleet_size(state)/2)
@@ -166,7 +184,7 @@ static func dispatch(state: Dictionary) -> void:
  state.hub.cursor=(cursor+1)%sources.size()
 
 static func target_name(state: Dictionary,trip: Dictionary) -> String:
- return UXRules.factory_name(state,int(trip.destination)) if trip.target in ["central","express"] else ""
+ return UXRules.factory_name(state,int(trip.destination)) if trip.target in ["central","express","factory"] else ""
 
 static func recall_express(state: Dictionary,index: int) -> float:
  var center=depot(state)
