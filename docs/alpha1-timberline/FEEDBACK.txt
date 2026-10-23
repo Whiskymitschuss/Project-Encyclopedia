@@ -1,0 +1,24 @@
+Installierte Version:
+Handy / Android:
+Startdauer:
+Zentrallager / Abhol-Express vorhanden und aktiv:
+Betroffenes Werk und Warenart:
+Lokaler Eingang / Ausgang:
+Bestand Zentrale / Abhol-Express / unterwegs:
+Wortlaut des Abhol- oder Wartegrunds:
+Baustelle / Bauphase:
+Mitarbeiter zugewiesen / vor Ort:
+Sprinter und Material-LKW unterwegs:
+Funktioniert nach Speichern / Neustart:
+Menü unklar oder schlecht bedienbar:
+Wärme nach fünf Minuten:
+
+Leistung 0.28.11:
+Erster Script-Frame seit Engine-Start:
+Weltöffnung nach Weiterspielen:
+Offline-Nachrechnung / simulierte Dauer:
+FPS / P95:
+Standard oder Akku / automatische Detailentlastung:
+Wärme am Gerät nach fünf Minuten:
+Hofmarkierungen und Produktionslicht verständlich:
+Versetzen: Grundfläche / LKW-Anschluss / Warngrund:

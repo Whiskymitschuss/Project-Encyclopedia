@@ -1,0 +1,34 @@
+extends SceneTree
+func _initialize(): call_deferred("run")
+func run():
+ await process_frame
+ var game=root.get_node("Game")
+ game.set_process(false)
+ var runtime=root.get_node_or_null("RuntimeStats")
+ if runtime!=null: runtime.set_process(false)
+ game.state=game.initial_state()
+ var s=game.state
+ s.tutorial=5; s.workers=0; s.city_services.enabled=false; s.companion_enabled=false
+ s.buildings.append({"kind":"central_depot","level":2,"paused":false,"position":[44,20]})
+ LogisticsDispatch.synchronize(s)
+ s.hub.inputs["1"]={"wood":30.0}; s.hub.outputs["1"]={"boards":12.0}
+ game.flow["building:1"]=0.7
+ var scene=load("res://Scenes/Main.tscn").instantiate()
+ root.add_child(scene)
+ scene.set_process(false)
+ scene.focus=Vector3(300,0,200); scene.zoom=75; scene.set_camera()
+ var machine
+ var handler
+ for child in scene.world_buildings.get_children():
+  var item=child.get_node_or_null("Processing")
+  if item!=null and item.building_index==1: machine=item; handler=child.get_node("YardHandling"); break
+ machine.set_process(false); handler.set_process(false)
+ var before=s.duplicate(true)
+ var time=Time.get_ticks_usec()
+ for i in 20000:
+  machine._process(1.0/60)
+  handler._process(1.0/60)
+ var elapsed=Time.get_ticks_usec()-time
+ print("PRESENTATION PROBE ",JSON.stringify({"manual_updates_per_controller":20000,"elapsed_us":elapsed,"company_unchanged":s==before,"version":ProjectSettings.get_setting("application/config/version"),"detailed_updates":machine.get("detail_updates"),"skipped_updates":machine.get("skipped_updates"),"scope":"Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement"}))
+ scene.queue_free(); await process_frame
+ quit()

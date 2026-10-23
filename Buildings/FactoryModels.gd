@@ -19,6 +19,11 @@ static func create(kind: String, level: int) -> Node3D:
  var root=Node3D.new()
  root.set_meta("open_factory",true)
  root.set_meta("kind",kind)
+ WoodYard.decorate(root,kind)
+ var beacon=load("res://Components/ProductionBeacon.gd").new()
+ beacon.name="ProductionBeacon"
+ beacon.position=Vector3(-3.8,2.35,1.2)
+ root.add_child(beacon)
  # One shared floor inside the campus; retain a private slab for remote factories.
  var floor_mesh=Models.paving_box(root,Vector3(19,0.16,23),Vector3(0,0.46,0),ProductionCampus.CONCRETE,"plaster",1.0)
  floor_mesh.name="FactoryFloor"

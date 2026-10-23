@@ -88,7 +88,8 @@ func layout() -> void:
 
 func enter() -> void:
  if active or busy or not world.placement.is_empty(): return
- saved={"focus":world.view_focus,"zoom":world.view_zoom,"yaw":world.camera_yaw,"hud":world.hud.visible,"mask":world.camera.cull_mask,"routes":world.selection_world.visible}
+ saved={"focus":world.view_focus,"zoom":world.view_zoom,"yaw":world.camera_yaw,"hud":world.hud.visible,"mask":world.camera.cull_mask,"routes":world.selection_world.visible,"render_scale":world.get_viewport().scaling_3d_scale}
+ world.get_viewport().scaling_3d_scale=1.0
  world.focus=world.view_focus
  world.zoom=world.view_zoom
  world.set_camera()
@@ -110,6 +111,7 @@ func enter() -> void:
 func leave() -> void:
  if not active or busy: return
  active=false
+ world.get_viewport().scaling_3d_scale=float(saved.render_scale)
  root_control.hide()
  world.focus=saved.focus
  world.zoom=saved.zoom

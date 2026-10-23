@@ -252,6 +252,7 @@ func simulate(seconds: float) -> void:
 
 func start_replay(seconds: float,before: Dictionary) -> void:
  if catching_up: return
+ if not simulation_only: RuntimeStats.begin_replay(seconds)
  replay_before=before.duplicate(true)
  replay_seconds=seconds
  replay_extension=0
@@ -288,6 +289,7 @@ func poll_replay() -> void:
   simulate(extra)
  else: state=result
  catching_up=false
+ RuntimeStats.end_replay(replay_seconds)
  get_tree().paused=replay_tree_was_paused
  replay_overlay.queue_free()
  replay_overlay=null

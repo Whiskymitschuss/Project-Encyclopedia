@@ -98,7 +98,7 @@ func _ready() -> void:
  frame.clip_contents=true
  column.add_child(frame)
  diorama=load("res://UI/IntroWorld.gd").new()
- diorama.animated=not reduced_motion and Game.state.quality>0
+ diorama.animated=not reduced_motion and not returning and Game.state.quality>0
  diorama.low=Game.state.quality==0
  frame.add_child(diorama)
  chapter=label(column,STEPS[0],21)
@@ -172,6 +172,7 @@ func finish_intro() -> void:
 func start_game() -> void:
  if starting or Store.recovery_required or Game.catching_up: return
  starting=true
+ RuntimeStats.request_world()
  play.disabled=true
  play.text="DEIN WALD WIRD VORBEREITET …"
  call_deferred("open_after_frame")

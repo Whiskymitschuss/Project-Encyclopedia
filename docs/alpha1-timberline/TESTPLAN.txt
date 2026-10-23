@@ -1,0 +1,13 @@
+1. Version 0.28.11-alpha.1 prüfen. Als Update installieren, keine App-Daten löschen.
+2. Bestehende Firma öffnen. Startzeit & FPS: Weltöffnung und Offline-Zeit getrennt notieren.
+3. Fünf Minuten dieselbe Firma spielen. Gerät, Helligkeit, Ladezustand und Wärme notieren.
+4. Dieselbe Kamerarunde in Standard und Akkumodus vergleichen. Keine Temperaturwerte erfinden.
+5. Zwischen Sägewerk-Nahansicht und Übersicht wechseln. Holzbestand, Abholung und Baustellen
+   müssen unabhängig von sichtbaren Animationen weiterlaufen.
+6. Sichtbares Sägewerk: lokale Stämme, Bretterstapel, Säge und Biber beobachten.
+7. Werk pausieren, Eingang leeren beziehungsweise Ausgang füllen: passende Leuchte prüfen.
+8. Logistik → Holzkette zeigt deine tatsächlichen Stationen, Lager, Sägewerke und Fahrten.
+9. Sägewerk und Haus versetzen: Grundfläche, Anschlusslinie und konkrete Warngründe prüfen.
+10. Vorschau abbrechen: keine Straßen-, Waren- oder Geldänderung.
+11. Kleine Bildschirmgröße und große Schrift: Leistungsmenü, Holzkette und Waren-Schaltfläche prüfen.
+12. Speichern, schließen, wieder öffnen: Waren und laufende Transporte bleiben erhalten.

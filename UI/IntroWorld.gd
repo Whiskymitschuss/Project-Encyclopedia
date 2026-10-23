@@ -19,6 +19,7 @@ func _ready() -> void:
  viewport.transparent_bg=true
  viewport.render_target_update_mode=SubViewport.UPDATE_ONCE
  add_child(viewport)
+ if not animated: viewport.process_mode=Node.PROCESS_MODE_DISABLED
  var env=WorldEnvironment.new()
  var resource=Environment.new()
  resource.background_mode=Environment.BG_CLEAR_COLOR

@@ -2,7 +2,25 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.10-alpha.1 · Logistik und Bauteams
+## Aktuell: 0.28.11-alpha.1 · Leistung und Holzproduktionsstraße
+
+Unsichtbare Maschinen und Stapler sparen detaillierte Animationsarbeit.
+Adaptive Entlastung und Akkumodus reduzieren nur die 3D-Darstellung; die
+Logistik und Wirtschaft laufen unverändert weiter. Startzeit, Offline-Nachrechnung,
+FPS und P95 sind unter Einstellungen und im Leistungsmenü getrennt sichtbar.
+
+Die vorhandene Holzlinie erhält einheitliche Eingangs-/Ausgangsmarkierungen,
+Sägeabdeckung und echte Produktionsleuchten. Logistik → Holzkette erklärt die
+aktuelle Lagervermittlung und führt zu den tatsächlichen Betrieben. Beim
+Versetzen zeigen Grundfläche und Anschlusslinie die LKW-Erreichbarkeit.
+
+Android-Code **3006**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-timberline/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Änderungen und Grenzen](docs/TIMBERLINE-2811.md).
+Kein physischer Android-/Hitzetest. Der vollständige Masterumbau bleibt offen.
+
+## Vorher: 0.28.10-alpha.1 · Logistik und Bauteams
 
 Alle vorhandenen Produktionsarten werden mit fertigem Zentrallager automatisch
 abgeholt und mit lokalen Wareneingängen versorgt. Abhol-Express sammelt regionale

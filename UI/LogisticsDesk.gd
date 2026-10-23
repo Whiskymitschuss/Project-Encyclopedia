@@ -55,6 +55,7 @@ static func populate(hud: Control) -> void:
     if count>=4: break
    if count==0: hud.card("Kein Produktionsengpass gemeldet","Die Transporte werden automatisch nach Materialbedarf, Wartezeit und freiem Lagerplatz vergeben.")
    hud.button(hud.contents,"ALLE BETRIEBE & ABHOLUNGEN",func(): hud.logistics_tab="factories"; hud.render_menu())
+   hud.button(hud.contents,"HOLZKETTE · WALD BIS BRETTERLAGER",func(): hud.open_menu("timberline"))
    sites(hud,3)
 
 static func factories(hud: Control) -> void:

@@ -79,6 +79,7 @@ var hold_consumed=false
 var industry_name_labels=[]
 var yard_handlers=[]
 var handler_clock=0.0
+var access_preview: Node3D
 
 func _ready() -> void:
  Game.live_world=true
@@ -181,6 +182,11 @@ func _ready() -> void:
  trade_world=load("res://Components/TradeWorld.gd").new()
  trade_world.world=self
  add_child(trade_world)
+ call_deferred("mark_first_world_frame")
+
+func mark_first_world_frame() -> void:
+ if DisplayServer.get_name()!="headless": await RenderingServer.frame_post_draw
+ RuntimeStats.mark_world_ready()
 
 func build_landscape() -> void:
  landscape=ValleyLandscape.new()
@@ -360,6 +366,8 @@ func rebuild() -> void:
   if mineral!=null: mineral.building_index=i
   var processing = model.get_node_or_null("Processing")
   if processing != null: processing.building_index = i
+  var beacon=model.get_node_or_null("ProductionBeacon")
+  if beacon!=null: beacon.building_index=i
   var handler=model.get_node_or_null("YardHandling")
   if handler!=null:
    handler.building_index=i
@@ -570,6 +578,8 @@ func _process(delta: float) -> void:
  if handler_clock>=0.5:
   handler_clock=0
   update_yard_handlers()
+  var render_scale=RuntimeStats.resolution_scale(get_window().size,int(Game.state.quality),bool(Game.state.ux.get("adaptive_detail",true)),OS.has_feature("mobile"),photo!=null and photo.active)
+  get_viewport().scaling_3d_scale=render_scale
  time += delta
  var animate=bool(Game.state.ux.motion) and bool(Game.state.ambient_enabled)
  if animate: wind_clock+=delta
@@ -591,9 +601,9 @@ func _process(delta: float) -> void:
   placement_check_clock+=delta
   if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
  sync_actors()
- sun.shadow_enabled=Game.state.quality>0
+ sun.shadow_enabled=Game.state.quality>0 and not (Game.state.ux.get("adaptive_detail",true) and RuntimeStats.low_detail) and zoom<300
  update_forest_detail()
- sun.directional_shadow_max_distance=maxf(180,zoom*1.8)
+ sun.directional_shadow_max_distance=clampf(zoom*1.2,160,260)
  var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
  sun.light_energy = 0.24+daylight*0.45
  sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
@@ -730,7 +740,7 @@ func make_chip_pool() -> void:
 
 func update_yard_handlers() -> void:
  yard_handlers.sort_custom(func(a,b): return a.global_position.distance_squared_to(view_focus)<b.global_position.distance_squared_to(view_focus))
- for i in yard_handlers.size(): yard_handlers[i].presentation_enabled=i<(2 if Game.state.quality==0 else 6)
+ for i in yard_handlers.size(): yard_handlers[i].presentation_enabled=i<(2 if Game.state.quality==0 or RuntimeStats.low_detail else 6)
 
 func clamp_camera() -> void:
  focus.x=clampf(focus.x,-350,350)
@@ -1027,12 +1037,33 @@ func update_ghost() -> void:
   elif city and Game.company_level()<4 and placement.kind!="townhall":
    for key in definition.materials:
     if float(Game.state.resources[key])<float(definition.materials[key]): reason="Es fehlt: %s" % Catalog.RESOURCES[key]; break
+ update_access_preview(reason)
  ghost_plate.material_override=Models.material(Color("43e69a") if reason.is_empty() else Color("f16c5d"))
  hud.update_placement(reason)
  hud.placement_undo.disabled=preview_history.is_empty()
  if reason.is_empty():
-  var dock=TownRules.nearest(placement_point,TownRules.road_cells(Game.state.town),32)
-  hud.placement_hint.text="✓ Standort frei · Straßenanschluss %s m" % int(placement_point.distance_to(TownRules.point(dock))) if dock!=null else "✓ Standort frei · Zufahrt noch nicht erreichbar"
+  var access=PlacementAccess.describe(Game.state,placement_point,placement_rotation,str(placement.kind) if not city else "")
+  if not access.connected: ghost_plate.material_override=Models.material(Color("e7ad43"))
+  var extent=Placement.size_for(placement_rotation,str(placement.kind) if not city else "")
+  hud.placement_hint.text="✓ Baufläche %s × %s m · %s" % [roundi(extent.x),roundi(extent.y),access.text]
+
+func update_access_preview(reason: String) -> void:
+ if access_preview==null:
+  access_preview=Node3D.new()
+  access_preview.name="PlacementAccess"
+  add_child(access_preview)
+ clear_children(access_preview)
+ var access=PlacementAccess.describe(Game.state,placement_point,placement_rotation,str(placement.kind))
+ if access.path.size()<2: return
+ var a: Vector3=access.path[0]
+ var b: Vector3=access.path[1]
+ var length=a.distance_to(b)
+ var color=Color("3bafbe") if access.connected and reason.is_empty() else Color("df634b")
+ for i in maxi(1,ceili(length/2)):
+  var at=a.lerp(b,(i+0.5)/maxf(1,ceili(length/2)))+Vector3.UP*0.75
+  var marker=Models.box(access_preview,Vector3(0.6,0.08,1.1),at,color)
+  marker.rotation.y=atan2(b.x-a.x,b.z-a.z)
+ Models.bake(access_preview)
 
 func placement_action(action: String) -> void:
  if placement.is_empty(): return
@@ -1066,6 +1097,9 @@ func placement_action(action: String) -> void:
   cancel_placement()
 
 func cancel_placement() -> void:
+ if access_preview!=null:
+  access_preview.queue_free()
+  access_preview=null
  placement={}
  road_anchor=null
  road_endpoint=null

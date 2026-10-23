@@ -21,7 +21,7 @@ static func populate(hud: Control) -> void:
   ["Firma",[["Logistik & Baustellen","logistics"],["Betriebsübersicht · Engpässe & LKW","operations"],["Betriebe verwalten","industry"],["Lieferaufträge","contracts"],["Lieferkette & Ladenaufträge","delivery"],["Steinbruch & Baustoffe","stone"],["Baustellen & Materialdepot","construction"],["Materialplaner","planner"],["Lager & Verkaufsstelle","market"],["Autobahn & Exporthandel","export"],["Spänebox","sawdust"],["Personal & Werkzeug","team"],["Garage & Fahrzeuge","garage"]]],
   ["Stadt",[["Stadtkarte & freie Grundstücke","overview"],["Stadt & Häuser","city"],["Viertel & Ausbaupläne","districts"],["Straßen & Wege","networks"],["Buslinien & Haltestellen","transit"],["Einsatzzentrale & Feuerwehr","services"],["Hinweise & Ereignisse","events"]]],
   ["Ausbau",[["Kapitel 1–10 & Rathaus","journey"],["Auszeichnungen","trophies"],["Regionen & Großprojekte","empire"],["Forschung","research"],["Loot & Inventar","loot"],["Booster","boosters"],["Neue Unternehmensära / Prestige","prestige"]]],
-  ["Hilfe",[["BENNOS WERKSHOF-RUNDE","welcome"],["Alpha 1 · Testen & Feedback","alpha"],["Leistungsvergleich · Kamerarunde","performance"],["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
+  ["Hilfe",[["BENNOS WERKSHOF-RUNDE","welcome"],["Alpha 1 · Testen & Feedback","alpha"],["Startzeit, FPS & Kamerarunde","performance"],["Holzkette · Wald bis Lager","timberline"],["Fotomodus & Galerie","photo"],["Anleitung & Hilfe","guide"],["Einstellungen & Sicherung","settings"]]]
  ]
  var sections=[]
  for group in groups:

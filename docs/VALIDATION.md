@@ -1,3 +1,21 @@
+## Leistung und Holzproduktionsstraße · 0.28.11-alpha.1
+
+20.976 numerische Headless-Prüfungen in 36 Modulen, zwei natürliche Fortschritts-
+szenarien sowie Haupt-/Startszene bestanden. 1.090 OpenGL-Prüfungen in 29 Modulen
+bestanden. Finaler Stand je Modul einmal gezählt.
+[Prüfbericht](alpha1-timberline/automated-checks.json).
+
+Neue Prüfungen decken Diagnostik ohne Firmenänderung, begrenzte Frame-Daten,
+Entlastung mit Wartefrist, mobiles Pixelbudget, sichtbare Hof-/Werkszustände,
+Unterdrückung unsichtbarer Details, echtes Versetzen und sofortige native
+Fotoauflösung ab. Alte Liefer- und Mitarbeiterketten bleiben geprüft.
+
+Kontrollierte Desktop-Probe: je 20.000 Aufrufe eines unsichtbaren Sägewerks und
+Staplers, drei Durchläufe pro Stand. Median 196,2 → 73,5 ms bei unverändertem
+Firmenstand. Vergleich mit unveränderten Ressourcen aus der echten 0.28.10-APK.
+[Messdaten](alpha1-timberline/presentation-probe.json). Keine Android-FPS- oder
+Temperaturmessung und keine neue Zusicherung zur Offline-Rechenzeit.
+
 ## Externe Downloads Automatische Werkslogistik und Bauteams · 0.28.10 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.10-alpha.1` vollständig per

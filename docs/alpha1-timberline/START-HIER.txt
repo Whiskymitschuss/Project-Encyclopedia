@@ -1,0 +1,21 @@
+Timber Loot Tycoon · 0.28.11-alpha.1 · Android-Code 3006
+
+Als Update installieren. Nicht deinstallieren und keine App-Daten löschen.
+Gleiche Paketkennung und dasselbe Testzertifikat. Android 7.0+, ARM64/ARMv7.
+
+Unter Logistik → Holzkette siehst du Wald, Lager, Sägewerke und reale Transporte.
+Türkise Hofmarkierungen bedeuten Eingang, goldene Ausgang. Produktionsleuchten
+zeigen fehlenden Nachschub, vollen Ausgang oder verfügbare Eingänge.
+
+Unter Einstellungen → Startzeit & FPS findest du die aktuelle Sitzungsmessung.
+Akkumodus reduziert nun auch die 3D-Auflösung, die Schrift bleibt scharf.
+Automatische Detailentlastung begrenzt auf hochauflösenden Android-Displays
+die 3D-Pixel und reagiert zusätzlich auf schlechte Bildzeiten. Sie ist abschaltbar.
+Es wird keine Temperatur gemessen. S26 Ultra und S24 FE bitte am Gerät vergleichen.
+
+Beim Versetzen zeigen Grundfläche, Anschlusslinie und Text die LKW-Erreichbarkeit.
+Ein freier Standort ohne erschlossene Zufahrt erscheint goldfarben.
+Die Logistik und dein bestehender Firmenfortschritt bleiben erhalten.
+
+Desktop-Simulation und Grafikprüfungen ersetzen keinen Android-Gerätelauf.
+Der vollständige Masterumbau bleibt offen.

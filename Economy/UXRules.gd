@@ -2,7 +2,7 @@ class_name UXRules
 extends RefCounted
 
 static func initial() -> Dictionary:
- return {"vibration":false,"large_text":false,"high_contrast":false,"motion":true,"groups":[],"next_group":1,"next_road":1,"events":[],"next_event":1,"road_undo":[]}
+ return {"adaptive_detail":true,"vibration":false,"large_text":false,"high_contrast":false,"motion":true,"groups":[],"next_group":1,"next_road":1,"events":[],"next_event":1,"road_undo":[]}
 static func title(state: Dictionary,city: bool,index: int) -> String:
  var records=state.homes if city else state.buildings
  if index<0 or index>=records.size(): return "Gebäude"

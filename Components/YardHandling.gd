@@ -95,8 +95,14 @@ func _process(delta: float) -> void:
  var machine=get_parent().get_node_or_null("Processing")
  if machine==null and not depot_handler: return
  var camera=get_viewport().get_camera_3d()
- var close=camera!=null and camera.global_position.distance_to(global_position)<260
+ var close=camera!=null and PresentationBudget.detailed(self)
  visible=close and presentation_enabled
+ if not visible:
+  active=false
+  cycle_running=false
+  cycle_trip={}
+  payload.hide()
+  return
  var index=building_index if depot_handler else int(machine.building_index)
  active=visible and index>=0 and float(Game.flow.get("building:%s" % index,0))>0 and not Game.state.buildings[index].get("paused",false) and not (Game.delivery_owns(index) and Game.state.delivery.paused)
  if depot_handler:

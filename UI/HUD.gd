@@ -214,6 +214,7 @@ func _ready() -> void:
  compact_style(sawdust_button,PANEL)
  var all_stock=button(stock_actions,"WAREN",func(): open_menu("stock"))
  all_stock_button=all_stock
+ all_stock.autowrap_mode=TextServer.AUTOWRAP_OFF
  all_stock.custom_minimum_size=Vector2(64,44)
  all_stock.add_theme_font_size_override("font_size",12)
  compact_style(all_stock,PANEL)
@@ -675,6 +676,7 @@ func render_menu() -> void:
  menu_back.visible=not menu_history.is_empty()
  match current:
   "logistics": load("res://UI/LogisticsDesk.gd").populate(self)
+  "timberline": load("res://UI/TimberLineDesk.gd").populate(self)
   "journey","commissions","trophies","return","townhall": journey_ui.populate(current)
   "stone": stone_menu()
   "delivery": delivery_menu()
@@ -1153,7 +1155,9 @@ func settings_menu() -> void:
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
  button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality); Game.apply_device_profile()))
- text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich Schatten und Umwelteffekte.",14,MUTED)
+ button(box,"Automatische Detailentlastung: AN" if Game.state.ux.get("adaptive_detail",true) else "Automatische Detailentlastung: AUS",func(): action(func(): Game.state.ux.adaptive_detail=not Game.state.ux.get("adaptive_detail",true); RuntimeStats.low_detail=false))
+ button(box,"STARTZEIT & FPS ANSEHEN",func(): open_menu("performance"))
+ text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich 3D-Auflösung, Schatten und Umwelteffekte. Automatische Detailentlastung reagiert auf schlechte Bildzeiten; ein Temperatursensor wird nicht ausgelesen.",14,MUTED)
  if ux!=null: ux.settings_controls(box)
  text(contents,"Alpha 1 · %s · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft." % ProjectSettings.get_setting("application/config/version"),14,MUTED)
 

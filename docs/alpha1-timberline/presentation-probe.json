@@ -1,0 +1,76 @@
+{
+  "runs": [
+    {
+      "company_unchanged": true,
+      "detailed_updates": null,
+      "elapsed_us": 200987,
+      "manual_updates_per_controller": 20000,
+      "scope": "Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement",
+      "skipped_updates": null,
+      "version": "0.28.10-alpha.1",
+      "run": 0,
+      "side": "before"
+    },
+    {
+      "company_unchanged": true,
+      "detailed_updates": 0,
+      "elapsed_us": 67953,
+      "manual_updates_per_controller": 20000,
+      "scope": "Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement",
+      "skipped_updates": 20000,
+      "version": "0.28.11-alpha.1",
+      "run": 0,
+      "side": "after"
+    },
+    {
+      "company_unchanged": true,
+      "detailed_updates": null,
+      "elapsed_us": 196216,
+      "manual_updates_per_controller": 20000,
+      "scope": "Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement",
+      "skipped_updates": null,
+      "version": "0.28.10-alpha.1",
+      "run": 1,
+      "side": "before"
+    },
+    {
+      "company_unchanged": true,
+      "detailed_updates": 0,
+      "elapsed_us": 85276,
+      "manual_updates_per_controller": 20000,
+      "scope": "Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement",
+      "skipped_updates": 20000,
+      "version": "0.28.11-alpha.1",
+      "run": 1,
+      "side": "after"
+    },
+    {
+      "company_unchanged": true,
+      "detailed_updates": null,
+      "elapsed_us": 165920,
+      "manual_updates_per_controller": 20000,
+      "scope": "Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement",
+      "skipped_updates": null,
+      "version": "0.28.10-alpha.1",
+      "run": 2,
+      "side": "before"
+    },
+    {
+      "company_unchanged": true,
+      "detailed_updates": 0,
+      "elapsed_us": 73519,
+      "manual_updates_per_controller": 20000,
+      "scope": "Desktop CPU time for fixed offscreen controller calls; not FPS, heat or Android measurement",
+      "skipped_updates": 20000,
+      "version": "0.28.11-alpha.1",
+      "run": 2,
+      "side": "after"
+    }
+  ],
+  "median_before_us": 196216,
+  "median_after_us": 73519,
+  "baseline": "Unmodified resources extracted from published 0.28.10 APK",
+  "execution": "Godot 4.6.3 desktop GL, fixed 20,000 offscreen updates per controller; no normal rendering loop; private player save not used",
+  "not_android_fps_or_temperature": true,
+  "baseline_apk_sha256": "58cb69d8178960229187ea0f57d2c3ad116cdfd489ff164ee99caf70e1bd1302"
+}

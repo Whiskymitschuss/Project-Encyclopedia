@@ -4,6 +4,7 @@ static func create(kind: String,level: int) -> Node3D:
  var central=kind=="central_depot"
  var root=Node3D.new()
  root.set_meta("kind",kind)
+ WoodYard.decorate(root,kind)
  root.set_meta("height",7.5)
  var width=31.0 if central else 19.0
  var floor_mesh=Models.paving_box(root,Vector3(width,0.16,23),Vector3(0,0.46,0),ProductionCampus.CONCRETE,"plaster",0.8)
@@ -22,9 +23,7 @@ static func create(kind: String,level: int) -> Node3D:
   for side in [-2,2]: Models.box(root,Vector3(0.15,4,0.2),Vector3(x+side,2.5,-8),blue)
  for side in [-1,1]:
   for z in [-3,0,3,6]: Models.box(root,Vector3(0.18,0.025,1.8),Vector3(side*(width/2-1),0.585,z),Color("ffda4c"))
- # Parking and unloading bays remain completely within the reserved plot.
- for x in [-width/2+3,width/2-3]:
-  for side in [-1,1]: Models.box(root,Vector3(0.14,0.025,5),Vector3(x+side*1.6,0.585,6),Color("fff5df"))
+ # The shared turquoise/gold bays already mark parking and unloading here.
  var sign_board=Models.box(root,Vector3(width-3,1.0,0.25),Vector3(0,5.4,-4.2),blue)
  var label=Models.label(root,"ZENTRALLAGER" if central else "ABHOL · EXPRESS",Vector3(0,5.4,-3.95),24)
  label.billboard=BaseMaterial3D.BILLBOARD_DISABLED
