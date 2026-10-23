@@ -1,0 +1,71 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.28.8-alpha.1.apk",
+  "bytes": 63308468,
+  "sha256": "4ceaaa2ae8d9b9adfa33a892e7fb00cde30e9a206f1e3188a895aa65c5ef0aae",
+  "version": "0.28.8-alpha.1",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "eaeea297ba3eb102c4dd82478abb50230db4d337",
+  "device_install_or_launch_tested": false,
+  "version_code": 3003,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "automated_headless_checks": 20872,
+  "automated_opengl_checks": 999,
+  "packaged_resource_checks": {
+    "apk": "Timber-Loot-Tycoon-v0.28.8-alpha.1.apk",
+    "apk_sha256": "4ceaaa2ae8d9b9adfa33a892e7fb00cde30e9a206f1e3188a895aa65c5ef0aae",
+    "apk_source_commit": "eaeea297ba3eb102c4dd82478abb50230db4d337",
+    "headless_checks": 1322,
+    "headless_results": {
+      "Forestry288": 22,
+      "Forestry287": 23,
+      "FactorySupply286": 32,
+      "Supply286": 32,
+      "Infrastructure286": 161,
+      "WorldRework285": 907,
+      "Central284": 34,
+      "Forest282": 22,
+      "Rollback028": 51,
+      "Alpha28": 38
+    },
+    "visual_checks": 279,
+    "visual_results": {
+      "VisualForestry288": 11,
+      "VisualColdStart288": 10,
+      "VisualForestry287": 17,
+      "VisualFactorySupply286": 11,
+      "VisualSupply286": 13,
+      "VisualRollback028": 146,
+      "VisualColdStart282": 8,
+      "VisualAlpha28": 63
+    },
+    "fixture": "Generated test companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+    "android_device_tested": false,
+    "temperature_measured": false
+  },
+  "master_rework_complete": false,
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.28.8-source.zip",
+    "bytes": 30518075,
+    "sha256": "4d502aa4c71a792385a70f6f56363db4bb49fe6f65bba9701337a1ad2f09c128",
+    "verified_files": 606
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-Alpha-1-Waldstart-Testerpaket.zip",
+    "bytes": 62682966,
+    "sha256": "b48ca1cd0140675dddbc4deb1b58052f37c0c326bc32dd6ecd44c7026459b8ff",
+    "verified_entries": 7
+  }
+}

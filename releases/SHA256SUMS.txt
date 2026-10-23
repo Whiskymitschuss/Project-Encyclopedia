@@ -79,3 +79,6 @@ f36a1f07cb38109d0515b8411872253a19417fb59c783392c740704445889e89  Timber-Loot-Ty
 997e58d62266a615dad9a881f86689c0151ce1aa7319b1b493935595129f4866  Timber-Loot-Tycoon-v0.28.7-alpha.1.apk
 e1cf995aa322b38d8e1c91b13e95f8406217251bbedbe5657c8608e1d30d3c99  Timber-Loot-Tycoon-v0.28.7-source.zip
 31f1af04fa6407c30f4fb7763ba3dee58dda864c105ff45057ed8a52b34e4b30  Timber-Loot-Tycoon-Alpha-1-Holzfaeller-Testerpaket.zip
+4ceaaa2ae8d9b9adfa33a892e7fb00cde30e9a206f1e3188a895aa65c5ef0aae  Timber-Loot-Tycoon-v0.28.8-alpha.1.apk
+4d502aa4c71a792385a70f6f56363db4bb49fe6f65bba9701337a1ad2f09c128  Timber-Loot-Tycoon-v0.28.8-source.zip
+b48ca1cd0140675dddbc4deb1b58052f37c0c326bc32dd6ecd44c7026459b8ff  Timber-Loot-Tycoon-Alpha-1-Waldstart-Testerpaket.zip

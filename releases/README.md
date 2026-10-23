@@ -1,4 +1,34 @@
-# Aktuell: Holzfäller und Abholung · 0.28.7-alpha.1
+# Aktuell: Waldabholung und Startzeit · 0.28.8-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.8-alpha.1/releases/Timber-Loot-Tycoon-v0.28.8-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.8-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Waldstart-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.8-source.zip) · [Änderungen und Grenzen](../docs/RECOVERY-288.md)
+
+Volle Sammelstation bei leerem zentralem Holzlager: Die automatische Werksversorgung
+lässt einen realen Truck für den dringenden Holztransport frei. Faire Abholrunden
+und numerisch stabile Quellen erhalten die Disposition beim Speichern. Express-
+Zufuhren berücksichtigen ihre echte gebuchte Kapazität. Die Holzkarte zeigt Abholung.
+Start, Einstellungen und Feedback zeigen die tatsächliche installierte Version
+statt der fest eingetragenen 0.28.3.
+
+Offline-Optimierung auf dem Desktop für acht Stunden: **17,2 → 12,1 s** und
+**24,3 → 14,3 s**, im isolierten Optimierungsvergleich vollständig identischer
+Firmenstand. Neue Dispositionsentscheidungen sind separat geprüft.
+Keine zugesicherte Handy-Ladezeit. Der gesamte Masterumbau bleibt offen.
+
+Android-Code **3003**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+20872 Headless- und 999 OpenGL-Prüfungen des Quellstands;
+zusätzlich 1322 Headless- und 279 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-recovery/automated-checks.json).
+
+APK-Quellstand `eaeea297ba3eb102c4dd82478abb50230db4d337`. Quell-ZIP: 606 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Holzfäller und Abholung · 0.28.7-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.7-alpha.1/releases/Timber-Loot-Tycoon-v0.28.7-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.7-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Holzfaeller-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.7-source.zip) · [Ursachen und Grenzen](../docs/FORESTRY-287.md)

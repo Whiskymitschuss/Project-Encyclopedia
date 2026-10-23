@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.8-alpha.1
+
+1322 Headless- und 279 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Enthalten sind die größere Firma mit leerem zentralem Holzlager,
+erneute Ernte, Lieferungen, Speicherung und echter Kaltstart mit acht Stunden Abwesenheit.
+[Paketprüfbericht](alpha1-recovery/packaged-checks.json).
+
+APK-SHA256 `4ceaaa2ae8d9b9adfa33a892e7fb00cde30e9a206f1e3188a895aa65c5ef0aae`. Quellstand `eaeea297ba3eb102c4dd82478abb50230db4d337`.
+Paket, Versionscode 3003, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Waldabholung und Startzeit · 0.28.8-alpha.1
 
 20.872 numerische Prüfungen in 35 Headless-Suiten inklusive zweier natürlicher
