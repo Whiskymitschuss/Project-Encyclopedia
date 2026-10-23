@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.7-alpha.1
+
+1262 Headless- und 506 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Enthalten sind der volle Abholstau, erneut laufende Ernte,
+lokale Werksanforderungen, Biber und die tatsächliche Hauptwelt.
+[Paketprüfbericht](alpha1-logging/packaged-checks.json).
+
+APK-SHA256 `997e58d62266a615dad9a881f86689c0151ce1aa7319b1b493935595129f4866`. Quellstand `88c0bc0bae3b548eaf878327df9f5817e9218ed3`.
+Paket, Versionscode 3002, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Holzfäller und Abholung · 0.28.7-alpha.1
 
 20.847 numerische Prüfungen in 34 Headless-Suiten inklusive zweier natürlicher

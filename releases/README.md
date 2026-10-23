@@ -1,4 +1,33 @@
-# Aktuell: Versorgung und Biberwelt · 0.28.6-alpha.1
+# Aktuell: Holzfäller und Abholung · 0.28.7-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.7-alpha.1/releases/Timber-Loot-Tycoon-v0.28.7-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.7-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Holzfaeller-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.7-source.zip) · [Ursachen und Grenzen](../docs/FORESTRY-287.md)
+
+Volle Lager hielten sämtliche Abhol-LKW beim Entladen fest. Eine begrenzte
+Warenannahme erhält die Ladungen und lässt die Flotte regulär zurückkehren.
+Werke werden wieder beliefert und die tatsächliche Holzernte läuft wieder an.
+Alle aktiven Sammelstationen mit Platz werden genutzt; Reservierungen verhindern
+neue Überbuchungen. Vorhandene Überbestände werden nicht still gekürzt.
+
+Biber und Forstmaschinen stellen angenommene Ernte dar, beenden begonnene Zyklen
+und fällen Bäume nahe ihrem Arbeitsbereich. Kleinere Maschinenplätze lassen Bäume
+in Arbeitsnähe stehen. Der Stationsstatus nennt volle Lager, fehlende Arbeiter,
+Pausen, fehlende Straßen und die aktuelle Abholung.
+
+Android-Code **3002**, gleiches Paket und Testzertifikat; weiterhin 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Der vollständige Masterumbau bleibt offen. Handy-/Hitzetests stehen aus.
+
+20847 Headless- und 975 OpenGL-Prüfungen des Quellstands;
+zusätzlich 1262 Headless- und 506 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-logging/automated-checks.json).
+
+APK-Quellstand `88c0bc0bae3b548eaf878327df9f5817e9218ed3`. Quell-ZIP: 588 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Versorgung und Biberwelt · 0.28.6-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.6-alpha.1/releases/Timber-Loot-Tycoon-v0.28.6-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.6-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Versorgung-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.6-source.zip) · [Änderungen und Reststand](../docs/WORLD-REWORK-286.md)
