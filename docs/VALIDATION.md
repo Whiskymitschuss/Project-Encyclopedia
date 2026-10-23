@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.10-alpha.1
+
+1472 Headless- und 392 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Eingeschlossen sind alle Produktionsfamilien, echte regionale Transporte, faire
+Baustellenbelieferung, anreisende Bauteams und die bestehende automatische Ernte.
+[Paketprüfbericht](alpha1-logistics/packaged-checks.json).
+
+APK-SHA256 `58cb69d8178960229187ea0f57d2c3ad116cdfd489ff164ee99caf70e1bd1302`. Quellstand `2ce5ccaaccdd9c7e6a326d737af3c9baf2bda9b3`.
+Paket, Versionscode 3005, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Automatische Werkslogistik und Bauteams · 0.28.10-alpha.1
 
 20.957 numerische Headless-Prüfungen in 35 Modulen sowie zwei natürliche

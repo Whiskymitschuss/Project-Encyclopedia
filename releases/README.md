@@ -1,4 +1,32 @@
-# Aktuell: Holzfäller und automatische Ernte · 0.28.9-alpha.1
+# Aktuell: Automatische Werkslogistik und Bauteams · 0.28.10-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.10-alpha.1/releases/Timber-Loot-Tycoon-v0.28.10-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.10-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Logistik-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.10-source.zip) · [Änderungen und Grenzen](../docs/LOGISTICS-2810.md)
+
+Alle vorhandenen Produktionsarten werden automatisch zum geeigneten Zentrallager
+oder Abhol-Express abgeholt. Eigene Werkseingänge erhalten echten Nachschub;
+regionale Überschüsse kommen zur Zentrale zurück. Gemeinsame, begrenzte Flotten
+verteilen Fahrten fair und bringen Material bis auf die Baustelle.
+
+Bauteams reisen im Sprinter aus der Arbeiterhütte an. Erst angekommene Biber
+arbeiten mit geliefertem Material, Werkzeug und Leitern. Neue Logistikansichten,
+Menüsuche, Kategorien und Zurück-Navigation zeigen Bestände und Wartegründe.
+Voraussetzung für das neue Netz ist ein fertiggestelltes Zentrallager.
+
+Android-Code **3005**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+20957 Headless- und 1064 OpenGL-Prüfungen des Quellstands;
+zusätzlich 1472 Headless- und 392 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-logistics/automated-checks.json).
+
+APK-Quellstand `2ce5ccaaccdd9c7e6a326d737af3c9baf2bda9b3`. Quell-ZIP: 656 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Holzfäller und automatische Ernte · 0.28.9-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.9-alpha.1/releases/Timber-Loot-Tycoon-v0.28.9-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.9-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Waldarbeit-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.9-source.zip) · [Änderungen und Grenzen](../docs/WORKERS-289.md)
