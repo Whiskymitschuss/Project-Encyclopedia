@@ -28,6 +28,42 @@ static func reserved_materials(state: Dictionary,key: String) -> float:
   else: ordinary+=remaining(job,key)
  return ordinary+minf(district,StoneIndustry.warehouse_capacity(state)*0.5)
 
+static func processing_reserve(state: Dictionary,key: String,available: float=-1) -> float:
+ # Keep afforded bills safe, including a deliberately paused site, but never
+ # embargo ingredients needed to manufacture a staffed site's missing products.
+ var needed=reserved_materials(state,key)
+ for trip in state.construction_shipments:
+  if trip.key==key and not trip.arrived: needed-=float(trip.amount)
+ needed=maxf(0,needed)
+ if not processing_required(state,key): return needed
+ var stock=float(state.resources.get(key,0)) if available<0 else available
+ var working=float({"wood":4,"boards":6,"dry":4,"furniture":2,"sawdust":5,"paper":2,"parts":1}.get(key,1))
+ return minf(needed,maxf(0,stock-working))
+
+static func uses_input(product: String,key: String,visited: Array=[]) -> bool:
+ if product in visited: return false
+ for recipe in Catalog.RECIPES.values():
+  if not recipe.out.has(product): continue
+  for ingredient in recipe["in"]:
+   if ingredient==key or uses_input(ingredient,key,visited+[product]): return true
+ return false
+
+static func processing_required(state: Dictionary,key: String) -> bool:
+ var demand={}
+ for job in state.jobs:
+  if job.get("paused",false) or (job.has("phases") and int(job.get("workers",0))<=0): continue
+  for product in job.get("materials",{}): demand[product]=float(demand.get(product,0))+remaining(job,product)
+ for product in demand:
+  if not uses_input(product,key): continue
+  var available=0.0
+  for source in sources(state,product): available+=float(source.stock.get(product,0))
+  for group in [state.hub.outputs,state.hub.express]:
+   for stock in group.values(): available+=float(stock.get(product,0))
+  for trip in FreightFlow.all_trips(state):
+   if trip.key==product and not trip.arrived: available+=float(trip.amount)
+  if available+0.00001<float(demand[product]): return true
+ return false
+
 static func ready(job: Dictionary) -> bool:
  for key in job.get("materials",{}):
   if remaining(job,key)>0.00001: return false
@@ -66,6 +102,7 @@ static func attach(job: Dictionary, workers: int = 1) -> void:
  job.phase = 0
  job.phase_left = float(job.total)/7.0
  job.workers = workers
+ job.auto_crew = true
  job.paused = false
  job.priority = false
  # A paid site requests its phase materials immediately, including before
@@ -136,17 +173,27 @@ static func logistics_status(state: Dictionary, job: Dictionary) -> String:
  var deliveries: Array[String] = []
  for s in state.construction_shipments:
   if int(s.job)!=int(job.id) or s.arrived: continue
-  deliveries.append("%s → Baustelle · %s %s" % [source_name(s),Catalog.number(s.amount),Catalog.RESOURCES[s.key]])
- if not deliveries.is_empty(): return "Unterwegs: "+" · ".join(deliveries)
+  deliveries.append("%s → Baustelle · %s %s · %s" % [source_name(s),Catalog.number(s.amount),Catalog.RESOURCES[s.key],FreightFlow.status(s)])
+ if not deliveries.is_empty(): return "Lieferung: "+" · ".join(deliveries)
  if job.get("paused",false): return "Pausiert · laufende LKWs dürfen noch entladen"
+ if job.has("phases") and int(job.get("workers",0))<=0:
+  return "Wartet auf freies Bauteam · rückt automatisch nach" if job.get("auto_crew",false) else "Keine Bauarbeiter zugewiesen"
+ if CentralLogistics.active(state) and state.buildings[CentralLogistics.depot(state)].get("paused",false): return "Zentrallager pausiert · Betrieb dort fortsetzen"
  for key in job.get("materials",{}):
   if phase_need(job,key)<=0.00001: continue
   var available = false
-  for source in sources(state,key):
+  var pickups=CentralLogistics.construction_sources(state,job,key) if CentralLogistics.active(state) else sources(state,key)
+  if CentralLogistics.active(state) and pickups.is_empty(): return "Keine Straßenverbindung vom Zentrallager zur Baustelle"
+  for source in pickups:
+   if source.kind=="express" and float(source.stock.get(key,0))<=0:
+    for trip in state.hub.shipments:
+     if trip.target=="express" and int(trip.destination)==int(source.index) and trip.key==key and not trip.arrived:
+      return "%s → Abhol-Express · %s" % [Catalog.RESOURCES[key],FreightFlow.status(trip)]
+    if float(state.resources.get(key,0))>0: return "%s im Zentrallager · Nachschub zum Abhol-Express wird disponiert" % Catalog.RESOURCES[key]
    if float(source.stock.get(key,0))<=0: continue
    available = true
    if LogisticsRoutes.road_to_point(state,int(source.index),job_position(state,job)).size()>=2:
-    return "%s liegt bereit · wartet auf freien LKW" % Catalog.RESOURCES[key]
+    return "%s liegt bereit · wartet auf freien %s" % [Catalog.RESOURCES[key],"Baustellen-LKW" if CentralLogistics.active(state) else "LKW"]
   return "Keine Straßenverbindung für %s" % Catalog.RESOURCES[key] if available else "%s fehlt · Produktion oder Materialdepot versorgt den Bau" % Catalog.RESOURCES[key]
  return "Material für diese Phase vollständig angeliefert"
 
@@ -186,7 +233,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  for job in jobs:
   var id = int(job.get("id",-1))
   if not job.has("phases") or job.get("paused",false) or (only_job>=0 and id!=only_job): continue
-  if job.has("district_group") and int(job.get("workers",0))<=0: continue
+  if int(job.get("workers",0))<=0: continue
   if not state.construction_auto and not job.get("requested",false): continue
   var material_keys = job.materials.keys()
   material_keys.sort()

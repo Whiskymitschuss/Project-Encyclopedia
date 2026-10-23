@@ -67,13 +67,7 @@ static func create(kind: String, level: int) -> Node3D:
   input.position=Vector3(-6,0.6,-6)
   for i in 5: Models.cylinder(input,0.9,1.3,Vector3(i%2,0.8,(i/2)*0.6),Color("aca38b"),0.3)
   Models.bake(input)
- if level>=3:
-  for x in [-7,7]: Models.box(root,Vector3(0.22,5,0.22),Vector3(x,2.9,-9),Color("3c9eaa"))
-  Models.box(root,Vector3(15,0.35,2),Vector3(0,5.5,-9),Color("58aaba"))
- if level>=6: Models.cylinder(root,1.2,5,Vector3(6.5,3,-5),Color("b6cfca"))
- if level>=10:
-  Models.box(root,Vector3(3,0.3,2),Vector3(6.5,5.8,-5),Color("3879ac"))
-  Models.box(root,Vector3(2,0.5,2),Vector3(-6,1,7),Color("f1c64d"))
+ InfrastructureEvolution.add_to(root,kind,level)
  Models.bake(stock)
  var controller=load("res://Components/StonePlant.gd").new()
  controller.name="StonePlant"

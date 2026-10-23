@@ -29,5 +29,5 @@ static func populate(hud: Control,tab: String) -> void:
   var s=trip
   var domain="central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"
   var box=hud.card("%s %s" % [Catalog.number(s.amount),Catalog.RESOURCES[s.key]])
-  hud.dynamic_text(box,func(): return "Abfahrt in %s s · im Depot" % ceili(float(s.get("depart_in",0))) if float(s.get("depart_in",0))>0 else "Leere Rückfahrt" if s.arrived else "Unterwegs · Ankunft in %s s" % ceili(maxf(0,float(s.travel)-float(s.age))))
+  hud.dynamic_text(box,func(): return FreightFlow.status(s))
   hud.button(box,"LKW & ROUTE",func(): hud.ux.select_truck({"kind":"truck","domain":domain,"id":int(s.id)},true))

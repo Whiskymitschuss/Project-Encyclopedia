@@ -43,5 +43,6 @@ static func create(kind: String,level: int) -> Node3D:
  var stock=load("res://Components/DepotStock.gd").new()
  stock.name="DepotStock"
  root.add_child(stock)
+ InfrastructureEvolution.add_to(root,kind,level)
  Models.bake(root)
  return root

@@ -39,6 +39,33 @@ static func capacity(state: Dictionary, kind: String) -> float:
  var level = int(state.buildings[int(state.delivery.nodes[kind])].level)
  return minf(48,4+level*2)
 
+static func general_busy(state: Dictionary) -> int:
+ var count=0
+ for trip in state.delivery.shipments:
+  if trip.mode=="truck" and trip.get("fleet","")!="central": count+=1
+ return count
+
+static func central_busy(state: Dictionary) -> int:
+ var count=0
+ for trip in state.delivery.shipments:
+  if trip.get("fleet","")=="central": count+=1
+ return count
+
+static func supply_pending(state: Dictionary) -> bool:
+ var data=state.delivery
+ if not data.active or data.paused: return false
+ var center=CentralLogistics.depot(state)
+ if center<0 or state.buildings[center].get("paused",false): return false
+ for link in LINKS:
+  var target=str(link[1])
+  var key=str(link[2])
+  var index=int(data.nodes[target])
+  if state.buildings[index].get("paused",false): continue
+  var room=capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
+  var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key)
+  if room>=1 and float(state.resources.get(key,0))-protected>=1 and LogisticsRoutes.road_route(state,center,index).size()>=2: return true
+ return false
+
 static func reserved(data: Dictionary, kind: String, key: String) -> float:
  var result = 0.0
  for s in data.shipments:
@@ -58,11 +85,10 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  for shipment in finished: data.shipments.erase(shipment)
  if not data.active: return report
  if data.paused: return report
- # Freeze this line while one of its selected buildings is paused.
+ # Validate assignments; individual building pauses affect only that workplace.
  for kind in KINDS:
   var index = int(data.nodes.get(kind,-1))
   if index<0 or index>=state.buildings.size(): return report
-  if state.buildings[index].get("paused",false): return report
  for kind in data.recovered:
   var keys = data.recovered[kind].keys()
   keys.sort()
@@ -72,11 +98,12 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
    data.buffers[kind][key] += amount
  # Arrival precedes production and dispatch. A dispatch can never teleport goods
  # into a downstream recipe in the same simulation tick.
- var protected_wood = ConstructionRules.reserved_materials(state,"wood")
- var take = 0.0 if CentralLogistics.active(state) else minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
+ var protected_wood = ConstructionRules.processing_reserve(state,"wood")
+ var take = 0.0 if CentralLogistics.active(state) or state.buildings[int(data.nodes.station)].get("paused",false) else minf(maxf(0,float(state.resources.wood)-protected_wood),maxf(0,capacity(state,"station")-float(data.buffers.station.wood)))
  data.buffers.station.wood += take
  state.resources.wood -= take
  for kind in ["sawmill","furniture"]:
+  if state.buildings[int(data.nodes[kind])].get("paused",false): continue
   var key = "wood" if kind=="sawmill" else "boards"
   var product = "boards" if kind=="sawmill" else "furniture"
   var buf = data.buffers[kind]
@@ -97,48 +124,55 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  # can load them. Dispatch withdraws real source stock into its own road cargo.
  ConstructionRules.dispatch(state)
  # A shop pays only for furniture that physically reached its own buffer.
- var order = data.order
- var sold = mini(floori(float(data.buffers.market.furniture)),int(order.amount)-int(order.delivered))
- if sold>0:
-  data.buffers.market.furniture -= sold
-  order.delivered += sold
-  data.sold += sold
-  report.sold += sold
-  report.coins += sold*float(Catalog.PRICES.furniture)*(0.7 if order.late else 1.0)
- if int(order.delivered)>=int(order.amount):
-  if not order.late:
-   report.coins += 90+int(order.amount)*10
-   report.tickets += 1
-   data.on_time += 1
-   data.last_receipt = "Pünktlich geliefert · Bonus + 1 Loot-Ticket"
+ if not state.buildings[int(data.nodes.market)].get("paused",false):
+  var order = data.order
+  var sold = mini(floori(float(data.buffers.market.furniture)),int(order.amount)-int(order.delivered))
+  if sold>0:
+   data.buffers.market.furniture -= sold
+   order.delivered += sold
+   data.sold += sold
+   report.sold += sold
+   report.coins += sold*float(Catalog.PRICES.furniture)*(0.7 if order.late else 1.0)
+  if int(order.delivered)>=int(order.amount):
+   if not order.late:
+    report.coins += 90+int(order.amount)*10
+    report.tickets += 1
+    data.on_time += 1
+    data.last_receipt = "Pünktlich geliefert · Bonus + 1 Loot-Ticket"
+   else:
+    data.late_orders += 1
+    data.last_receipt = "Spät geliefert · 70 % Verkaufspreis, nächster Auftrag"
+   data.orders += 1
+   report.orders+=1
+   data.order = next_order(state,data)
   else:
-   data.late_orders += 1
-   data.last_receipt = "Spät geliefert · 70 % Verkaufspreis, nächster Auftrag"
-  data.orders += 1
-  report.orders+=1
-  data.order = next_order(state,data)
- else:
-  order.left = maxf(0,float(order.left)-delta)
-  if order.left<=0: order.late = true
- var truck_count = maxi(0,int(state.trucks)-(0 if CentralLogistics.active(state) else state.construction_shipments.size())-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
- # Deliver downstream first so one starter truck can serve the entire chain.
- for i in [2,1,0]:
+   order.left = maxf(0,float(order.left)-delta)
+   if order.left<=0: order.late = true
+ var free = CentralLogistics.available_trucks(state) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-general_busy(state)-state.construction_shipments.size()-state.stone.shipments.size()-ExportTrade.busy(state)-(1 if state.stone.ready and state.stone.turn=="stone" else 0))
+ # Keep one pickup/replenishment in service when both duties need the central
+ # fleet. Existing hub assignments already satisfy that share, including returns.
+ if free>0 and CentralLogistics.active(state) and state.hub.shipments.is_empty() and CentralLogistics.work_pending(state): free=maxi(0,free-1)
+ # Start downstream, then rotate after successful assignments so permanently
+ # stocked shop orders cannot starve a sawmill's next ingredient delivery.
+ var order_of_links=[2,1,0]
+ var cursor=int(state.hub.get("supply_cursor",0))%3
+ for offset in 3:
+  var i=order_of_links[(cursor+offset)%3]
   var source = LINKS[i][0]
   var target = LINKS[i][1]
   var key = LINKS[i][2]
   var route = routes.get(target,[])
   if route.size()<2 and not CentralLogistics.active(state): continue
-  var busy = 0
-  for s in data.shipments:
-   if s.mode=="truck": busy += 1
-  if busy >= truck_count: continue
+  if free<=0 or state.buildings[int(data.nodes[target])].get("paused",false): continue
   var room = capacity(state,target)-float(data.buffers[target][key])-reserved(data,target,key)
-  var batch = mini(4+int(state.vehicle)*2,mini(floori(float(data.buffers[source][key])),floori(room)))
+  var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key,float(data.buffers[source][key]))
+  var batch = mini(4+int(state.vehicle)*2,mini(floori(maxf(0,float(data.buffers[source][key])-protected)),floori(room)))
   if CentralLogistics.active(state): batch=0
   var origin=-1
   var warehouse_load=false
   if batch<=0 and room>=1:
-   var available=maxf(0,float(state.resources.get(key,0))-ConstructionRules.reserved_materials(state,key))
+   var reserve=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key)
+   var available=maxf(0,float(state.resources.get(key,0))-reserve)
    batch=mini(4+int(state.vehicle)*2,mini(floori(available),floori(room)))
    if batch>0:
     for index in state.buildings.size():
@@ -161,6 +195,8 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   else: data.buffers[source][key] -= batch
   FreightFlow.enqueue(state,data.shipments,{"id":data.next_id,"origin":origin,"source":"central_depot" if CentralLogistics.active(state) and warehouse_load else "warehouse" if warehouse_load else source,"fleet":"central" if CentralLogistics.active(state) and warehouse_load else "general","target":target,"key":key,"amount":batch,"mode":"truck","path":route.duplicate(true),"load":handling,"drive":drive,"unload":handling,"travel":travel,"total":total,"age":0.0,"arrived":false})
   data.next_id += 1
+  state.hub.supply_cursor=(cursor+offset+1)%3
+  free-=1
  return report
 
 static func status(state: Dictionary, kind: String) -> Dictionary:

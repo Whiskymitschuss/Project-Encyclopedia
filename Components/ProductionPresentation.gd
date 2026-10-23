@@ -10,7 +10,7 @@ static func advice(game: Node,index: int) -> Dictionary:
   elif game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).key)
   elif Catalog.RECIPES.has(b.kind):
    for input in Catalog.RECIPES[b.kind]["in"]:
-    if float(game.state.resources[input])<=game.reserve_for(input)+0.0001: key=input; break
+    if float(game.state.resources[input])<=game.processing_reserve_for(input)+0.0001: key=input; break
  if status.kind=="full":
   if game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).get("output_key","wood"))
   elif b.kind in StoneIndustry.KINDS: key="rock" if b.kind=="quarry" else "stone"
@@ -38,8 +38,6 @@ static func describe(game: Node,index: int) -> Dictionary:
   return {"kind":"running","text":""}
  if game.delivery_owns(index):
   if state.delivery.paused: return {"kind":"paused","text":"Ⅱ Lieferlinie pausiert"}
-  for selected in state.delivery.nodes.values():
-   if state.buildings[int(selected)].get("paused",false): return {"kind":"paused","text":"Ⅱ Lieferlinie wartet"}
   var info=DeliveryChain.status(state,b.kind)
   if info.full: return {"kind":"full","text":"↑ Ausgang voll"}
   if not info.ready and b.kind in ["sawmill","furniture"]: return {"kind":"missing","text":"! %s fehlt" % Catalog.RESOURCES[info.key]}
@@ -49,6 +47,6 @@ static func describe(game: Node,index: int) -> Dictionary:
  for key in recipe.out:
   if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key])>=game.capacity()-0.0001): return {"kind":"full","text":"↑ %s-Lager voll" % Catalog.RESOURCES[key]}
  for key in recipe["in"]:
-  if float(state.resources[key])<=game.reserve_for(key)+0.0001:
-   return {"kind":"missing","text":"! %s reserviert" % Catalog.RESOURCES[key] if game.reserve_for(key)>0 else "! %s fehlt" % Catalog.RESOURCES[key]}
+  if float(state.resources[key])<=game.processing_reserve_for(key)+0.0001:
+   return {"kind":"missing","text":"! %s reserviert" % Catalog.RESOURCES[key] if game.processing_reserve_for(key)>0 else "! %s fehlt" % Catalog.RESOURCES[key]}
  return {"kind":"running","text":""}

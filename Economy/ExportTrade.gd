@@ -14,7 +14,7 @@ static func busy(state: Dictionary) -> int:
  return state.get("trade",{}).get("shipments",[]).size()
 
 static func available_trucks(state: Dictionary) -> int:
- return maxi(0,int(state.trucks)-state.delivery.shipments.size()-(0 if CentralLogistics.active(state) else state.construction_shipments.size())-state.stone.shipments.size()-busy(state))
+ return maxi(0,int(state.trucks)-DeliveryChain.general_busy(state)-(0 if CentralLogistics.active(state) else state.construction_shipments.size())-state.stone.shipments.size()-busy(state))
 
 static func route(state: Dictionary) -> Dictionary:
  if str(state.trade.gateway)!="highway": return {}

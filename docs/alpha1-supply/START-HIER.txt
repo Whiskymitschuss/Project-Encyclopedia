@@ -1,0 +1,17 @@
+TIMBER LOOT TYCOON · VERSORGUNG & BIBERWELT · 0.28.6-alpha.1 (3001)
+
+Die APK als Update über die vorhandene Alpha installieren.
+Nicht deinstallieren und keine App-Daten löschen. Paket und Testzertifikat bleiben gleich.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+Behoben: Baumaterial-Zutaten waren durch spätere Bauaufträge blockiert;
+Fabrikversorgung der Zentrale benötigte normale LKW; eine Betriebspause stoppte
+alle; einzelne Baustellen bekamen nach Abschluss des Vorgängers kein Bauteam.
+Bestände und tatsächliche Frachten bleiben erhalten. Die große Materialzahl zählt
+Lager plus Betriebe, die Zeile darunter nennt den reinen Lageranteil.
+
+Außerdem zehn Architektur-Erweiterungen für Zentrale, Express, Steinbruch und
+Steinwerk. Kein Zurücksetzen der Firma. Der Gesamtumbau ist noch nicht fertig.
+Genauer Stand und offene Aufgaben: WORLD-REWORK-286.md.
+
+Echte Android-Ausführung und Temperaturmessung dieser Version stehen aus.

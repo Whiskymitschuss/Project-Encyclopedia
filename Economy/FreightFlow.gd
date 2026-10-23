@@ -130,3 +130,13 @@ static func advance(trip: Dictionary,delta: float) -> void:
  var wait=minf(maxf(0,float(trip.get("depart_in",0))),delta)
  trip.depart_in=maxf(0,float(trip.get("depart_in",0))-wait)
  trip.age=float(trip.age)+delta-wait
+
+static func status(trip: Dictionary) -> String:
+ var waiting=float(trip.get("depart_in",0))
+ if waiting>0: return "Abfahrt in %s s · Ladeplatz reserviert" % ceili(waiting)
+ if trip.arrived: return "Leere Rückfahrt"
+ var age=float(trip.age)
+ if age<float(trip.get("load",0)): return "Wird beladen"
+ if age<float(trip.get("load",0))+float(trip.get("drive",0)): return "Unterwegs · Ankunft in %s s" % ceili(maxf(0,float(trip.travel)-age))
+ if age<float(trip.travel): return "Wird entladen"
+ return "Wartet auf Platz zum Entladen"

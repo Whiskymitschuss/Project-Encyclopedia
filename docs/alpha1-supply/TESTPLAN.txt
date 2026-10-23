@@ -1,0 +1,17 @@
+1. Als Update installieren: Geld, Gebäude, Material und laufende Fracht erhalten?
+2. Eine Firma mit wartender Baustelle und vorhandenen Brettern öffnen.
+   Möbelproduktion beobachten: Ware wird geladen, gefahren und erst nach Entladen gebucht?
+3. Mehrere Ausbauten bestellen: verhindert eine spätere Rechnung weiterhin die
+   Herstellung fehlender Möbel oder anderer Baumaterialien?
+4. Ein Sägewerk pausieren: verarbeitet eine andere Fabrik ihre verfügbaren Bretter weiter?
+5. Zentrale: weiß-blaue Abholung und Fabriklieferungen, schwarz-weiße Baulieferung.
+   Beide Zentralstapler beobachten. Keine doppelte Ladung oder Bestandsbuchung?
+6. Mehr Baustellen als Bauteams: übernimmt ein Team nach Abschluss den nächsten Auftrag?
+   Eine bewusst manuell auf null gesetzte Besetzung darf nicht überschrieben werden.
+7. Entfernte Baustelle: Nachschub zum Abhol-Express und letzte Lieferstrecke ansehen.
+   Materialhilfe unterscheidet Abfahrt, Beladen, Fahrt, Entladen und Rückfahrt?
+8. Materialleiste: Gesamtbestand und Lageranteil lesbar? Kleine Displays/Großschrift prüfen.
+9. Zentrale, Express, Steinbruch und Steinwerk ausbauen: neue Aufbauten erst nach Abschluss,
+   keine neue Überdeckung von Fahrgassen oder Nachbargrundstücken?
+10. Spiel minimieren/beenden und erneut öffnen: Fortschritt und Lieferungen korrekt fortgesetzt?
+11. S26 Ultra/S24 FE: Gerät, Modus, Startdauer, FPS-Eindruck und Wärme nach 5/15 Minuten notieren.

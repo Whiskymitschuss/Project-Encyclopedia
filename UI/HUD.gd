@@ -298,6 +298,7 @@ func _ready() -> void:
  Game.rebuild_world.connect(func(): if overlay.visible: call_deferred("render_menu"))
  header_panel.resized.connect(layout_interface)
  bottom_panel.resized.connect(layout_interface)
+ bottom_panel.minimum_size_changed.connect(func(): call_deferred("layout_interface"))
  resized.connect(layout_interface)
  for panel in [overlay,placement_panel,ux.sheet,ux.palette]: panel.visibility_changed.connect(layout_interface)
  layout_interface()
@@ -1342,10 +1343,10 @@ func delivery_menu() -> void:
 
 func construction_menu() -> void:
  modal_title.text = "BAUSTELLEN & MATERIAL"
- card("Erst Material. Dann Richtfest.","Lieferungen starten automatisch: direkt vom Sägewerk, Steinwerk oder Lager zur Baustelle. Jede Bauphase wartet auf ihre tatsächlichen Materialien. Alle Transporte teilen sich deine LKWs; mehr Fahrzeuge gibt es in der Garage.")
+ card("Erst Material. Dann Richtfest.","Jede Bauphase wartet auf ihre tatsächlichen Materialien. Mit fertigem Zentrallager nutzen Baustellen eine eigene schwarz-weiße Flotte und entfernte Baustellen den Abhol-Express. Ohne Zentrale teilen sie den gekauften Fuhrpark.")
  if Game.state.jobs.is_empty(): card("Keine offenen Baustellen","Im Baukatalog ein Gebäude platzieren oder auf einen Betrieb tippen und Ausbauen wählen.")
  else: jobs_cards()
- var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Dein erstes Rathaus erklärt die Materialbaustellen. Ab Unternehmenslevel 4 gilt das System auch für weitere Gebäude; bis zu fünf Bauarbeiter arbeiten je Baustelle.")
+ var crew=card("Bauteam: %s · %s frei" % [Game.state.builders,Game.free_builders()],"Freie Bauteams übernehmen automatisch den nächsten bezahlten Auftrag. Eine manuelle Zuweisung bleibt erhalten. Ab Unternehmenslevel 4 gilt das Materialsystem auch für weitere Gebäude; bis zu fünf Bauarbeiter arbeiten je Baustelle.")
  button(crew,"BAUARBEITER EINSTELLEN · %s" % Catalog.number(150*pow(1.6,int(Game.state.builders)-2)*Game.difficulty()),func(): action(func(): Game.hire_builder()),Game.company_level()>=4 and int(Game.state.builders)<8)
  if Game.company_level()<4: text(crew,"Dein Level: %s/4 · Neue Industriebetriebe benötigen bis dahin nur Geld. Dein Rathaus erhält schon echte Lieferungen." % Game.company_level(),15,MUTED)
  var depot = card("Materialdepot · nur Spielmünzen","Muttern und Schrauben werden hier mit erspielten Münzen gekauft. Holz und Bretter liefert deine Produktion.")
@@ -1356,7 +1357,7 @@ func construction_menu() -> void:
   button(choices,"1 KAUFEN",func(): action(func(): Game.buy_hardware(id,1)))
   button(choices,"10 KAUFEN",func(): action(func(): Game.buy_hardware(id,10)))
  button(contents,"STEINBRUCH & BAUSTOFFE",func(): open_menu("stone"))
- card("So wird geliefert","Der Bauauftrag wird beim Platzieren bezahlt. Ein Transportfahrzeug nimmt tatsächlichen Vorrat am Lager auf, fährt über Straßen zur Baustelle, entlädt und kehrt leer zurück. Belegte Fahrzeuge fehlen an der Möbellinie. Automatik kauft keine Teile. Material bleibt für den Bau geschützt. Laufende alte Baustellen bleiben gültig.")
+ card("So wird geliefert","Der Bauauftrag wird beim Platzieren bezahlt. Ein LKW lädt tatsächliche Ware, fährt über Straßen, entlädt und kehrt leer zurück. Fertigwaren bleiben vor automatischem Verkauf geschützt; Zutaten dürfen fehlendes Baumaterial erzeugen. Muttern und Schrauben werden mit Spielmünzen im Materialdepot gekauft. Tippe auf eine Ware für Bestand, Quelle und Lieferstatus.")
  button(contents,"BAUKATALOG",func(): open_menu("catalog"))
 
 

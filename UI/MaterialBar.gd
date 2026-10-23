@@ -6,6 +6,7 @@ var hud
 var counters={}
 var controls={}
 var captions={}
+var warehouse_counts={}
 func _ready() -> void:
  columns=3
  size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -14,7 +15,7 @@ func _ready() -> void:
  for key_value in KEYS:
   var key=str(key_value)
   var item=hud.button(self,"",func(): hud.ux.open_material(key))
-  item.custom_minimum_size=Vector2(0,44)
+  item.custom_minimum_size=Vector2(0,54)
   item.size_flags_horizontal=Control.SIZE_EXPAND_FILL
   hud.compact_style(item,hud.PAPER)
   var box=VBoxContainer.new()
@@ -31,11 +32,21 @@ func _ready() -> void:
   name_label.clip_text=true
   name_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
   captions[key]=name_label
-  var count=hud.text(box,"0",20,hud.INK)
+  var count=hud.text(box,"0",18,hud.INK)
   count.autowrap_mode=TextServer.AUTOWRAP_OFF
   count.clip_text=true
   count.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
   counters[key]=count
+  var warehouse=hud.text(box,"Lager 0",10,hud.INK)
+  warehouse.autowrap_mode=TextServer.AUTOWRAP_OFF
+  warehouse.clip_text=true
+  warehouse.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+  warehouse_counts[key]=warehouse
+  # Buttons do not propagate their children's minimum size. Derive the height
+  # from all three labels, including the active font/accessibility metrics.
+  var fit=func(): item.custom_minimum_size.y=maxf(54,box.get_combined_minimum_size().y+4)
+  box.minimum_size_changed.connect(fit)
+  fit.call()
   controls[key]=item
  refresh()
 func refresh() -> void:
@@ -43,6 +54,7 @@ func refresh() -> void:
  for key in counters:
   var stock=UXRules.material_stock(Game.state,key)
   counters[key].text=compact_number(stock.stored)
+  warehouse_counts[key].text="Lager "+compact_number(stock.warehouse)
   var trend=Game.material_trend(key)
   captions[key].text=NAMES[key]+(" "+str(trend.arrow) if trend.ready else "")
   controls[key].tooltip_text="%s: %s im Lager · %s in Betrieben · %s unterwegs. Antippen für Quellen und Lieferungen." % [Catalog.RESOURCES[key],Catalog.number(stock.warehouse),Catalog.number(stock.local),Catalog.number(stock.transit)]

@@ -118,6 +118,10 @@ func restore(saved: Dictionary) -> void:
  if int(saved.get("construction_logistics_version",0))<1:
   for job in state.jobs:
    if job.has("phases"): job.requested=true
+ for job in state.jobs:
+  # Explicit manual assignments already write auto_crew=false. Old individual
+  # orders without a policy must not remain unstaffed forever after a handoff.
+  if job.has("phases") and not job.has("auto_crew"): job.auto_crew=true
  for key in CityServices.initial():
   if not state.city_services.has(key): state.city_services[key]=CityServices.initial()[key]
  # Ampelwartung belongs to 0.29. Its zero-cargo technician missions have no
@@ -374,15 +378,16 @@ func reserve_for(key: String) -> float:
  if not state.reserve: return 0.0
  return {"boards":10.0,"dry":5.0,"furniture":4.0,"walls":2.0,"roofs":2.0,"parts":2.0,"paper":2.0}.get(key,0.0)
 
+func processing_reserve_for(key: String) -> float:
+ return ConstructionRules.processing_reserve(state,key) if ConstructionRules.reserved_materials(state,key)>0 else reserve_for(key)
+
 func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
  var building = state.buildings[index]
- if building.kind in ["central_depot","express"]: return "Eigene Lagerflotte: %s · Baustellenflotte: %s · Waren tatsächlich unterwegs: %s" % [CentralLogistics.fleet_size(state),CentralLogistics.fleet_size(state),state.hub.shipments.size()]
+ if building.kind in ["central_depot","express"]: return "Lagerflotte: %s/%s frei · Baustellenflotte: %s/%s frei" % [CentralLogistics.available_trucks(state),CentralLogistics.fleet_size(state),maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()),CentralLogistics.fleet_size(state)]
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
   if state.delivery.paused or building.get("paused",false): return "Pausiert · Produktion fortsetzen"
-  for selected in state.delivery.nodes.values():
-   if state.buildings[int(selected)].get("paused",false): return "Lieferlinie wartet auf pausiertes Gebäude"
   var info = DeliveryChain.status(state,building.kind)
   if info.has("output_key"):
    return "Eingang: %s %s/%s · Ausgang: %s %s/%s · %s" % [Catalog.RESOURCES[info.key],Catalog.number(info.amount),info.need,Catalog.RESOURCES[info.output_key],Catalog.number(info.output_amount),info.output_capacity,info.text]
@@ -394,8 +399,8 @@ func production_status(index: int) -> String:
   if key not in recipe.get("overflow_sell",[]) and (CentralLogistics.output_room(state,index,key)<=0.0001 if CentralLogistics.active(state) else float(state.resources[key]) >= capacity()-0.0001):
    return "%s-Lager voll · verkaufen oder weiterverarbeiten" % Catalog.RESOURCES[key]
  for key in recipe["in"]:
-  if float(state.resources[key]) <= reserve_for(key)+0.0001:
-   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," (Baureserve geschützt)" if reserve_for(key)>0 else ""]
+  if float(state.resources[key]) <= processing_reserve_for(key)+0.0001:
+   return "Wartet auf %s%s" % [Catalog.RESOURCES[key]," (Baureserve geschützt)" if processing_reserve_for(key)>0 else ""]
  if float(flow.get("building:%s" % index,0))>0: return "Läuft · %.2f Zyklen/s" % float(flow["building:%s" % index])
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
@@ -436,6 +441,9 @@ func step(delta: float) -> void:
  flow = {"harvest":accepted/maxf(delta,0.001)}
  flow.merge(StoneIndustry.tick(state,delta,(1+research_level("production")*0.12)*multiplier()*boost("processing")),true)
  state.stone.ready=not StoneIndustry.requests(state,stone_route_cache).is_empty()
+ # Load the current real phase before factories compete for a small fresh
+ # harvest. Otherwise fractional processing can consume every new log forever.
+ ConstructionRules.dispatch(state)
  var proposals = []
  var demand = {}
  var output_demand = {}
@@ -453,11 +461,13 @@ func step(delta: float) -> void:
  # Apply all consumption before output: no factory depends on array ordering.
  var produced = {}
  var consumed = {}
+ var processing_reserves={}
+ for key in demand: processing_reserves[key]=processing_reserve_for(key)
  for proposal in proposals:
   var recipe = proposal.recipe
   var fraction = 1.0
   for key in recipe["in"]:
-   fraction = minf(fraction,maxf(0.0,float(state.resources[key])-reserve_for(key))/maxf(float(demand[key]),0.0001))
+   fraction = minf(fraction,maxf(0.0,float(state.resources[key])-float(processing_reserves[key]))/maxf(float(demand[key]),0.0001))
   for key in recipe.out:
    if key in recipe.get("overflow_sell",[]): continue
    var room=CentralLogistics.output_room(state,int(proposal.index),key) if CentralLogistics.active(state) else capacity()-float(state.resources[key])

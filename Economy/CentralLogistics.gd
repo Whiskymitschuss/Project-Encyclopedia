@@ -4,7 +4,7 @@ extends RefCounted
 # Resources belong to the central store; outputs, express stock and road cargo
 # have separate ownership. No credit before unloading and no shared-fleet lock.
 static func initial() -> Dictionary:
- return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0}
+ return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0}
 
 static func depot(state: Dictionary) -> int:
  for i in state.buildings.size():
@@ -32,6 +32,29 @@ static func output_room(state: Dictionary,index: int,key: String) -> float:
 static func fleet_size(state: Dictionary) -> int:
  var index=depot(state)
  return mini(6,2+int(state.buildings[index].level)) if index>=0 else 0
+
+static func available_trucks(state: Dictionary) -> int:
+ var assigned=state.hub.shipments.size()+DeliveryChain.central_busy(state)
+ return maxi(0,fleet_size(state)-assigned)
+
+static func work_pending(state: Dictionary) -> bool:
+ var center=depot(state)
+ if center<0 or state.buildings[center].get("paused",false): return false
+ for source in pickup_sources(state):
+  for key in source.stock:
+   if source.has("only") and key!=source.only: continue
+   if source.has("keys") and key not in source.keys: continue
+   if float(source.stock[key])<0.25 or capacity(state)-float(state.resources.get(key,0))-incoming(state,center,key)<0.25: continue
+   if LogisticsRoutes.road_route(state,int(source.index),center).size()>=2: return true
+ for job in state.jobs:
+  if not job.has("phases") or job.get("paused",false) or int(job.get("workers",0))<=0: continue
+  for key in job.materials:
+   if float(state.resources.get(key,0))<=0: continue
+   var sources=construction_sources(state,job,key)
+   if sources.is_empty() or sources[0].kind!="express": continue
+   var source=sources[0]
+   if ConstructionRules.phase_need(job,key)-ConstructionRules.incoming(state,int(job.id),key)-float(source.stock.get(key,0))-incoming(state,int(source.index),key)>0: return true
+ return false
 
 static func incoming(state: Dictionary,index: int,key: String) -> float:
  var amount=0.0
@@ -97,18 +120,22 @@ static func construction_sources(state: Dictionary,job: Dictionary,key: String) 
    if length<distance*0.8 and length<nearest:
     nearest=length
     best=i
- if best>=0: return [{"kind":"express","index":best,"stock":stock(state,best,true)}]
+ if best>=0: return [{"kind":"express","index":best,"stock":state.hub.express.get(str(best),{})}]
  return [{"kind":"central_depot","index":center,"stock":state.resources}]
 
 static func dispatch(state: Dictionary) -> void:
  var center=depot(state)
  if center<0 or state.buildings[center].get("paused",false): return
- var free=fleet_size(state)-state.hub.shipments.size()
+ var free=available_trucks(state)
+ if free<=0: return
+ # Symmetric to plant dispatch: keep a factory delivery in service while
+ # collections are busy, without allocating an extra truck or holding a mutex.
+ if DeliveryChain.central_busy(state)==0 and DeliveryChain.supply_pending(state): free=maxi(0,free-1)
  if free<=0: return
  # Long-distance replenishment has priority, but cannot consume pickup capacity.
  var express_budget=maxi(1,fleet_size(state)/2)
  for job in state.jobs:
-  if not job.has("phases") or job.get("paused",false): continue
+  if not job.has("phases") or job.get("paused",false) or int(job.get("workers",0))<=0: continue
   for key in job.materials:
    if free<=0 or express_budget<=0: break
    var sources=construction_sources(state,job,key)
@@ -122,12 +149,20 @@ static func dispatch(state: Dictionary) -> void:
  var cursor=int(state.hub.cursor)%sources.size()
  for offset in sources.size():
   var source=sources[(cursor+offset)%sources.size()]
-  for key in source.stock.keys():
+  var keys=source.stock.keys()
+  keys.sort()
+  if keys.is_empty(): continue
+  var source_id=str(source.index)
+  var key_cursor=int(state.hub.key_cursors.get(source_id,0))%keys.size()
+  for key_offset in keys.size():
+   var key=keys[(key_cursor+key_offset)%keys.size()]
    if source.has("only") and key!=source.only: continue
    if source.has("keys") and key not in source.keys: continue
    var amount=minf(float(source.stock[key]),minf(12+int(state.vehicle)*2,maxf(0,capacity(state)-float(state.resources.get(key,0))-incoming(state,center,key))))
    if amount<0.25 or free<=0: continue
-   if launch(state,int(source.index),center,key,amount,"central",source.stock): free-=1
+   if launch(state,int(source.index),center,key,amount,"central",source.stock):
+    free-=1
+    state.hub.key_cursors[source_id]=(key_cursor+key_offset+1)%keys.size()
  state.hub.cursor=(cursor+1)%sources.size()
 
 static func target_name(state: Dictionary,trip: Dictionary) -> String:
@@ -136,7 +171,7 @@ static func target_name(state: Dictionary,trip: Dictionary) -> String:
 static func recall_express(state: Dictionary,index: int) -> float:
  var center=depot(state)
  if center<0 or state.buildings[index].kind!="express": return 0
- var available=fleet_size(state)-state.hub.shipments.size()
+ var available=available_trucks(state)
  var result=0.0
  var regional=stock(state,index,true)
  for key in regional:

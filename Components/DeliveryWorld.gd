@@ -130,6 +130,8 @@ func _process(delta: float) -> void:
  clock += delta
  if clock>=0.5: clock=0; refresh_badges()
  var occupied: Array[Rect2] = []
+ for control in [world.hud.bottom_panel,world.hud.header_panel,world.hud.mission_button,world.hud.camera_controls,world.hud.emergency_button]:
+  if control.visible: occupied.append(control.get_global_rect())
  if world.hud.get("ux")!=null:
   var ux=world.hud.ux
   for control in [ux.event_button,ux.sheet,ux.palette]:
@@ -147,8 +149,12 @@ func _process(delta: float) -> void:
   if not b.button.visible: continue
   var extent: Vector2=b.button.size
   var p = world.camera.unproject_position(b.at)-Vector2(extent.x/2,extent.y-4)
+  # Keep the selected target reachable when its newly opened card covers the
+  # projected label. Other world badges still yield to the detail card entirely.
+  if chosen and world.hud.ux.sheet.visible and Rect2(p,extent).intersects(world.hud.ux.sheet.get_global_rect()):
+   p.y=world.hud.ux.sheet.get_global_rect().position.y-extent.y-8
   var rect = Rect2(p,extent)
-  if p.x<4 or p.x+extent.x>world.hud.size.x-4 or p.y<170 or p.y+extent.y>world.hud.size.y-190: b.button.hide(); continue
+  if p.x<4 or rect.end.x>world.hud.size.x-4 or p.y<world.hud.mission_button.get_global_rect().end.y+8 or rect.end.y>world.hud.bottom_panel.get_global_rect().position.y-8: b.button.hide(); continue
   for previous in occupied:
    if rect.intersects(previous): b.button.hide(); break
   if not b.button.visible: continue

@@ -1,0 +1,13 @@
+Version: 0.28.6-alpha.1 (3001)
+Handy / Android:
+Vorherige Version / Update oder neue Installation:
+Grafikmodus / reduzierte Bewegung:
+Startdauer / Dauer bis zur Erwärmung:
+Welcher Betrieb / welche Baustelle wartet?
+Gesamtbestand und Lageranteil der fehlenden Ware:
+Lieferstatus / Anzahl freier LKW und Bauteams:
+Was wurde gemacht? Was sollte passieren? Was passiert tatsächlich?
+Wiederholbare Schritte:
+Bild / Video:
+
+Keine Passwörter, Signaturschlüssel oder privaten Daten beilegen.

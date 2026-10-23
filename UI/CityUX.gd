@@ -397,6 +397,8 @@ func material_menu() -> void:
   var id=int(job.get("id",-1))
   var count=UXRules.material_counts(Game.state,job,key)
   var site=hud.card("Baustelle benötigt %s %s" % [Catalog.number(count.total),Catalog.RESOURCES[key]],"%s angekommen · %s unterwegs · %s fehlen" % [Catalog.number(count.arrived),Catalog.number(count.incoming),Catalog.number(count.missing)])
+  var project=job
+  hud.dynamic_text(site,func(): return ConstructionRules.logistics_status(Game.state,project))
   hud.button(site,"BAUSTELLE ANSEHEN",func(): select_job(id,true))
  var cargo=hud.card("Tatsächlich unterwegs")
  var found=false
@@ -405,7 +407,7 @@ func material_menu() -> void:
   found=true
   var selected={"kind":"truck","id":int(s.id),"domain":"central" if s.target in ["central","express"] else "construction" if s.target=="construction" else "stone" if s.target=="mineral" else "export" if s.target=="export" else "wood"}
   var at=LogisticsRoutes.sample(s.path,clampf((float(s.age)-float(s.load))/float(s.drive),0,1)).position
-  hud.button(cargo,"%s %s · LKW ansehen" % [Catalog.number(s.amount),Catalog.RESOURCES[key]],func(): hud.focus_requested.emit(at); select_truck(selected))
+  hud.button(cargo,"%s %s · %s\nLKW ansehen" % [Catalog.number(s.amount),Catalog.RESOURCES[key],FreightFlow.status(s)],func(): hud.focus_requested.emit(at); select_truck(selected))
  if not found: hud.text(cargo,"Momentan keine beladene Lieferung dieser Ware.",15,hud.MUTED)
  if ConstructionRules.HARDWARE.has(key):
   hud.button(box,"10 EINHEITEN KAUFEN · %s MÜNZEN" % Catalog.number(float(ConstructionRules.HARDWARE[key])*10*Game.difficulty()),func(): hud.action(func(): Game.buy_hardware(key,10)),float(Game.state.resources[key])+10<=Game.capacity() and float(Game.state.coins)>=float(ConstructionRules.HARDWARE[key])*10*Game.difficulty())

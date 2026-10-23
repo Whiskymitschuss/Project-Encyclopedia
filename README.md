@@ -2,7 +2,22 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.5-alpha.1 · Biberwelt – erster Meilenstein
+## Aktuell: 0.28.6-alpha.1 · Versorgung und Biberwelt
+
+Baurechnungen blockieren nicht mehr die Zutaten für fehlende Baumaterialien.
+Die Zentrale versorgt Fabriken mit ihrer eigenen Flotte. Einzelne Betriebspausen
+stoppen keine unabhängigen Werkstätten; Bauteams rücken auch bei einzelnen
+Aufträgen nach. Lieferstatus und Lageranteil der Materialvorräte sind sichtbar.
+Zentrale, Express, Steinbruch und Steinwerk erhalten ebenfalls zehn bauliche
+Erweiterungsstufen in der Hauptwelt.
+
+Weiterhin 0.28-Spielbasis, Android-Code **3001**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-supply/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Änderungen und tatsächlicher Reststand](docs/WORLD-REWORK-286.md).
+Der Masterumbau ist noch nicht fertig. Echte Android-/Temperaturprüfung steht aus.
+
+## Vorher: 0.28.5-alpha.1 · Biberwelt – erster Meilenstein
 
 Straßen und Gehwege entstehen aus einer gemeinsamen Fläche des tatsächlichen
 Straßengraphen. Die beige Überdeckung und die graue Gesamtplatte sind entfernt.

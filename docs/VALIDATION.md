@@ -1,3 +1,34 @@
+## Versorgung und Biberwelt · 0.28.6-alpha.1
+
+20.792 Prüfungen in 32 Headless-Suiten einschließlich zweier natürlicher
+Progressionsläufe; Hauptwelt- und Titelstart bestanden. 947 OpenGL-Prüfungen
+in 22 unterschiedlichen Suiten bestanden. Betroffene Suiten nach Korrekturen
+wiederholt, Wiederholungen nicht doppelt gezählt.
+[Prüfbericht](alpha1-supply/automated-checks.json).
+
+Nachgestellt und korrigiert: blockierte Zutaten trotz vorhandener Vorräte,
+fehlende unabhängige Flottenversorgung, globale Wirkung einer einzelnen Pause,
+nicht nachrückende Bauteams sowie verdrängte Abholung gemischter Fabrikausgänge.
+32 neue Versorgungsprüfungen decken auch alte Firmen ohne zugewiesene Lieferlinie,
+Warenbilanz, kleinen frischen Holzertrag und JSON-Fortsetzung ab.
+
+Die Grafikprüfung fand zunächst abgeschnittene Lagerzeilen und anschließend
+Warenbadges, die die höhere Bedienleiste oder eine offene Detailkarte überdeckten.
+Mindestgrößen, tatsächliche HUD-Grenzen und die Lage des ausgewählten Badges
+korrigiert. Materialtipp, 32 wiederholte Fabriktipps, Großschrift und kleine
+Displays anschließend erfolgreich geprüft. Der unveränderte Rollback-Test
+bestätigt die bisherigen Lieferdaten; neue Reihenfolgen liegen separat im
+Logistikzustand. 161 neue Architekturprüfungen prüfen vier bestehende Familien
+über jeweils zehn Stufen. [Hauptwelt](alpha1-supply/supply.png) ·
+[Zusätzlicher QA-Stufenvergleich](alpha1-supply/infrastructure.png).
+
+Der gesamte Weltumbau ist **noch nicht fertig**.
+[Änderungen und exakter Reststand](WORLD-REWORK-286.md).
+Kein privater Spielstand benutzt, kein echter Android-/Temperaturtest.
+Desktop-Kaltstartprobe: erster Skriptframe 613 ms, acht Offline-Stunden in
+18,277 s einschließlich Darstellung verarbeitet. Das ist keine zugesicherte
+Handy-Startzeit und kein kontrollierter Geschwindigkeitsvergleich.
+
 ## Externe Downloads Biberwelt · 0.28.5 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.5-alpha.1` vollständig per
