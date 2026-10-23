@@ -1,3 +1,15 @@
+## Tatsächliche APK-Ressourcen · 0.28.6-alpha.1
+
+1239 Headless- und 489 OpenGL-Prüfungen mit unveränderten
+Spieldateien aus der signierten APK bestanden. Tests und Profile lagen separat.
+Auch die echte Touch-Anforderung am Werk, sichtbare Lager-LKW, lokale Verarbeitung
+und Speichern sind im Paket geprüft.
+[Paketprüfbericht](alpha1-supply/packaged-checks.json).
+
+APK-SHA256: `ea43d30c094f945463ee7230fad610c4c8fcddeb835204121369b5abe5bb12fb`. Quellstand `59accccbcd80f09b0887115d53b281f403269f53`.
+Paketname, Versionscode 3001, bisheriges Testzertifikat und 16-KiB-Zip-Ausrichtung
+geprüft. Das ist ein Desktop-Test entpackter APK-Dateien, kein Android-Gerätelauf.
+
 ## Versorgung und Biberwelt · 0.28.6-alpha.1
 
 20.824 numerische Prüfungen in 33 Headless-Suiten einschließlich zweier

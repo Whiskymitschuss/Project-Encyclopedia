@@ -1,4 +1,32 @@
-# Aktuell: Biberwelt · 0.28.5-alpha.1
+# Aktuell: Versorgung und Biberwelt · 0.28.6-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.6-alpha.1/releases/Timber-Loot-Tycoon-v0.28.6-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.6-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Versorgung-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.6-source.zip) · [Änderungen und Reststand](../docs/WORLD-REWORK-286.md)
+
+Baurechnungen blockieren nicht mehr die Herstellung fehlender Baumaterialien.
+**Ware anfordern** im Werk startet tatsächliche Lager-LKW mit lokalem
+Eingangspuffer und automatischem Nachschub. Eigene Lagerflotte für Abholung
+und Fabrikversorgung, faire Warenzuteilung,
+unabhängige Betriebspausen, automatische Bauteam-Übergabe und genaue Lieferstatus.
+Die Materialleiste trennt Gesamtbestand und Lageranteil. Zehn Architektur-
+Erweiterungen jetzt auch für Zentrale, Express, Steinbruch und Steinwerk.
+**Der gesamte Masterumbau bleibt offen.**
+
+Android-Code **3001**, gleiches Paket und Testzertifikat, weiterhin 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+20824 Headless- und 958 OpenGL-Prüfungen
+mit dem Quellstand. Zusätzlich 1239 Headless- und
+489 OpenGL-Prüfungen unveränderter Ressourcen aus der
+wirklichen APK. Kein echter Android-Lauf und keine Temperaturmessung.
+[Prüfbericht](../docs/alpha1-supply/automated-checks.json).
+
+APK-Quellstand `59accccbcd80f09b0887115d53b281f403269f53`. Quell-ZIP: 574 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Paketdaten und Hashes stehen in
+der APK-JSON und `SHA256SUMS.txt`. Der Signaturschlüssel bleibt außerhalb von Git.
+
+## Vorher: Biberwelt · 0.28.5-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-v0.28.5-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.5-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Biberwelt-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.5-source.zip) · [Genauer Entwicklungsstand](../docs/WORLD-REWORK-285.md)

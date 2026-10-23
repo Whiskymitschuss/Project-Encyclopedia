@@ -73,3 +73,6 @@ c49ad0555ab146c364b46a02706a51952c8b55f449c5fc75d4c24c66f30b82be  Timber-Loot-Ty
 750141cd8871c344d6b9a33b4a6bafbb61c04f5c53f9ea3b284ce0379e54c243  Timber-Loot-Tycoon-v0.28.5-alpha.1.apk
 cbc31a898ad9b419847b7e65d7dd1a180415a6d3b03a455f27840fdbfd8d4811  Timber-Loot-Tycoon-v0.28.5-source.zip
 1d8cb3efe8a10faa97b414c1ccf95c69281643a66da8fcbc95aa817d307ac041  Timber-Loot-Tycoon-Alpha-1-Biberwelt-Testerpaket.zip
+ea43d30c094f945463ee7230fad610c4c8fcddeb835204121369b5abe5bb12fb  Timber-Loot-Tycoon-v0.28.6-alpha.1.apk
+5bc886967df5b628c7e0439a91a21682fd895cee0bf71361189e9de0562f619d  Timber-Loot-Tycoon-v0.28.6-source.zip
+f36a1f07cb38109d0515b8411872253a19417fb59c783392c740704445889e89  Timber-Loot-Tycoon-Alpha-1-Versorgung-Testerpaket.zip
