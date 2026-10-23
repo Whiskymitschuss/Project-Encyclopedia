@@ -322,7 +322,7 @@ func refresh() -> void:
  for stop in Game.state.town.stops: bounds.append(Rect2(Vector2(TownRules.cell(stop.cell))-Vector2(8,8),Vector2(16,16)))
  if world!=null and world.actors!=null:
   for actor in world.actors.get_children():
-   if actor.has_meta("forestry_tier"): bounds.append(Rect2(Vector2(actor.origin_point.x,actor.origin_point.z)-Vector2(9,9),Vector2(18,18)))
+   if actor.has_meta("forestry_tier"): bounds.append(ForestryMachine.clearance(actor.origin_point))
  spans=road_spans()
  quality=int(Game.state.quality)
  for kind in batches:

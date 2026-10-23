@@ -48,6 +48,8 @@ static func factory_name(state: Dictionary,index: int) -> String:
  return "%s %s" % [Catalog.BUILDINGS[kind].name,ordinal]
 static func material_sources(state: Dictionary,key: String) -> Array:
  var result=[]
+ var staged=float(state.hub.get("receiving",{}).get(key,0))
+ if staged>0 and CentralLogistics.depot(state)>=0: result.append({"index":CentralLogistics.depot(state),"amount":staged,"name":"Zentrallager · Warenannahme","kind":"central_depot"})
  for id in state.hub.inputs:
   if float(state.hub.inputs[id].get(key,0))>0: result.append({"index":int(id),"amount":float(state.hub.inputs[id][key]),"name":factory_name(state,int(id))+" · Werkseingang","kind":state.buildings[int(id)].kind})
  for id in state.hub.outputs:
@@ -77,7 +79,8 @@ static func material_counts(state: Dictionary,job: Dictionary,key: String) -> Di
  return {"arrived":delivered,"incoming":transit,"missing":maxf(0,total-delivered-transit),"total":total}
 static func material_stock(state: Dictionary,key: String) -> Dictionary:
  var warehouse=float(state.resources.get(key,0))
- var local=0.0
+ var receiving=float(state.hub.get("receiving",{}).get(key,0))
+ var local=receiving
  for group in [state.delivery.buffers,state.delivery.recovered]:
   for stock in group.values(): local+=float(stock.get(key,0))
  for group in [state.hub.outputs,state.hub.express,state.hub.inputs]:
@@ -88,7 +91,7 @@ static func material_stock(state: Dictionary,key: String) -> Dictionary:
   if trip.key==key and not trip.arrived: transit+=float(trip.amount)
  # A truck's cargo was already withdrawn. An arrived truck has already
  # credited its destination; neither may be counted twice as available stock.
- return {"warehouse":warehouse,"local":local,"transit":transit,"stored":warehouse+local}
+ return {"warehouse":warehouse,"local":local,"transit":transit,"stored":warehouse+local,"receiving":receiving}
 static func build_quote(state: Dictionary,key: String,needed: float) -> Dictionary:
  var pickup=0.0
  for source in ConstructionRules.sources(state,key): pickup+=float(source.stock.get(key,0))

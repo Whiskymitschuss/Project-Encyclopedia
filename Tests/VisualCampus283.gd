@@ -89,6 +89,8 @@ func run() -> void:
  game.state.ux.motion=true
  var worker=scene.actors.get_child(0)
  worker.set_process(false)
+ # Work animation now requires real accepted harvest; no decorative free logs.
+ game.step(1)
  worker.phase=0
  worker._process(0.1)
  check(worker.working and worker.axe.visible and not worker.pack.visible,"The forester visibly chops before loading the wood")

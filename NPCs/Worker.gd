@@ -21,6 +21,7 @@ var resting=false
 var rest_via=Vector3.ZERO
 var mug: Node3D
 var axe: Node3D
+var work_left=0.0
 
 func _ready() -> void:
  position=origin_point+Vector3(0,0.6,0)
@@ -80,6 +81,13 @@ func _process(delta: float) -> void:
   body.rotation.y=facing
   for i in [2,3]: limbs[i].rotation.x=-0.8+sin(phase+(i%2)*PI)*0.35 if working else -0.1
   return
+ if role=="forester":
+  if float(Game.flow.get("harvest",0))>0: work_left=maxf(work_left,18.0-fposmod(phase,18.0))
+  if work_left<=0:
+   working=false
+   pack.hide()
+   return
+  work_left=maxf(0,work_left-delta*pace*Game.boost("workers"))
  phase+=delta*pace*Game.boost("workers")
  var cycle=fmod(phase,18.0)
  var travel=clampf((cycle-3)/6,0,1) if cycle<11 else 1-clampf((cycle-11)/7,0,1)

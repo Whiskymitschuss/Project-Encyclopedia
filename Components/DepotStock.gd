@@ -31,6 +31,6 @@ func _process(delta: float) -> void:
  var central=Game.state.buildings[building_index].kind=="central_depot"
  var stock=Game.state.resources if central else Game.state.hub.express.get(str(building_index),{})
  for entry in stacks:
-  var amount=float(stock.get(entry.key,0))
+  var amount=float(stock.get(entry.key,0))+(float(Game.state.hub.get("receiving",{}).get(entry.key,0)) if central else 0)
   entry.node.visible=amount>0.00001
   entry.node.scale.y=0.65+0.35*clampf(amount/24,0,1)

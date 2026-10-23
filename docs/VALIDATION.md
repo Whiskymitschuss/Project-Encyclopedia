@@ -1,3 +1,28 @@
+## Holzfäller und Abholung · 0.28.7-alpha.1
+
+20.847 numerische Prüfungen in 34 Headless-Suiten inklusive zweier natürlicher
+Progressionsläufe, Hauptwelt und Titelstart bestanden. 975 OpenGL-Prüfungen in
+24 unterschiedlichen Suiten bestanden. Betroffene Suiten nach Korrekturen erneut
+geprüft; Wiederholungen nicht doppelt gezählt.
+[Prüfbericht](alpha1-logging/automated-checks.json).
+
+23 neue Prüfungen reproduzieren den vollständigen Abholstau an einer vollen
+Zentrale. Bereits geladene Ware bleibt in einer begrenzten Annahme erhalten,
+die Flotte kehrt zurück, das Sägewerk verarbeitet Ware, verkauft und die echte
+Holzernte setzt wieder ein. Mengenbilanz, Flottenlimit, Lagerreservierungen,
+mehrere Sammelstationen, Pausen, Überbestände und JSON-Fortsetzung bestanden.
+
+17 neue Grafikprüfungen verwenden die echte Hauptwelt und zeigen Lagergründe,
+Warenannahme, arbeitende Biber/Forstmaschinen, begrenzte Arbeitszyklen, Baumfälle
+nahe der Maschine und freie 9 × 9 Meter große Standflächen. Die ältere Campus-
+Animationsprüfung startet nun eine echte Ernte, bevor sie Fällbewegungen erwartet.
+Eine anfängliche Ladefolge des QA-Helfers vor der Autoload-Registrierung wurde
+korrigiert. Alle betroffenen Grafikprüfungen danach bestanden.
+[Waldansicht](alpha1-logging/forest.png) · [Änderungen und Grenzen](FORESTRY-287.md).
+
+Keine privaten Spielerprofile verwendet. Kein echter Android-/Hitzetest.
+Der gesamte Masterumbau ist weiter offen.
+
 ## Externe Downloads Versorgung und Biberwelt · 0.28.6 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.6-alpha.1` vollständig per

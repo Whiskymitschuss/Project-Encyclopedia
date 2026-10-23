@@ -1,0 +1,18 @@
+1. Als Update installieren. Geld, Arbeiterzahl, Gebäude und Vorräte unverändert?
+2. Ohne Tippen auf FÄLLEN: Holzfäller/Forstmaschinen beobachten und Sammelstation
+   auswählen. Steigt der echte Holzbestand bei freiem Platz?
+3. Volles Lager mit wartenden Abhol-LKW: Wird Holz in der Warenannahme sichtbar,
+   kehren LKW zurück und wird das leere Sägewerk anschließend wieder beliefert?
+4. Rucksack abliefern, wenn Lagerplätze für ankommende Ware reserviert sind:
+   nicht passendes Holz muss im Rucksack bleiben.
+5. Zwei Sammelstationen: Eine voll, die andere frei. Nutzt die Ernte die freie?
+6. Sammelstation/Werk bewusst pausieren und fortsetzen. Der Status muss den Grund
+   nennen; vorhandene Ladungen dürfen nicht verschwinden.
+7. Normale Biberarbeiter und Forstmaschinen ansehen: Axt/Säge, Trage-/Ladebewegung,
+   Baumfall nahe der Waldarbeit, anschließend leere Rückkehr/Stillstand.
+8. Reduzierte Bewegung: Wirtschaft muss weiterlaufen, Animation darf stillstehen.
+9. Während Abholung oder Warenannahme schließen/öffnen: Ladung nicht verdoppeln,
+   nicht verlieren; Fortschritt und Bestände bleiben erhalten.
+10. WARE ANFORDERN in einer anderen Fabrik testen. Baustellen weiter beliefert?
+11. Kleine Anzeige/Großschrift: Statuskarte und Materialhilfe les- und scrollbar?
+12. S26 Ultra/S24 FE: Gerät, Profil, Startzeit, Wärme nach 5/15 Minuten notieren.

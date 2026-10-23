@@ -5,6 +5,7 @@ static func advice(game: Node,index: int) -> Dictionary:
  var status=describe(game,index)
  var key=""
  var b=game.state.buildings[index]
+ if b.kind=="station": return {"kind":status.kind,"text":status.text,"key":"wood" if status.kind in ["full","missing"] else "","index":index}
  if status.kind=="missing":
   if b.kind in StoneIndustry.KINDS: key="rock" if b.kind=="stoneworks" else ""
   elif game.delivery_owns(index): key=str(DeliveryChain.status(game.state,b.kind).key)
@@ -24,6 +25,7 @@ static func describe(game: Node,index: int) -> Dictionary:
  if index<0 or index>=state.buildings.size(): return {"kind":"ready","text":""}
  var b=state.buildings[index]
  if b.get("paused",false): return {"kind":"paused","text":"Ⅱ Pause"}
+ if b.kind=="station": return ForestryFlow.describe(state,index,game.flow)
  if b.kind in StoneIndustry.KINDS:
   var site=StoneIndustry.site(state,index)
   if site.is_empty(): return {"kind":"ready","text":""}

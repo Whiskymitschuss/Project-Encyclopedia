@@ -820,7 +820,7 @@ func building_menu() -> void:
   stone_site_controls(box,index)
  if Catalog.RECIPES.has(b.kind) or b.kind in StoneIndustry.KINDS:
   button(box,"Produktion fortsetzen" if b.paused else "Produktion pausieren",func(): action(func(): b.paused = not b.paused))
- if b.kind=="cabin": button(box,"PERSONAL EINSTELLEN",func(): open_menu("team"))
+ if b.kind in ["cabin","station"]: button(box,"PERSONAL EINSTELLEN",func(): open_menu("team"))
  if b.kind=="garage": button(box,"FAHRZEUGE VERWALTEN",func(): open_menu("garage"))
  if b.kind=="research": button(box,"FORSCHUNG",func(): open_menu("research"))
  button(box,"IN DER WELT ANSEHEN",func(): focus_requested.emit(Game.building_position(index)); close_menu())

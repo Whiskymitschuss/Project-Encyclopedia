@@ -1,6 +1,11 @@
 class_name ForestryMachine
 extends Node3D
 
+const STAND_SIZE=Vector2(9,9)
+
+static func clearance(at: Vector3) -> Rect2:
+ return Rect2(Vector2(at.x,at.z)-STAND_SIZE/2,STAND_SIZE)
+
 var tier = 10
 var origin_point = Vector3.ZERO
 var phase = 0.0
@@ -11,6 +16,7 @@ var forearm: Node3D
 var saw: Node3D
 var cargo: Node3D
 var working = false
+var work_left=0.0
 
 func _ready() -> void:
  set_meta("forestry_tier",tier)
@@ -72,12 +78,16 @@ func _ready() -> void:
  position=origin_point
 
 func _process(delta: float) -> void:
- working=float(Game.flow.get("harvest",0))>0
- if not working: return
+ # Finish the already earned load cycle before parking; never start a cycle
+ # just to make an actually blocked forest look productive.
+ if float(Game.flow.get("harvest",0))>0: work_left=maxf(work_left,20.0-fposmod(phase,20.0))
+ working=work_left>0
+ if not working or not Game.state.ux.motion: return
+ work_left=maxf(0,work_left-delta)
  phase+=delta
  var travel=fmod(phase,20.0)
  var angle=sin(phase*0.14)*0.55
- position=origin_point+Vector3(sin(phase*0.11)*2.5,0,cos(phase*0.13)*1.4)
+ position=origin_point+Vector3(sin(phase*0.11)*0.8,0,cos(phase*0.13)*0.6)
  rotation.y=angle
  turret.rotation.y=sin(phase*0.32)*0.65
  boom.rotation.x=-0.65+sin(phase*0.9)*0.16

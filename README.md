@@ -2,7 +2,20 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.6-alpha.1 · Versorgung und Biberwelt
+## Aktuell: 0.28.7-alpha.1 · Holzfäller und Abholung
+
+Ein voller Zentralbestand kann bereits beladene Abhol-LKW nicht mehr dauerhaft
+festhalten. Eine begrenzte Warenannahme erhält die Ladung; die zurückgekehrte
+Flotte versorgt wieder die Werke. Die Ernte nutzt alle aktiven Sammelstationen
+mit freiem Platz. Status, Fällbewegungen und Maschinen folgen der echten Ernte.
+
+Android-Code **3002**, weiterhin 0.28-Basis, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-logging/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Ursachen, Korrektur und Grenzen](docs/FORESTRY-287.md).
+Handy-/Hitzetests stehen aus; der gesamte Masterumbau bleibt offen.
+
+## Vorher: 0.28.6-alpha.1 · Versorgung und Biberwelt
 
 Baurechnungen blockieren nicht mehr die Zutaten für fehlende Baumaterialien.
 Im Werk kann **„Ware anfordern“** einen echten Lager-LKW losschicken.
@@ -105,7 +118,7 @@ kleineren Schatten bleiben aktiv. Reale Android-Startzeit und Temperatur auf
 S26 Ultra/S24 FE müssen am Gerät geprüft werden.
 
 [Änderungen, Nutzen und Nachweise](docs/FOREST-282.md) ·
-[Installation](docs/alpha1-forest/START-HIER.txt) · [Downloads](releases/README.md).
+[Installation](docs/alpha1-logging/START-HIER.txt) · [Downloads](releases/README.md).
 
 ## Frühere 0.29-Entwicklung (zurückgenommen)
 

@@ -68,6 +68,7 @@ var trade_world: Node3D
 var production_alerts: Node
 var falling_trees=[]
 var next_fall=0
+var next_work_tree=0
 var forest_detail_key=Vector4(INF,INF,INF,INF)
 var performance_tour: Node
 var hold_pointer=-1
@@ -442,8 +443,7 @@ func refresh_forest_clearance() -> void:
  if actors!=null:
   for actor in actors.get_children():
    if actor.has_meta("forestry_tier"):
-    var p=Vector2(actor.origin_point.x,actor.origin_point.z)
-    rectangles.append(Rect2(p-Vector2(9,9),Vector2(18,18)))
+    rectangles.append(ForestryMachine.clearance(actor.origin_point))
  for biome in trees.size():
   for i in trees[biome].size():
    var tree = trees[biome][i]
@@ -632,9 +632,18 @@ func set_tree_visible(biome: int, index: int, visible_tree: bool) -> void:
 func on_harvested(biome: int, _amount: float) -> void:
  var closest = -1
  var distance = INF
+ var work_point=focus
+ if _amount<=0 and actors!=null:
+  var crew=[]
+  for actor in actors.get_children():
+   if actor.has_meta("forestry_tier") or (actor is TimberWorker and actor.role=="forester"):
+    if actor.working: crew.append(actor)
+  if not crew.is_empty():
+   work_point=crew[next_work_tree%crew.size()].origin_point
+   next_work_tree+=1
  for i in trees[biome].size():
   var t = trees[biome][i]
-  var d = t.point.distance_squared_to(focus)
+  var d = t.point.distance_squared_to(work_point)
   if not t.blocked and t.regrow <= 0 and d < distance:
    closest = i
    distance = d

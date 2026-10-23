@@ -1,0 +1,11 @@
+Gerät / Android-Version:
+Installierte Spielversion:
+Update ohne Deinstallation gelungen:
+Arbeiterzahl / Werkzeugstufe / aktive Sammelstationen:
+Holz: Lager / Betriebe / unterwegs / Warenannahme:
+Status in der ausgewählten Sammelstation:
+Fällbewegung und echter Holzzuwachs beobachtet:
+LKW entladen und kehren zurück:
+Sägewerk nach Rückstau wieder beliefert:
+Schritte / ungefähre Wartezeit bis zum Problem:
+Wärme nach 5 / 15 Minuten und verwendetes Leistungsprofil:

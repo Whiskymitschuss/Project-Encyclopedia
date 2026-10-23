@@ -4,7 +4,7 @@ extends RefCounted
 # Resources belong to the central store; outputs, express stock and road cargo
 # have separate ownership. No credit before unloading and no shared-fleet lock.
 static func initial() -> Dictionary:
- return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0}
+ return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0,"receiving":{}}
 
 static func depot(state: Dictionary) -> int:
  for i in state.buildings.size():
@@ -25,6 +25,13 @@ static func capacity(state: Dictionary) -> float:
   if b.kind=="warehouse": result+=int(b.level)*500
   elif b.kind=="central_depot": result+=int(b.level)*1500
  return result
+
+static func storage_room(state: Dictionary,key: String) -> float:
+ # Manual deposits and fresh pickups cannot occupy an already booked shelf.
+ return maxf(0,capacity(state)-float(state.resources.get(key,0))-float(state.hub.get("receiving",{}).get(key,0))-incoming(state,depot(state),key))
+
+static func receiving_capacity(state: Dictionary) -> float:
+ return maxf(96,fleet_size(state)*(12+int(state.vehicle)*2))
 
 static func output_room(state: Dictionary,index: int,key: String) -> float:
  return maxf(0,64+int(state.buildings[index].level)*8-float(state.hub.outputs.get(str(index),{}).get(key,0)))
@@ -53,7 +60,7 @@ static func work_pending(state: Dictionary) -> bool:
   for key in source.stock:
    if source.has("only") and key!=source.only: continue
    if source.has("keys") and key not in source.keys: continue
-   if float(source.stock[key])<0.25 or capacity(state)-float(state.resources.get(key,0))-incoming(state,center,key)<0.25: continue
+   if float(source.stock[key])<0.25 or storage_room(state,key)<0.25: continue
    if LogisticsRoutes.road_route(state,int(source.index),center).size()>=2: return true
  for job in state.jobs:
   if not job.has("phases") or job.get("paused",false) or int(job.get("workers",0))<=0: continue
@@ -72,16 +79,32 @@ static func incoming(state: Dictionary,index: int,key: String) -> float:
  return amount
 
 static func tick(state: Dictionary,delta: float) -> void:
+ # A bounded receiving area lets already loaded/legacy pickups finish unloading
+ # even if a manual deposit occupied their reservation. Goods remain at the
+ # depot; shelving never credits twice and requires real warehouse capacity.
+ for key in state.hub.receiving:
+  var amount=minf(float(state.hub.receiving[key]),maxf(0,capacity(state)-float(state.resources.get(key,0))))
+  state.hub.receiving[key]-=amount
+  state.resources[key]=float(state.resources.get(key,0))+amount
  var completed=[]
  for trip in state.hub.shipments:
   FreightFlow.advance(trip,delta)
   if not trip.arrived and float(trip.age)>=float(trip.travel):
-   var destination=FactorySupply.stock(state,int(trip.destination)) if trip.target=="factory" else state.resources if trip.target=="central" else stock(state,int(trip.destination),true)
-   var limit=FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else capacity(state) if trip.target=="central" else 96.0
-   if float(destination.get(trip.key,0))+float(trip.amount)>limit+0.00001:
-    trip.age=float(trip.travel)
-    continue
-   destination[trip.key]=float(destination.get(trip.key,0))+float(trip.amount)
+   if trip.target=="central":
+    var shelved=minf(float(trip.amount),maxf(0,capacity(state)-float(state.resources.get(trip.key,0))))
+    var staged=float(trip.amount)-shelved
+    if float(state.hub.receiving.get(trip.key,0))+staged>receiving_capacity(state)+0.00001:
+     trip.age=float(trip.travel)
+     continue
+    state.resources[trip.key]=float(state.resources.get(trip.key,0))+shelved
+    if staged>0: state.hub.receiving[trip.key]=float(state.hub.receiving.get(trip.key,0))+staged
+   else:
+    var destination=FactorySupply.stock(state,int(trip.destination)) if trip.target=="factory" else stock(state,int(trip.destination),true)
+    var limit=FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else 96.0
+    if float(destination.get(trip.key,0))+float(trip.amount)>limit+0.00001:
+     trip.age=float(trip.travel)
+     continue
+    destination[trip.key]=float(destination.get(trip.key,0))+float(trip.amount)
    trip.arrived=true
   if trip.arrived and float(trip.age)>=float(trip.total): completed.append(trip)
  for trip in completed: state.hub.shipments.erase(trip)
@@ -176,7 +199,7 @@ static func dispatch(state: Dictionary) -> void:
    var key=keys[(key_cursor+key_offset)%keys.size()]
    if source.has("only") and key!=source.only: continue
    if source.has("keys") and key not in source.keys: continue
-   var amount=minf(float(source.stock[key]),minf(12+int(state.vehicle)*2,maxf(0,capacity(state)-float(state.resources.get(key,0))-incoming(state,center,key))))
+   var amount=minf(float(source.stock[key]),minf(12+int(state.vehicle)*2,maxf(0,storage_room(state,key))))
    if amount<0.25 or free<=0: continue
    if launch(state,int(source.index),center,key,amount,"central",source.stock):
     free-=1
@@ -194,6 +217,6 @@ static func recall_express(state: Dictionary,index: int) -> float:
  var regional=stock(state,index,true)
  for key in regional:
   if available<=0: break
-  var amount=minf(float(regional[key]),minf(12+int(state.vehicle)*2,maxf(0,capacity(state)-float(state.resources[key])-incoming(state,center,key))))
+  var amount=minf(float(regional[key]),minf(12+int(state.vehicle)*2,storage_room(state,key)))
   if amount>0 and launch(state,index,center,key,amount,"central",regional): available-=1; result+=amount
  return result

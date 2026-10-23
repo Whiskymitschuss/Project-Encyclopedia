@@ -1,0 +1,19 @@
+TIMBER LOOT TYCOON · HOLZFÄLLER & ABHOLUNG · 0.28.7-alpha.1 (3002)
+
+Als Update über die vorhandene Alpha installieren.
+Nicht deinstallieren und keine App-Daten löschen. Gleiches Paket/Testzertifikat.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+
+Behoben: Volle Lager konnten sämtliche Abhol-LKW dauerhaft beim Entladen
+festhalten. Nun bleiben alte Ladungen in einer begrenzten Warenannahme erhalten;
+die Fahrzeuge kehren zurück und versorgen wieder die Werke. Freie zusätzliche
+Sammelstationen werden für die tatsächliche Holzernte genutzt.
+
+Die Sammelstation zeigt Gründe für einen Stopp an. Biber und Forstmaschinen
+beenden bereits begonnene Arbeitsbewegungen; Baumfälle finden nahe der Waldarbeit
+statt. Ein tatsächlich volles Lager oder eine bewusst gesetzte Pause darf die
+Ernte weiterhin begrenzen. Dann Holz verarbeiten/verkaufen bzw. Betrieb fortsetzen.
+
+Die bisherigen Funktionen inklusive WARE ANFORDERN bleiben enthalten.
+Genauer Stand und Grenzen: FORESTRY-287.md.
+Der große Weltumbau ist noch nicht fertig; Handy-/Hitzetests stehen aus.

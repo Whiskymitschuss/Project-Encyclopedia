@@ -364,7 +364,9 @@ func boost(key: String) -> float:
  return float(item.get("factor",1.0)) if float(item.get("left",0.0)) > 0 else 1.0
 
 func add_resource(key: String, amount: float) -> void:
- state.resources[key] = clampf(float(state.resources.get(key,0)) + amount,0.0,capacity())
+ var current=float(state.resources.get(key,0))
+ # An old surplus belongs to the player; a zero/positive award cannot erase it.
+ state.resources[key]=maxf(0,current+amount) if amount<0 else current+minf(amount,maxf(0,capacity()-current))
 
 func earn(amount: float) -> void:
  state.coins += amount
@@ -384,7 +386,8 @@ func processing_reserve_for(key: String) -> float:
 func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
  var building = state.buildings[index]
- if building.kind in ["central_depot","express"]: return "Lagerflotte: %s/%s frei · Baustellenflotte: %s/%s frei" % [CentralLogistics.available_trucks(state),CentralLogistics.fleet_size(state),maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()),CentralLogistics.fleet_size(state)]
+ if building.kind=="station": return ForestryFlow.describe(state,index,flow).text
+ if building.kind in ["central_depot","express"]: return "Warenannahme: %s · Lagerflotte: %s/%s frei · Baustellenflotte: %s/%s frei" % [Catalog.number(state.hub.receiving.values().reduce(func(total,value): return total+float(value),0.0)),CentralLogistics.available_trucks(state),CentralLogistics.fleet_size(state),maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()),CentralLogistics.fleet_size(state)]
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
   if state.delivery.paused or building.get("paused",false): return "Pausiert · Produktion fortsetzen"
@@ -427,20 +430,12 @@ func step(delta: float) -> void:
  for key in state.boosters:
   state.boosters[key].left = maxf(0,float(state.boosters[key].left)-delta)
  var harvest = (0.65 + int(state.tool)*0.13) * int(state.workers) * (1.0+int(state.biome)*0.3) * (1.0+research_level("forestry")*0.15) * boost("workers") * delta
- harvest = minf(harvest,level("station")*5.0*delta)
- var accepted = minf(harvest,capacity()-float(state.resources.wood))
- if CentralLogistics.active(state):
-  var station=-1
-  for i in state.buildings.size():
-   if state.buildings[i].kind=="station" and not state.buildings[i].get("paused",false): station=i; break
-  accepted=0 if station<0 else minf(harvest,CentralLogistics.output_room(state,station,"wood"))
-  if station>=0:
-   var stock=CentralLogistics.stock(state,station)
-   stock.wood=float(stock.get("wood",0))+accepted
- else: add_resource("wood",accepted)
+ var forest=ForestryFlow.harvest(state,harvest,delta)
+ var accepted=float(forest.amount)
  state.gathered += accepted
  Journey.add(state,"gathered",accepted)
  flow = {"harvest":accepted/maxf(delta,0.001)}
+ for station in forest.sources: flow["harvest:%s" % station]=float(forest.sources[station])/maxf(delta,0.001)
  flow.merge(StoneIndustry.tick(state,delta,(1+research_level("production")*0.12)*multiplier()*boost("processing")),true)
  state.stone.ready=not StoneIndustry.requests(state,stone_route_cache).is_empty()
  # Load the current real phase before factories compete for a small fresh
@@ -593,8 +588,9 @@ func chop() -> void:
  changed.emit()
 
 func deposit() -> void:
- var amount = minf(float(state.bag),capacity()-float(state.resources.wood))
- add_resource("wood",amount)
+ var room=CentralLogistics.storage_room(state,"wood") if CentralLogistics.active(state) else maxf(0,capacity()-float(state.resources.wood))
+ var amount = minf(float(state.bag),room)
+ if amount>0: add_resource("wood",amount)
  state.bag -= amount
  Journey.add(state,"deposited",amount)
  if state.tutorial == 2 and amount > 0: state.tutorial = 3

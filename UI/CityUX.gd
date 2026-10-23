@@ -386,7 +386,7 @@ func material_menu() -> void:
  hud.dynamic_text(box,func():
   var amount=UXRules.material_stock(Game.state,key)
   var trend=Game.material_trend(key)
-  return "%s Lager · %s Betriebe · %s unterwegs\n%s" % [Catalog.number(amount.warehouse),Catalog.number(amount.local),Catalog.number(amount.transit),"Bestandstrend: %+.1f / Min." % float(trend.rate) if trend.ready else "Bestandstrend wird beim Spielen gemessen."])
+  return "%s Lager · %s Betriebe · %s unterwegs\n%s" % [Catalog.number(amount.warehouse),Catalog.number(amount.local),Catalog.number(amount.transit),("Warenannahme: %s · " % Catalog.number(amount.receiving) if amount.receiving>0 else "")+("Bestandstrend: %+.1f / Min." % float(trend.rate) if trend.ready else "Bestandstrend wird beim Spielen gemessen.")])
  if Game.state.delivery.active:
   for kind_value in Game.state.delivery.buffers:
    var kind=str(kind_value)

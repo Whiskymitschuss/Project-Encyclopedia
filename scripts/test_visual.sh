@@ -24,7 +24,7 @@ if [ -z "${DISPLAY:-}" ]; then
  if [ ! -s "$test_data/display" ]; then cat "$test_data/x11.log"; exit 1; fi
  export DISPLAY=":$(cat "$test_data/display")"
 fi
-targets=(VisualFactorySupply286 VisualSupply286 VisualBeavers285 VisualMap2842 VisualFactory284 VisualCampus283 VisualColdStart282 VisualForest282 VisualRollback028 VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI VisualFireProtection VisualCrafted VisualQuality VisualPresentation26 VisualWorldTrade27 VisualAlpha28)
+targets=(VisualForestry287 VisualFactorySupply286 VisualSupply286 VisualBeavers285 VisualMap2842 VisualFactory284 VisualCampus283 VisualColdStart282 VisualForest282 VisualRollback028 VisualUI VisualStartup VisualBuildingCard VisualCityUX VisualFireUI VisualFireProtection VisualCrafted VisualQuality VisualPresentation26 VisualWorldTrade27 VisualAlpha28)
 if [ "$#" -gt 0 ]; then targets=("$@"); fi
 for target in "${targets[@]}"; do
  export XDG_DATA_HOME="$test_data/profile-$target"
