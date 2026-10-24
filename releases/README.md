@@ -1,4 +1,28 @@
-# Aktuell: Holzwerkshof und Wiederaufforstung · 0.28.12-alpha.1
+# Aktuell: Waldzugang und Holzfäller · 0.28.13-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-Waldzugang-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.13-source.zip) · [Änderungen und Grenzen](../docs/FOREST-ACCESS-2813.md)
+
+Die vordere Waldabsperrung ist entfernt. Holzfäller arbeiten vor erreichbaren
+Bäumen innerhalb des Waldes und tragen über geprüfte Gassen zum Sammelplatz.
+Abgeerntete Arbeitsplätze werden per Fußweg gewechselt. Ein kleiner Hinweis
+zeigt ausstehende Holzabholung oder volle Holzlager. Der tatsächliche Ertrag und
+die vorhandenen Lager-/Transportbestände bleiben maßgeblich.
+
+Android-Code **3008**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+21033 Headless- und 1163 OpenGL-Prüfungen des Quellstands;
+zusätzlich 8008 Headless- und 607 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-forest-access/automated-checks.json).
+
+APK-Quellstand `dae1617c20cfe230316edc037ce9a04562452970`. Quell-ZIP: 738 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Holzwerkshof und Wiederaufforstung · 0.28.12-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.12-alpha.1/releases/Timber-Loot-Tycoon-v0.28.12-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.12-alpha.1/releases/Timber-Loot-Tycoon-v0.28.12-Werkshof-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.12-source.zip) · [Änderungen und Grenzen](../docs/CAMPUS-2812.md)

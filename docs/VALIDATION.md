@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.13-alpha.1
+
+8008 Headless- und 607 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Eingeschlossen sind offene Waldfront, erreichbare Arbeitsplätze,
+Tragewege, kontinuierlicher Baumwechsel, Abholung, Wiederaufforstung und Bauteams.
+[Paketprüfbericht](alpha1-forest-access/packaged-checks.json).
+
+APK-SHA256 `0c8a8aa044c7c2bc574b5ac4022065c9255f28e74dfeaae50b28b83d052fc934`. Quellstand `dae1617c20cfe230316edc037ce9a04562452970`.
+Paket, Versionscode 3008, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Waldzugang und Holzfäller · 0.28.13-alpha.1
 
 21.033 numerische Headless-Prüfungen in 38 Modulen, zwei natürliche Fortschritts-
