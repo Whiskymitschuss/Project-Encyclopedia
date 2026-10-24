@@ -1,3 +1,16 @@
+## Neuer Spielstart · 0.28.14-alpha.1
+
+38 numerische Headless-Suiten mit 21.032 Prüfungen, zwei natürliche
+Fortschrittsszenarien und beide Szenenstarts bestanden. Sechs relevante
+OpenGL-Suiten mit 170 Prüfungen kontrollieren Cover, kleine/hohe/breite Anzeige,
+echte Touch-Bedienung, Tutorial, Titelrückkehr, Speicherwiederherstellung und
+zwei kalte Acht-Stunden-Nachrechnungen mit automatischem Welteinstieg.
+[Quellprüfbericht](alpha1-loading/automated-checks.json).
+
+Geprüft mit generierten Profilen unter Desktop-Godot; kein privater
+Handyspielstand, kein Android-Gerätelauf und keine Temperaturmessung.
+Die zusätzliche Gebäudetafel ist ein Konzept, keine fertige 3D-Integration.
+
 ## Externe Downloads Waldzugang und Holzfäller · 0.28.13 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.13-alpha.1` vollständig per

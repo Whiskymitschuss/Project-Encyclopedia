@@ -90,6 +90,9 @@ with zipfile.ZipFile(output) as apk:
     assert any('Scenes/Boot.tscn' in x for x in names)
     assert any('Brand/timber-icon' in x for x in names)
     assert any('UI/Startup.gd' in x for x in names)
+    assert any('Brand/timber-loading' in x for x in names)
+    assert any('UI/LoadingArtwork.gd' in x for x in names)
+    assert b'SIL OPEN FONT LICENSE' in apk.read('assets/Assets/Fonts/Anton-OFL.txt')
     assert any('Economy/FireSafety.gd' in x for x in names)
     assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,

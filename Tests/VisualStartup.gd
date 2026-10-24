@@ -23,6 +23,7 @@ func run() -> void:
  var game=root.get_node("Game")
  game.set_process(false)
  game.state=game.initial_state()
+ game.title_requested=true
  var boot=load("res://Scenes/Boot.tscn").instantiate()
  root.add_child(boot)
  current_scene=boot
@@ -30,14 +31,14 @@ func run() -> void:
  for resolution in [Vector2i(360,640),Vector2i(540,960),Vector2i(591,1280),Vector2i(1280,800)]:
   root.size=resolution
   await settle()
-  boot._process(1)
+  boot._process(0)
   await settle()
   var screen_transform=root.get_screen_transform()
   check(absf(screen_transform.x.length()-screen_transform.y.length())<0.001,"Startup display scale is uniform "+str(resolution))
   check(boot.column.get_global_rect().position.y>=20,"Intro content stays below screen top "+str(resolution))
   check(boot.column.get_global_rect().end.y<=boot.size.y-20,"Intro content fits above screen bottom "+str(resolution))
   check(boot.play.size.y>=48,"Play keeps a touch-sized target "+str(resolution))
-  check(boot.logo.stretch_mode==TextureRect.STRETCH_KEEP_ASPECT_CENTERED,"Logo never stretches "+str(resolution))
+  check(boot.logo.stretch_mode in [TextureRect.STRETCH_KEEP_ASPECT_CENTERED,TextureRect.STRETCH_KEEP_ASPECT_COVERED],"Cover preserves its aspect ratio "+str(resolution))
   var image=root.get_texture().get_image()
   check(not image.is_empty(),"Actual startup frame renders "+str(resolution))
   image.save_png("/workspace/timber-startup-%sx%s.png" % [resolution.x,resolution.y])
@@ -48,12 +49,11 @@ func run() -> void:
  boot.size=Vector2(360,640)
  await settle()
  check(boot.column.get_global_rect().position.y>=20 and boot.column.get_global_rect().end.y<=620,"A 360x640 logical intro fits without clipping")
- boot.elapsed=0
- boot.ready_to_play=false
- boot.skip.show()
- await settle()
- await tap(boot.skip)
- check(boot.ready_to_play and not boot.skip.visible,"Real touch skips the timed intro")
+ var deadline=Time.get_ticks_msec()+10000
+ while not boot.ready_to_play and Time.get_ticks_msec()<deadline:
+  boot._process(0)
+  await process_frame
+ check(boot.ready_to_play and boot.play.visible,"Explicit title return keeps a usable Continue action without a timed intro")
  game.state.tutorial=5
  await tap(boot.play)
  for i in 8: await process_frame

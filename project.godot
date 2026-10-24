@@ -2,13 +2,15 @@ config_version=5
 
 [application]
 config/name="Timber Loot Tycoon"
-config/version="0.28.13-alpha.1"
+config/version="0.28.14-alpha.1"
 run/main_scene="res://Scenes/Boot.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://Assets/Brand/timber-icon.png"
-boot_splash/bg_color=Color(0.063, 0.173, 0.161, 1)
+boot_splash/bg_color=Color(0.09, 0.24, 0.20, 1)
 boot_splash/show_image=true
-boot_splash/image="res://Assets/Brand/timber-icon.png"
+boot_splash/image="res://Assets/Brand/timber-loading.png"
+boot_splash/fullsize=true
+boot_splash/use_filter=true
 config/use_custom_user_dir=true
 config/custom_user_dir_name="TimberLootReborn"
 

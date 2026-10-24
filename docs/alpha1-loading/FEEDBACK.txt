@@ -1,0 +1,9 @@
+Version: 0.28.14-alpha.1
+Handymodell / Android:
+Update ohne Neuinstallation möglich:
+Spielstand vollständig vorhanden:
+Ladebildschirm gut lesbar:
+Welt automatisch geöffnet:
+Startdauer / Offlinezeit davor:
+Rückkehr über das Spielmenü funktioniert:
+Fehlerbeschreibung:

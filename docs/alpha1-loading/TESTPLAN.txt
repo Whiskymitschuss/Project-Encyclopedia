@@ -1,0 +1,9 @@
+1. Update installieren; vorhandenen Spielstand und Vorräte prüfen.
+2. App normal starten: Bibercover, Ladeanzeige unten, automatischer Weltstart.
+3. Länger minimieren, zurückkehren: dasselbe Cover für die reale Nachrechnung;
+   danach vorhandene Firma mit erhaltenen Transporten und Bauaufträgen.
+4. Spielmenü → Speichern & zum Startbildschirm: Titel bleibt stehen;
+   Weiterspielen führt zurück zur Welt.
+5. Kleine Anzeige und große Schrift: Status und Knopf vollständig sichtbar.
+6. Beobachtete Startdauer und Handyversion berichten; keine Annahme, dass
+   ein neuer Ladebildschirm automatisch die Rechenzeit verkürzt.

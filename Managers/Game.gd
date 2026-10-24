@@ -15,6 +15,8 @@ signal company_level_unlocked(level: int)
 signal construction_finished(point: Vector3, job_type: String)
 
 var live_world=true
+# Explicit menu return holds the cover; ordinary app launches enter directly.
+var title_requested=false
 var state: Dictionary
 var flow: Dictionary = {}
 var tick_clock = 0.0

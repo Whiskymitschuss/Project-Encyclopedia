@@ -30,15 +30,19 @@ func run() -> void:
  game.state.city_services.enabled=false
  root.content_scale_size=Vector2i(540,960)
  root.size=Vector2i(540,960)
+ game.title_requested=true
  var boot=load("res://Scenes/Boot.tscn").instantiate()
  root.add_child(boot)
  current_scene=boot
  boot.set_process(false)
- boot._process(3.3)
+ var loading_deadline=Time.get_ticks_msec()+10000
+ while not boot.ready_to_play and Time.get_ticks_msec()<loading_deadline:
+  boot._process(0)
+  await process_frame
  await settle()
  check(boot.find_children("*","Label",true,false).any(func(label): return label.text.contains(str(ProjectSettings.get_setting("application/config/version")))),"Rendered title version matches the real installed project version")
- check(boot.diorama.viewport.own_world_3d and boot.diorama.town.visible and boot.diorama.workshop.visible,"The alpha intro presents actual isolated workshop and city geometry")
- check(absf(float(boot.diorama.viewport.size.x)/boot.diorama.viewport.size.y-boot.diorama.size.x/boot.diorama.size.y)<0.02,"Intro viewport renders at its real aspect ratio")
+ check(boot.logo.texture.resource_path.ends_with("timber-loading.png") and boot.find_children("*","SubViewport",true,false).is_empty(),"The title uses full-screen original beaver art without a second 3D world")
+ check(boot.logo.stretch_mode==TextureRect.STRETCH_KEEP_ASPECT_COVERED,"Portrait cover preserves the art aspect ratio")
  root.get_texture().get_image().save_png("/workspace/timber-alpha28-intro.png")
  await tap(boot.play)
  for i in 10: await process_frame

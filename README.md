@@ -2,7 +2,24 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.13-alpha.1 · Waldzugang und Holzfäller
+## Aktuell: 0.28.14-alpha.1 · Bibercover und direkter Spielstart
+
+Bildschirmfüllendes eigenes Biber-Waldmotiv mit Live-Schriftzug und Ladeanzeige
+unten. Die Welt wird im Hintergrund als Ressource geladen und nach vollständiger
+Offline-Nachrechnung automatisch geöffnet. Der Titel verwendet keinen separaten
+3D-Schaukasten und keine zeitgesteuerte Introfolge. Die Wiederherstellung bleibt
+bei beschädigten Speicherdateien verfügbar. Eine ausdrückliche Rückkehr aus dem
+Spielmenü hält den Titel mit „Weiterspielen“ an.
+
+[Gestaltungsbuch mit Gebäudeentwürfen und Rathaus 1–10](docs/DESIGN-DIRECTION-2814.md) ·
+[Installation](docs/alpha1-loading/START-HIER.txt) · [Downloads](releases/README.md).
+Die Gebäudetafel ist eine Modelliergrundlage, noch kein Ersatz der 3D-Gebäude.
+Die zuletzt vorgeschlagene Produktionsautomatik ist hierdurch nicht neu umgesetzt.
+Android-Code **3009**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein physischer Android-/Hitzetest und kein privater Handyspielstand.
+
+## Vorher: 0.28.13-alpha.1 · Waldzugang und Holzfäller
 
 Die vordere Waldabsperrung ist entfernt. Holzfäller erhalten Arbeitsplätze an
 erreichbaren Bäumen innerhalb des Waldes und tragen über geprüfte Waldgassen.

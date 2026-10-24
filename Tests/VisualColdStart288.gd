@@ -34,7 +34,9 @@ func run() -> void:
  check(float(game.state.gathered)>float(saved.gathered),"The cold-loaded advanced company resumes actual forestry during its eight offline hours")
  check(CentralLogistics.available_trucks(game.state)>=0,"Cold startup preserves real central fleet assignments")
  check(store.valid_shape(store.load_game()),"Cold start commits a valid complete company")
- check(not paused and boot.play.is_visible_in_tree() and not boot.starting,"Cold startup returns to the normal ready title screen")
+ var world_deadline=Time.get_ticks_msec()+10000
+ while current_scene==boot and Time.get_ticks_msec()<world_deadline: await process_frame
+ check(not paused and current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn","Cold startup automatically enters the actual world after complete replay")
  print("COLD START 288 MEASURE: first script frame ",first," ms, total ",Time.get_ticks_msec()-began," ms, responsive frames ",frames)
  print("VISUAL COLD START 288: ",checks," checks, ",failures.size()," failures")
  quit(0 if failures.is_empty() else 1)

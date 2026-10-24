@@ -1,0 +1,17 @@
+Timber Loot Tycoon · 0.28.14-alpha.1 · Neuer Spielstart
+
+APK als Update über die vorhandene Timber-Loot-App installieren.
+Nicht deinstallieren und keine App-Daten löschen.
+Paket und bisheriges Testzertifikat bleiben gleich. Android-Code 3009.
+
+Neu: Bildschirmfüllender Biber-Wald, eigener Schriftzug und Ladeanzeige unten.
+Die Welt öffnet sich nach dem Laden automatisch. Nur eine bewusste Rückkehr
+über das Spielmenü hält den Titel mit „Weiterspielen“ an.
+
+Die Berechnung des Offlinefortschritts bleibt unverändert. Ein neues Motiv
+ist kein Beleg für kürzere Nachrechnung oder weniger Hitze auf einem Handy.
+Die neue Gebäudetafel ist ein Konzept für kommende Modellierarbeit; sie
+ersetzt in dieser Fassung noch keine 3D-Gebäude.
+
+Bei einem Speicherfehler bleiben die vorhandenen Wiederherstellungsaktionen
+verfügbar. Es wird nicht automatisch eine neue Firma begonnen.

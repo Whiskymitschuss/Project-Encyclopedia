@@ -1551,5 +1551,8 @@ func game_menu() -> void:
  button(contents,"EINSTELLUNGEN",func(): open_menu("settings"))
  button(contents,"SPEICHERN & ZUM STARTBILDSCHIRM",func():
   if not Game.save(true): show_notice(Store.last_error); return
+  Game.title_requested=true
   var error=get_tree().change_scene_to_file("res://Scenes/Boot.tscn")
-  if error!=OK: show_notice("Der Startbildschirm konnte nicht geöffnet werden"))
+  if error!=OK:
+   Game.title_requested=false
+   show_notice("Der Startbildschirm konnte nicht geöffnet werden"))
