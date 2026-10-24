@@ -81,3 +81,16 @@ static func team_status(state: Dictionary,flow: Dictionary) -> String:
    if state.buildings[index].kind=="station": rows.append(describe(state,index,flow).text)
  if not state.ux.motion: rows.append("Arbeitsanimationen sind ausgeschaltet")
  return "\n".join(rows)
+
+static func overview(state: Dictionary,flow: Dictionary) -> String:
+ if float(flow.get("harvest",0))>0: return ""
+ var active=0; var full=0
+ for index in state.buildings.size():
+  if state.buildings[index].kind!="station" or state.buildings[index].get("paused",false): continue
+  active+=1
+  if describe(state,index,flow).kind=="full": full+=1
+ if int(state.workers)<=0: return "Holzfäller im Team einstellen"
+ if active==0: return "Sammelstation pausiert"
+ if full==active: return "Wartet auf Holzabholung" if CentralLogistics.active(state) else "Holzlager voll"
+ if ForestCycle.busy(state)>=int(state.workers): return "Baumpflanzer unterwegs"
+ return ""

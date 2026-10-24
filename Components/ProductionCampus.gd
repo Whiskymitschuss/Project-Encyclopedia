@@ -30,11 +30,15 @@ static func build(parent: Node3D,ctx: Dictionary) -> void:
   var p=Catalog.biome_position(biome)
   Models.paving_box(yard,Vector3(76,0.05,66),p+Vector3(0,0.46,0),SAND,"plaster",2)
   Models.paving_box(yard,Vector3(69,0.07,59),p+Vector3(0,0.56,0),Color(Catalog.BIOMES[biome].ground).lerp(Color("98ce65"),0.55),"plaster",1.8)
+  # The working front is completely open. Fences mark the rear boundary;
+  # no rail separates the near tree rows from their log-collection apron.
   for x in range(-32,33,8):
-   var at=Vector2(p.x+x,p.z+31)
-   if not clear(at,ctx,1.2) or x>=24: continue
-   Models.box(yard,Vector3(0.5,2.5,0.5),Vector3(at.x,1.6,at.y),Color("88522f"))
-   Models.box(yard,Vector3(7.2,0.3,0.28),Vector3(at.x+3.6,2.2,at.y),Color("b67c44"))
+   var at=Vector2(p.x+x,p.z-31)
+   if not clear(at,ctx,1.2): continue
+   var post=Models.box(yard,Vector3(0.5,2.5,0.5),Vector3(at.x,1.6,at.y),Color("88522f"))
+   post.set_meta("forest_fence",biome)
+   var rail=Models.box(yard,Vector3(7.2,0.3,0.28),Vector3(at.x+3.6,2.2,at.y),Color("b67c44"))
+   rail.set_meta("forest_fence",biome)
  # Short private foot connections join neighbouring working lots without
  # filling roads, vacant plots or the entire city with one concrete slab.
  for link in TimberCampus.links(Game.state):

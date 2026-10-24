@@ -1,0 +1,12 @@
+FEEDBACK · 0.28.13-alpha.1
+Handymodell/Android:
+Installierte Version:
+Helfer / Pflanzteam / aktiver Wald:
+Holz insgesamt / im Lager / an der Sammelstation:
+Automatischer Holzzähler vor/nach fünf Minuten:
+Wartehinweis im Wald:
+Fährt ein echter Abhol-LKW:
+Arbeitsplatz / Trageweg / Baumwechsel auffällig:
+Schritte, Screenshot oder Video:
+
+Keine privaten Zugangsdaten senden. Nicht deinstallieren oder App-Daten löschen.

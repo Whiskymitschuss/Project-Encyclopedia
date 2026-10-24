@@ -1,0 +1,15 @@
+TIMBER LOOT TYCOON · 0.28.13-alpha.1 (3008)
+Waldzugang und Holzfäller
+
+APK herunterladen und als Update über die vorhandene App installieren.
+NICHT deinstallieren und KEINE App-Daten löschen.
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0; gleiches Paket/Testzertifikat.
+
+Die vordere Absperrung ist entfernt. Holzfäller arbeiten an erreichbaren Bäumen
+innerhalb des Waldes, tragen über Waldgassen und wechseln den Baum per Laufweg.
+Wartet die Sammelstation auf Holzabholung oder ist das Lager voll, steht der
+Grund an der Waldfront. Volle Vorräte benötigen echte Abholung oder freien Platz.
+
+Versionsnummer unter Mehr → Alpha-Testen & Feedback prüfen.
+Automatisierte Tests verwenden künstliche Firmen, keinen privaten Handyspielstand.
+Echter Handy-/Temperaturtest steht aus. Die vorherigen fünf Ausbauten sind enthalten.

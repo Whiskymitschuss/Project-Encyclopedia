@@ -68,3 +68,34 @@ static func reserved(state: Dictionary,rectangle: Rect2) -> bool:
  for task in state.get("forest",{}).get("tasks",[]):
   if intersects(path(int(task.biome),int(task.cell)),rectangle.grow(0.5)): return true
  return false
+
+# Shared by felling representatives and the already authoritative planting paths.
+# Choose a reachable standing tree, not a point on the outside spectator path.
+static func worksite(state: Dictionary,slot: int,count: int) -> Dictionary:
+ var biome=int(state.biome)
+ var center=Catalog.biome_position(biome)
+ var u=(slot+0.5)/maxi(1,count)
+ # Leave the large boss trunk and its crown clear in the middle of the front.
+ var across=lerpf(-27,-9,u*2) if u<0.5 else lerpf(9,27,(u-0.5)*2)
+ var preferred=center+Vector3(across,0,24)
+ var rectangles=rectangles(state)
+ rectangles.append(Rect2(center.x-2,center.z+23,4,4)) # Boss trunk, not an ordinary work tree.
+ var cells=state.get("forest",{}).get("stands",{}).get(str(biome),{}).get("cells",{})
+ var candidates=[]
+ for index in 100:
+  if cells.get(str(index),{"state":"mature"}).state!="mature": continue
+  var target=point(biome,index)
+  if rectangles.any(func(rect): return rect.has_point(Vector2(target.x,target.z))): continue
+  candidates.append({"index":index,"point":target,"distance":target.distance_squared_to(preferred)})
+ candidates.sort_custom(func(a,b): return a.distance<b.distance)
+ for candidate in candidates:
+  var origin: Vector3=candidate.point+Vector3(1.4,0,3)
+  if absf(origin.x-center.x)<8 and origin.z>center.z+17: continue
+  var landing=center+Vector3(across*0.8,0,ForestryFlow.LANDING_EDGE)
+  var route=path(biome,int(candidate.index)); route.reverse(); route[0]=origin
+  if candidate.point.z>center.z+20:
+   route=[origin,Vector3(origin.x,0,center.z+29),Vector3(origin.x,0,center.z+34),center+Vector3(34,0,34)]
+  route.append(Vector3(center.x+34,0,landing.z));route.append(landing)
+  if rectangles.any(func(rect): return intersects(route,rect.grow(0.4))): continue
+  return {"cell":int(candidate.index),"origin":route[0],"landing":landing,"route":LogisticsRoutes.encode(PackedVector3Array(route))}
+ return {}

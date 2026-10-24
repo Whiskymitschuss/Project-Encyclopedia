@@ -1,0 +1,15 @@
+WALDZUGANG TESTEN · 0.28.13-alpha.1
+
+1. Update ohne Datenlöschung installieren; bestehende Firma und Version prüfen.
+2. Team → Holzfäller ansehen. Arbeiter müssen im Wald vor Bäumen arbeiten.
+3. Die Front zwischen Bäumen und Sammelweg darf keinen Querzaun mehr haben.
+4. Biber beim Tragen, Ablegen und leeren Rückweg beobachten.
+5. Nach abgeerntetem Baum den Fußweg zum nächsten Arbeitsplatz beobachten.
+6. Holzkarte und den tatsächlich automatisch gewonnenen Holzzähler im Team prüfen.
+7. Bei „Wartet auf Holzabholung“ die echte Lagerflotte und Sammelstation prüfen.
+8. Bei vollem Lager verarbeiten oder verkaufen; es dürfen keine Gratiswaren entstehen.
+9. Pflanzteam, Fabrikversorgung und Baustellenlieferung parallel beobachten.
+10. Große Schrift, Akkumodus und reduzierte Bewegung prüfen.
+
+Fehler bitte mit Version, Handy, Teamgröße, Lagerwerten und kurzem Video melden.
+Nicht deinstallieren und keine App-Daten löschen.

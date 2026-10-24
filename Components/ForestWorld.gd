@@ -5,6 +5,7 @@ var previous={}
 var planters={}
 var pool=[]
 var initialized=false
+var work_status: Label3D
 
 func _process(delta: float) -> void:
  clock+=delta
@@ -12,6 +13,7 @@ func _process(delta: float) -> void:
   clock=0
   sync_trees(initialized)
   initialized=true
+  update_work_status()
  update_planters(delta)
 
 func sync_trees(falling: bool=false) -> void:
@@ -93,3 +95,11 @@ func update_planters(delta: float) -> void:
  for id in planters.keys():
   if ids.has(id): continue
   var worker=planters[id]; worker.hide(); pool.append(worker); planters.erase(id)
+
+func update_work_status() -> void:
+ if work_status==null:
+  work_status=Models.label(self,"",Vector3.ZERO,24)
+  work_status.name="ForestWorkStatus"
+ work_status.position=ForestryFlow.work_position(Game.state)+Vector3(0,3.5,0)
+ work_status.text=ForestryFlow.overview(Game.state,Game.flow)
+ work_status.visible=not work_status.text.is_empty() and PresentationBudget.detailed(work_status)

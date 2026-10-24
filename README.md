@@ -2,7 +2,21 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.12-alpha.1 · Holzwerkshof und Wiederaufforstung
+## Aktuell: 0.28.13-alpha.1 · Waldzugang und Holzfäller
+
+Die vordere Waldabsperrung ist entfernt. Holzfäller erhalten Arbeitsplätze an
+erreichbaren Bäumen innerhalb des Waldes und tragen über geprüfte Waldgassen.
+Ein verbrauchter Arbeitsplatz wird per Fußweg gewechselt. Ein Wartehinweis
+unterscheidet volle Holzlager und ausstehende Holzabholung. Die vorhandenen
+Bestände und das tatsächliche Erntesystem bleiben maßgeblich.
+
+Android-Code **3008**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-forest-access/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Änderungen, Ursache und Grenzen](docs/FOREST-ACCESS-2813.md).
+Kein physischer Android-/Hitzetest und kein privater Handyspielstand.
+
+## Vorher: 0.28.12-alpha.1 · Holzwerkshof und Wiederaufforstung
 
 Die fünf gewählten Ausbauten laufen in der vorhandenen Hauptwelt: zusammenhängende
 Holzhöfe, zehn baulich verschiedene Sägewerkformen, echte Verarbeitung über

@@ -1,3 +1,21 @@
+## Waldzugang und Holzfäller · 0.28.13-alpha.1
+
+21.033 numerische Headless-Prüfungen in 38 Modulen, zwei natürliche Fortschritts-
+szenarien sowie Haupt-/Startszene bestanden. 1.163 OpenGL-Prüfungen in 31 Modulen
+bestanden. [Prüfbericht](alpha1-forest-access/automated-checks.json).
+
+Neue Prüfungen kontrollieren die offene Waldfront, Arbeitsplätze an erreichbaren
+Bäumen, Tragegassen, leere Rückfahrt und kontinuierlichen Baumwechsel ohne
+Materialbuchung durch die Animation. Eine Firma mit sechs Helfern, 1.050 Holz,
+1.183 Brettern und vollem 80-Holz-Abholvorrat muss ohne Handarbeit echte Abholung
+und neue automatische Ernte schaffen. Volles Lager bleibt ein korrekter Stopp.
+Bestehende Wirtschafts-/Speicher- und Lieferprüfungen bleiben bestanden.
+
+Die Zaungeometrie war nicht Eigentümer der Ernteberechnung und hatte keinen
+Kollisionskörper. Korrigiert sind die falschen Außen-Arbeitsplätze und Wege;
+volle Vorräte werden nicht durch geschenktes Holz umgangen. Kein privater
+Spielstand, physischer Android-Lauf oder Temperaturtest.
+
 ## Externe Downloads Holzwerkshof und Wiederaufforstung · 0.28.12 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.12-alpha.1` vollständig per

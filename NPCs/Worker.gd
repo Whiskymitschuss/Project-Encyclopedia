@@ -23,6 +23,15 @@ var mug: Node3D
 var axe: Node3D
 var work_left=0.0
 var handling=false
+var forest_route=[]
+var forest_cell=-1
+var forest_slot=0
+var forest_count=1
+var forest_configured=false
+var forest_round=-1
+var forest_relocation=[]
+var forest_relocation_at=0.0
+
 
 func _ready() -> void:
  position=origin_point+Vector3(0,0.6,0)
@@ -91,6 +100,23 @@ func _process(delta: float) -> void:
   var rate=float(Game.flow.get("harvest:%s" % production_index,Game.flow.get("harvest",0)))
   if float(Game.flow.get("harvest",0))<=0: rate=0
   if production_index>=0 and Game.state.buildings[production_index].get("paused",false): rate=0
+  if forest_configured:
+   var round_value=floori(phase/18.0)
+   if rate>0 and (round_value!=forest_round or forest_route.is_empty()):
+    forest_round=round_value
+    var cell=Game.state.forest.stands.get(str(int(Game.state.biome)),{}).get("cells",{}).get(str(forest_cell),{"state":"mature"})
+    if forest_cell<0 or cell.state!="mature": relocate_forest()
+   if not forest_relocation.is_empty():
+    forest_relocation_at=minf(1,forest_relocation_at+delta*6/maxf(1,LogisticsRoutes.length(forest_relocation)))
+    var step=LogisticsRoutes.sample(forest_relocation,forest_relocation_at)
+    position=step.position+Vector3.UP*0.6
+    body.rotation.y=atan2(step.direction.x,step.direction.z)
+    for i in limbs.size(): limbs[i].rotation.x=sin(forest_relocation_at*LogisticsRoutes.length(forest_relocation)+(i%2)*PI)*0.4
+    working=false; pack.hide()
+    if forest_relocation_at>=1: forest_relocation=[]
+    return
+   if forest_route.is_empty():
+    working=false; work_left=0; pack.hide(); return
   if rate>0: work_left=maxf(work_left,18.0-fposmod(phase,18.0))
   if work_left<=0:
    working=false
@@ -99,8 +125,9 @@ func _process(delta: float) -> void:
     phase+=delta*pace
     var hauling=fposmod(phase,12.0)
     var progress=hauling/6 if hauling<6 else (12-hauling)/6
-    position=origin_point.lerp(destination,smoothstep(0,1,progress))+Vector3.UP*0.6
-    body.rotation.y=atan2(destination.x-origin_point.x,destination.z-origin_point.z)+(PI if hauling>=6 else 0)
+    position=forest_position(smoothstep(0,1,progress))+Vector3.UP*0.6
+    var direction=forest_direction(progress)
+    body.rotation.y=atan2(direction.x,direction.z)+(PI if hauling>=6 else 0)
     for i in limbs.size(): limbs[i].rotation.x=sin(phase*5+(i%2)*PI)*0.4
     pack.visible=hauling<6
    else: pack.hide()
@@ -109,9 +136,10 @@ func _process(delta: float) -> void:
  phase+=delta*pace*Game.boost("workers")
  var cycle=fmod(phase,18.0)
  var travel=clampf((cycle-3)/6,0,1) if cycle<11 else 1-clampf((cycle-11)/7,0,1)
- position=origin_point.lerp(destination,smoothstep(0,1,travel))
+ position=forest_position(smoothstep(0,1,travel)) if role=="forester" else origin_point.lerp(destination,smoothstep(0,1,travel))
  position.y=0.6+absf(sin(phase*5))*0.09 if cycle>=3 else 0.6
- body.rotation.y=atan2(destination.x-origin_point.x,destination.z-origin_point.z)+(PI if cycle>=11 else 0)
+ var direction=forest_direction(travel) if role=="forester" else destination-origin_point
+ body.rotation.y=atan2(direction.x,direction.z)+(PI if cycle>=11 else 0)
  if role=="forester" and cycle<3: body.rotation.y=facing
  for i in limbs.size(): limbs[i].rotation.x=sin(phase*5+(i%2)*PI)*0.45 if cycle>=3 else 0
  if role=="forester":
@@ -157,3 +185,49 @@ func neighbor_step(delta: float) -> void:
 func rest_route(amount: float) -> Vector3:
  if amount<0.55: return origin_point.lerp(rest_via,smoothstep(0,1,amount/0.55))
  return rest_via.lerp(destination,smoothstep(0,1,(amount-0.55)/0.45))
+
+func configure_forest(slot: int,count: int) -> void:
+ forest_configured=true; forest_slot=slot; forest_count=count
+ var site=ForestLayout.worksite(Game.state,slot,count)
+ if site.is_empty():
+  forest_cell=-1; forest_route=[]
+  origin_point=ForestryFlow.work_position(Game.state); destination=origin_point
+ else:
+  forest_cell=int(site.cell); forest_route=site.route
+  origin_point=site.origin; destination=site.landing
+ if forest_cell>=0:
+  var direction=ForestLayout.point(int(Game.state.biome),forest_cell)-origin_point
+  facing=atan2(direction.x,direction.z)
+ else: facing=PI
+
+func forest_position(progress: float) -> Vector3:
+ if forest_route.is_empty(): return origin_point.lerp(destination,progress)
+ return LogisticsRoutes.sample(forest_route,progress).position
+
+func relocate_forest() -> void:
+ var previous=forest_route.duplicate(true)
+ var start=position-Vector3.UP*0.6
+ configure_forest(forest_slot,forest_count)
+ if forest_route.is_empty(): return
+ var points=[start]
+ # Adjacent trees in the same cleared row share their narrow work aisle.
+ if previous.size()>=4 and absf(start.z-origin_point.z)<1.5 and signf(start.x-Catalog.biome_position(int(Game.state.biome)).x)==signf(origin_point.x-Catalog.biome_position(int(Game.state.biome)).x):
+  points.append(origin_point)
+  forest_relocation=LogisticsRoutes.encode(PackedVector3Array(points)); forest_relocation_at=0
+  return
+ if previous.size()>=4:
+  var nearest=0; var distance=INF
+  for i in previous.size():
+   var candidate=start.distance_squared_to(LogisticsRoutes.vector(previous[i]))
+   if candidate<distance: distance=candidate; nearest=i
+  if nearest<=3:
+   for i in range(nearest,4): points.append(LogisticsRoutes.vector(previous[i]))
+  else:
+   for i in range(nearest,2,-1): points.append(LogisticsRoutes.vector(previous[i]))
+ else: points.append(LogisticsRoutes.vector(forest_route[3]))
+ var arrival=forest_route.slice(0,4); arrival.reverse()
+ for raw in arrival: points.append(LogisticsRoutes.vector(raw))
+ forest_relocation=LogisticsRoutes.encode(PackedVector3Array(points)); forest_relocation_at=0
+
+func forest_direction(progress: float) -> Vector3:
+ return LogisticsRoutes.sample(forest_route,progress).direction if not forest_route.is_empty() else (destination-origin_point).normalized()

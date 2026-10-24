@@ -58,6 +58,12 @@ func run() -> void:
  worker.phase=0
  worker.work_left=0
  worker._process(0.2)
+ # A consumed tree now requires an actual empty walk to the next reachable
+ # workplace, rather than an immediate axe animation outside the forest fence.
+ for frame in 300:
+  if worker.forest_relocation.is_empty(): break
+  worker._process(0.2)
+ worker._process(0.2)
  machine.work_left=0
  machine._process(0.2)
  check(worker.working and worker.axe.visible and not worker.pack.visible,"An actual hired beaver visibly swings the axe for accepted autonomous production")

@@ -509,12 +509,7 @@ func sync_actors() -> void:
   worker.production_index=stations[i%stations.size()] if not stations.is_empty() else -1
   var forester=i-forestry_machines
   var forester_count=maxi(1,forestry_slots-forestry_machines)
-  var across=(forester-(forester_count-1)*0.5)*minf(7,56.0/maxi(1,forester_count-1))
-  # Work on the near edge of the actual tree rows: the old deep-forest
-  # positions hid a whole beaver behind each nine-metre canopy.
-  worker.origin_point = ForestryFlow.work_position(Game.state)+Vector3(across,0,0)
-  worker.destination = Catalog.biome_position(int(Game.state.biome))+Vector3(across*0.8,0,ForestryFlow.LANDING_EDGE)
-  worker.facing=PI
+  if not neighbor: worker.configure_forest(forester,forester_count)
   worker.variant_id=i+operators
   worker.phase = i*1.7
   worker.pace = 0.7+(i%4)*0.1
