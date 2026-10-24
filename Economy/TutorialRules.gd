@@ -25,7 +25,7 @@ static func info(state: Dictionary) -> Dictionary:
  var p=phase(state)
  var count=clampi(int(state.trees)-int(state.get("onboarding",{}).get("start_trees",0)),0,5)
  var entries={
- "chop":[1,"Hi, ich bin Benno!","Tippe unten auf Fällen. Fünf Bäume reichen für deinen ersten kleinen Auftrag.","WALD ANSEHEN",count,5],
+ "chop":[1,"Hi, ich bin Benno!","Tippe unten fünfmal auf Fällen. So sammelst du Holz für deinen ersten kleinen Auftrag.","WALD ANSEHEN",count,5],
  "deposit":[2,"Dein Holz kommt ins Lager","Tippe unten auf Abliefern. Dein Helfer und das Sägewerk kümmern sich dann um die ersten Bretter.","ZUM HOLZLAGER",0,1],
  "boards":[3,"Aus Holz wird mehr","Das Sägewerk verarbeitet dein Holz automatisch. Schau zu, wie die ersten Bretter entstehen.","SÄGEWERK ANSEHEN",minf(1,float(state.resources.boards)),1],
  "sell":[3,"Deine ersten Münzen","Öffne den Verkauf und verkaufe einen Teil deiner Bretter. Jede verkaufte Ware wird wirklich bezahlt.","ZUM VERKAUF",0,1],

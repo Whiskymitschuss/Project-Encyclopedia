@@ -42,7 +42,8 @@ func run() -> void:
  game.deposit()
  check(game.state.bag==0 and game.state.resources.wood==20,"Tutorial delivery uses real backpack stock")
  check(TutorialRules.phase(game.state)=="boards","Tutorial waits for actual boards rather than awarding them")
- game.step(2)
+ # Three real processing stages must finish before the first board is sellable.
+ game.simulate(5)
  check(TutorialRules.phase(game.state)=="sell" and game.state.resources.boards>=1,"Normal sawmill production advances the guided flow")
  var coins=float(game.state.coins)
  var boards=float(game.state.resources.boards)
@@ -103,6 +104,7 @@ func run() -> void:
  check(not restored.is_empty() and store.load_status=="backup" and not store.recovery_required,"Syntactically valid but structurally broken data restores a healthy backup")
  check(not store.valid_shape({"schema":1,"coins":-1}),"Negative economy values cannot silently become a save")
  check(not store.valid_shape({"schema":1,"buildings":[{"kind":"unknown","level":1}]}),"An unknown producer cannot crash the catalogue after load")
+ check(not store.valid_shape({"schema":1,"forest":null}) and not store.valid_shape({"schema":1,"sawmills":[]}),"Malformed new forest or processing envelopes fall back to recovery rather than crashing restore")
  write_raw(store.PATH,"interrupted")
  write_raw(store.PATH+".bak","also interrupted")
  var original=FileAccess.get_sha256(store.PATH)

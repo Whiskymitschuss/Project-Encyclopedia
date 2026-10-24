@@ -2,7 +2,25 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.11-alpha.1 · Leistung und Holzproduktionsstraße
+## Aktuell: 0.28.12-alpha.1 · Holzwerkshof und Wiederaufforstung
+
+Die fünf gewählten Ausbauten laufen in der vorhandenen Hauptwelt: zusammenhängende
+Holzhöfe, zehn baulich verschiedene Sägewerkformen, echte Verarbeitung über
+Entrinden → Sägen → Hobeln, bis zu drei gekaufte parallele Linien und Baumpflanzer
+mit realen Arbeitswegen und gespeichertem Jungbaumwachstum.
+
+Zusätzliche Linien und neue Vierer-Werkshöfe verwenden normale bezahlte Baustellen
+mit Materialtransport und Bauteams. Holz in Verarbeitung bleibt bilanziert und
+wird separat ausgewiesen. Vorhandene Stadt, Straßen und Transportketten bleiben
+erhalten. Grafikqualität verändert weder Ertrag noch Wiederaufforstung.
+
+Android-Code **3007**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+[Installation](docs/alpha1-werkshof/START-HIER.txt) · [Downloads](releases/README.md) ·
+[Änderungen und Grenzen](docs/CAMPUS-2812.md).
+Kein physischer Android-/Hitzetest; die vollständige frühere Masterliste bleibt offen.
+
+## Vorher: 0.28.11-alpha.1 · Leistung und Holzproduktionsstraße
 
 Unsichtbare Maschinen und Stapler sparen detaillierte Animationsarbeit.
 Adaptive Entlastung und Akkumodus reduzieren nur die 3D-Darstellung; die
@@ -174,7 +192,7 @@ nicht deinstallieren und keine App-Daten löschen.** Geräteprüfung, Temperatur
 und langfristige mobile Leistung dieser Fassung stehen aus.
 
 [Änderungen und Nutzen](docs/CAMPUS-283.md) ·
-[Installation](docs/alpha1-campus/START-HIER.txt) · [Downloads](releases/README.md).
+[Installation](docs/alpha1-werkshof/START-HIER.txt) · [Downloads](releases/README.md).
 
 ## Vorher: 0.28.2-alpha.1 · weiterhin auf 0.28-Basis
 

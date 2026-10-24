@@ -1,0 +1,19 @@
+TESTPLAN · 0.28.12-alpha.1
+
+Update ohne Löschen installieren. Version, Münzen und bisherige Gebäude prüfen.
+1. Sägewerk ansehen: Entrinder, Säge und Hobel; Ware erst am Ausgang verfügbar.
+2. Werk pausieren/fortsetzen. Keine neuen Bretter während Pause; vorhandene bleiben.
+3. Werkstufe 4/7: zusätzliche Linie regulär bestellen. Liefer-LKW und Bausprinter
+   beobachten. Vor Fertigstellung keine zusätzliche aktive Linie, danach mehr Kapazität.
+4. Volles Ausgangslager prüfen: Abholung durch reale Lager-LKW bleibt nötig.
+5. Team → Wiederaufforstung automatisch; einige Bäume tatsächlich fällen lassen.
+   Stumpf, Biber mit Spaten, Hinweg, Pflanzen, Rückweg und wachsenden Jungbaum ansehen.
+6. Pflanzen pausieren: keine neuen Pflanzmissionen; begonnene kehren ordentlich zurück.
+7. Während einer Pflanzmission speichern, App verlassen und später zurückkehren.
+8. Holzwerkshof planen: Gesamtpreis und Grundstücke ansehen; nur bei Wunsch bestellen.
+   Das sind vier regulär bezahlte Baustellen, kein kostenloser Weltumbau.
+9. Bestehende Produktions-, Express- und Baustellenversorgung beobachten.
+10. Kleines Display/große Schrift, Zoom und Kamerafokus prüfen. S26 Ultra und S24 FE
+    jeweils separat mit Gerät, Startdauer und Wärme nach 5/15 Minuten dokumentieren.
+
+Die automatisierten Berichte enthalten keine Messung eines echten Handys.

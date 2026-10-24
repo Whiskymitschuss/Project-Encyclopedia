@@ -66,8 +66,8 @@ func run() -> void:
  check(game.state==snapshot and not context.junctions.is_empty(),"Street detailing reads real roads without changing progress")
  var model=load("res://Buildings/Models.gd").building("sawmill",1)
  check(model.has_node("Processing/Feed") and model.has_node("Processing/Product") and model.has_node("SawdustFill"),"Detailed sawmill retains its actual machine, products and sawdust")
- check(model.has_node("FrontageDetails"),"Factories receive an actual detailed work yard")
- var details=model.get_node("FrontageDetails")
+ check(model.has_node("WoodYard"),"The reworked sawmill retains its actual marked input/output yard")
+ var details=model.get_node("WoodYard")
  var limited=true
  for mesh in details.find_children("*","MeshInstance3D",true,false): limited=limited and mesh.visibility_range_end==360
  check(limited,"Small frontage geometry is culled beyond its bounded view distance")

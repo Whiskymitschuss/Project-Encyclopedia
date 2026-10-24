@@ -8,7 +8,7 @@ func run() -> void:
  game.begin_tutorial()
  for i in 5: game.chop()
  game.deposit()
- game.simulate(2)
+ game.simulate(5) # Entrinden, Sägen und Hobeln vor dem ersten echten Verkauf.
  game.sell("boards",0.25)
  if not game.order_building("cabin",game.free_position(Catalog.industry_position(5))): printerr("FAILED: First alpha hut cannot be afforded"); quit(1); return
  game.simulate(40)

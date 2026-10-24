@@ -116,6 +116,17 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
   var buf = data.buffers[kind]
   var index = int(data.nodes[kind])
   var duration = (3.0 if kind=="sawmill" else 6.0)/maxf(1,int(state.buildings[index].level)*speed_bonus)
+  if kind=="sawmill":
+   var rate=1.0/duration
+   var result=SawmillProduction.advance(state,index,delta,rate,maxf(0,capacity(state,kind)-float(buf.boards)))
+   buf.boards+=float(result.finished)
+   report.sawdust+=float(result.finished)
+   report.produced.boards=float(result.finished)
+   var cycles=minf(rate*SawmillProduction.line_count(state,index)*delta,minf(float(buf.wood)/2,minf(SawmillProduction.intake_room(state,index,rate),maxf(0,capacity(state,kind)-float(buf.boards)-SawmillProduction.pending(state,index)))))
+   buf.wood-=cycles*2
+   SawmillProduction.accept(state,index,cycles,rate)
+   report.flow["building:%s" % index]=maxf(float(result.working),cycles/maxf(delta,0.001))
+   continue
   if float(buf[key])>=2 and float(buf[product])<capacity(state,kind):
    data.progress[kind] = float(data.progress.get(kind,0))+delta
    var cycles = mini(floori(float(data.progress[kind])/duration),mini(floori(float(buf[key])/2),floori(capacity(state,kind)-float(buf[product]))))
@@ -221,6 +232,9 @@ static func status(state: Dictionary, kind: String) -> Dictionary:
  # Input and output retain their own icons. A full board pallet must never
  # replace the input log counter and then apparently turn back into logs.
  var result = {"key":key,"amount":amount,"need":need,"ready":amount>=need,"full":full,"empty":amount<1,"text":"Ausgang voll" if full else "Bereit" if amount>=need else "Wartet auf Lieferung"}
+ if kind=="sawmill" and SawmillProduction.pending(state,int(data.nodes.sawmill))>0 and not full:
+  result.ready=true
+  result.text="Entrinden → Sägen → Hobeln"
  if kind in ["sawmill","furniture"]:
   result.output_key=output_key
   result.output_amount=float(data.buffers[kind][output_key])

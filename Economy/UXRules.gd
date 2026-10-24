@@ -94,7 +94,7 @@ static func material_stock(state: Dictionary,key: String) -> Dictionary:
   if trip.key==key and not trip.arrived: transit+=float(trip.amount)
  # A truck's cargo was already withdrawn. An arrived truck has already
  # credited its destination; neither may be counted twice as available stock.
- return {"warehouse":warehouse,"regional":regional,"local":local,"transit":transit,"stored":warehouse+local,"receiving":receiving}
+ return {"warehouse":warehouse,"regional":regional,"local":local,"transit":transit,"stored":warehouse+local,"receiving":receiving,"processing":SawmillProduction.pending_total(state)*2 if key=="wood" else 0.0}
 static func build_quote(state: Dictionary,key: String,needed: float) -> Dictionary:
  var pickup=0.0
  for source in ConstructionRules.sources(state,key): pickup+=float(source.stock.get(key,0))

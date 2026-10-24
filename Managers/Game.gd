@@ -56,7 +56,7 @@ func initial_state() -> Dictionary:
   "resources":resources, "bag":0.0, "tool":0, "workers":1, "trucks":1, "vehicle":0,
   "biome":0, "unlocked":1, "buildings":buildings, "homes":[], "jobs":[],
   "research":{}, "inventory":{}, "boosters":{}, "projects":{}, "region":0,
-  "hub":CentralLogistics.initial(), "crew":CrewTransport.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
+  "forest":ForestCycle.initial(), "sawmills":SawmillProduction.initial(), "hub":CentralLogistics.initial(), "crew":CrewTransport.initial(), "trade":ExportTrade.initial(), "stone":StoneIndustry.initial(), "city_services":CityServices.initial(), "company_xp":0, "builders":2, "construction_intro":false, "construction_shipments":[], "next_shipment":100000,
   "delivery":DeliveryChain.initial(), "construction_auto":false, "construction_logistics_version":1, "next_job":1,
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
@@ -90,6 +90,10 @@ func restore(saved: Dictionary) -> void:
  for key in state:
   if saved.has(key):
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
+ for key in ForestCycle.initial():
+  if not state.forest.has(key): state.forest[key]=ForestCycle.initial()[key]
+ for key in SawmillProduction.initial():
+  if not state.sawmills.has(key): state.sawmills[key]=SawmillProduction.initial()[key]
  for key in CentralLogistics.initial():
   if not state.hub.has(key): state.hub[key]=CentralLogistics.initial()[key]
  for key in CrewTransport.initial():
@@ -392,6 +396,9 @@ func production_status(index: int) -> String:
  if index < 0 or index >= state.buildings.size(): return ""
  var building = state.buildings[index]
  if building.kind=="station": return ForestryFlow.describe(state,index,flow).text
+ if building.kind=="sawmill" and not building.get("paused",false) and not (delivery_owns(index) and state.delivery.paused) and SawmillProduction.pending(state,index)>0:
+  var full=float(state.delivery.buffers.sawmill.boards)>=DeliveryChain.capacity(state,"sawmill") if delivery_owns(index) else CentralLogistics.output_room(state,index,"boards")<=0.0001 if CentralLogistics.active(state) else float(state.resources.boards)>=capacity()
+  return "Bretter-Ausgang voll · wartet auf Abholung" if full else "Entrinden → Sägen → Hobeln · %s Holz in Verarbeitung" % Catalog.number(SawmillProduction.pending(state,index)*2)
  if building.kind in ["central_depot","express"]: return "Warenannahme: %s · Lagerflotte: %s/%s frei · Baustellenflotte: %s/%s frei" % [Catalog.number(state.hub.receiving.values().reduce(func(total,value): return total+float(value),0.0)),CentralLogistics.available_trucks(state),CentralLogistics.fleet_size(state),maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()),CentralLogistics.fleet_size(state)]
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
@@ -436,7 +443,8 @@ func step(delta: float) -> void:
  state.weather = int(float(state.elapsed)/180.0) % 4
  for key in state.boosters:
   state.boosters[key].left = maxf(0,float(state.boosters[key].left)-delta)
- var harvest = (0.65 + int(state.tool)*0.13) * int(state.workers) * (1.0+int(state.biome)*0.3) * (1.0+research_level("forestry")*0.15) * boost("workers") * delta
+ ForestCycle.tick(state,delta)
+ var harvest = (0.65 + int(state.tool)*0.13) * maxi(0,int(state.workers)-ForestCycle.busy(state)) * (1.0+int(state.biome)*0.3) * (1.0+research_level("forestry")*0.15) * boost("workers") * delta
  var forest=ForestryFlow.harvest(state,harvest,delta)
  var accepted=float(forest.amount)
  state.gathered += accepted
@@ -449,6 +457,25 @@ func step(delta: float) -> void:
  # Load the current real phase before factories compete for a small fresh
  # harvest. Otherwise fractional processing can consume every new log forever.
  ConstructionRules.dispatch(state)
+ var saw_reports={}
+ var saw_finished={}
+ for i in state.buildings.size():
+  var b=state.buildings[i]
+  if b.kind!="sawmill" or delivery_owns(i): continue
+  var room=CentralLogistics.output_room(state,i,"boards") if CentralLogistics.active(state) else maxf(0,capacity()-float(state.resources.boards)-float(saw_finished.get("boards",0)))
+  var rate=0.9*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")
+  var result=SawmillProduction.advance(state,i,delta,rate,room)
+  saw_reports[i]=result
+  if float(result.finished)>0:
+   if CentralLogistics.active(state):
+    var output=CentralLogistics.stock(state,i)
+    output.boards=float(output.get("boards",0))+float(result.finished)
+    Journey.add(state,"boards",float(result.finished))
+   else: saw_finished.boards=float(saw_finished.get("boards",0))+float(result.finished)
+   saw_finished.sawdust=float(saw_finished.get("sawdust",0))+float(result.finished)
+  flow["building:%s" % i]=float(result.working)
+  flow.sawmill=float(flow.get("sawmill",0))+float(result.finished)/maxf(delta,0.001)
+ var saw_space=maxf(0,capacity()-float(state.resources.boards)-SawmillProduction.pending_total(state)-float(saw_finished.get("boards",0)))
  var proposals = []
  var demand = {}
  var output_demand = {}
@@ -460,6 +487,8 @@ func step(delta: float) -> void:
   if b.get("paused",false) or delivery_owns(building_index) or not Catalog.RECIPES.has(b.kind): continue
   var recipe = Catalog.RECIPES[b.kind]
   var cycles = float(recipe.speed)*int(b.level)*production_bonus*multiplier()*boost("processing")*delta
+  if b.kind=="sawmill":
+   cycles=minf(cycles*SawmillProduction.line_count(state,building_index),SawmillProduction.intake_room(state,building_index,cycles/maxf(delta,0.001)))
   var local_inputs=FactorySupply.managed(state,building_index)
   proposals.append({"kind":b.kind,"index":building_index,"recipe":recipe,"cycles":cycles,"local_inputs":local_inputs})
   for key in recipe["in"]:
@@ -468,7 +497,7 @@ func step(delta: float) -> void:
    output_demand[key] = float(output_demand.get(key,0))+float(recipe.out[key])*cycles
  # Allocate scarce shared inputs proportionally from one common snapshot.
  # Apply all consumption before output: no factory depends on array ordering.
- var produced = {}
+ var produced = saw_finished
  var consumed = {}
  var processing_reserves={}
  for key in demand: processing_reserves[key]=processing_reserve_for(key) if float(state.resources[key])>0 else 0.0
@@ -482,6 +511,7 @@ func step(delta: float) -> void:
    if fraction<=0: break
    if key in recipe.get("overflow_sell",[]): continue
    var room=CentralLogistics.output_room(state,int(proposal.index),key) if centralized else production_capacity-float(state.resources[key])
+   if proposal.kind=="sawmill" and key=="boards": room=maxf(0,room-SawmillProduction.pending(state,int(proposal.index))) if centralized else saw_space
    var requested=float(recipe.out[key])*float(proposal.cycles) if centralized else float(output_demand[key])
    fraction = minf(fraction,room/maxf(requested,0.0001))
   var cycles = float(proposal.cycles)*maxf(0,fraction)
@@ -490,6 +520,11 @@ func step(delta: float) -> void:
     var local_stock=FactorySupply.stock(state,int(proposal.index))
     local_stock[key]=maxf(0,float(local_stock.get(key,0))-float(recipe["in"][key])*cycles)
    else: consumed[key] = float(consumed.get(key,0))+float(recipe["in"][key])*cycles
+  if proposal.kind=="sawmill":
+   var rate=float(recipe.speed)*int(state.buildings[int(proposal.index)].level)*production_bonus*multiplier()*boost("processing")
+   SawmillProduction.accept(state,int(proposal.index),cycles,rate)
+   flow["building:%s" % proposal.index]=maxf(float(flow.get("building:%s" % proposal.index,0)),cycles/maxf(delta,0.001))
+   continue
   for key in recipe.out:
    var amount=float(recipe.out[key])*cycles
    if centralized and key!="sawdust":
@@ -589,6 +624,10 @@ func chop() -> void:
   notice.emit("Rucksack voll · zuerst abliefern")
   return
  var amount = minf(bag_capacity()-float(state.bag),(4.0+int(state.tool)*3.0)*(1+int(state.biome)*0.4))
+ amount=ForestCycle.take(state,int(state.biome),amount)
+ if amount<=0:
+  notice.emit("Hier wächst der Nachwuchs · Pflanzteam unter Team prüfen")
+  return
  state.bag += amount
  state.gathered += amount
  state.trees += 1
@@ -673,6 +712,7 @@ func placement_reason(point: Vector3, rotation: int = 0, ignore_building: int = 
  reason = Placement.terrain_reason(point,rotation,int(state.town.districts),kind)
  if not reason.is_empty(): return reason
  var rectangle = Placement.bounds(point,rotation,kind).grow(0.6)
+ if ForestLayout.reserved(state,rectangle): return "Baumpflanzer zuerst zurückkehren lassen · Arbeitsweg belegt"
  for project in Catalog.PROJECTS:
   if rectangle.intersects(Placement.bounds(project.position,0)): return "Projektstandort freihalten"
  for road in state.town.roads:
@@ -777,7 +817,7 @@ func undo_building_move() -> bool:
  if current!=Vector3(float(last.to[0]),0,float(last.to[1])) or int(records[index].get("rotation",0))!=int(last.new_rotation): return false
  return move_building(index,Vector3(float(last.from[0]),0,float(last.from[1])),int(last.rotation),bool(last.city),false)
 
-func order_building(kind: String, point: Variant = null, rotation: int = 0) -> bool:
+func order_building(kind: String, point: Variant = null, rotation: int = 0, batch: bool=false) -> bool:
  if not Catalog.BUILDINGS.has(kind) or not available(kind): return false
  var pending = 0
  for j in state.jobs:
@@ -793,9 +833,10 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0) -> b
  if state.tutorial == 4 or TutorialRules.phase(state)=="build":
   if state.onboarding.active: state.onboarding.job=int(state.jobs.back().id)
   state.tutorial = 5
- rebuild_world.emit()
- changed.emit()
- save(true)
+ if not batch:
+  rebuild_world.emit()
+  changed.emit()
+  save(true)
  return true
 
 func job_for(type: String, index: int) -> bool:
@@ -884,7 +925,9 @@ func finish_job(job: Dictionary) -> void:
  add_company_xp(25 if job.type=="home" else 15 if job.type=="building" else 8)
  match job.type:
   "building": state.buildings.append({"kind":job.kind,"level":1,"paused":false,"slot":job.slot})
-  "upgrade": state.buildings[int(job.index)].level += 1
+  "upgrade":
+   if job.get("saw_line",false): state.buildings[int(job.index)].saw_lines=SawmillProduction.line_count(state,int(job.index))+1
+   else: state.buildings[int(job.index)].level += 1
   "home": state.homes.append({"kind":job.kind,"level":1,"plot":job.plot})
   "home_upgrade": state.homes[int(job.index)].level += 1
   "project": state.projects[str(int(job.index))] = int(state.projects.get(str(int(job.index)),0))+1
@@ -1101,7 +1144,7 @@ func buy_booster(key: String, factor: float = 2.0) -> bool:
 
 func mission_definitions() -> Array:
  var tier = int(state.prestige)+1
- return [{"id":"trees","name":"Fälle %s Bäume" % (25*tier),"value":state.trees,"target":25*tier,"reward":300*tier},
+ return [{"id":"trees","name":"Fälle %s-mal Holz" % (25*tier),"value":state.trees,"target":25*tier,"reward":300*tier},
  {"id":"gathered","name":"Sammle %s Holz" % (500*tier),"value":state.gathered,"target":500*tier,"reward":500*tier},
  {"id":"team","name":"Stelle fünf Arbeiter ein","value":state.workers,"target":5,"reward":700*tier},
  {"id":"mill","name":"Erreiche Sägewerk-Stufe 10","value":level("sawmill"),"target":10,"reward":1800*tier},
@@ -1313,6 +1356,7 @@ func road_reason(kind: String, cells: Array) -> String:
   if not WorldAccess.LAND.encloses(Rect2(Vector2(c)-Vector2.ONE*width,Vector2.ONE*width*2)): return "Straßen müssen vollständig auf dem Land bleiben"
   for rectangle in occupied:
    if rectangle.has_point(Vector2(c)): return "Gebäude und Baustellen umfahren"
+  if ForestLayout.reserved(state,Rect2(Vector2(c)-Vector2.ONE*width,Vector2.ONE*width*2)): return "Baumpflanzer zuerst zurückkehren lassen · Arbeitsweg belegt"
  var permanent=TownRules.road_cells(state.town)
  for c in cells:
   if permanent.has(c): continue
@@ -1872,3 +1916,39 @@ func end_tutorial(completed: bool=false) -> void:
  state.tutorial=5
  changed.emit()
  save(true)
+
+func saw_line_cost(index: int) -> float:
+ if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="sawmill": return 0.0
+ return ceilf(250*pow(2,SawmillProduction.line_count(state,index)+1)*(1+int(state.buildings[index].level)*0.2)*difficulty())
+
+func order_saw_line(index: int) -> bool:
+ if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="sawmill" or job_for("upgrade",index): return false
+ var count=SawmillProduction.line_count(state,index)
+ if count>=SawmillProduction.line_limit(int(state.buildings[index].level)):
+  notice.emit("Zweite Linie ab Werkstufe 4, dritte ab Werkstufe 7")
+  return false
+ if not pay(saw_line_cost(index)): return false
+ var next=count+1
+ var job={"id":state.next_job,"type":"upgrade","index":index,"kind":"sawmill","saw_line":true,"left":30.0+next*10,"total":30.0+next*10,"materials":{"boards":8.0*next,"dry":2.0*next,"nuts":float(next),"screws":2.0*next},"delivered":{}}
+ ConstructionRules.attach(job,1 if free_builders()>0 else 0)
+ state.jobs.append(job); state.next_job+=1
+ rebuild_world.emit(); changed.emit(); save(true)
+ return true
+
+func assign_planters(amount: int) -> void:
+ state.forest.assignment=clampi(amount,-1,int(state.workers))
+ changed.emit(); save(true)
+
+func order_timber_campus(quoted_price: float) -> bool:
+ var quote=TimberCampus.quote(self)
+ if not str(quote.reason).is_empty(): notice.emit(quote.reason); return false
+ if not is_equal_approx(float(quote.price),quoted_price): notice.emit("Werkshofpreis geändert · Vorschau neu öffnen"); return false
+ if float(state.coins)<float(quote.price): notice.emit("Es fehlen Münzen für den vollständigen Werkshof"); return false
+ var before=state.duplicate(true)
+ for lot in quote.lots:
+  if not order_building(lot.kind,Vector3(lot.point[0],0,lot.point[1]),0,true):
+   state=before
+   notice.emit("Werkshof konnte nicht vollständig reserviert werden")
+   return false
+ rebuild_world.emit(); changed.emit(); save(true)
+ return true

@@ -9,7 +9,7 @@ var recovery_required=false
 func valid_shape(data: Variant) -> bool:
  if not data is Dictionary or not data.get("schema") is float and not data.get("schema") is int: return false
  if int(data.schema)!=1: return false
- for key in ["resources","ux","onboarding","journey","town","trade","stone","city_services","research","boosters","delivery","inventory","projects","plan","missions_claimed"]:
+ for key in ["resources","ux","onboarding","journey","town","trade","stone","city_services","research","boosters","delivery","inventory","projects","plan","missions_claimed","forest","sawmills"]:
   if data.has(key) and not data[key] is Dictionary: return false
  for key in ["buildings","homes","jobs","construction_shipments"]:
   if data.has(key) and not data[key] is Array: return false

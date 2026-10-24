@@ -25,6 +25,7 @@ static func describe(game: Node,index: int) -> Dictionary:
  if index<0 or index>=state.buildings.size(): return {"kind":"ready","text":""}
  var b=state.buildings[index]
  if b.get("paused",false): return {"kind":"paused","text":"Ⅱ Pause"}
+ if game.delivery_owns(index) and state.delivery.paused: return {"kind":"paused","text":"Ⅱ Lieferlinie pausiert"}
  if b.kind=="station": return ForestryFlow.describe(state,index,game.flow)
  if b.kind in StoneIndustry.KINDS:
   var site=StoneIndustry.site(state,index)
@@ -38,6 +39,9 @@ static func describe(game: Node,index: int) -> Dictionary:
     if float(site.stock[key])+float(recipe.out[key])>StoneIndustry.capacity(state,index): return {"kind":"full","text":"↑ Ausgang voll"}
    if float(site.stock.rock)<3: return {"kind":"missing","text":"! Gestein fehlt"}
   return {"kind":"running","text":""}
+ if b.kind=="sawmill" and SawmillProduction.pending(state,index)>0:
+  var full=float(state.delivery.buffers.sawmill.boards)>=DeliveryChain.capacity(state,"sawmill") if game.delivery_owns(index) else CentralLogistics.output_room(state,index,"boards")<=0.0001 if CentralLogistics.active(state) else float(state.resources.boards)>=game.capacity()
+  return {"kind":"full" if full else "running","text":"↑ Bretter-Ausgang voll" if full else "Entrinden → Sägen → Hobeln"}
  if game.delivery_owns(index):
   if state.delivery.paused: return {"kind":"paused","text":"Ⅱ Lieferlinie pausiert"}
   var info=DeliveryChain.status(state,b.kind)

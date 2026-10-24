@@ -7,6 +7,7 @@ const BLUE=Color("368dd2")
 const RED=Color("ef7840")
 
 static func create(kind: String, level: int) -> Node3D:
+ if kind=="sawmill": return SawmillModels.create(level)
  # Shared factory finishes: lacquer, brushed metal, and unpolished timber.
  for color in [BLUE,RED,Color("27b6a7"),Color("b876c2")]:
   var paint=Models.material(color)

@@ -21,6 +21,7 @@ static func harvest(state: Dictionary,potential: float,delta: float) -> Dictiona
   room+=available
  var amount=minf(maxf(0,potential),room)
  if not centralized: amount=minf(amount,maxf(0,CentralLogistics.capacity(state)-float(state.resources.wood)))
+ amount=ForestCycle.take(state,int(state.biome),amount)
  var sources={}
  for station in stations:
   var share=amount*float(station.room)/maxf(room,0.000001)
@@ -37,11 +38,11 @@ static func describe(state: Dictionary,index: int,flow: Dictionary={}) -> Dictio
  var rate=float(flow.get("harvest:%s" % index,0))
  if not CentralLogistics.active(state):
   if float(state.resources.wood)>=CentralLogistics.capacity(state)-0.00001: return {"kind":"full","text":"Holzlager voll · Holz verarbeiten oder verkaufen","key":"wood"}
-  return {"kind":"running","text":"Holzfäller arbeiten · %.2f Holz/s" % rate,"key":""}
+  return {"kind":"running","text":"Baumpflanzer arbeiten · Holzfäller kehren zurück" if rate<=0 and ForestCycle.busy(state)>0 else "Holzfäller arbeiten · %.2f Holz/s" % rate,"key":""}
  var amount=float(state.hub.outputs.get(str(index),{}).get("wood",0))
  var maximum=64+int(state.buildings[index].level)*8
  var stock="Abholvorrat %s/%s Holz" % [Catalog.number(amount),maximum]
- if amount<maximum-0.00001: return {"kind":"running","text":"Holzfäller arbeiten · %.2f Holz/s · %s" % [rate,stock],"key":""}
+ if amount<maximum-0.00001: return {"kind":"running","text":("Baumpflanzer arbeiten · "+stock) if rate<=0 and ForestCycle.busy(state)>0 else "Holzfäller arbeiten · %.2f Holz/s · %s" % [rate,stock],"key":""}
  var center=CentralLogistics.depot(state)
  var reason="Wartet auf freien Lager-LKW"
  if LogisticsDispatch.enabled(state):

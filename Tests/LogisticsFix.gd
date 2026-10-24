@@ -45,7 +45,7 @@ func company() -> void:
  accounted_jobs=[]
  check(game.start_delivery(),"Level-eight company opens its existing wood line")
 func units() -> float:
- var total=float(game.state.delivery.sold)*4
+ var total=float(game.state.delivery.sold)*4+2*SawmillProduction.pending_total(game.state)
  for key in WEIGHTS: total+=float(game.state.resources[key])*WEIGHTS[key]
  for kind in game.state.delivery.buffers:
   for key in WEIGHTS: total+=float(game.state.delivery.buffers[kind][key])*WEIGHTS[key]

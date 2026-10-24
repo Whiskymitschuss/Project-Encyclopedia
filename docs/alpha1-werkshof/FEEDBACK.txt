@@ -1,0 +1,17 @@
+FEEDBACK · 0.28.12-alpha.1
+Handymodell / Android:
+Installierte Version:
+Update oder frische Testinstallation:
+Startdauer nach längerer Pause:
+Wärme nach 5/15 Minuten, Akkumodus:
+
+Betroffen: Sägewerk / Werkshof / Pflanzteam / LKW / Baustelle / Menü
+Konkrete Schritte:
+Erwartetes Verhalten:
+Tatsächliches Verhalten:
+Werkstufe / eingerichtete Linien / Werkspause:
+Material im Lager / Werk / in Verarbeitung:
+Pflanzteam-Zuteilung / wartende Pflanzstellen:
+Screenshot oder kurzer Bildschirmfilm:
+
+Nicht deinstallieren und keine App-Daten löschen. Keine privaten Zugangsdaten senden.

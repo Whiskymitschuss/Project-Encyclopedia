@@ -59,7 +59,7 @@ func run() -> void:
  check(TutorialRules.phase(game.state)=="deposit" and game.state.bag==20,"Five physical chop touches collect the real tutorial cargo")
  await tap(hud.deposit_button)
  check(TutorialRules.phase(game.state)=="boards" and game.state.bag==0,"Physical deposit touch advances after a real unloading")
- game.step(2)
+ game.simulate(5) # Finish real debarking, sawing and planing before the sale.
  game.changed.emit()
  await settle()
  check(TutorialRules.phase(game.state)=="sell","Automatic production makes actual boards available")

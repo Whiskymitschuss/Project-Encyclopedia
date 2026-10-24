@@ -23,7 +23,7 @@ func run() -> void:
  check(Journey.current(game.state).id=="roots:0","Fresh game starts at a small actionable goal")
  check(not game.claim_journey("roots:0") and not game.home_available("townhall"),"No unearned reward or early town-hall bypass")
  for i in 5: game.chop()
- check(game.claim_journey("roots:0"),"Five real trees earn the first reward")
+ check(game.claim_journey("roots:0"),"Five actual manual cuts earn the first reward")
  var coins=game.state.coins
  check(not game.claim_journey("roots:0") and game.state.coins==coins,"A repeated reward tap cannot duplicate coins")
  game.deposit()
@@ -77,7 +77,11 @@ func run() -> void:
  check(not game.accept_commission("wood"),"Only one optional commission can be active")
  game.state.resources.boards=40
  check(Journey.order_progress(game.state)==0,"Existing warehouse stock is not new production")
- game.simulate(120)
+ # The one starter helper also walks actual replanting missions. Wait for
+ # genuinely completed boards, within a bounded five-minute supply window.
+ for second in 300:
+  if Journey.order_progress(game.state)>=30: break
+  game.step(1)
  check(Journey.order_progress(game.state)==30,"Actual shared-recipe production advances the accepted order")
  coins=game.state.coins
  check(game.claim_commission() and game.state.coins==coins+140,"Only completed commission pays its displayed reward")

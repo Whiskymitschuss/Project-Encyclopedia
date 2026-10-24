@@ -28,6 +28,7 @@ func run() -> void:
  chimney._process(0)
  var actual=chimney.smoke.global_basis*chimney.smoke.gravity
  check(Vector3(actual.x,0,actual.z).normalized().dot(wind.normalized())>0.99,"A rotated chimney still emits down the common world wind")
+ for cut_action in 6: game.chop() # Consume one entire real 24-wood tree.
  var before=game.state.duplicate(true)
  scene.focus=Catalog.biome_position(0)
  scene.set_camera()
@@ -35,9 +36,8 @@ func run() -> void:
  var cut=-1
  for i in scene.trees[0].size():
   if scene.trees[0][i].regrow>0: cut=i; break
- check(cut>=0,"Actual visual harvesting removes one eligible tree")
- scene.trees[0][cut].regrow=0
- scene.set_tree_visible(0,cut,true)
+ check(cut>=0,"The forest view mirrors a genuinely completed cut")
+ scene.forest_world.sync_trees(false)
  check(game.state==before,"Tree presentation and stumps never add wood or alter the save")
  var sound=scene.spatial_audio.sound("creak")
  check(sound.data.size()>10000 and sound==scene.spatial_audio.sound("creak"),"Wood feedback contains cached PCM audio")

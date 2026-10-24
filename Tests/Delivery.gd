@@ -23,6 +23,7 @@ func company() -> void:
 func wood_units() -> float:
  var data = game.state.delivery
  var result = float(game.state.resources.wood)+float(game.state.resources.boards)*2+float(game.state.resources.furniture)*4+int(data.sold)*4
+ result+=SawmillProduction.pending_total(game.state)*2
  for kind in data.buffers:
   var b=data.buffers[kind]
   result += float(b.wood)+float(b.boards)*2+float(b.furniture)*4

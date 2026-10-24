@@ -6,7 +6,7 @@ const HALL_PLOT=100
 # No wall-clock rewards, streaks, expiry timers or synthetic material grants.
 const CHAPTERS = [
  {"id":"roots","name":"Ein guter Anfang","title":"Waldfreund","color":"e7b460","goals":[
-  ["trees",5,"Fälle fünf Bäume","forest",40],
+  ["trees",5,"Fälle fünfmal Holz","forest",40],
   ["deposited",20,"Liefere 20 Holz aus dem Rucksack ab","deposit",60],
   ["sales",1,"Verkaufe deine erste Ware","market",100]]},
  {"id":"sawmill","name":"Die Säge singt","title":"Sägemeister","color":"4fc3c8","goals":[

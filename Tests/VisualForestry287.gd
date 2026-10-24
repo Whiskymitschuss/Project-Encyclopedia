@@ -88,19 +88,24 @@ func run() -> void:
  game.flow.harvest=0
  for second in 22: machine._process(1)
  check(not machine.working and machine.work_left==0,"An earned load finishes its current cycle, then the machine parks if no new harvest is accepted")
- # Falling targets must be near actual work, independent of a city camera.
- game.flow.harvest=1
+ # Finite forest cells now own felling, including rows beyond the parked rig's
+ # old nine-metre display loop. Moving the camera or faking a flow cannot cut
+ # another tree: the view must mirror exactly the already accepted real cells.
+ for tick in 240:
+  if s.forest.stands.get("0",{}).get("cells",{}).values().any(func(cell): return cell.state=="stump"): break
+  game.step(1)
  machine._process(0.1)
  scene.focus=Vector3(200,0,140)
  var before=s.duplicate(true)
  scene.on_harvested(0,0)
+ var real_cells=s.forest.stands.get("0",{}).get("cells",{})
+ var mirrored=true
  var cut=-1
  for i in scene.trees[0].size():
-  if scene.trees[0][i].regrow>0: cut=i; break
- var nearest=INF
- if cut>=0:
-  for actor in machines: nearest=minf(nearest,scene.trees[0][cut].point.distance_to(actor.origin_point))
- check(cut>=0 and nearest<9,"Automatic felling occurs within nine metres of the operating machine instead of at the distant camera")
+  var stage=str(real_cells.get(str(i),{"state":"mature"}).state)
+  if (scene.trees[0][i].regrow>0)!=(stage!="mature"): mirrored=false
+  if stage=="stump": cut=i
+ check(cut>=0 and mirrored and scene.trees[0][cut].point.distance_to(Catalog.biome_position(0))<50 and scene.trees[0][cut].point.distance_to(scene.focus)>100,"Falling trees mirror actual finite harvested cells in the working forest, independent of the distant camera or artificial flow")
  var clear=true
  for actor in machines:
   for tree in scene.trees[0]:

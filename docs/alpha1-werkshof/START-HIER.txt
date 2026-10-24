@@ -1,0 +1,18 @@
+TIMBER LOOT TYCOON · 0.28.12-alpha.1 (3007)
+Holzwerkshof, zehn Sägewerkformen, Verarbeitung, parallele Linien, Baumpflanzer
+
+1. APK herunterladen und öffnen. Installation aus dieser Quelle bei Bedarf erlauben.
+2. Als Update über Timber Loot installieren. Nicht deinstallieren, keine Daten löschen.
+3. Gleiche Paketkennung und bisheriges Testzertifikat. Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0.
+4. Bei einem älteren Dateinamen die Versionsanzeige unter Mehr → Alpha-Testen & Feedback prüfen.
+
+Logistik → Holzkette → Holzwerkshof: bestehende Kette ansehen oder einen normalen
+bezahlten Vierer-Werkshof planen. Vorhandene Stadt bleibt stehen.
+Sägewerk auswählen: Bauform und echte Zwischenpuffer; zweite Linie ab Werkstufe 4,
+dritte ab 7 kaufen. Material und ein angekommenes Bauteam müssen den Ausbau beenden.
+Team: Wiederaufforstung automatisch, manuell oder pausiert; Baumpflanzer ansehen.
+Warenmenü: Holz in Verarbeitung ist bis zum letzten Maschinenschritt gebunden.
+
+Getestet mit automatisierten Firmen und der Hauptwelt am Desktop; kein privater
+Handyspielstand und kein echter Android-/Hitzetest. Debug-signierte Testfassung.
+Die ganze frühere Masterliste bleibt über die fünf Ausbauten hinaus offen.

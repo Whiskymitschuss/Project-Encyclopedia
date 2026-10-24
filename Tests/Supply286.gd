@@ -61,7 +61,7 @@ func run() -> void:
   for tick in 900: game.step(1)
   check(float(home.delivered.get("furniture",0))==6,"Furniture reaches the waiting home despite future wood/board bills; central=%s" % central)
   check(not home in s.jobs,"Real construction finishes after unloading, central=%s" % central)
-  var actual=float(s.resources.wood)+float(s.resources.boards)*2+float(s.resources.furniture)*4+float(s.delivery.sold)*4
+  var actual=float(s.resources.wood)+float(s.resources.boards)*2+float(s.resources.furniture)*4+float(s.delivery.sold)*4+2*SawmillProduction.pending_total(s)
   for group in [s.delivery.buffers,s.hub.outputs,s.hub.express]:
    for stock in group.values(): actual+=float(stock.get("wood",0))+float(stock.get("boards",0))*2+float(stock.get("furniture",0))*4
   for trip in FreightFlow.all_trips(s):

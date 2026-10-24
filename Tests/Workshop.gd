@@ -27,31 +27,27 @@ func run() -> void:
  machine._process(0.1)
  check(not machine.active and rotor.rotation==stopped,"Empty factory never rotates its saw")
  game.state.resources.wood=30
- game.step(1)
+ game.simulate(4) # Fill the real debarking, sawing and planing stages.
  machine._process(0.1)
  check(machine.active and rotor.rotation!=stopped,"Actual wood conversion drives the saw")
  check(game.state.resources.boards>0,"Visual production is backed by real output")
- var operator=null
- for worker in scene.actors.get_children():
-  if worker.get("role")=="operator": operator=worker; break
- check(operator!=null,"Hired team staffs a factory directly")
- if operator!=null:
-  operator.set_process(false)
-  operator._process(0.1)
-  check(operator.working,"Machine operator works with the factory flow")
+ var operator=machine.lanes[0].operator
+ check(operator!=null and operator.has_node("RightArm"),"The actual sawmill line includes its equipped beaver operator")
+ var operator_pose=operator.get_node("RightArm").rotation
+ check(operator_pose.x!=0,"The line's own beaver operates its actual running machinery")
  game.state.buildings[1].paused=true
  stopped=rotor.rotation
  var phase=machine.phase
  machine._process(0.25)
- if operator!=null: operator._process(0.25)
  check(not machine.active and rotor.rotation==stopped and machine.phase==phase,"Pause freezes tooling and workpiece even before the next economy tick")
- if operator!=null: check(not operator.working,"Paused production also stops its operator")
+ check(operator.get_node("RightArm").rotation==operator_pose,"Paused production also freezes its own operator")
  game.state.buildings[1].paused=false
  game.state.resources.wood=0
  game.state.workers=0
- game.step(1)
+ for tick in 12: game.step(1)
+ stopped=rotor.rotation
  machine._process(0.25)
- check(not machine.active and rotor.rotation==stopped,"Material shortage stops the same rendered machine")
+ check(not machine.active and rotor.rotation==stopped and SawmillProduction.pending(game.state,1)==0,"After real intermediate work finishes, material shortage stops the same rendered machine")
  var before=game.state.duplicate(true)
  for kind in Catalog.RECIPES:
   for level in [1,10,100]:

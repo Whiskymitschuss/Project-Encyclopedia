@@ -1,0 +1,132 @@
+{
+  "version": "0.28.12-alpha.1",
+  "headless_checks": 21015,
+  "headless_suites": 39,
+  "headless_numeric_results": {
+    "TIMBER 2812": 37,
+    "PERFORMANCE 2811": 19,
+    "LOGISTICS 2810": 65,
+    "FORESTRY 289": 26,
+    "FORESTRY 288": 22,
+    "FORESTRY 287": 23,
+    "FACTORY SUPPLY 286": 34,
+    "SUPPLY 286": 32,
+    "INFRASTRUCTURE 286": 161,
+    "WORLD REWORK 285": 907,
+    "CENTRAL LOGISTICS 284": 34,
+    "FOREST 282": 22,
+    "ROLLBACK 028": 51,
+    "ALPHA 1": 40,
+    "RULES": 234,
+    "SCENE": 4080,
+    "WORLD & HIGHWAY TRADE 27": 61,
+    "PLACEMENT & ONBOARDING": 52,
+    "WORKSHOP": 42,
+    "COMPANION": 23,
+    "WORLD LIFE": 30,
+    "TOWN": 206,
+    "VALLEY": 177,
+    "CRAFTED WORLD": 128,
+    "DELIVERY": 6057,
+    "CONSTRUCTION": 56,
+    "LOGISTICS FIX": 431,
+    "CITY UX": 797,
+    "BUILDING CARD": 437,
+    "JOURNEY": 215,
+    "TRAFFIC & TOUCH": 1494,
+    "FIRE SAFETY": 24,
+    "FIRE PROTECTION": 38,
+    "STONE INDUSTRY": 4870,
+    "QUALITY FEEDBACK": 32,
+    "PRESENTATION 26": 46,
+    "STARTUP": 12
+  },
+  "additional_headless_suites": [
+    "AlphaProgression: first hut/town hall without grants, eight-hour offline replay equals foreground after reload",
+    "Progression: first home without grants"
+  ],
+  "main_and_boot_smokes_passed": true,
+  "visual_checks": 1126,
+  "visual_suites": 30,
+  "visual_results": {
+    "VISUAL TIMBER 2812": 33,
+    "VISUAL PERFORMANCE 2811": 26,
+    "VISUAL LOGISTICS 2810": 40,
+    "VISUAL FORESTRY 289": 25,
+    "VISUAL FORESTRY 288": 11,
+    "VISUAL FORESTRY 287": 17,
+    "VISUAL FACTORY SUPPLY 286": 11,
+    "VISUAL SUPPLY 286": 13,
+    "BEAVER WORLD": 91,
+    "VISUAL MAP 2842": 32,
+    "VISUAL FACTORY 284": 48,
+    "VISUAL CAMPUS 283": 55,
+    "VISUAL COLD START 288": 10,
+    "VISUAL COLD START 282": 8,
+    "VISUAL FOREST 282": 28,
+    "VISUAL ROLLBACK 028": 146,
+    "VISUAL UI": 23,
+    "STARTUP OPENGL": 28,
+    "VISUAL BUILDING CARD": 87,
+    "VISUAL CITY UX": 45,
+    "FIRE & RESPONSIVE UI OPENGL": 50,
+    "FIRE PROTECTION OPENGL": 36,
+    "VISUAL CRAFTED WORLD": 14,
+    "VISUAL QUALITY": 41,
+    "VISUAL PRESENTATION 26": 37,
+    "VISUAL WORLD & TRADE 27": 45,
+    "VISUAL ALPHA 1": 63,
+    "VISUAL STONE": 27,
+    "VISUAL TRAFFIC": 27,
+    "VISUAL VALLEY": 9
+  },
+  "new_headless_checks": 37,
+  "new_visual_checks": 33,
+  "validation_sequence": "The final complete headless runner exited zero. All modules in the complete OpenGL runner plus VisualStone/VisualTraffic/VisualValley passed; targeted modules were rerun after replacing obsolete instant-sawing and decorative-regrowth assumptions. Actual missing quality metadata, pause feedback and paused-line status were fixed. Unique final result per module counted once.",
+  "fixture_origin": "Generated test companies and checked-in fixtures only; temporary isolated profiles; no private player save",
+  "coverage": [
+    "Real 3-stage sawmill buffers, exact 2 wood -> 1 board + 1 sawdust completion, no instant product",
+    "Conservation includes owned processing material, freight, deliveries and all storage owners",
+    "Steady 1/2/3-line throughput exactly 63/126/189 over ten seconds at level 7",
+    "Extra line paid once, actual material freight and arrived construction crew required before installation",
+    "Full output and pauses retain intermediate ownership; status, beacon, particles and operator reflect pause",
+    "Main-world architectural forms 1..10; old economic levels above ten preserved",
+    "Finite harvested cells, reachable real planter missions, protected aisles, seedling/growth deadlines",
+    "Full-precision JSON continues active processing, planted seedlings and returning workers identically",
+    "Render quality and camera cannot alter harvest or authoritative machinery clearances",
+    "Paid four-lot campus reservations use ordinary construction without moving old buildings or granting stock",
+    "Bounded reused planter representatives and shared instanced trees; old visibility budgets remain",
+    "Small screens, large text, ordinary menus, actual first-sale tutorial and first building",
+    "Existing factory/depot/Express/site logistics, staffed construction, roads, town, traffic and incident suites"
+  ],
+  "measurements": {
+    "automatic_forest_fixture_30min": {
+      "initial_manual_wood_cases": [
+        802,
+        1015
+      ],
+      "automatic_harvest_each": 1296,
+      "maximum_seconds_without_accepted_harvest": 142
+    },
+    "steady_line_test": {
+      "level": 7,
+      "seconds": 10,
+      "boards": [
+        63,
+        126,
+        189
+      ]
+    },
+    "offline_progression_result": [
+      "ALPHA PROGRESSION: first hut and town hall in 436 simulated seconds, no grants; eight offline hours replay correctly; host simulation 6045 ms"
+    ]
+  },
+  "limits": [
+    "No physical Android device, temperature, battery or sustained FPS measurement",
+    "No private player save",
+    "No cross-version startup/offline speed improvement claimed",
+    "The selected five improvements are integrated; the entire earlier master world/asset list remains open"
+  ],
+  "android_device_tested": false,
+  "temperature_measured": false
+}

@@ -553,7 +553,7 @@ func update_stats() -> void:
   var partial=float(guide.value)/maxf(1,float(guide.target)) if guide.phase in ["chop","done"] else 0.0
   update_goal_progress({"id":"guided_start","value":float(guide.step)-1+partial,"target":5})
  elif int(Game.state.tutorial)<=4 and not Game.state.onboarding.paused:
-  mission_button.text = ["WILLKOMMEN · Dein Waldimperium wartet","ANLEITUNG 1/4 · Fälle fünf Bäume","ANLEITUNG 2/4 · Holz abliefern","ANLEITUNG 3/4 · Erste Rohstoffe verkaufen","ANLEITUNG 4/4 · Erstes Gebäude platzieren"][int(Game.state.tutorial)]
+  mission_button.text = ["WILLKOMMEN · Dein Waldimperium wartet","ANLEITUNG 1/4 · Fälle fünfmal Holz","ANLEITUNG 2/4 · Holz abliefern","ANLEITUNG 3/4 · Erste Rohstoffe verkaufen","ANLEITUNG 4/4 · Erstes Gebäude platzieren"][int(Game.state.tutorial)]
  else:
   var goal=Journey.current(Game.state)
   update_goal_progress(goal)
@@ -677,6 +677,7 @@ func render_menu() -> void:
  match current:
   "logistics": load("res://UI/LogisticsDesk.gd").populate(self)
   "timberline": load("res://UI/TimberLineDesk.gd").populate(self)
+  "timber_campus","mill_stages": load("res://UI/TimberCampusDesk.gd").populate(self,current)
   "journey","commissions","trophies","return","townhall": journey_ui.populate(current)
   "stone": stone_menu()
   "delivery": delivery_menu()
@@ -852,6 +853,7 @@ func building_menu() -> void:
   text(box,"Zum Verschieben zuerst die Lieferlinie auflösen. Ihre Vorräte und Ladungen kommen vollständig ins Lager zurück.",14,MUTED)
   button(box,"LIEFERKETTE & LOKALEN VORRAT ANSEHEN",func(): open_menu("delivery"))
  text(box,"Ausbau: %s Münzen" % Catalog.number(Game.cost_for(b.kind,int(b.level)+1)),17,GOLD)
+ if b.kind=="sawmill": load("res://UI/TimberCampusDesk.gd").mill_controls(self,box,index)
  var management=row(box)
  button(management,"AUSBAUEN" if not Game.job_for("upgrade",index) else "AUSBAU LÄUFT",func(): action(func(): Game.upgrade(index)),not Game.job_for("upgrade",index) and b.level < d.max)
  button(management,"VERSCHIEBEN",func(): request_placement({"kind":b.kind,"city":false,"index":index}),not Game.delivery_owns(index) and not Game.job_for("upgrade",index))
@@ -878,6 +880,18 @@ func team_menu() -> void:
  var box = card("%s / %s Arbeiter" % [int(Game.state.workers),Game.worker_capacity()],"Helfer fällen und liefern Holz automatisch. Hütten und Stadtbewohner schaffen zusätzlichen Wohnraum. Forschungsboni erhöhen die Leistung.")
  dynamic_text(box,func(): return ForestryFlow.team_status(Game.state,Game.flow))
  button(box,"HOLZFÄLLER ANSEHEN",func(): focus_requested.emit(ForestryFlow.work_position(Game.state)); close_menu())
+ var planting=card("Biber-Baumpflanzer","Das Pflanzteam stammt aus deinen eingestellten Helfern. Es pflanzt echte abgeerntete Stellen nach; während Hinweg, Pflanzen und Rückkehr sind diese Biber keine Holzfäller. Jungbäume wachsen anschließend selbständig heran.")
+ dynamic_text(planting,func(): return ForestCycle.status(Game.state))
+ var allocation=row(planting)
+ button(allocation,"Automatisch",func(): action(func(): Game.assign_planters(-1)))
+ button(allocation,"Weniger",func(): action(func(): Game.assign_planters(maxi(0,ForestCycle.limit(Game.state)-1))))
+ button(allocation,"Mehr",func(): action(func(): Game.assign_planters(mini(int(Game.state.workers),ForestCycle.limit(Game.state)+1))))
+ button(planting,"PFLANZARBEIT ANSEHEN",func():
+  var at=Catalog.biome_position(int(Game.state.biome))+Vector3(25,0,28)
+  if not Game.state.forest.tasks.is_empty():
+   var task=Game.state.forest.tasks[0]
+   at=ForestLayout.point(int(task.biome),int(task.cell))
+  focus_requested.emit(at); close_menu())
  var builders=card("Bauteam & Sprinter","Bauarbeiter werden von der Arbeiterhütte zur Baustelle gefahren. Sie beginnen nach der Ankunft und warten auf das Material ihrer Bauphase.")
  dynamic_text(builders,func(): return "%s Bauarbeiter · %s frei · %s/%s Sprinter unterwegs" % [int(Game.state.builders),Game.free_builders(),Game.state.crew.missions.size(),CrewTransport.fleet_size(Game.state)])
  button(builders,"BAUSTELLEN ANSEHEN",func(): logistics_tab="sites"; open_menu("logistics"))
@@ -1100,7 +1114,9 @@ func stock_menu() -> void:
   var box=card(Catalog.RESOURCES[key])
   dynamic_text(box,func():
    var stock=UXRules.material_stock(Game.state,key)
-   return "%s Vorrat\n%s Zentrale · %s Abhol-Express · %s Betriebe · %s unterwegs" % [Catalog.number(stock.stored),Catalog.number(float(stock.warehouse)+float(stock.receiving)),Catalog.number(stock.regional),Catalog.number(float(stock.local)-float(stock.regional)-float(stock.receiving)),Catalog.number(stock.transit)])
+   var reading="%s Vorrat\n%s Zentrale · %s Abhol-Express · %s Betriebe · %s unterwegs" % [Catalog.number(stock.stored),Catalog.number(float(stock.warehouse)+float(stock.receiving)),Catalog.number(stock.regional),Catalog.number(float(stock.local)-float(stock.regional)-float(stock.receiving)),Catalog.number(stock.transit)]
+   if key=="wood" and float(stock.processing)>0: reading+="\n%s Holz in Verarbeitung · noch nicht lieferbar" % Catalog.number(stock.processing)
+   return reading)
   button(box,"QUELLEN & LIEFERUNGEN ›",func(): ux.open_material(key))
 
 func market_menu() -> void:
@@ -1266,7 +1282,7 @@ func guide_menu() -> void:
  modal_title.text="DEIN WEG ZUM IMPERIUM"
  button(contents,"KAPITEL 1–10 · DEIN RATHAUS AUFBAUEN",func(): open_menu("journey"))
  var step=mini(int(Game.state.tutorial),4)
- var box=card("Schritt %s / 4" % step,["","Tippe auf Fällen oder auf Bäume. Nach fünf gefällten Bäumen geht es weiter.","Tippe auf Abliefern. Dein Rucksack wird in das Holzlager geleert; Helfer liefern zusätzlich automatisch.","Öffne Verkaufen und verkaufe etwas Holz oder Bretter. Missionsprämien helfen beim ersten Ausbau.","Öffne Bauen, wähle ein Gebäude und platziere es in der Welt. Grün bedeutet frei; Rot zeigt Straßen oder belegte Flächen."][step])
+ var box=card("Schritt %s / 4" % step,["","Tippe auf Fällen oder auf Bäume. Nach fünf Fällaktionen geht es weiter.","Tippe auf Abliefern. Dein Rucksack wird in das Holzlager geleert; Helfer liefern zusätzlich automatisch.","Öffne Verkaufen und verkaufe etwas Holz oder Bretter. Missionsprämien helfen beim ersten Ausbau.","Öffne Bauen, wähle ein Gebäude und platziere es in der Welt. Grün bedeutet frei; Rot zeigt Straßen oder belegte Flächen."][step])
  button(box,"WEITER SPIELEN",func(): close_menu())
  var help=card("So funktioniert deine Produktion","Holz → Sägewerk → Bretter → Trockenkammer → Trockenholz → Möbelfabrik → Möbel. Der lokale Laden verkauft seine Lieferware; Fernexporte fahren über den verbundenen Autobahnanschluss. Tippe direkt auf ein Gebäude für Zustand, Ausbau und Verschieben. LKWs verbinden die Betriebe über das Straßennetz.")
  text(help,"Spänebox: regelmäßig leeren und verkaufen. Bei Störungen zeigt das Betriebsfenster den konkreten Grund. Mit einem Finger die Welt bewegen, mit zwei Fingern zoomen. Im Baumodus bewegt ein Finger das Bauwerk; zwei Finger bewegen die Kamera.",15,MUTED)

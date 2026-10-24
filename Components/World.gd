@@ -79,6 +79,7 @@ var hold_consumed=false
 var industry_name_labels=[]
 var yard_handlers=[]
 var handler_clock=0.0
+var forest_world: Node3D
 var access_preview: Node3D
 
 func _ready() -> void:
@@ -182,6 +183,10 @@ func _ready() -> void:
  trade_world=load("res://Components/TradeWorld.gd").new()
  trade_world.world=self
  add_child(trade_world)
+ forest_world=load("res://Components/ForestWorld.gd").new()
+ forest_world.world=self
+ add_child(forest_world)
+ forest_world.sync_trees(false)
  call_deferred("mark_first_world_frame")
 
 func mark_first_world_frame() -> void:
@@ -294,22 +299,15 @@ func build_forest() -> void:
    add_child(node)
    batch_nodes.append(node)
   for i in 100:
-   # A recognisable managed forest: ten rows with small natural offsets.
-   var point=center+Vector3((i%10-4.5)*6.0+random.randf_range(-0.65,0.65),0,(int(i/10.0)-4.5)*5.2+random.randf_range(-0.65,0.65))
-   # Keep the north road and the center boulevards clear.
-   if absf(point.x-80)<8: point.x = 90
-   if absf(point.x+80)<8: point.x = -90
-   for project in Catalog.PROJECTS:
-    if signf(point.x)==signf(project.position.x) and absf(point.x)>80 and absf(point.z-Catalog.project_road_z(project))<7:
-     point.z -= 14
-    if point.distance_to(project.position)<18: point.x -= signf(point.x)*16
-   var scale_value = random.randf_range(0.75,1.25)
+   var source=ForestLayout.records()[biome][i]
+   var point=source.point
+   var scale_value=float(source.scale)
    records.append({"point":point,"scale":scale_value,"regrow":0.0,"blocked":false})
    for part in 3:
     var y = [1.8,4.7,7.1][part]*scale_value
     var transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*scale_value),point+Vector3(0,y,0))
     batch_nodes[part].multimesh.set_instance_transform(i,transform)
-    batch_nodes[part].multimesh.set_instance_color(i,Color.WHITE.darkened(random.randf_range(0,0.13)))
+    batch_nodes[part].multimesh.set_instance_color(i,Color.WHITE.darkened(float(source.tones[part])))
   var stumps=MultiMeshInstance3D.new()
   var stump_mesh=CylinderMesh.new()
   stump_mesh.top_radius=0.43
@@ -383,9 +381,10 @@ func rebuild() -> void:
   add_approach(model.position,int(b.get("rotation",0)))
   var fill = model.get_node_or_null("SawdustFill")
   if fill!=null:
-   var label = Models.label(model,"Spänebox",Vector3(7.5,5.2,-3),28)
+   var label = Models.label(model,"Spänebox",fill.get_meta("label_point",Vector3(7.5,5.2,-3)),28)
    label.set_meta("building_index",i)
-   industry_name_labels.append(label)
+   if b.kind=="sawmill": label.hide()
+   else: industry_name_labels.append(label)
    bins.append({"fill":fill,"label":label})
   if Catalog.RECIPES.has(b.kind) and not model.get_meta("open_factory",false):
    for j in 3:
@@ -481,7 +480,7 @@ func sync_actors() -> void:
  var staff = mini(int(Game.state.workers),8 if Game.state.quality == 0 else 16)
  var factories = []
  for i in Game.state.buildings.size():
-  if Catalog.RECIPES.has(Game.state.buildings[i].kind) or Game.state.buildings[i].kind=="stoneworks": factories.append(i)
+  if (Catalog.RECIPES.has(Game.state.buildings[i].kind) and Game.state.buildings[i].kind!="sawmill") or Game.state.buildings[i].kind=="stoneworks": factories.append(i)
  var operators = mini(mini(staff/3,factories.size()),2 if Game.state.quality==0 else 6)
  var cabin_index=-1
  for i in Game.state.buildings.size():
@@ -640,16 +639,6 @@ func _process(delta: float) -> void:
   bin.fill.scale.y = maxf(fraction,0.03)
   bin.fill.position.y = 0.7+1.35*fraction
   bin.label.text = "SPÄNE · %s %%" % int(fraction*100)
- auto_tree_clock += delta
- if auto_tree_clock>=maxf(0.6,6.0/maxi(1,int(Game.state.workers))) and float(Game.flow.get("harvest",0))>0:
-  auto_tree_clock = 0
-  on_harvested(int(Game.state.biome),0)
- for biome in trees.size():
-  for index in trees[biome].size():
-   var tree = trees[biome][index]
-   if tree.regrow > 0:
-    tree.regrow -= delta
-    if tree.regrow <= 0: set_tree_visible(biome,index,not tree.blocked)
 
 func set_tree_visible(biome: int, index: int, visible_tree: bool) -> void:
  var tree = trees[biome][index]
@@ -661,35 +650,8 @@ func set_tree_visible(biome: int, index: int, visible_tree: bool) -> void:
  var stump_size=float(tree.scale) if not visible_tree and not tree.blocked and tree.regrow>0 else 0.001
  stump_batches[biome].multimesh.set_instance_transform(index,Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*stump_size),tree.point+Vector3.UP*0.35*stump_size))
 
-func on_harvested(biome: int, _amount: float) -> void:
- var closest = -1
- var distance = INF
- var work_point=focus
- if _amount<=0 and actors!=null:
-  var crew=[]
-  for actor in actors.get_children():
-   if actor.has_meta("forestry_tier") or (actor is TimberWorker and actor.role=="forester"):
-    if actor.working: crew.append(actor)
-  if not crew.is_empty():
-   work_point=crew[next_work_tree%crew.size()].origin_point
-   next_work_tree+=1
- for i in trees[biome].size():
-  var t = trees[biome][i]
-  var d = t.point.distance_squared_to(work_point)
-  if not t.blocked and t.regrow <= 0 and d < distance:
-   closest = i
-   distance = d
- if closest >= 0:
-  show_falling_tree(biome,closest)
-  if spatial_audio!=null: spatial_audio.cut(trees[biome][closest].point)
-  trees[biome][closest].regrow = 20.0
-  set_tree_visible(biome,closest,false)
-  var effect = chip_pool[chip_index]
-  effect.position = trees[biome][closest].point+Vector3(0,3,0)
-  if Game.state.ux.motion and Game.state.ambient_enabled:
-   effect.restart()
-   effect.emitting = true
-  chip_index = (chip_index+1)%chip_pool.size()
+func on_harvested(_biome: int, _amount: float) -> void:
+ if forest_world!=null: forest_world.sync_trees(true)
 
 func show_falling_tree(biome: int, index: int) -> void:
  if not Game.state.ux.motion or not Game.state.ambient_enabled: return
@@ -999,6 +961,8 @@ func begin_placement(request: Dictionary) -> void:
  add_child(ghost)
  var preview_level=int((Game.state.homes if city else Game.state.buildings)[index].level) if index>=0 else 1
  var model = Models.building(placement.kind,preview_level,city)
+ if placement.kind=="sawmill" and index>=0 and not city:
+  for i in 3: model.get_node("Processing/Line%s" % i).visible=i<SawmillProduction.line_count(Game.state,index)
  ghost.add_child(model)
  var mat = Models.material(Color(1,1,1,0.45)).duplicate()
  mat.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA

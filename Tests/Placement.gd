@@ -19,7 +19,7 @@ func run() -> void:
  Game.state.workers=0
  Game.state.resources.wood=20
  Game.state.resources.sawdust=Game.capacity()
- Game.step(1)
+ Game.simulate(4) # Actual debarking, sawing and final planing, including raw intake.
  check(Game.state.resources.boards>0 and Game.state.resources.sawdust==Game.capacity(),"Full manual bin never stops boards or deletes stored sawdust")
  check(Game.state.coins==350 and Game.flow.sawdust_composted>0,"Uncollected new overflow is composted without free income")
  Game.sell("sawdust")

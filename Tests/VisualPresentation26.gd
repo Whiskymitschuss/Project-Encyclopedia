@@ -43,6 +43,7 @@ func run() -> void:
  scene.wet_weather.set_process(false)
  scene.fauna.set_process(false)
  var hud=scene.hud
+ for cut_action in 6: game.chop() # Actual finite timber, rather than a decorative cut callback.
  var before=game.state.duplicate(true)
  scene.focus=Catalog.biome_position(0)
  scene.zoom=65
@@ -55,11 +56,18 @@ func run() -> void:
  check(cut>=0,"A real forest cut is staged for render checks")
  var transform=scene.stump_batches[0].multimesh.get_instance_transform(cut)
  check(transform.basis.get_scale().x>0.5 and transform.origin.distance_to(scene.trees[0][cut].point)<1,"The visible stump occupies the cut tree's actual position")
- scene.trees[0][cut].regrow=0
- scene.set_tree_visible(0,cut,true)
+ var read_only=game.state==before
+ # Regrowth requires the real helper to arrive and plant; rendering cannot
+ # shorten the task or replace the stump by changing a cached display timer.
+ for second in 180:
+  game.state.elapsed+=1
+  ForestCycle.tick(game.state,1)
+  if not game.state.forest.stands["0"].cells.has(str(cut)): break
+ before=game.state.duplicate(true)
+ scene.forest_world.sync_trees(false)
  await settle()
- check(scene.stump_batches[0].multimesh.get_instance_transform(cut).basis.get_scale().x<0.01,"Actual rendered regrowth removes its stump")
- check(game.state==before,"Rendering a cut or regrowth never grants free wood")
+ check(scene.stump_batches[0].multimesh.get_instance_transform(cut).basis.get_scale().x<0.01,"Actual planted-and-grown forest state removes its rendered stump")
+ check(read_only and game.state==before,"Rendering a real cut or regrowth never grants free wood")
  scene.fauna.on_cut(0,1)
  scene.fauna._process(0.2)
  var bird=scene.fauna.animals[0]

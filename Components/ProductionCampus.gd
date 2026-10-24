@@ -32,9 +32,22 @@ static func build(parent: Node3D,ctx: Dictionary) -> void:
   Models.paving_box(yard,Vector3(69,0.07,59),p+Vector3(0,0.56,0),Color(Catalog.BIOMES[biome].ground).lerp(Color("98ce65"),0.55),"plaster",1.8)
   for x in range(-32,33,8):
    var at=Vector2(p.x+x,p.z+31)
-   if not clear(at,ctx,1.2): continue
+   if not clear(at,ctx,1.2) or x>=24: continue
    Models.box(yard,Vector3(0.5,2.5,0.5),Vector3(at.x,1.6,at.y),Color("88522f"))
    Models.box(yard,Vector3(7.2,0.3,0.28),Vector3(at.x+3.6,2.2,at.y),Color("b67c44"))
+ # Short private foot connections join neighbouring working lots without
+ # filling roads, vacant plots or the entire city with one concrete slab.
+ for link in TimberCampus.links(Game.state):
+  var area: Rect2=link.area
+  Models.paving_box(yard,Vector3(area.size.x,0.12,area.size.y),Vector3(area.get_center().x,0.57,area.get_center().y),CONCRETE,"paving",0.1)
+  for side in [-1,1]:
+   var at=Vector3(area.get_center().x,0.8,area.get_center().y+side*2.4)
+   Models.box(yard,Vector3(1.6,0.5,0.8),at,Color("c9a777"))
+   Models.cylinder(yard,0.6,0.8,at+Vector3.UP*0.55,Color("73ab66"),0.35)
+ for biome in 10:
+  var center=Catalog.biome_position(biome)
+  for x in [32,37]: Models.box(yard,Vector3(0.45,3.5,0.45),center+Vector3(x,2.3,31),Color("9b713f"))
+  Models.box(yard,Vector3(5.5,0.4,0.4),center+Vector3(34.5,4.1,31),Color("9b713f"))
  Models.bake(yard)
 
 static func wall(parent: Node3D,at: Vector2,horizontal: bool) -> void:

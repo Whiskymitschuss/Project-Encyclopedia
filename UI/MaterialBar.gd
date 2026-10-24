@@ -66,6 +66,7 @@ func refresh() -> void:
   var trend=Game.material_trend(key)
   captions[key].text=NAMES[key]+(" "+str(trend.arrow) if trend.ready else "")
   controls[key].tooltip_text="%s: %s Zentrale · %s Abhol-Express · %s Betriebe · %s unterwegs. Antippen für Quellen und Lieferungen." % [Catalog.RESOURCES[key],Catalog.number(float(stock.warehouse)+float(stock.receiving)),Catalog.number(stock.regional),Catalog.number(float(stock.local)-float(stock.regional)-float(stock.receiving)),Catalog.number(stock.transit)]
+  if key=="wood" and float(stock.processing)>0: controls[key].tooltip_text+=" %s Holz werden gerade entrindet, gesägt und gehobelt." % Catalog.number(stock.processing)
 
 func compact_number(value: float) -> String:
  if value<10000: return str(int(value))

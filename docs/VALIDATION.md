@@ -1,3 +1,22 @@
+## Holzwerkshof und Wiederaufforstung · 0.28.12-alpha.1
+
+21.015 numerische Headless-Prüfungen in 37 Modulen, zwei natürliche Fortschritts-
+szenarien sowie Haupt-/Startszene bestanden. 1.126 OpenGL-Prüfungen in 30 Modulen
+bestanden. Endergebnis je Modul einmal gezählt.
+[Prüfbericht](alpha1-werkshof/automated-checks.json) ·
+[Bilder aus der Hauptwelt](alpha1-werkshof/BILDER.md).
+
+Echte Zwischenbestände, drei Verarbeitungsschritte, paralleler Durchsatz,
+bezahlter Linienausbau mit LKW und angekommenem Bauteam, zehn Bauformen,
+Wiederaufforstung mit Arbeitswegen und geräteunabhängige Ernte sind geprüft.
+Pausierte Lieferlinien überschreiben ihren Wartegrund nicht durch Restmaterial.
+Die Materialbilanzen berücksichtigen jedes Holz in Verarbeitung. Alte reine
+Animations-Regrowth-Tests verwenden nun tatsächliche Ernte und Pflanzaufträge.
+
+Der natürliche Start erreicht Hütte und Rathaus ohne Gratiswaren. Acht Stunden
+Offline-Simulation stimmen nach dem Laden mit der schrittweisen Fortsetzung
+überein. Keine Startzeit-/Temperaturzusage für Android und kein privater Spielstand.
+
 ## Externe Downloads Leistung und Holzproduktionsstraße · 0.28.11 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.11-alpha.1` vollständig per

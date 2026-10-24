@@ -19,6 +19,12 @@ func fresh() -> void:
  Game.tick_clock = 0
  Game.save_clock = 0
 
+func prime_saw() -> void:
+ # One genuinely consumed batch has reached the final pass. Overflow checks
+ # below test that handoff while the next batch is loaded, not instant sawing.
+ Game.state.resources.wood=1.8
+ Game.simulate(3)
+
 func close(a: float, b: float) -> bool:
  return absf(a-b) < 0.0001
 
@@ -68,10 +74,13 @@ func run() -> void:
  Game.state.resources.wood = 20.0
  Game.simulate(1)
  check(close(Game.state.resources.wood,18.2),"Sawmill consumes two wood per cycle")
- check(close(Game.state.resources.boards,0.9),"Sawmill outputs boards")
+ check(Game.state.resources.boards==0 and SawmillProduction.pending_total(Game.state)>0,"Sawmill owns intermediate work before finished goods exist")
+ Game.simulate(3)
+ check(close(Game.state.resources.boards,0.9),"Sawmill outputs boards after three actual passes")
  check(close(Game.state.resources.sawdust,0.9),"Sawmill recovers sawdust")
  fresh()
  Game.state.workers = 0
+ prime_saw()
  Game.state.resources.wood = 20.0
  Game.state.resources.sawdust = Game.capacity()
  Game.state.auto_sawdust = true
@@ -85,9 +94,10 @@ func run() -> void:
  var stopped_coins = Game.state.coins
  Game.step(1)
  check(close(Game.state.resources.wood,stopped_wood) and close(Game.state.coins,stopped_coins),"Full main-product buffer still prevents waste and free overflow income")
- check("Lager voll" in Game.production_status(1),"Blocked main output has a visible explanation")
+ check("Bretter" in Game.production_status(1) and "voll" in Game.production_status(1),"Blocked main output has a visible explanation")
  fresh()
  Game.state.workers = 0
+ prime_saw()
  Game.state.resources.wood = 20.0
  Game.state.resources.sawdust = Game.capacity()-0.2
  Game.state.auto_sawdust = true
@@ -95,6 +105,7 @@ func run() -> void:
  check(close(Game.state.coins,350.35),"Partially full buffer sells exactly the overflow")
  fresh()
  Game.state.workers = 0
+ prime_saw()
  Game.state.resources.wood = 20.0
  Game.state.resources.sawdust = Game.capacity()
  Game.state.buildings.append({"kind":"pellet","level":1,"paused":false})

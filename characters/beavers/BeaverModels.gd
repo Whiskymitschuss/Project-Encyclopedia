@@ -15,7 +15,7 @@ const VARIANTS=[
  {"name":"Taro","fur":"584534","body":1.11,"head":Vector3(0.81,0.69,0.63),"ears":0.19,"tail":Vector2(0.58,0.85),"muzzle":0.35},
  {"name":"Sunny","fur":"d29b4c","body":0.97,"head":Vector3(0.72,0.68,0.58),"ears":0.24,"tail":Vector2(0.43,0.79),"muzzle":0.34},
  {"name":"Nova","fur":"89664f","body":1.02,"head":Vector3(0.78,0.72,0.55),"ears":0.23,"tail":Vector2(0.49,0.88),"muzzle":0.30}]
-const CLOTHES={"forester":Color("f47e35"),"industry":Color("328bc2"),"logistics":Color("79ad50"),"civilian":Color("aa7bb5"),"fire":Color("29485f")}
+const CLOTHES={"planter":Color("5c9945"),"forester":Color("f47e35"),"industry":Color("328bc2"),"logistics":Color("79ad50"),"civilian":Color("aa7bb5"),"fire":Color("29485f")}
 static var scenes={}
 static var sphere_mesh: SphereMesh
 static var palette: StandardMaterial3D
