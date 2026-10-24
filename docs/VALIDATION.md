@@ -1,3 +1,14 @@
+## Tatsächliche APK-Dateien · 0.28.14-alpha.1
+
+6420 Headless- und 170 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Direkter Weltstart, Rückkehr per Menü, Wiederherstellung,
+Tutorial, Logistik und zwei kalte Acht-Stunden-Nachrechnungen eingeschlossen.
+[Paketprüfbericht](alpha1-loading/packaged-checks.json).
+APK-SHA256 `c776639ae47c0cb7ba1ece890d22f9126aff91b5892269ec4b4250cfe05b3a98`. Quellstand `d0154d1d9ca993c5e2fb98f354809ed3a8c07ed6`.
+Paket, Versionscode 3009, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Neuer Spielstart · 0.28.14-alpha.1
 
 38 numerische Headless-Suiten mit 21.032 Prüfungen, zwei natürliche

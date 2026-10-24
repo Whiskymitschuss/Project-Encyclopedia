@@ -1,4 +1,28 @@
-# Aktuell: Waldzugang und Holzfäller · 0.28.13-alpha.1
+# Aktuell: Bibercover und direkter Spielstart · 0.28.14-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.14-alpha.1/releases/Timber-Loot-Tycoon-v0.28.14-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.14-alpha.1/releases/Timber-Loot-Tycoon-v0.28.14-Spielstart-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.14-source.zip) · [Änderungen](../docs/STARTUP-2814.md) ·
+[Neue Gestaltungsrichtung und Gebäudeentwürfe](../docs/DESIGN-DIRECTION-2814.md)
+
+Eigenes bildschirmfüllendes Bibercover, scharfer Schriftzug und Ladeanzeige unten.
+Nach dem tatsächlichen Laden und der Offline-Nachrechnung öffnet sich die Welt
+automatisch. Der Titel hat keinen separaten 3D-Schaukasten und keine Introfrist.
+Menürückkehr und Speicherwiederherstellung bleiben bedienbar.
+Die Gebäudetafel ist eine Modelliergrundlage, noch kein Ersatz der 3D-Gebäude.
+Produktionsautomatik und vollständiger Masterumbau sind damit nicht neu umgesetzt.
+
+Android-Code **3009**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+21032 Headless- und 170 relevante OpenGL-Prüfungen des Quellstands;
+zusätzlich 6420 Headless- und 170 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-loading/automated-checks.json).
+APK-Quellstand `d0154d1d9ca993c5e2fb98f354809ed3a8c07ed6`. Quell-ZIP: 759 Dateien gegen Git geprüft.
+
+## Vorher: Waldzugang und Holzfäller · 0.28.13-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-Waldzugang-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.13-source.zip) · [Änderungen und Grenzen](../docs/FOREST-ACCESS-2813.md)
