@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-24T22:09:26.713082+00:00",
+  "tag": "v0.28.13-alpha.1",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-alpha.1.apk",
+      "http_status": 200,
+      "bytes": 63431378,
+      "sha256": "0c8a8aa044c7c2bc574b5ac4022065c9255f28e74dfeaae50b28b83d052fc934",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-source.zip",
+      "http_status": 200,
+      "bytes": 37537597,
+      "sha256": "ee41beaa686b88c526816cd8c032b4dc819158264ef6740f1a0e7bd541b46d2c",
+      "matches_built_artifact": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.13-alpha.1/releases/Timber-Loot-Tycoon-v0.28.13-Waldzugang-Testerpaket.zip",
+      "http_status": 200,
+      "bytes": 62799305,
+      "sha256": "2b9054c1af83d9cee2766f16265b55196c2dcda2088f842db700470eec7009bc",
+      "matches_built_artifact": true
+    }
+  ],
+  "signature_matches_023": true,
+  "device_tested": false
+}

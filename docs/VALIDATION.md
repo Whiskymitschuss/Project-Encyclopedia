@@ -1,3 +1,10 @@
+## Externe Downloads Waldzugang und Holzfäller · 0.28.13 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.13-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2813.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.13-alpha.1
 
 8008 Headless- und 607 OpenGL-Prüfungen mit unveränderten,
