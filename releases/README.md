@@ -1,4 +1,31 @@
-# Aktuell: Bibercover und direkter Spielstart · 0.28.14-alpha.1
+# Aktuell: Mehr Durchsatz für Lager und Werke · 0.28.15-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.15-alpha.1/releases/Timber-Loot-Tycoon-v0.28.15-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.15-alpha.1/releases/Timber-Loot-Tycoon-v0.28.15-Transport-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.15-source.zip) · [Änderungen und Messung](../docs/THROUGHPUT-2815.md)
+
+Fünf statt drei Lager-LKW ab fertiggestellter Zentrale Stufe 1. Größere
+Werkspuffer, größere echte Ladungen und verbesserter Umschlag. Zusätzliche
+Lager-LKW unter Logistik/Garage kaufen; Transportausbau direkt im Werk.
+Maximal 16 Lager-LKW aktiv. Angeforderte Fracht wird bei Ankunftsplanung und
+Zielraum berücksichtigt. Vorhandener Werkvorrat wird auch bei belegter Flotte
+weiterverarbeitet. Kein Gratisauffüllen oder vorzeitige Warengutschrift.
+
+Generierte Vergleichsfirma, 1.200 simulierte Sekunden ohne manuelle Hilfe:
+647,33 statt 36 Bretter und 74 statt 22 tatsächlich verkaufte Möbel. Das
+Sägewerk arbeitet 1.020 statt 90 Sekunden. Keine Garantie für jeden Spielstand.
+
+Android-Code **3010**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+21064 Headless- und 318 relevante OpenGL-Prüfungen des Quellstands;
+zusätzlich 6523 Headless- und 318 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-throughput/automated-checks.json).
+APK-Quellstand `a584051a9fa01e8a8c27c15e1a81ee87b4ad20f5`. Quell-ZIP: 777 Dateien gegen Git geprüft.
+
+## Vorher: Bibercover und direkter Spielstart · 0.28.14-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.14-alpha.1/releases/Timber-Loot-Tycoon-v0.28.14-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.14-alpha.1/releases/Timber-Loot-Tycoon-v0.28.14-Spielstart-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.14-source.zip) · [Änderungen](../docs/STARTUP-2814.md) ·

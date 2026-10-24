@@ -1,3 +1,14 @@
+## Tatsächliche APK-Dateien · 0.28.15-alpha.1
+
+6523 Headless- und 318 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Transportkauf, ganze Produktionsketten, Materialbilanz,
+16 sichere Fahrzeugreservierungen, Holzabholung, Baustellen und kalter Start
+sind eingeschlossen. [Paketprüfbericht](alpha1-throughput/packaged-checks.json).
+APK-SHA256 `231a09a43045814f1d5bd0495a69e398459900f23110adab3a8a791a2bb1993f`. Quellstand `a584051a9fa01e8a8c27c15e1a81ee87b4ad20f5`.
+Paket, Versionscode 3010, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Werkstransport und größerer Fuhrpark · 0.28.15-alpha.1
 
 39 numerische Headless-Suiten mit 21.064 Prüfungen, zwei natürliche

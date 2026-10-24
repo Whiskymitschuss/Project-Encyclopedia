@@ -1,0 +1,80 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.28.15-alpha.1.apk",
+  "bytes": 67053522,
+  "sha256": "231a09a43045814f1d5bd0495a69e398459900f23110adab3a8a791a2bb1993f",
+  "version": "0.28.15-alpha.1",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "a584051a9fa01e8a8c27c15e1a81ee87b4ad20f5",
+  "device_install_or_launch_tested": false,
+  "version_code": 3010,
+  "signature_matches_023": true,
+  "same_package_as_023": true,
+  "automated_headless_checks": 21064,
+  "automated_opengl_checks": 318,
+  "packaged_resource_checks": {
+    "apk": "Timber-Loot-Tycoon-v0.28.15-alpha.1.apk",
+    "apk_sha256": "231a09a43045814f1d5bd0495a69e398459900f23110adab3a8a791a2bb1993f",
+    "apk_source_commit": "a584051a9fa01e8a8c27c15e1a81ee87b4ad20f5",
+    "headless_checks": 6523,
+    "headless_results": {
+      "Throughput2815": 31,
+      "Startup": 11,
+      "ForestAccess2813": 19,
+      "Timber2812": 37,
+      "Performance2811": 19,
+      "Logistics2810": 65,
+      "Delivery": 6057,
+      "Construction": 56,
+      "FactorySupply286": 34,
+      "Supply286": 32,
+      "Rollback028": 51,
+      "Alpha28": 40,
+      "Forestry289": 26,
+      "Forestry288": 22,
+      "Forestry287": 23
+    },
+    "visual_checks": 318,
+    "visual_results": {
+      "VisualThroughput2815": 25,
+      "VisualLogistics2810": 40,
+      "VisualSupply286": 13,
+      "VisualFactorySupply286": 11,
+      "VisualForestry289": 25,
+      "VisualTimber2812": 33,
+      "VisualLoading2814": 33,
+      "VisualAlpha28": 63,
+      "VisualColdStart288": 10,
+      "VisualForestAccess2813": 37,
+      "VisualForestry287": 17,
+      "VisualForestry288": 11
+    },
+    "fixture": "Generated test companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+    "android_device_tested": false,
+    "temperature_measured": false
+  },
+  "master_rework_complete": false,
+  "source_archive": {
+    "file": "Timber-Loot-Tycoon-v0.28.15-source.zip",
+    "bytes": 44772906,
+    "sha256": "7ee91f2f13d49e68d99799ffa0b2d5a038d435683fa085bfc6c798c2acb08b09",
+    "verified_files": 777
+  },
+  "tester_package": {
+    "file": "Timber-Loot-Tycoon-v0.28.15-Transport-Testerpaket.zip",
+    "bytes": 66296341,
+    "sha256": "5a01798da2a4957d68ea6cc10aff04ec8f65cc253990ea228cec471085cb57a7",
+    "verified_entries": 7
+  }
+}
