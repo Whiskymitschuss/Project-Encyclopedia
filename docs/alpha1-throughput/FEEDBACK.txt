@@ -1,0 +1,9 @@
+Version: 0.28.15-alpha.1
+Handymodell / Android:
+Zentrallagerstufe / Lager-LKW frei und insgesamt:
+Betroffenes Werk / Gebäudestufe / Transportausbau:
+Zutaten im Werk / Lagerbestand / angekündigte Lieferung:
+Wie lange steht das Werk:
+Automatische Weiterverarbeitung und Abholung:
+Baustellenversorgung:
+Beobachtete Startdauer / Wärme:

@@ -2,7 +2,23 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.14-alpha.1 · Bibercover und direkter Spielstart
+## Aktuell: 0.28.15-alpha.1 · Mehr Durchsatz für Lager und Werke
+
+Fünf statt drei Lager-LKW ab fertiger Zentrale Stufe 1, größere Werkspuffer,
+größere echte Ladungen und schnellerer Umschlag. Zusätzliche Lager-LKW werden
+unter Logistik/Garage gekauft; Transportausbauten im einzelnen Werk verbessern
+Puffer, Ladevolumen und Umschlag. Der aktive Lagerfuhrpark bleibt auf 16 begrenzt.
+Nachschubstatus und geplante Ankunft sind getrennt von laufender Verarbeitung.
+Kein kostenloses Auffüllen der Bestände und keine doppelte Belegung eines
+Zieleingangs mit noch unterwegs befindlichen Kleinstlieferungen.
+
+[Änderungen und gemessener Vergleich](docs/THROUGHPUT-2815.md) ·
+[Installation](docs/alpha1-throughput/START-HIER.txt) · [Downloads](releases/README.md).
+Android-Code **3010**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein physischer Android-/Hitzetest und kein privater Handyspielstand.
+
+## Vorher: 0.28.14-alpha.1 · Bibercover und direkter Spielstart
 
 Bildschirmfüllendes eigenes Biber-Waldmotiv mit Live-Schriftzug und Ladeanzeige
 unten. Die Welt wird im Hintergrund als Ressource geladen und nach vollständiger

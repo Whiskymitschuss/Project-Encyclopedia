@@ -2,7 +2,7 @@ config_version=5
 
 [application]
 config/name="Timber Loot Tycoon"
-config/version="0.28.14-alpha.1"
+config/version="0.28.15-alpha.1"
 run/main_scene="res://Scenes/Boot.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://Assets/Brand/timber-icon.png"

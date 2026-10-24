@@ -844,6 +844,7 @@ func building_menu() -> void:
  if not FactorySupply.requirements(Game.state,index).is_empty():
   button(box,"WARE ANFORDERN · ZENTRALLAGER → WERK",func(): action(func(): Game.request_material(index)))
   dynamic_text(box,func(): return FactorySupply.status(Game.state,index))
+ if LogisticsDispatch.enabled(Game.state) and TransportCapacity.supported(Game.state,index): load("res://UI/TransportDesk.gd").workshop_controls(self,box,index)
  if b.kind == "sawmill":
   text(box,"Leere die sichtbare Spänebox regelmäßig. Ein voller Behälter stoppt die Bretterproduktion nicht; neuer Überlauf wird kompostiert oder auf Wunsch verkauft.",15,MUTED)
   button(box,"SPÄNEBOX LEEREN",func(): open_menu("sawdust"))
@@ -907,14 +908,15 @@ func garage_menu() -> void:
  text(contents,"Transportupgrades verbessern Ladekapazität und Fahrtempo. Höhere Stufen zeigen Gelenk-Auflieger und Tiefbetttransporter. Maschinen im Wald schaltest du unter Team mit den Werkzeugstufen frei.",15,MUTED)
  modal_title.text = "GARAGE & FUHRPARK"
  if CentralLogistics.active(Game.state):
-  var logistics=card("Lagerflotte · %s LKW" % CentralLogistics.fleet_size(Game.state),"Weiß-blaue LKW holen Fabrikprodukte ab und versorgen Werke und Abhol-Express. Ausbau der Zentrale und weitere Abhol-Express-Standorte erhöhen diese eigene Flotte.")
+  var logistics=card("Lagerflotte · %s LKW" % CentralLogistics.fleet_size(Game.state),"Weiß-blaue LKW holen Fabrikprodukte ab und versorgen Werke und Abhol-Express. Zusätzliche Lager-LKW hier kaufen. Zentrale und Abhol-Express erhöhen die Grundflotte; eine Garage schafft weitere Kaufplätze. Bis zu 16 Lager-LKW sind aktiv.")
+  load("res://UI/TransportDesk.gd").fleet_controls(self,logistics)
   button(logistics,"ZENTRALLAGER VERWALTEN",func(): show_building(CentralLogistics.depot(Game.state)))
   button(logistics,"ABHOL-EXPRESS BAUEN",func(): request_placement({"kind":"express","city":false,"index":-1}),Game.available("express"))
-  card("Baustellenflotte · %s LKW" % CentralLogistics.fleet_size(Game.state),"Schwarz-weiße Fahrer bringen Material vom Lager zur Baustelle. Die Mitarbeiter kommen separat mit höchstens zwei Sprintern aus der Arbeiterhütte.")
+  card("Baustellenflotte · %s LKW" % CentralLogistics.construction_fleet_size(Game.state),"Schwarz-weiße Fahrer bringen Material vom Lager zur Baustelle. Die Mitarbeiter kommen separat mit höchstens zwei Sprintern aus der Arbeiterhütte.")
  var box = card("%s allgemeine Transportfahrzeuge" % int(Game.state.trucks),"Diese LKW bedienen den Fernhandel. Lager- und Baustellenflotten sind mit Zentrallager eigenständig." if CentralLogistics.active(Game.state) else "Deine gemeinsame Flotte transportiert Holz, Bretter, Möbel und Baumaterial. Beladen, Entladen und leere Rückfahrt belegen das Fahrzeug. Die Garage schafft zusätzliche Stellplätze.")
  button(box,"LIEFERKETTE & ZUTEILUNG",func(): open_menu("delivery"))
- button(box,"LKW KAUFEN · %s" % Catalog.number(Game.truck_cost()),func(): action(func(): Game.buy_truck()))
- var vehicle = card(Catalog.VEHICLES[int(Game.state.vehicle)],"Verbessert Ladekapazität und Fahrtempo der Transporte sowie deinen Rucksack. Mehr Lager-LKW erhältst du durch die Lagerstandorte.")
+ button(box,("FERNHANDELS-LKW KAUFEN · %s" if CentralLogistics.active(Game.state) else "LKW KAUFEN · %s") % Catalog.number(Game.truck_cost()),func(): action(func(): Game.buy_truck()))
+ var vehicle = card(Catalog.VEHICLES[int(Game.state.vehicle)],"Verbessert Ladekapazität und Fahrtempo der Transporte sowie deinen Rucksack. Lager-LKW kaufst du oben; einzelne Werke erhalten unter Transportausbau größere Puffer und Ladungen.")
  if Game.state.vehicle < 9:
   button(vehicle,"NÄCHSTE STUFE · %s" % Catalog.number(Game.vehicle_cost()),func(): action(func(): Game.upgrade_vehicle()))
   button(vehicle,"AUS TEILEN BAUEN · %s Teile" % (4+int(Game.state.vehicle)*3),func(): action(func(): Game.craft_vehicle()))

@@ -225,6 +225,7 @@ func render_sheet() -> void:
   if not city and not FactorySupply.requirements(Game.state,index).is_empty():
    hud.button(sheet_body,"WARE ANFORDERN · ZENTRALLAGER → WERK",func(): Game.request_material(index); refresh())
    hud.text(sheet_body,FactorySupply.status(Game.state,index),12,hud.MUTED)
+   if LogisticsDispatch.enabled(Game.state): hud.button(sheet_body,"TRANSPORT AUSBAUEN",func(): hud.show_building(index))
   if not city and LogisticsDispatch.enabled(Game.state) and not LogisticsDispatch.outputs(Game.state,index).is_empty():
    hud.text(sheet_body,LogisticsDispatch.collection_status(Game.state,index),12,hud.MUTED)
    hud.button(sheet_body,"LOGISTIK & ABHOLUNG",func(): hud.open_menu("logistics"))

@@ -24,6 +24,7 @@ static func populate(hud: Control) -> void:
  if not CentralLogistics.active(state):
   hud.text(summary,"Baue ein Zentrallager für die automatische Versorgung aller Werke und die regionalen Abholungen.",15,hud.GOLD)
   hud.button(summary,"ZENTRALLAGER BAUEN",func(): hud.request_placement({"kind":"central_depot","city":false,"index":-1}))
+ if LogisticsDispatch.enabled(state): load("res://UI/TransportDesk.gd").fleet_controls(hud,summary)
  var tabs=GridContainer.new()
  tabs.columns=2
  tabs.size_flags_horizontal=Control.SIZE_EXPAND_FILL

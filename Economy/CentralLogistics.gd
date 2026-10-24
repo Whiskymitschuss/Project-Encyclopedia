@@ -4,7 +4,7 @@ extends RefCounted
 # Resources belong to the central store; outputs, express stock and road cargo
 # have separate ownership. No credit before unloading and no shared-fleet lock.
 static func initial() -> Dictionary:
- return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0,"receiving":{},"network_version":0,"waiting":{},"service_cursor":0,"site_last_served":{},"site_sequence":0,"site_class_cursor":0}
+ return {"outputs":{},"express":{},"shipments":[],"next_id":300000,"cursor":0,"key_cursors":{},"supply_cursor":0,"inputs":{},"requests":[],"factory_cursor":0,"receiving":{},"extra_trucks":0,"network_version":0,"waiting":{},"service_cursor":0,"site_last_served":{},"site_sequence":0,"site_class_cursor":0}
 
 static func depot(state: Dictionary) -> int:
  for i in state.buildings.size():
@@ -33,21 +33,28 @@ static func storage_room(state: Dictionary,key: String) -> float:
 static func receiving_capacity(state: Dictionary) -> float:
  return maxf(96,fleet_size(state)*pickup_capacity(state,"wood"))
 
-static func output_room(state: Dictionary,index: int,key: String) -> float:
- return maxf(0,64+int(state.buildings[index].level)*8-float(state.hub.outputs.get(str(index),{}).get(key,0)))
+static func output_capacity(state: Dictionary,index: int) -> float:
+ if LogisticsDispatch.enabled(state) and TransportCapacity.supported(state,index): return TransportCapacity.buffer(state,index)
+ return 64+int(state.buildings[index].level)*8
 
-static func pickup_capacity(state: Dictionary,key: String) -> float:
- # A forestry transporter carries bundled logs. The former crate-sized load
- # emptied less than one manually cut tree and throttled whole forest crews.
- return (12+int(state.vehicle)*2)*(4 if key=="wood" else 2 if LogisticsDispatch.enabled(state) else 1)
+static func output_room(state: Dictionary,index: int,key: String) -> float:
+ return maxf(0,output_capacity(state,index)-float(state.hub.outputs.get(str(index),{}).get(key,0)))
+
+static func pickup_capacity(state: Dictionary,key: String,origin: int=-1,destination: int=-1) -> float:
+ var base=12+int(state.vehicle)*2
+ if LogisticsDispatch.enabled(state):
+  return base*(6 if key=="wood" else 4)*TransportCapacity.load_multiplier(state,origin,destination)
+ return base*(4 if key=="wood" else 1)
 
 static func fleet_size(state: Dictionary) -> int:
  var index=depot(state)
- var result=mini(6,2+int(state.buildings[index].level)) if index>=0 else 0
- if result>0 and LogisticsDispatch.enabled(state):
-  for b in state.buildings:
-   if b.kind=="express": result+=1+mini(2,(int(b.level)-1)/4)
- return mini(12,result)
+ if index<0: return 0
+ if LogisticsDispatch.enabled(state):
+  return mini(16,TransportCapacity.fleet_base(state)+maxi(0,int(state.hub.get("extra_trucks",0))))
+ return mini(6,2+int(state.buildings[index].level))
+
+static func construction_fleet_size(state: Dictionary) -> int:
+ return TransportCapacity.fleet_base(state) if LogisticsDispatch.enabled(state) else fleet_size(state)
 
 static func available_trucks(state: Dictionary) -> int:
  var assigned=state.hub.shipments.size()+DeliveryChain.central_busy(state)
@@ -181,7 +188,8 @@ static func launch(state: Dictionary,origin: int,destination: int,key: String,am
  var route=LogisticsRoutes.road_route(state,origin,destination)
  if route.size()<2 or amount<=0: return false
  var drive=maxf(2,LogisticsRoutes.length(route)/(10+int(state.vehicle)))
- var trip={"id":state.hub.next_id,"source":state.buildings[origin].kind,"origin":origin,"destination":destination,"target":target,"fleet":"central","key":key,"amount":amount,"mode":"truck","path":route,"age":0.0,"load":6.0,"drive":drive,"unload":6.0,"travel":drive+12,"total":drive*2+14,"arrived":false}
+ var handling=TransportCapacity.handling_seconds(state,origin,destination) if LogisticsDispatch.enabled(state) else 6.0
+ var trip={"id":state.hub.next_id,"source":state.buildings[origin].kind,"origin":origin,"destination":destination,"target":target,"fleet":"central","key":key,"amount":amount,"mode":"truck","path":route,"age":0.0,"load":handling,"drive":drive,"unload":handling,"travel":drive+handling*2,"total":drive*2+handling*2+2,"arrived":false}
  source_stock[key]=float(source_stock.get(key,0))-amount
  FreightFlow.enqueue(state,state.hub.shipments,trip)
  state.hub.next_id+=1

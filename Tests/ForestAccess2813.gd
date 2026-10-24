@@ -30,7 +30,9 @@ func run() -> void:
  LogisticsDispatch.synchronize(s)
  s.resources.wood=1050;s.resources.boards=1183
  CentralLogistics.stock(s,0).wood=80
- check(ForestryFlow.overview(s,{"harvest":0})=="Wartet auf Holzabholung","The screenshot's full 80-log landing has an honest collection reason")
+ check(CentralLogistics.output_room(s,0,"wood")>0,"The old eighty-log landing gains real free space without inventing a waiting stop")
+ CentralLogistics.stock(s,0).wood=CentralLogistics.output_capacity(s,0)
+ check(ForestryFlow.overview(s,{"harvest":0})=="Wartet auf Holzabholung","A genuinely full current landing has an honest collection reason")
  var gathered=float(s.gathered); var picked=false
  for second in 600:
   game.step(1)

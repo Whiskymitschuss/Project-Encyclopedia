@@ -25,6 +25,7 @@ static func stock(state: Dictionary,index: int) -> Dictionary:
 static func capacity(state: Dictionary,index: int) -> float:
  if DeliveryChain.owns(state,index): return DeliveryChain.capacity(state,state.buildings[index].kind)
  if state.buildings[index].kind=="stoneworks": return StoneIndustry.capacity(state,index)
+ if LogisticsDispatch.enabled(state): return TransportCapacity.buffer(state,index)
  return minf(96,8+int(state.buildings[index].level)*4)
 
 static func incoming(state: Dictionary,index: int,key: String) -> float:
@@ -148,6 +149,15 @@ static func dispatch(state: Dictionary,immediate: bool=false,preferred: int=-1) 
   free-=1
   if immediate: break
 
+static func delivery_status(state: Dictionary,index: int,key: String) -> String:
+ var earliest=INF
+ for trip in state.hub.shipments+state.delivery.shipments:
+  var matches=int(trip.get("destination",-1))==index if trip.has("destination") else DeliveryChain.owns(state,index) and str(trip.target)==str(state.buildings[index].kind)
+  if not matches or trip.key!=key or trip.arrived: continue
+  if float(trip.age)>=float(trip.travel): return "Entladung wartet auf Platz"
+  earliest=minf(earliest,float(trip.get("depart_in",0))+float(trip.travel)-float(trip.age))
+ return "Ankunft in %s s" % ceili(earliest) if earliest<INF else "Lieferung unterwegs"
+
 static func status(state: Dictionary,index: int) -> String:
  var reason=blocked(state,index)
  if not reason.is_empty(): return reason
@@ -156,17 +166,17 @@ static func status(state: Dictionary,index: int) -> String:
   var text="%s: %s vor Ort" % [Catalog.RESOURCES[key],Catalog.number(float(stock(state,index).get(key,0)))]
   var inbound=incoming(state,index,key)
   var waiting=queued(state,index,key)
-  if inbound>0: text+=" · %s im LKW" % Catalog.number(inbound)
+  if inbound>0: text+=" · %s im LKW · %s" % [Catalog.number(inbound),delivery_status(state,index,key)]
   if LogisticsDispatch.enabled(state) and waiting<=0 and float(stock(state,index).get(key,0))+inbound<maxf(float(requirements(state,index)[key])*2,capacity(state,index)*0.5):
    text+=" · automatischer Nachschub"
    if DepotNetwork.supply_sources(state,LogisticsRoutes.building_position(state,index),key).is_empty(): text+=" (Lagerbestand fehlt/reserviert)"
-   elif CentralLogistics.available_trucks(state)<=0: text+=" (wartet auf freien LKW)"
+   elif CentralLogistics.available_trucks(state)<=0: text+=" (Nachschub wartet auf freien LKW)"
   if waiting>0:
    text+=" · %s angefordert" % Catalog.number(waiting)
    var protected=ConstructionRules.reserved_materials(state,key) if key=="furniture" else ConstructionRules.processing_reserve(state,key)
    if LogisticsDispatch.enabled(state) and DepotNetwork.supply_sources(state,LogisticsRoutes.building_position(state,index),key).is_empty(): text+=" (im Lager fehlend/reserviert)"
    elif not LogisticsDispatch.enabled(state) and float(state.resources.get(key,0))<=protected: text+=" (im Zentrallager fehlend/reserviert)"
-   elif CentralLogistics.available_trucks(state)<=0: text+=" (wartet auf freien LKW)"
+   elif CentralLogistics.available_trucks(state)<=0: text+=" (Nachschub wartet auf freien LKW)"
    else: text+=" (Disposition läuft)"
   parts.append(text)
  return "\n".join(parts)

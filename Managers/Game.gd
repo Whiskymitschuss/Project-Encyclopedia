@@ -401,7 +401,7 @@ func production_status(index: int) -> String:
  if building.kind=="sawmill" and not building.get("paused",false) and not (delivery_owns(index) and state.delivery.paused) and SawmillProduction.pending(state,index)>0:
   var full=float(state.delivery.buffers.sawmill.boards)>=DeliveryChain.capacity(state,"sawmill") if delivery_owns(index) else CentralLogistics.output_room(state,index,"boards")<=0.0001 if CentralLogistics.active(state) else float(state.resources.boards)>=capacity()
   return "Bretter-Ausgang voll · wartet auf Abholung" if full else "Entrinden → Sägen → Hobeln · %s Holz in Verarbeitung" % Catalog.number(SawmillProduction.pending(state,index)*2)
- if building.kind in ["central_depot","express"]: return "Warenannahme: %s · Lagerflotte: %s/%s frei · Baustellenflotte: %s/%s frei" % [Catalog.number(state.hub.receiving.values().reduce(func(total,value): return total+float(value),0.0)),CentralLogistics.available_trucks(state),CentralLogistics.fleet_size(state),maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()),CentralLogistics.fleet_size(state)]
+ if building.kind in ["central_depot","express"]: return "Warenannahme: %s · Lagerflotte: %s/%s frei · Baustellenflotte: %s/%s frei" % [Catalog.number(state.hub.receiving.values().reduce(func(total,value): return total+float(value),0.0)),CentralLogistics.available_trucks(state),CentralLogistics.fleet_size(state),maxi(0,CentralLogistics.construction_fleet_size(state)-state.construction_shipments.size()),CentralLogistics.construction_fleet_size(state)]
  if building.kind in StoneIndustry.KINDS: return StoneIndustry.status(state,index)
  if delivery_owns(index):
   if state.delivery.paused or building.get("paused",false): return "Pausiert · Produktion fortsetzen"
@@ -980,6 +980,25 @@ func buy_truck() -> bool:
  if not pay(truck_cost()): return false
  state.trucks += 1
  changed.emit()
+ return true
+
+func buy_central_truck() -> bool:
+ if not LogisticsDispatch.enabled(state): notice.emit("Zuerst ein Zentrallager fertigstellen"); return false
+ var owned=int(state.hub.get("extra_trucks",0))
+ if owned>=TransportCapacity.fleet_purchase_limit(state): notice.emit("Für weitere Lager-LKW Garage oder Zentrallager ausbauen"); return false
+ if not pay(TransportCapacity.fleet_cost(state)): return false
+ state.hub.extra_trucks=owned+1
+ changed.emit()
+ save(true)
+ return true
+
+func upgrade_transport(index: int) -> bool:
+ if not LogisticsDispatch.enabled(state) or not TransportCapacity.supported(state,index): return false
+ if TransportCapacity.dock_level(state,index)>=TransportCapacity.MAX_DOCK_LEVEL: return false
+ if not pay(TransportCapacity.upgrade_cost(state,index)): return false
+ state.buildings[index].transport_level=TransportCapacity.dock_level(state,index)+1
+ changed.emit()
+ save(true)
  return true
 
 func tool_cost() -> float:

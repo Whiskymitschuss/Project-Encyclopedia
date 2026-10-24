@@ -1,0 +1,11 @@
+1. Update installieren; Firma, Münzen und Materialbestände prüfen.
+2. Mit reichlich Holz mehrere Minuten ohne manuelles Anfordern spielen:
+   Sägewerk, Trocknung und Möbelwerk sollen Nachschub erhalten und Produkte abgeben.
+3. Logistik/Garage: einen Lager-LKW kaufen; genau ein zusätzlicher Lager-LKW
+   und genau eine Zahlung. Fernhandels- und Baustellenflotte getrennt prüfen.
+4. Werk: Transport ausbauen; angezeigte Kapazität und Ladungsgrenze steigen.
+5. App neu starten: gekaufte Fahrzeuge und Werksausbauten bleiben erhalten.
+6. Bei belegt gemeldeter Flotte prüfen, ob eigener Werkvorrat weiterverarbeitet
+   wird und ob die nächste Lieferung mit Ankunftszeit angezeigt ist.
+7. Baustellen und automatische Holzabholung beobachten; keine Waren dürfen
+   verschwinden oder vor Ankunft im Zielbestand erscheinen.

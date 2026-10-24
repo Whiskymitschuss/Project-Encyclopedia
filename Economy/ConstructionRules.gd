@@ -256,7 +256,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  var busy = state.construction_shipments.size()+state.stone.shipments.size()+ExportTrade.busy(state)
  for s in state.delivery.shipments:
   if s.mode=="truck": busy+=1
- var free = maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size()) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-busy)
+ var free = maxi(0,CentralLogistics.construction_fleet_size(state)-state.construction_shipments.size()) if CentralLogistics.active(state) else maxi(0,int(state.trucks)-busy)
  if free<=0: return 0
  var jobs = state.jobs.duplicate()
  jobs.sort_custom(func(a,b): return int(a.get("priority",false))>int(b.get("priority",false)))
@@ -291,7 +291,7 @@ static func dispatch(state: Dictionary, only_job: int = -1) -> float:
  return result
 
 static func dispatch_network(state: Dictionary,only_job: int=-1) -> float:
- var free=maxi(0,CentralLogistics.fleet_size(state)-state.construction_shipments.size())
+ var free=maxi(0,CentralLogistics.construction_fleet_size(state)-state.construction_shipments.size())
  if free<=0: return 0.0
  var result=0.0
  var active={}

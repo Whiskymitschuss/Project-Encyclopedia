@@ -28,7 +28,7 @@ static func synchronize(state: Dictionary) -> void:
 static func source_limit(state: Dictionary,source: Dictionary,key: String) -> float:
  if str(source.get("owner",""))=="line": return DeliveryChain.capacity(state,str(source.kind))
  if str(source.get("owner",""))=="mineral": return StoneIndustry.capacity(state,int(source.index))
- return 64+int(state.buildings[int(source.index)].level)*8
+ return CentralLogistics.output_capacity(state,int(source.index))
 
 static func age(state: Dictionary,id: String) -> float:
  return maxf(0,float(state.elapsed)-float(state.hub.get("waiting",{}).get(id,state.elapsed)))
@@ -52,7 +52,7 @@ static func pickup_tasks(state: Dictionary) -> Array:
    if depot.is_empty(): continue
    var id="p:%06d:%s:%s" % [int(source.index),str(source.get("owner","output")),key]
    var limit=source_limit(state,source,key)
-   var capacity=CentralLogistics.pickup_capacity(state,key)
+   var capacity=CentralLogistics.pickup_capacity(state,key,int(source.index),int(depot.index))
    var need=DepotNetwork.current_need(state,key)
    var score=age(state,id)+minf(1,quantity/maxf(1,limit))*24+(24 if need>0 else 0)
    # Empty wood shelves get prompt service; this is a bonus, never an absolute
@@ -67,6 +67,7 @@ static func supply_tasks(state: Dictionary,preferred: int=-1) -> Array:
   var needs=FactorySupply.requirements(state,i)
   if needs.is_empty() or state.buildings[i].get("paused",false) or (DeliveryChain.owns(state,i) and state.delivery.paused): continue
   for key in needs:
+   if FactorySupply.incoming(state,i,key)>0.00001: continue
    var available=float(FactorySupply.stock(state,i).get(key,0))+FactorySupply.incoming(state,i,key)
    var capacity=FactorySupply.capacity(state,i)
    if capacity-available<0.25 or (i!=preferred and FactorySupply.queued(state,i,key)<=0 and available>=maxf(float(needs[key])*2,capacity*0.5)): continue
@@ -77,7 +78,7 @@ static func supply_tasks(state: Dictionary,preferred: int=-1) -> Array:
    var score=age(state,id)+maxf(0,1-available/capacity)*24
    for product in outputs(state,i):
     if DepotNetwork.current_need(state,product)>0: score+=20; break
-   result.append({"id":id,"class":"supply","origin":int(source.index),"destination":i,"key":key,"amount":minf(capacity-available,minf(CentralLogistics.pickup_capacity(state,key),float(source.available))),"stock":source.stock,"target":"factory","score":score,"ready":true})
+   result.append({"id":id,"class":"supply","origin":int(source.index),"destination":i,"key":key,"amount":minf(capacity-available,minf(CentralLogistics.pickup_capacity(state,key,int(source.index),i),float(source.available))),"stock":source.stock,"target":"factory","score":score,"ready":true})
  return result
 
 static func regional_tasks(state: Dictionary) -> Array:

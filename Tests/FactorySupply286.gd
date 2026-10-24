@@ -49,11 +49,11 @@ func run() -> void:
  for i in 400: CentralLogistics.tick(s,1)
  check(float(FactorySupply.stock(s,5).get(key,0))>0,"Local factory receives stock only after actual unload")
  s.hub.requests=[]
- var boards=s.resources.boards
- var dry=s.resources.dry
+ var boards=float(s.resources.boards)+FactorySupply.incoming(s,5,"boards")
+ var dry=float(s.resources.dry)+FactorySupply.incoming(s,5,"dry")
  game.step(1)
  check(float(game.flow.get("building:5",0))>0,"Generic factory consumes its delivered local ingredients")
- check(float(s.resources.boards)==float(boards) and float(s.resources.dry)==float(dry),"Local production never also consumes warehouse ingredients")
+ check(absf(float(s.resources.boards)+FactorySupply.incoming(s,5,"boards")-boards)<0.00001 and absf(float(s.resources.dry)+FactorySupply.incoming(s,5,"dry")-dry)<0.00001,"Local production never also consumes warehouse ingredients; new real supply cargo remains accounted for")
  check(float(UXRules.material_stock(s,"furniture").stored)+float(UXRules.material_stock(s,"furniture").transit)>0,"Result is a real collectable factory output")
  check(game.production_status(5).contains("Läuft") and ProductionPresentation.describe(game,5).kind=="running","Status and visual workers use the same local inventory")
  # Resume through the real save migration, including queued requests and cargo.

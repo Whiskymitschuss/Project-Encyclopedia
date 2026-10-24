@@ -41,7 +41,9 @@ static func owns(state: Dictionary, index: int) -> bool:
  return false
 
 static func capacity(state: Dictionary, kind: String) -> float:
- var level = int(state.buildings[int(state.delivery.nodes[kind])].level)
+ var index=int(state.delivery.nodes[kind])
+ if LogisticsDispatch.enabled(state): return TransportCapacity.buffer(state,index)
+ var level = int(state.buildings[index].level)
  return minf(48,4+level*2)
 
 static func general_busy(state: Dictionary) -> int:

@@ -1,0 +1,21 @@
+Timber Loot Tycoon · 0.28.15-alpha.1 · Transport und Werkspuffer
+
+Als Update über die vorhandene App installieren. Nicht deinstallieren und
+keine App-Daten löschen. Gleiche Paketkennung und bisheriges Testzertifikat.
+Android-Code 3010.
+
+Die fertiggestellte Zentrale startet im einheitlichen Netz mit fünf Lager-LKW.
+Werkspuffer, Ladungen und Umschlagleistung sind verbessert. Bereits laufende
+Fahrten behalten ihren ursprünglichen Zeitplan und ihre wirkliche Ladung.
+
+Zusätzliche Lager-LKW: Logistik oder Garage → LAGER-LKW KAUFEN.
+Mehr Stellplätze: Garage bauen/ausbauen. Maximal 16 Lager-LKW aktiv.
+Allgemeine Fernhandels-LKW sind eine getrennte Kaufentscheidung.
+
+Einzelnes Werk: Betrieb öffnen → Details → TRANSPORT AUSBAUEN.
+Vier bezahlte Stufen vergrößern Puffer und Ladung und verbessern den Umschlag.
+Vorhandene Waren werden nicht gratis aufgefüllt.
+
+Wartender Nachschub stoppt keine Produktion mit eigenem Vorrat. Fehlen Zutaten,
+eine Straße oder freier Lagerplatz, muss der tatsächliche Engpass gelöst werden.
+Die Testsimulation ist kein Beleg für Wärmeverhalten auf einem echten Handy.

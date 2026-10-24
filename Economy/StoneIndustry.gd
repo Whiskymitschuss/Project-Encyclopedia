@@ -21,6 +21,7 @@ static func synchronize(state: Dictionary) -> void:
   state.stone.sites[str(i)]={"stock":{"rock":0.0,"stone":0.0,"gravel":0.0},"reserve":float(deposit),"vein_size":float(deposit),"veins":1,"bucket":0.0,"phase":0,"phase_work":0.0,"recipe":"blocks","batch":{},"mined":0.0,"cycles":0}
 
 static func capacity(state: Dictionary, index: int) -> float:
+ if LogisticsDispatch.enabled(state): return TransportCapacity.buffer(state,index)
  return 8.0+int(state.buildings[index].level)*4.0
 
 static func warehouse_capacity(state: Dictionary) -> float:

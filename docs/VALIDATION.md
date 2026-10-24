@@ -1,3 +1,22 @@
+## Werkstransport und größerer Fuhrpark · 0.28.15-alpha.1
+
+39 numerische Headless-Suiten mit 21.064 Prüfungen, zwei natürliche
+Fortschrittsszenarien und beide Szenenstarts bestanden. Zwölf relevante
+OpenGL-Suiten mit 318 Prüfungen kontrollieren tatsächliche Kaufaktionen,
+Werksvorräte, Logistik, Holzabholung, kleine/große Schrift, Titel/Tutorial und
+eine kalte Acht-Stunden-Nachrechnung. [Quellprüfbericht](alpha1-throughput/automated-checks.json).
+
+Die neue generierte Vergleichsfirma produziert in 1.200 simulierten Sekunden
+647,33 statt 36 Bretter und verkauft 74 statt 22 Möbel. Das Sägewerk arbeitet
+1.020 statt 90 Sekunden. Keine manuelle Warenanforderung oder Fäll-/Ablieferaktion.
+Die vollständige generische Kette bis Wänden und Dächern erhält ihre Materialbilanz;
+16 Fahrzeuge behalten sichere Straßen-/Ladeplatzreservierungen. Fahrzeugkauf wird
+nicht zugleich als zweites Fahrzeug der Baustellen- oder Exportflotte verbucht.
+Geänderte ältere Vollpuffer-Fixtures füllen nun die tatsächlich größere Kapazität.
+
+Desktop-Prüfungen mit generierten Profilen; kein privater Handyspielstand,
+kein Android-Gerätelauf und keine Temperaturmessung.
+
 ## Externe Downloads Neuer Spielstart · 0.28.14 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.14-alpha.1` vollständig per
