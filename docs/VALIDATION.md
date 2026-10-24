@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.12-alpha.1
+
+7990 Headless- und 570 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Eingeschlossen sind tatsächliche Zwischenpuffer, parallele Linien,
+alle zehn Bauformen, Pflanzwege, Wiederaufforstung, Transporte und Bauteams.
+[Paketprüfbericht](alpha1-werkshof/packaged-checks.json).
+
+APK-SHA256 `f47d07cfd0fbf8fdc7eefe3d10200bc294d9ea521496867b479253be4256c3ca`. Quellstand `b40d306008d855a97289d92462a71180a0dc4582`.
+Paket, Versionscode 3007, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Holzwerkshof und Wiederaufforstung · 0.28.12-alpha.1
 
 21.015 numerische Headless-Prüfungen in 37 Modulen, zwei natürliche Fortschritts-

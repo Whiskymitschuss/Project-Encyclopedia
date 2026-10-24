@@ -1,4 +1,29 @@
-# Aktuell: Leistung und Holzproduktionsstraße · 0.28.11-alpha.1
+# Aktuell: Holzwerkshof und Wiederaufforstung · 0.28.12-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.12-alpha.1/releases/Timber-Loot-Tycoon-v0.28.12-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.12-alpha.1/releases/Timber-Loot-Tycoon-v0.28.12-Werkshof-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.12-source.zip) · [Änderungen und Grenzen](../docs/CAMPUS-2812.md)
+
+Ein verbundener Holzwerkshof, zehn baulich unterschiedliche Sägewerkformen,
+Entrinden → Sägen → Hobeln, bis zu drei tatsächlich eingerichtete Linien und
+Biber-Baumpflanzer mit echten Wegen und gespeicherten Jungbäumen sind in der
+Hauptwelt integriert. Neue Werkshöfe und zusätzliche Linien verwenden bezahlte
+Baustellen mit realen Materiallieferungen und angekommenen Bauteams. Die bestehende
+Stadt und ihre Lager-/Express-Logistik bleiben erhalten.
+
+Android-Code **3007**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+21015 Headless- und 1126 OpenGL-Prüfungen des Quellstands;
+zusätzlich 7990 Headless- und 570 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-werkshof/automated-checks.json).
+
+APK-Quellstand `b40d306008d855a97289d92462a71180a0dc4582`. Quell-ZIP: 725 Dateien gegen Git geprüft;
+Testerpaket: 7 geprüfte Einträge. Signaturschlüssel außerhalb von Git.
+
+## Vorher: Leistung und Holzproduktionsstraße · 0.28.11-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.11-alpha.1/releases/Timber-Loot-Tycoon-v0.28.11-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.11-alpha.1/releases/Timber-Loot-Tycoon-Alpha-1-Holzlinie-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.11-source.zip) · [Änderungen und Grenzen](../docs/TIMBERLINE-2811.md)
