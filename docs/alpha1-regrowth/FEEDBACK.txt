@@ -1,0 +1,8 @@
+Version: 0.28.17-alpha.1
+Handymodell / Android:
+Wald / Helfer / Werkzeug / Forschung / Booster:
+Automatische oder manuelle Pflanzzuweisung:
+Erntereife Bäume / Jungbäume / Pflanzstellen / Countdown:
+Holzbestand vorher / nachher:
+Beobachtete Zeit vom Pflanzen bis zum erneuten Fällen:
+Sind Pflanzer sichtbar und ist der Waldgang frei?

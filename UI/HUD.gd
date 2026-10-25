@@ -882,7 +882,7 @@ func team_menu() -> void:
  var box = card("%s / %s Arbeiter" % [int(Game.state.workers),Game.worker_capacity()],"Helfer fällen und liefern Holz automatisch. Hütten und Stadtbewohner schaffen zusätzlichen Wohnraum. Forschungsboni erhöhen die Leistung.")
  dynamic_text(box,func(): return ForestryFlow.team_status(Game.state,Game.flow))
  button(box,"HOLZFÄLLER ANSEHEN",func(): focus_requested.emit(ForestryFlow.work_position(Game.state)); close_menu())
- var planting=card("Biber-Baumpflanzer","Das Pflanzteam stammt aus deinen eingestellten Helfern. Es pflanzt echte abgeerntete Stellen nach; während Hinweg, Pflanzen und Rückkehr sind diese Biber keine Holzfäller. Jungbäume wachsen anschließend selbständig heran.")
+ var planting=card("Biber-Baumpflanzer","Das Pflanzteam stammt aus deinen eingestellten Helfern. Es pflanzt echte abgeerntete Stellen nach; während Hinweg, Pflanzen und Rückkehr sind diese Biber keine Holzfäller. Jungbäume sind nach 45 Sekunden erntereif. Die Automatik verstärkt bei kahlem Wald das Pflanzteam und gibt die Helfer anschließend wieder zum Fällen frei.")
  dynamic_text(planting,func(): return ForestCycle.status(Game.state))
  var allocation=row(planting)
  button(allocation,"Automatisch",func(): action(func(): Game.assign_planters(-1)))

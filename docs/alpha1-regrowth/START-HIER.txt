@@ -1,0 +1,13 @@
+Timber Loot Tycoon · 0.28.17-alpha.1 · Wiederaufforstung
+
+Als Update installieren. Nicht vorher deinstallieren und keine App-Daten löschen.
+Gleiches Paket und bisheriges Testzertifikat, Android-Code 3012.
+
+Neu: 45 statt 90 Sekunden Wachstum nach dem Pflanzen. Die Automatik verstärkt
+bei kahlem Wald das vorhandene Pflanzteam. Neue Pflanzmissionen laufen zügiger.
+Bereits gewachsene Zeit alter Jungbäume bleibt angerechnet. Keine Gratiswaren.
+
+Unter Team → Biber-Baumpflanzer den aktuellen Bestand und den nächsten
+Erntezeitpunkt ansehen. Bei bewusst ausgeschalteten Pflanzern „Automatisch“
+wählen. Manuelle Zuweisungen werden durch das Update nicht überschrieben.
+Ein blockierter Waldgang muss frei bleiben, damit Biber ihn benutzen können.

@@ -124,10 +124,10 @@ func run() -> void:
   s.elapsed+=1;ForestCycle.tick(s,1)
  check(s.forest.planted==1 and s.forest.stands["0"].cells[str(int(task.cell))].state=="growing","The seedling appears only after the worker reaches and plants the actual site")
  var forest_saved=JSON.parse_string(encoded.stringify(s,"",true,true))
- for tick in 40: s.elapsed+=1;ForestCycle.tick(s,1)
+ for tick in int(ForestCycle.GROW_SECONDS/4): s.elapsed+=1;ForestCycle.tick(s,1)
  var forest_expected=s.forest.duplicate(true)
  game.restore(forest_saved);s=game.state
- for tick in 40: s.elapsed+=1;ForestCycle.tick(s,1)
+ for tick in int(ForestCycle.GROW_SECONDS/4): s.elapsed+=1;ForestCycle.tick(s,1)
  check(same(s.forest,forest_expected),"Active planting, return travel and seedling deadlines continue identically after a full-precision save")
  check(ForestCycle.take(s,0,100000)<timber*100,"Growing trees cannot be harvested as mature stock")
  var ready=float(s.forest.stands["0"].cells[str(int(task.cell))].ready_at)

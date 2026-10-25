@@ -44,7 +44,7 @@ func refresh() -> void:
   candidate.index=i
   candidate.left=4.5
   candidate.label.text=status.text
-  var tone={"paused":Color("53686c"),"full":Color("325e72"),"missing":Color("885b30")}[status.kind]
+  var tone={"paused":Color("53686c"),"full":Color("325e72"),"missing":Color("885b30"),"waiting":Color("647340")}.get(status.kind,Color("53686c"))
   var skin=world.hud.style(tone,10)
   skin.content_margin_top=5
   skin.content_margin_bottom=5

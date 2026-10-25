@@ -36,12 +36,15 @@ static func describe(state: Dictionary,index: int,flow: Dictionary={}) -> Dictio
  if state.buildings[index].get("paused",false): return {"kind":"paused","text":"Sammelstation pausiert","key":"wood"}
  if int(state.workers)<=0: return {"kind":"missing","text":"Keine Holzfäller eingestellt · Team öffnen","key":"wood"}
  var rate=float(flow.get("harvest:%s" % index,0))
+ var waiting=ForestCycle.wait_reason(state) if rate<=0 else ""
  if not CentralLogistics.active(state):
   if float(state.resources.wood)>=CentralLogistics.capacity(state)-0.00001: return {"kind":"full","text":"Holzlager voll · Holz verarbeiten oder verkaufen","key":"wood"}
+  if not waiting.is_empty(): return {"kind":"waiting","text":waiting,"key":"wood"}
   return {"kind":"running","text":"Baumpflanzer arbeiten · Holzfäller kehren zurück" if rate<=0 and ForestCycle.busy(state)>0 else "Holzfäller arbeiten · %.2f Holz/s" % rate,"key":""}
  var amount=float(state.hub.outputs.get(str(index),{}).get("wood",0))
  var maximum=CentralLogistics.output_capacity(state,index)
  var stock="Abholvorrat %s/%s Holz" % [Catalog.number(amount),maximum]
+ if amount<maximum-0.00001 and not waiting.is_empty(): return {"kind":"waiting","text":waiting+" · "+stock,"key":"wood"}
  if amount<maximum-0.00001: return {"kind":"running","text":("Baumpflanzer arbeiten · "+stock) if rate<=0 and ForestCycle.busy(state)>0 else "Holzfäller arbeiten · %.2f Holz/s · %s" % [rate,stock],"key":""}
  var center=CentralLogistics.depot(state)
  var reason="Wartet auf freien Lager-LKW"
@@ -92,5 +95,7 @@ static func overview(state: Dictionary,flow: Dictionary) -> String:
  if int(state.workers)<=0: return "Holzfäller im Team einstellen"
  if active==0: return "Sammelstation pausiert"
  if full==active: return "Wartet auf Holzabholung" if CentralLogistics.active(state) else "Holzlager voll"
+ var waiting=ForestCycle.wait_reason(state)
+ if not waiting.is_empty(): return waiting
  if ForestCycle.busy(state)>=int(state.workers): return "Baumpflanzer unterwegs"
  return ""

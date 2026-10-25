@@ -34,7 +34,7 @@ func sync_trees(falling: bool=false) -> void:
     if world.spatial_audio!=null: world.spatial_audio.cut(tree.point)
    var growth=1.0
    if stage=="stump": growth=0.001
-   elif stage=="growing": growth=lerpf(0.12,1,clampf(1-(float(state.ready_at)-float(Game.state.elapsed))/ForestCycle.GROW_SECONDS,0,1))
+   elif stage=="growing": growth=lerpf(0.12,1,clampf(1-(float(state.ready_at)-float(Game.state.elapsed))/float(state.get("grow_seconds",ForestCycle.LEGACY_GROW_SECONDS)),0,1))
    tree.regrow=maxf(0.01,float(state.get("ready_at",Game.state.elapsed+1))-float(Game.state.elapsed)) if stage!="mature" else 0.0
    for part in 3:
     var size_value=float(tree.scale)*(0.001 if tree.blocked else growth)
@@ -67,8 +67,10 @@ func update_planters(delta: float) -> void:
  var cutters=world.actors.get_children().filter(func(actor): return actor is TimberWorker and actor.role=="forester")
  for actor in cutters: actor.visible=true
  var keep_cutter=1 if int(Game.state.workers)>ForestCycle.busy(Game.state) else 0
- var visible_count=mini(1 if Game.state.quality==0 else 3,maxi(0,cutters.size()-keep_cutter))
- for i in mini(visible_count,tasks.size()): cutters[cutters.size()-1-i].visible=false
+ # A completely depleted stand has no felling worksite and therefore no
+ # cutter actors. Its actual planting tasks still need visible beavers.
+ var visible_count=mini(1 if Game.state.quality==0 else 3,mini(int(Game.state.workers),tasks.size()))
+ for i in mini(visible_count,maxi(0,cutters.size()-keep_cutter)): cutters[cutters.size()-1-i].visible=false
  for task in tasks.slice(0,visible_count):
   var id=int(task.id); ids[id]=true
   if not planters.has(id): planters[id]=pool.pop_back() if not pool.is_empty() else make_planter()

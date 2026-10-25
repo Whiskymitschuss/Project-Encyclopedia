@@ -14,4 +14,4 @@ func _process(delta: float) -> void:
  visible=PresentationBudget.detailed(self)
  if not visible or building_index<0 or building_index>=Game.state.buildings.size(): return
  status=ProductionPresentation.describe(Game,building_index).kind
- lens.material_override=Models.material({"missing":Color("df634b"),"full":Color("e7ad43"),"running":Color("61b982")}.get(status,Color("4b6370")),status in ["missing","full","running"])
+ lens.material_override=Models.material({"missing":Color("df634b"),"full":Color("e7ad43"),"waiting":Color("e7ad43"),"running":Color("61b982")}.get(status,Color("4b6370")),status in ["missing","full","waiting","running"])

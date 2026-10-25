@@ -1,0 +1,8 @@
+1. Update installieren, Spielstand und Waren prüfen.
+2. Team → Baumpflanzer: Automatisch aktivieren und Bestand/Countdown ansehen.
+3. Auf einem abgeernteten Bereich Pflanzen beobachten. Jungbäume werden erst
+   nach Ankunft und Arbeit des Bibers gesetzt, dann nach 45 Sekunden erntereif.
+4. Bereits vor dem Update wachsende Bäume behalten ihr bisheriges Alter.
+5. Holz entsteht erst beim Fällen, nicht beim Wachsen oder durch die Grafik.
+6. Speichern/Neustart; Pflanzmissionen, Alter und Bestände weiter prüfen.
+7. Kleine Anzeige und große Schrift: Teammenü muss scrollbar bleiben.

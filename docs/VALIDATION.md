@@ -1,3 +1,24 @@
+## Wiederaufforstung · 0.28.17-alpha.1
+
+41 numerische Headless-Suiten mit 21.272 Prüfungen, zwei natürliche
+Fortschrittsszenarien und beide Szenenstarts bestanden. 13 relevante OpenGL-Suiten
+mit 327 Prüfungen bestanden. [Quellprüfbericht](alpha1-regrowth/automated-checks.json).
+
+45-Sekunden-Jungbäume, dynamische automatische Pflanzzuweisung, unveränderte
+manuelle Zuweisung, echte Pflanzwege und Migration alter Wachstumsfristen geprüft.
+Ein zunächst abgeernteter Eichenwald kehrt innerhalb 70 Sekunden zu ersten
+reifen Bäumen zurück. Waldstress mit 8/31 Helfern über je 900 Sekunden behält
+mindestens 33/18 erreichbare erntereife Bäume nach der Einlaufphase und hat
+keine Sekunde ohne Ernte. Keine Warengutschrift durch Wachstum oder Rendering.
+
+Die tatsächliche Hauptwelt zeigt Pflanzer auch ohne verbliebene Holzfällerfiguren,
+kleine Jungbäume und erst nach Ablauf vollständige Baumgeometrie. Teammenü mit
+kleiner/großer Schrift, Produktionsanzeigen, Waldzugänge, Logistik und kalter
+Start sind eingeschlossen. [Änderungen und Bilder](REGROWTH-2817.md).
+
+Generierte Testprofile, kein privater Handyspielstand und kein physischer
+Android-/Hitzetest. Die vollständige frühere Masterliste bleibt offen.
+
 ## Externe Downloads Weltgestaltung · 0.28.16 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.16-alpha.1` vollständig per

@@ -2,7 +2,22 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.16-alpha.1 · Einheitlicher Weltstil
+## Aktuell: 0.28.17-alpha.1 · Wiederaufforstung
+
+45 statt 90 Sekunden Wachstum nach echtem Pflanzen. Bei kahlem Wald reserviert
+die Automatik mehr der vorhandenen Helfer zur Aufforstung. Neue Pflanzmissionen
+laufen zügiger; alte Jungbäume behalten ihr bisheriges Alter. Fäll- und Pflanzzugang
+verwenden dieselben geprüften Waldgänge. Das Teammenü und die Welt erklären
+den tatsächlichen Nachwuchs und den nächsten Erntezeitpunkt. Keine Gratiswaren.
+
+[Änderungen und Waldmessung](docs/REGROWTH-2817.md) ·
+[Installation](docs/alpha1-regrowth/START-HIER.txt) · [Downloads](releases/README.md).
+Grafikstand, Inventare und manuelle Zuweisungen bleiben erhalten. Android-Code
+**3012**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein physischer Android-/Hitzetest; die vollständige frühere Masterliste bleibt offen.
+
+## Vorher: 0.28.16-alpha.1 · Einheitlicher Weltstil
 
 Gemeinsame Farben und Materialien für die vorhandene Welt. Offene Holzrahmenhallen
 und Berufsschilder ergänzen die Produktionswerke; Zentrallager und Abhol-Express
