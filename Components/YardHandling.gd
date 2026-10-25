@@ -29,7 +29,7 @@ func _ready() -> void:
  chassis=Node3D.new()
  chassis.scale=Vector3.ONE*0.75
  add_child(chassis)
- Models.box(chassis,Vector3(1.5,0.9,2),Vector3(0,0.85,0),Color("efad31"))
+ Models.soft_box(chassis,Vector3(1.5,0.9,2),Vector3(0,0.85,0),Color("efad31"))
  Models.box(chassis,Vector3(1.2,0.6,0.6),Vector3(0,1.5,-0.6),Color("363c46"))
  for x in [-0.64,0.64]:
   for z in [-0.65,0.65]:

@@ -107,7 +107,7 @@ static func create(kind: String, level: int) -> Node3D:
    Models.cylinder(root,0.65,0.25,Vector3(x,8.6,-1),DARK)
  elif kind in ["furniture","design","joinery","prefab"]:
   planks(feed,Vector3.ZERO,3)
-  var tone=Color("b876c2") if kind=="design" else BLUE
+  var tone=TycoonStyle.family(kind)
   block(root,Vector3(5.4,1.3,4.5),Vector3(0,1.3,0),tone)
   block(root,Vector3(5.6,0.3,4.7),Vector3(0,2.1,0),STEEL)
   for x in [-2.3,2.3]: block(root,Vector3(0.45,3.7,0.5),Vector3(x,3.4,-1),tone)

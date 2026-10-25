@@ -1,0 +1,19 @@
+Timber Loot Tycoon · 0.28.16-alpha.1 · Einheitlicher Weltstil
+
+Als Update über die vorhandene App installieren. Nicht deinstallieren und
+keine App-Daten löschen. Gleiche Paketkennung und bisheriges Testzertifikat.
+Android-Code 3011.
+
+Neu: abgestimmte Weltmaterialien, offene Werkhallen, Verladefassaden und ein
+neu aufgebautes Rathaus in zehn Stufen. Abgeschrägte Fahrzeugkarosserien,
+Biber-Berufskleidung, Straßen-/Bodenfarben und Menüoberflächen sind abgestimmt.
+Der bereits vorhandene Vollbild-Spielstart bleibt erhalten.
+
+Waren und gekaufte Transportausbauten bleiben bestehen. Hallendachbuchten
+schenken keine zusätzlichen Produktionslinien; die vorhandenen Linienkäufe
+und tatsächlichen Transportvorgänge bleiben maßgeblich.
+
+Das Designbuch zeigt echte Bilder aus der Hauptwelt mit einer Testfirma.
+Bestehende übrige Stadthäuser erhalten die neue Materialrichtung; ihre
+Architekturformen sind nicht sämtlich neu modelliert. Die volle frühere
+Masterliste ist damit nicht abgeschlossen.

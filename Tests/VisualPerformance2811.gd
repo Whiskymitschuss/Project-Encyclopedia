@@ -61,7 +61,7 @@ func run() -> void:
  beacon._process(0.6)
  check(beacon.status=="missing","The real warning lamp identifies missing input")
  s.hub.inputs["1"].wood=30
- s.hub.outputs["1"].boards=72
+ s.hub.outputs["1"].boards=CentralLogistics.output_capacity(s,1)
  beacon._process(0.6)
  check(beacon.status=="full","The real warning lamp identifies a full output rack")
  s.buildings[1].paused=true
@@ -116,10 +116,11 @@ func run() -> void:
  root.get_texture().get_image().save_png("/workspace/timber2811-sawmill.png")
  scene.queue_free(); await process_frame
  before=s.duplicate(true)
+ game.title_requested=true
  var boot=load("res://Scenes/Boot.tscn").instantiate()
  root.add_child(boot)
  await settle()
- check(boot.returning and not boot.diorama.animated and boot.diorama.viewport.process_mode==Node.PROCESS_MODE_DISABLED,"A returning company draws a static intro without running its decorative 3D controllers")
+ check(boot.returning and boot.logo.texture!=null and boot.find_children("*","SubViewport",true,false).is_empty(),"A returning company uses the original static beaver cover without a decorative 3D renderer")
  check(s==before,"The static returning intro cannot modify the real company")
  boot.queue_free(); await process_frame
  print("VISUAL PERFORMANCE 2811: %s checks, %s failures" % [checks,failures.size()])

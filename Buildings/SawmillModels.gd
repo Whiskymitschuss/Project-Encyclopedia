@@ -1,13 +1,13 @@
 class_name SawmillModels
 extends RefCounted
-const BLUE=Color("328db8")
+const BLUE=TycoonStyle.TEAL
 const WOOD=Color("bd874d")
 const CREAM=Color("fff0d2")
 const STEEL=Color("9bb9bd")
 const STAGES=["Forsthütte","Entrinderwerkstatt","Bretterhof","Doppellinienhalle","Industriesägewerk","Technikflügel","Dreilinienhalle","Hallenverbund","Automatikwerk","Biber-Leitwerk"]
 
 static func box(root: Node3D,size: Vector3,at: Vector3,color: Color) -> MeshInstance3D:
- return Models.box(root,size,at,color)
+ return Models.soft_box(root,size,at,color)
 static func create(level: int) -> Node3D:
  var n=clampi(level,1,10)
  var root=Node3D.new()
@@ -46,6 +46,7 @@ static func create(level: int) -> Node3D:
  transfer_belt(root,level)
  var beacon=load("res://Components/ProductionBeacon.gd").new(); beacon.name="ProductionBeacon"; beacon.position=Vector3(-5.1,2.1,1.5); root.add_child(beacon)
  architecture(root,n)
+ TycoonArchitecture.workshop(root,"sawmill",n)
  var anchors=Node3D.new(); anchors.name="Connections"; root.add_child(anchors)
  for entry in [["VehicleEntry",Vector3(0,0.6,10.5)],["Loading",Vector3(6.3,0.6,5.5)],["Unloading",Vector3(-6.3,0.6,-4.5)],["Worker",Vector3(-1.65,0.6,0)]]:
   var marker=Marker3D.new(); marker.name=entry[0]; marker.position=entry[1]; anchors.add_child(marker)

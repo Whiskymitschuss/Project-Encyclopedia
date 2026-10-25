@@ -1,0 +1,9 @@
+Version: 0.28.16-alpha.1
+Handymodell / Android:
+Grafikprofil:
+Spielstand, Waren und Ausbauten erhalten:
+Betroffenes Gebäude / Stufe / Fahrzeug:
+Farben und Erkennbarkeit:
+Sichtbare Überschneidung oder verdeckte Animation:
+Menülesbarkeit und Touch:
+Beobachtete Wärme / Startdauer:

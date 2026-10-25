@@ -1,0 +1,12 @@
+1. Update installieren und vorhandene Firma, Waren und Transportausbauten prüfen.
+2. Sägewerk und Möbel-/Trocknungswerke ansehen: farbige Dächer und Holzrahmen,
+   sichtbare Maschinen, Biber und unveränderte Materialbewegungen.
+3. Zentrallager und Abhol-Express: neue Fassade, weiterhin fahrende Stapler,
+   Lade-/Entladevorgänge und freie Zufahrten.
+4. Rathaus auf vorhandener Stufe ansehen; bei einem regulären späteren Ausbau
+   die neue Architektur prüfen. Es darf kein Gratisupgrade stattfinden.
+5. Fahrzeuge/Fahrer, Gehwege und Straßen auf Überschneidungen prüfen.
+6. Kleine Schrift/große Schrift und kleine Anzeige: Menütexte und Aktionen
+   müssen per Touch und Scrollen erreichbar bleiben.
+7. Standard/Akkumodus vergleichen. Beobachtete Wärme und Leistung am Handy
+   berichten; Desktopprüfungen sind kein echter Gerätetest.

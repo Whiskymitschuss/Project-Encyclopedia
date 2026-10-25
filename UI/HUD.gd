@@ -6,11 +6,11 @@ signal placement_requested(request: Dictionary)
 signal placement_action(action: String)
 
 const INK = Color("533b30")
-const PANEL = Color("c97234")
-const GOLD = Color("ffd06d")
+const PANEL = TycoonStyle.COPPER
+const GOLD = Color("f4c56b")
 const CREAM = Color("fff8ed")
 const MUTED = Color("ebcdb0")
-const PAPER = Color("fff4df")
+const PAPER = TycoonStyle.PAPER
 const Surface = preload("res://UI/SculptedSurface.gd")
 var money: Label
 var diamonds: Label
@@ -80,9 +80,9 @@ func style(color: Color, radius: int = 18, pressed: bool = false) -> StyleBoxFla
  skin.bg_color=color.darkened(0.12) if pressed else color
  skin.set_corner_radius_all(radius)
  skin.set_border_width_all(1)
- skin.border_color=color.lightened(0.16)
+ skin.border_color=color.lightened(0.10)
  skin.shadow_color=Color(0.02,0.09,0.08,0.22)
- skin.shadow_size=3 if pressed else 6
+ skin.shadow_size=2 if pressed else 4
  skin.shadow_offset=Vector2(0,2)
  skin.content_margin_left=16
  skin.content_margin_right=16
@@ -394,6 +394,7 @@ func build_overlay() -> void:
  menu_back.tooltip_text="Zurück zum vorherigen Menü"
  menu_back.hide()
  modal_title = text(heading,"",23,GOLD)
+ modal_title.add_theme_font_override("font",preload("res://Assets/Fonts/Anton-Regular.ttf"))
  modal_title.max_lines_visible=2
  modal_title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
  modal_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL

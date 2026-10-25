@@ -7,6 +7,7 @@ static var materials: Dictionary = {}
 static var grain: ImageTexture
 
 static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
+ color=TycoonStyle.paint(color)
  var key = str(color)+str(glow)
  if materials.has(key): return materials[key]
  var result = StandardMaterial3D.new()
@@ -39,6 +40,13 @@ static func box(parent: Node3D, size: Vector3, at: Vector3, color: Color) -> Mes
  node.position = at
  parent.add_child(node)
  return node
+
+static func soft_box(parent: Node3D,size: Vector3,at: Vector3,color: Color) -> MeshInstance3D:
+ if minf(size.x,minf(size.y,size.z))>=0.3:
+  var node=crafted_box(parent,size,at,color,"paint",0.09)
+  node.material_override=material(color)
+  return node
+ return box(parent,size,at,color)
 
 static func crafted_box(parent: Node3D,size: Vector3,at: Vector3,color: Color,finish: String="plaster",radius: float=0.16) -> MeshInstance3D:
  var node=MeshInstance3D.new()
@@ -107,8 +115,9 @@ static func building(kind: String, level: int, city: bool = false) -> Node3D:
  if not city and (Catalog.RECIPES.has(kind) or kind in ["station","warehouse"]):
   return load("res://Buildings/FactoryModels.gd").create(kind,level)
  var root = Node3D.new()
+ root.set_meta("kind",kind)
  var definition = Catalog.HOMES[kind] if city else Catalog.BUILDINGS[kind]
- var tone = Color(definition.color)
+ var tone = TycoonStyle.family(kind) if not city else Color(definition.color)
  if Game.state.skin == "Modern": tone = tone.lerp(Color("82b2c3"),0.6)
  var floors = mini(1+int((level-1)/4.0),4)
  if not city and kind!="cabin": floors = 1
@@ -217,13 +226,16 @@ static func bake(root: Node3D) -> void:
  var old = []
  for child in root.get_children():
   if not child is MeshInstance3D or (child.name in ["Saw","Crane","SawdustFill"] or child.get_meta("animated",false)): continue
-  var key = child.material_override
-  if not batches.has(key):
-   var surface = SurfaceTool.new()
-   surface.begin(Mesh.PRIMITIVE_TRIANGLES)
-   surface.set_material(key)
-   batches[key] = surface
-  batches[key].append_from(child.mesh,0,child.transform)
+  for index in child.mesh.get_surface_count():
+   var key=child.material_override
+   if key==null: key=child.get_surface_override_material(index)
+   if key==null: key=child.mesh.surface_get_material(index)
+   if not batches.has(key):
+    var surface = SurfaceTool.new()
+    surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+    surface.set_material(key)
+    batches[key] = surface
+   batches[key].append_from(child.mesh,index,child.transform)
   old.append(child)
  for key in batches:
   var combined = MeshInstance3D.new()

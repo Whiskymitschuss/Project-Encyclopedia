@@ -15,7 +15,7 @@ const VARIANTS=[
  {"name":"Taro","fur":"584534","body":1.11,"head":Vector3(0.81,0.69,0.63),"ears":0.19,"tail":Vector2(0.58,0.85),"muzzle":0.35},
  {"name":"Sunny","fur":"d29b4c","body":0.97,"head":Vector3(0.72,0.68,0.58),"ears":0.24,"tail":Vector2(0.43,0.79),"muzzle":0.34},
  {"name":"Nova","fur":"89664f","body":1.02,"head":Vector3(0.78,0.72,0.55),"ears":0.23,"tail":Vector2(0.49,0.88),"muzzle":0.30}]
-const CLOTHES={"planter":Color("5c9945"),"forester":Color("f47e35"),"industry":Color("328bc2"),"logistics":Color("79ad50"),"civilian":Color("aa7bb5"),"fire":Color("29485f")}
+const CLOTHES={"planter":Color("5c9945"),"forester":TycoonStyle.COPPER,"industry":TycoonStyle.BLUE,"logistics":Color("79ad50"),"civilian":Color("aa7bb5"),"fire":Color("29485f")}
 static var scenes={}
 static var sphere_mesh: SphereMesh
 static var palette: StandardMaterial3D
@@ -78,10 +78,12 @@ static func build(id: int,profession: String,seated: bool) -> Node3D:
  ball(torso,Vector3.ZERO,Vector3(0.56*data.body,0.71,0.43),shirt)
  ball(torso,Vector3(0,0.11,0.33),Vector3(0.35*data.body,0.44,0.16),fur)
  if profession!="civilian":
-  for side in [-1,1]: Models.box(torso,Vector3(0.10,0.93,0.08),Vector3(side*0.35*data.body,0,0.40),Color("ffdf77"))
-  Models.box(torso,Vector3(1.03*data.body,0.10,0.09),Vector3(0,-0.29,0.44),Color("ffdf77"))
+  for side in [-1,1]: Models.box(torso,Vector3(0.10,0.93,0.08),Vector3(side*0.35*data.body,0,0.40),TycoonStyle.GOLD)
+  Models.box(torso,Vector3(1.03*data.body,0.10,0.09),Vector3(0,-0.29,0.44),TycoonStyle.GOLD)
  else:
   Models.box(torso,Vector3(0.65,0.13,0.12),Vector3(0,0.57,0.4),Color("7dc1ab"))
+ if profession in ["forester","logistics"]:
+  Models.crafted_box(torso,Vector3(0.7*data.body,0.30,0.13),Vector3(0,-0.43,0.41),TycoonStyle.BLUE,"paint",0.04)
  if profession=="industry":
   Models.box(torso,Vector3(1.12*data.body,0.15,0.85),Vector3(0,-0.45,0),Color("654b39"))
   Models.box(torso,Vector3(0.20,0.28,0.12),Vector3(0.4,-0.35,0.46),Color("b8c7c9"))
@@ -108,6 +110,8 @@ static func build(id: int,profession: String,seated: bool) -> Node3D:
   Models.cylinder(head,0.77,0.10,Vector3(0,0.55,0),Color("ffc643"))
   ball(head,Vector3(0,0.62,0),Vector3(0.64,0.31,0.57),Color("ffd45a"))
   Models.box(head,Vector3(0.11,0.18,0.92),Vector3(0,0.87,0),Color("ffe68c"))
+  Models.crafted_box(head,Vector3(0.26,0.22,0.05),Vector3(0,0.66,0.55),TycoonStyle.TIMBER_DARK,"paint",0.03)
+  for side in [-1,1]: Models.box(head,Vector3(0.06,0.11,0.06),Vector3(side*0.045,0.65,0.58),TycoonStyle.CREAM)
  var tail=part(root,"Tail",Vector3(0,0.53,-0.35))
  ball(tail,Vector3(0,0,-0.58),Vector3(data.tail.x,0.14,data.tail.y),fur.darkened(0.4))
  for row in [-1,0,1]:

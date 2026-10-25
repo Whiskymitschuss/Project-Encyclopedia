@@ -4,13 +4,14 @@ static func create(kind: String, level: int) -> Node3D:
  var root=Node3D.new()
  root.set_meta("open_factory",true)
  root.set_meta("kind",kind)
+ root.set_meta("design_version",TycoonStyle.VERSION)
  var quarry=kind=="quarry"
- Models.box(root,Vector3(19,0.35,23),Vector3(0,0.2,0),Color("c7b88d") if quarry else Color("b0c3bc"))
+ Models.soft_box(root,Vector3(19,0.35,23),Vector3(0,0.2,0),Color("c7b88d") if quarry else Color("b0c3bc"))
  for x in [-9,9]:
-  Models.box(root,Vector3(0.18,0.2,22),Vector3(x,0.45,0),Color("fff0bd"))
+  Models.soft_box(root,Vector3(0.18,0.2,22),Vector3(x,0.45,0),Color("fff0bd"))
   for z in [-10,-6,-2,2,6,10]:
-   Models.box(root,Vector3(0.22,1.3,0.22),Vector3(x,1.05,z),Color("738d87"))
- for z in [-10.5,10.5]: Models.box(root,Vector3(18,0.12,0.3),Vector3(0,0.45,z),Color("edc46c"))
+   Models.soft_box(root,Vector3(0.22,1.3,0.22),Vector3(x,1.05,z),Color("738d87"))
+ for z in [-10.5,10.5]: Models.soft_box(root,Vector3(18,0.12,0.3),Vector3(0,0.45,z),Color("edc46c"))
  var stock=Node3D.new()
  stock.name="Stock"
  stock.set_meta("animated",true)
@@ -30,25 +31,25 @@ static func create(kind: String, level: int) -> Node3D:
   excavator.position=Vector3(-2,0.5,-0.4)
   root.add_child(excavator)
   stock.position=Vector3(0,0.5,3)
-  Models.box(root,Vector3(4,1.1,5),Vector3(0,0.9,3),Color("727d76"))
-  Models.box(root,Vector3(3.7,0.15,4.7),Vector3(0,1.5,3),Color("ab9b72"))
+  Models.soft_box(root,Vector3(4,1.1,5),Vector3(0,0.9,3),Color("727d76"))
+  Models.soft_box(root,Vector3(3.7,0.15,4.7),Vector3(0,1.5,3),Color("ab9b72"))
   for i in 6: Models.cylinder(stock,0.85,1.2,Vector3((i%2)*1.1-0.5,1+(i/2)*0.25,(i%3)*0.9-0.9),Color("b9ae90"),0.4)
  else:
   var handler=load("res://Components/YardHandling.gd").new()
   handler.name="YardHandling"
   handler.points=[Vector3(-7,0.6,7),Vector3(6.6,0.6,7),Vector3(7,0.6,10),Vector3(-7,0.6,7),Vector3(-7,0.6,7)]
   root.add_child(handler)
-  Models.box(root,Vector3(5.5,3.3,5),Vector3(-1,2.2,-3),Color("e5954d"))
-  Models.box(root,Vector3(4.7,0.4,4.3),Vector3(-1,4,-3),Color("f8d077"))
+  Models.soft_box(root,Vector3(5.5,3.3,5),Vector3(-1,2.2,-3),Color("e5954d"))
+  Models.soft_box(root,Vector3(4.7,0.4,4.3),Vector3(-1,4,-3),Color("f8d077"))
   Models.cylinder(root,2,1.8,Vector3(-1,4.8,-3),Color("62898e"),2.7)
-  Models.box(root,Vector3(2.3,1.3,2.5),Vector3(-1,1.5,1),Color("b8ccc3"))
+  Models.soft_box(root,Vector3(2.3,1.3,2.5),Vector3(-1,1.5,1),Color("b8ccc3"))
   var rotor=Models.cylinder(root,1.25,0.5,Vector3(-1,2.6,-0.3),Color("547787"))
   rotor.rotation.z=PI/2
   rotor.name="Rotor"
   rotor.set_meta("animated",true)
-  Models.box(root,Vector3(1.5,1.4,1.1),Vector3(-5,1.4,0),Color("328f9b"))
-  Models.box(root,Vector3(1.2,0.6,0.1),Vector3(-5,2.2,0.6),Color("95e7c9"))
-  Models.box(root,Vector3(5,0.35,4.5),Vector3(5.8,0.6,4),Color("8b7856"))
+  Models.soft_box(root,Vector3(1.5,1.4,1.1),Vector3(-5,1.4,0),Color("328f9b"))
+  Models.soft_box(root,Vector3(1.2,0.6,0.1),Vector3(-5,2.2,0.6),Color("95e7c9"))
+  Models.soft_box(root,Vector3(5,0.35,4.5),Vector3(5.8,0.6,4),Color("8b7856"))
   var stones=Node3D.new()
   stones.name="StonePile"
   stock.add_child(stones)
@@ -56,7 +57,7 @@ static func create(kind: String, level: int) -> Node3D:
   stones.scale.x=0.75
   for y in 3:
    for x in 2:
-    for z in 3: Models.box(stones,Vector3(1.8,0.65,1),Vector3((x-0.5)*1.9,0.55+y*0.7,z*1.1-1.1),Color("d5ccb1"))
+    for z in 3: Models.soft_box(stones,Vector3(1.8,0.65,1),Vector3((x-0.5)*1.9,0.55+y*0.7,z*1.1-1.1),Color("d5ccb1"))
   Models.bake(stones)
   var gravel=Node3D.new()
   gravel.name="GravelPile"

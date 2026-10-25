@@ -1,3 +1,21 @@
+## Einheitlicher Weltstil · 0.28.16-alpha.1
+
+40 numerische Headless-Suiten mit 21.251 Prüfungen, zwei natürliche
+Fortschrittsszenarien und beide Szenenstarts bestanden. Alle 31 OpenGL-Suiten
+mit 1.181 Prüfungen bestanden. [Quellprüfbericht](alpha1-style/automated-checks.json).
+
+Die tatsächliche Hauptwelt zeigt neue Holzwerkhallen, Lagerfassaden und zehn
+neue Rathauszustände. Geometriegrenzen, freie Ladewege, Materialien nach erneutem
+Batching, vorhandene Maschinen-/Staplerknoten, zehn Bibervarianten, Fahrer und
+Menüs mit kleiner/großer Schrift sind eingeschlossen. Bilder stehen im
+[Designbuch](DESIGN-2816.md). Eine veraltete Vollpuffer-Fixture verwendet jetzt
+die aktuelle Transportkapazität; die Startprüfung prüft das vorhandene Vollbildmotiv.
+
+Die Wirtschaft bleibt unverändert: dieselbe generierte Firma erzeugt in 1.200
+simulierten Sekunden 647,33 Bretter und verkauft 74 Möbel. Keine privaten
+Handyspielstände und kein physischer Android-/Hitzetest. Die frühere komplette
+Masterliste ist nicht abgeschlossen; andere Stadtbaukörper behalten ihre Architektur.
+
 ## Externe Downloads Werkstransport · 0.28.15 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.15-alpha.1` vollständig per

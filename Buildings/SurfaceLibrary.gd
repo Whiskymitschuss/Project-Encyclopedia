@@ -17,13 +17,13 @@ static func texture(kind: String) -> ImageTexture:
    var value=0.96+noise_value*0.04
    if kind=="timber":
     value=0.9+sin(y*0.55+sin(x*0.12)*1.5)*0.035+noise_value*0.055
-    if y%16==0: value=0.76
+    if y%16==0: value=0.86
    elif kind=="paving":
     if y%16==0 or posmod(x+(8 if (y/16)%2==0 else 0),16)==0: value=0.82
    elif kind=="roof":
     value=0.91+noise_value*0.04
-    if y%16<2: value=0.77
-    if posmod(x+(8 if (y/16)%2==0 else 0),16)==0: value*=0.92
+    if y%16<2: value=0.86
+    if posmod(x+(8 if (y/16)%2==0 else 0),16)==0: value*=0.97
    image.set_pixel(x,y,Color(value,value,value))
  image.generate_mipmaps()
  var result=ImageTexture.create_from_image(image)
@@ -31,6 +31,7 @@ static func texture(kind: String) -> ImageTexture:
  return result
 
 static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
+ color=TycoonStyle.paint(color)
  var key=str(color)+kind
  if materials.has(key): return materials[key]
  var mat=StandardMaterial3D.new()

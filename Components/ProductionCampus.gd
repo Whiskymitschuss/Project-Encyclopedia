@@ -3,8 +3,8 @@ extends RefCounted
 
 # Presentation only: the saved street graph, lots and freight routes stay authoritative.
 const YARD=Rect2(-64,-58,128,128)
-const CONCRETE=Color("b9b2af")
-const SAND=Color("d7bb95")
+const CONCRETE=TycoonStyle.CONCRETE
+const SAND=TycoonStyle.SAND
 
 static func inside(point: Vector3) -> bool:
  return YARD.has_point(Vector2(point.x,point.z))
@@ -29,7 +29,7 @@ static func build(parent: Node3D,ctx: Dictionary) -> void:
  for biome in 10:
   var p=Catalog.biome_position(biome)
   Models.paving_box(yard,Vector3(76,0.05,66),p+Vector3(0,0.46,0),SAND,"plaster",2)
-  Models.paving_box(yard,Vector3(69,0.07,59),p+Vector3(0,0.56,0),Color(Catalog.BIOMES[biome].ground).lerp(Color("98ce65"),0.55),"plaster",1.8)
+  Models.paving_box(yard,Vector3(69,0.07,59),p+Vector3(0,0.56,0),Color(Catalog.BIOMES[biome].ground).lerp(Color("8fbc70"),0.55),"plaster",1.8)
   # The working front is completely open. Fences mark the rear boundary;
   # no rail separates the near tree rows from their log-collection apron.
   for x in range(-32,33,8):

@@ -43,5 +43,6 @@ static func create(kind: String,level: int) -> Node3D:
  stock.name="DepotStock"
  root.add_child(stock)
  InfrastructureEvolution.add_to(root,kind,level)
+ TycoonArchitecture.depot(root,kind,level)
  Models.bake(root)
  return root

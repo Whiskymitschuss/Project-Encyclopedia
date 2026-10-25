@@ -55,6 +55,7 @@ static func create(kind: String,level: int,skin: String = "Rustikal") -> Node3D:
  var n=clampi(level,1,10)
  var root=Node3D.new()
  root.set_meta("town_kind",kind)
+ root.set_meta("design_version",TycoonStyle.VERSION)
  root.set_meta("evolution_level",n)
  root.set_meta("stage_name",TownEvolution.title(kind,n))
  var tone=Color("e65d4b") if kind=="fire" else Color(Catalog.HOMES[kind].color)
@@ -67,27 +68,8 @@ static func create(kind: String,level: int,skin: String = "Rustikal") -> Node3D:
  var top=6.0
  match kind:
   "townhall":
-   slab(root,10,9,h,tone,0,-2)
-   facade(root,10,9,f,CREAM,0,-2)
-   door(root,0,2.7,DARK)
-   roof(root,11,10,h+1.6,0,-2,Color("bc7154"))
-   var tower_h=h+3.5+n*0.3
-   slab(root,3.2,3.5,tower_h,CREAM,0,-2)
-   roof(root,3.6,3.8,tower_h+1.5,0,-2,Color("438296"))
-   Models.cylinder(root,0.8,0.15,Vector3(0,tower_h-0.2,-0.12),DARK).rotation.x=PI/2
-   box(root,Vector3(0.1,0.65,0.15),Vector3(0,tower_h,-0.02),CREAM)
-   box(root,Vector3(0.48,0.1,0.15),Vector3(0.2,tower_h-0.2,-0.02),CREAM)
-   if n>=3:
-    for x in [-5.8,5.8]:
-     slab(root,3.3,7,2.7*maxi(1,int(n/3.0)),tone.lightened(0.1),x,-1)
-     facade(root,3.3,7,maxi(1,int(n/3.0)),CREAM,x,-1)
-   for x in [-4,4]:
-    Models.cylinder(root,0.1,4+n*0.1,Vector3(x,2.4+n*0.05,7),DARK)
-    box(root,Vector3(1.4,0.9,0.12),Vector3(x+0.65,4+n*0.1,7),Color("f7c95c"))
-   for step in 3: box(root,Vector3(6+step,0.18,1.6),Vector3(0,0.6-step*0.1,4.7+step*0.7),CREAM)
-   if n>=5:
-    for x in [-6,6]: Props.bench(root,Vector3(x,0,8.7))
-   top=maxf(h+3.6,tower_h+3)
+   top=TycoonArchitecture.townhall(root,n,skin)
+   f=2 if n>=7 else 1
   "apartments","office","hotel":
    var width=10.0+n*0.2 if kind=="hotel" else 11.0 if n<6 else 10.0
    slab(root,width,9,h,tone,-1,-2)

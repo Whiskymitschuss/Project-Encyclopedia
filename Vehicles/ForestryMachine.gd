@@ -25,10 +25,10 @@ func _ready() -> void:
  var giant = tier>=13
  var color = Color("efb93e") if tier<12 else Color("ef8e42") if tier==12 else Color("dcb64d") if tier==13 else Color("6dc9db")
  var length = 4.8 if tier==10 else 6.6 if not giant else 7.4
- Models.box(self,Vector3(3.4,0.9,length),Vector3(0,1.3,0),Color("395568"))
+ Models.soft_box(self,Vector3(3.4,0.9,length),Vector3(0,1.3,0),Color("395568"))
  for x in [-1.85,1.85]:
   if giant:
-   Models.box(self,Vector3(0.9,1.1,7.4),Vector3(x,0.9,0),Color("364e59"))
+   Models.soft_box(self,Vector3(0.9,1.1,7.4),Vector3(x,0.9,0),Color("364e59"))
    for z in [-2.8,-1.4,0,1.4,2.8]:
     var roller=Models.cylinder(self,0.55,0.95,Vector3(x,0.9,z),Color("778b8c"))
     roller.rotation.z=PI/2
@@ -44,30 +44,30 @@ func _ready() -> void:
  turret=Node3D.new()
  add_child(turret)
  turret.position.y=1.8
- Models.box(turret,Vector3(3.3,1.3,3.1),Vector3(0,0.6,0),color)
+ Models.soft_box(turret,Vector3(3.3,1.3,3.1),Vector3(0,0.6,0),color)
  BeaverModels.cockpit(turret,Vector3(-0.4,1.3,-0.5),Vector3(2.2,2.1,2.0),color,tier,"forester")
  Models.cylinder(turret,0.28,0.4,Vector3(-0.4,3.8,-0.5),Color("ffc94f"))
  boom=Node3D.new()
  turret.add_child(boom)
  boom.position=Vector3(0.9,1.3,1)
- Models.box(boom,Vector3(0.7,4.4,0.8),Vector3(0,2.1,0),color)
+ Models.soft_box(boom,Vector3(0.7,4.4,0.8),Vector3(0,2.1,0),color)
  Models.cylinder(boom,0.13,3.7,Vector3(0.5,1.9,0),Color("d0e0df"))
  forearm=Node3D.new()
  boom.add_child(forearm)
  forearm.position.y=4.1
- Models.box(forearm,Vector3(0.65,3.6,0.75),Vector3(0,-1.7,0),color)
+ Models.soft_box(forearm,Vector3(0.65,3.6,0.75),Vector3(0,-1.7,0),color)
  Models.cylinder(forearm,0.13,3,Vector3(0.4,-1.3,0),Color("d4e0dc"))
  var head=Node3D.new()
  forearm.add_child(head)
  head.position.y=-3.4
- Models.box(head,Vector3(2,1.6,1.5),Vector3(0,-0.5,0),Color("3a6473"))
- for x in [-1,1]: Models.box(head,Vector3(0.3,1.8,1.8),Vector3(x,-1,0.4),color)
+ Models.soft_box(head,Vector3(2,1.6,1.5),Vector3(0,-0.5,0),Color("3a6473"))
+ for x in [-1,1]: Models.soft_box(head,Vector3(0.3,1.8,1.8),Vector3(x,-1,0.4),color)
  saw=Node3D.new()
  head.add_child(saw)
  var blade=Models.cylinder(saw,1.25,0.16,Vector3.ZERO,Color("c6d9d8"))
  for i in 10:
   var angle=i*TAU/10
-  var tooth=Models.box(saw,Vector3(0.4,0.2,0.4),Vector3(cos(angle)*1.25,0,sin(angle)*1.25),Color("dee8d9"))
+  var tooth=Models.soft_box(saw,Vector3(0.4,0.2,0.4),Vector3(cos(angle)*1.25,0,sin(angle)*1.25),Color("dee8d9"))
   tooth.rotation.y=-angle
  saw.position=Vector3(0,-1.6,0.6)
  cargo=Node3D.new()

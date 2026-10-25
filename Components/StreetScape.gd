@@ -1,8 +1,8 @@
 class_name StreetScape
 extends RefCounted
 
-const ASPHALT=Color("485f70")
-const WALK=Color("d9cba7")
+const ASPHALT=TycoonStyle.ASPHALT
+const WALK=TycoonStyle.SAND
 const CURB=Color("f0ead5")
 
 static func context(state: Dictionary) -> Dictionary:

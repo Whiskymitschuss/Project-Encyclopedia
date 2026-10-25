@@ -21,6 +21,7 @@ if [ "$#" -gt 0 ]; then
  done
  exit 0
 fi
+check --script res://Tests/Design2816.gd
 check --script res://Tests/Throughput2815.gd
 check --script res://Tests/ForestAccess2813.gd
 check --script res://Tests/Timber2812.gd

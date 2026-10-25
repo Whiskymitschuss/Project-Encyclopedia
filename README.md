@@ -2,7 +2,24 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.15-alpha.1 · Mehr Durchsatz für Lager und Werke
+## Aktuell: 0.28.16-alpha.1 · Einheitlicher Weltstil
+
+Gemeinsame Farben und Materialien für die vorhandene Welt. Offene Holzrahmenhallen
+und Berufsschilder ergänzen die Produktionswerke; Zentrallager und Abhol-Express
+haben neue Verladefassaden. Das Rathaus ist in zehn Architekturzuständen neu
+aufgebaut. Fahrzeuge, Biber-Arbeitskleidung, Böden, Straßen und Menüoberflächen
+verwenden die abgestimmte Richtung. Dachfarben bleiben auch nach Materialbatching
+erhalten. Das bestehende Vollbild-Bibercover bleibt der Spielstart.
+
+[Designbuch und echte Hauptweltbilder](docs/DESIGN-2816.md) ·
+[Installation](docs/alpha1-style/START-HIER.txt) · [Downloads](releases/README.md).
+Übrige Stadtbaukörper behalten ihre Architektur und erhalten die neue Materialrichtung.
+Wirtschaft, Spielstände, Linienkäufe und Transportausbauten bleiben erhalten.
+Android-Code **3011**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein physischer Android-/Hitzetest; die vollständige frühere Masterliste bleibt offen.
+
+## Vorher: 0.28.15-alpha.1 · Mehr Durchsatz für Lager und Werke
 
 Fünf statt drei Lager-LKW ab fertiger Zentrale Stufe 1, größere Werkspuffer,
 größere echte Ladungen und schnellerer Umschlag. Zusätzliche Lager-LKW werden

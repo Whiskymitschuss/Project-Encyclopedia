@@ -23,7 +23,7 @@ static func add_to(root: Node3D,kind: String,level: int) -> void:
  var storage=kind in ["warehouse","station","central_depot","express"]
  var utility=kind in ["cabin","market","research","garage"]
  var stone=kind in ["quarry","stoneworks"]
- var tone=Color("57a99d") if utility else Color("ea9a4d") if stone else BLUE
+ var tone=TycoonStyle.family(kind)
  for stage in n:
   var group=Node3D.new()
   group.name="Stage%s" % (stage+1)
@@ -97,6 +97,7 @@ static func add_to(root: Node3D,kind: String,level: int) -> void:
    mesh.visibility_range_end_margin=20
    mesh.visibility_range_fade_mode=GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
  root.set_meta("height",maxf(float(root.get_meta("height",8.6)),11.6 if n==10 else 10.1 if n>=9 else 8.3 if n>=8 else 8.6))
+ TycoonArchitecture.workshop(root,kind,n)
  # Connection and work anchors are shared by the real main-world instances.
  var anchors=Node3D.new()
  anchors.name="Connections"
