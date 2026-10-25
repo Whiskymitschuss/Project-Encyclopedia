@@ -1,0 +1,9 @@
+1. Update über die vorhandene App installieren; Spielstand und Waren prüfen.
+2. Im Eichenwald oder einem späteren Wald bleiben und dort weiter spielen.
+3. Team → Baumpflanzer: Starter-Wald und aktuellen Wald in der Übersicht ansehen.
+4. STARTER-WALD ANSEHEN: Kamera springt dorthin, Produktionsauswahl bleibt erhalten.
+5. Alte laufende Pflanzmissionen dürfen zuerst zurückkehren. Danach müssen auch
+   freie Stellen im Starterfeld bepflanzt werden; Jungbäume wachsen 45 Sekunden.
+6. Speichern/Neustart während einer Mission; Aufgaben und Verteilung fortsetzen.
+7. Ein einzelner Pflanzer muss beide Wälder nacheinander bedienen können.
+8. Bei ausgeschaltetem Pflanzteam bewusst Automatisch wählen; keine Gratishelfer.

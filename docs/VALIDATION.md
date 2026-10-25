@@ -1,3 +1,25 @@
+## Starterfeld und Waldwechsel · 0.28.18-alpha.1
+
+42 numerische Headless-Suiten mit 21.299 Prüfungen, zwei natürliche
+Fortschrittsszenarien und beide Szenenstarts bestanden. Zwölf relevante OpenGL-Suiten
+mit 259 Prüfungen bestanden. [Quellprüfbericht](alpha1-starter/automated-checks.json).
+
+Altspielstände mit kahlem Starterfeld und laufender Ernte im Eichenwald erhalten
+wechselnde Pflanzmissionen. Nach 900 simulierten Sekunden sind mit 1/8/31 Helfern
+16/100/100 Starterbäume wieder erntereif; die ersten nach 65/63/58 Sekunden.
+Vorher bekamen 1-/8-Helfer-Teams dort überhaupt keinen Pflanzauftrag.
+Auch bereits laufende alte Missionen, ein einzelner manuell zugewiesener Pflanzer,
+alle zehn besuchten Wälder und identische Speicherfortsetzung sind geprüft.
+Kein zusätzliches Personal und keine Warengutschrift durch Regeneration.
+
+Die tatsächliche Hauptszene zeigt Jungbäume und ausgereifte Bäume im inaktiven
+Starterfeld. Teamübersicht, Kamerasprung ohne Wechsel des Produktionswaldes,
+kleine/große Schrift, Produktionswege, alter Wachstumsfix, Start und Offline-
+Nachrechnung bestanden. [Ursache, Grenzen und Bilder](STARTER-2818.md).
+
+Generierte Testprofile; kein privater Handyspielstand und kein physischer
+Android-/Hitzetest. Die vollständige frühere Masterliste bleibt offen.
+
 ## Externe Downloads Wiederaufforstung · 0.28.17 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.17-alpha.1` vollständig per

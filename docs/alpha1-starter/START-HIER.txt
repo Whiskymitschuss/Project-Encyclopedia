@@ -1,0 +1,14 @@
+Timber Loot Tycoon · 0.28.18-alpha.1 · Starterfeld und Waldwechsel
+
+Als Update installieren; nicht vorher deinstallieren und keine App-Daten löschen.
+Android-Code 3013, gleiches Paket und bisheriges Testzertifikat.
+
+Behoben: Der aktuell gewählte Wald bekommt nicht mehr immer zuerst alle freien
+Pflanzer. Auch ein alter kahler Starterwald wird nach einem Waldwechsel weiter
+aufgeforstet, selbst mit nur einem Pflanzer. Bestehende Missionen kehren regulär
+zurück; neue Aufträge wechseln anschließend zwischen den Waldflächen.
+
+Team → Biber-Baumpflanzer zeigt alle abgeernteten Wälder und bietet
+STARTER-WALD ANSEHEN. Manuelle Teamgrößen bleiben erhalten. Wenn Pflanzen bewusst
+auf null gesetzt wurde, Automatisch oder mindestens einen Pflanzer zuweisen.
+Wachstum weiterhin 45 Sekunden nach dem tatsächlichen Pflanzen. Kein Gratis-Holz.

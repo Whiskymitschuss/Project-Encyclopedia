@@ -3,7 +3,7 @@ extends RefCounted
 const GROW_SECONDS=45.0
 const LEGACY_GROW_SECONDS=90.0
 const WALK_SPEED=8.0
-static func initial() -> Dictionary: return {"stands":{},"tasks":[],"next_id":1,"assignment":-1,"revision":0,"harvested":0.0,"planted":0,"retry_at":0.0}
+static func initial() -> Dictionary: return {"stands":{},"tasks":[],"next_id":1,"next_plant_biome":0,"assignment":-1,"revision":0,"harvested":0.0,"planted":0,"retry_at":0.0}
 static func stand(state: Dictionary,biome: int) -> Dictionary:
  var id=str(biome)
  if not state.forest.stands.has(id): state.forest.stands[id]={"cells":{},"cursor":90}
@@ -77,25 +77,44 @@ static func tick(state: Dictionary,delta: float) -> void:
  var free=maxi(0,limit(state)-busy(state))
  if free<=0 or float(state.elapsed)<float(state.forest.retry_at): return
  state.forest.retry_at=float(state.elapsed)+1
+ # Share free missions between all previously harvested stands. Persist
+ # the next stand so a single planter also returns to older clear-cut land.
  var biomes=state.forest.stands.keys()
  biomes.sort_custom(func(a,b): return int(a)<int(b))
- var current=str(int(state.biome))
- if current in biomes: biomes.erase(current); biomes.push_front(current)
- for biome in biomes:
+ var queues={}
+ var reserved={}
+ for task in state.forest.tasks: reserved["%s:%s" % [int(task.biome),int(task.cell)]]=true
+ var start=0
+ var next_biome=int(state.forest.get("next_plant_biome",0))
+ var found=false
+ for i in biomes.size():
+  var biome=biomes[i]
+  if not found and int(biome)>=next_biome: start=i;found=true
   var cells=state.forest.stands[biome].cells
-  var ids=cells.keys(); ids.sort_custom(func(a,b): return int(a)<int(b))
-  for id in ids:
-   if free<=0: return
-   if cells[id].state!="stump" or ForestLayout.blocked(state,int(biome),int(id)) or not ForestLayout.walkable(state,int(biome),int(id)): continue
-   if state.forest.tasks.any(func(task): return int(task.biome)==int(biome) and int(task.cell)==int(id)): continue
-   var route=ForestLayout.path(int(biome),int(id))
-   var distance=0.0
-   for i in range(1,route.size()): distance+=route[i-1].distance_to(route[i])
-   var walk=maxf(2,distance/WALK_SPEED)
-   state.forest.tasks.append({"id":state.forest.next_id,"biome":int(biome),"cell":int(id),"age":0.0,"walk":walk,"total":walk*2+4,"planted":false})
-   state.forest.next_id+=1; free-=1
-static func availability(state: Dictionary) -> Dictionary:
- var biome=int(state.biome)
+  var ids=cells.keys();ids.sort_custom(func(a,b):return int(a)<int(b))
+  queues[biome]=ids.filter(func(id):return cells[id].state=="stump" and not reserved.has("%s:%s" % [int(biome),int(id)]))
+ while free>0:
+  var assigned=false
+  for offset in biomes.size():
+   var position=(start+offset)%biomes.size()
+   var biome=biomes[position]
+   while not queues[biome].is_empty():
+    var id=queues[biome].pop_front()
+    if ForestLayout.blocked(state,int(biome),int(id)) or not ForestLayout.walkable(state,int(biome),int(id)): continue
+    var route=ForestLayout.path(int(biome),int(id))
+    var distance=0.0
+    for i in range(1,route.size()): distance+=route[i-1].distance_to(route[i])
+    var walk=maxf(2,distance/WALK_SPEED)
+    state.forest.tasks.append({"id":state.forest.next_id,"biome":int(biome),"cell":int(id),"age":0.0,"walk":walk,"total":walk*2+4,"planted":false})
+    state.forest.next_id+=1;free-=1
+    state.forest.next_plant_biome=int(biome)+1
+    start=(position+1)%biomes.size()
+    assigned=true
+    break
+   if assigned: break
+  if not assigned: break
+static func availability(state: Dictionary,biome: int=-1) -> Dictionary:
+ if biome<0: biome=int(state.biome)
  var cells=state.forest.stands.get(str(biome),{}).get("cells",{})
  var result={"mature":0,"stumps":0,"growing":0,"next_ready":INF}
  var rectangles=ForestLayout.rectangles(state)
@@ -125,3 +144,19 @@ static func status(state: Dictionary) -> String:
  var info=availability(state)
  var timing="Nächster Baum erntereif in %s s" % ceili(float(info.next_ready)) if int(info.growing)>0 else "Pflanzteam deaktiviert · Automatisch wählen" if limit(state)==0 and int(info.stumps)>0 else "Neue Bäume: %s s Wachstum nach dem Pflanzen" % int(GROW_SECONDS)
  return "%s Holzfäller verfügbar · %s Biber pflanzen oder kehren zurück\nAktueller Wald: %s erntereif · %s Jungbäume · %s offene Pflanzstellen\nPflanzteam: %s\n%s" % [maxi(0,int(state.workers)-busy(state)),busy(state),info.mature,info.growing,info.stumps,"automatisch bis %s Helfer" % limit(state) if int(state.forest.assignment)<0 else "bis %s Helfer zugewiesen" % limit(state),timing]
+
+static func recovery_status(state: Dictionary) -> String:
+ var rows=[]
+ var biomes=state.forest.stands.keys()
+ biomes.sort_custom(func(a,b):return int(a)<int(b))
+ for biome in biomes:
+  var stumps=0;var growing=0;var workers=0
+  for cell in state.forest.stands[biome].cells.values():
+   if cell.state=="stump":stumps+=1
+   elif cell.state=="growing":growing+=1
+  for task in state.forest.tasks:
+   if int(task.biome)==int(biome):workers+=1
+  var text="%s: %s Pflanzer · %s Jungbäume · %s Pflanzstellen" % [Catalog.BIOMES[int(biome)].name,workers,growing,stumps]
+  if stumps==0 and growing==0 and workers==0:text="%s: aufgeforstet" % Catalog.BIOMES[int(biome)].name
+  rows.append(text)
+ return "\n".join(rows) if not rows.is_empty() else "Noch keine abgeernteten Waldflächen."

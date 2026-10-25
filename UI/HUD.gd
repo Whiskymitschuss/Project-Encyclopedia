@@ -884,6 +884,8 @@ func team_menu() -> void:
  button(box,"HOLZFÄLLER ANSEHEN",func(): focus_requested.emit(ForestryFlow.work_position(Game.state)); close_menu())
  var planting=card("Biber-Baumpflanzer","Das Pflanzteam stammt aus deinen eingestellten Helfern. Es pflanzt echte abgeerntete Stellen nach; während Hinweg, Pflanzen und Rückkehr sind diese Biber keine Holzfäller. Jungbäume sind nach 45 Sekunden erntereif. Die Automatik verstärkt bei kahlem Wald das Pflanzteam und gibt die Helfer anschließend wieder zum Fällen frei.")
  dynamic_text(planting,func(): return ForestCycle.status(Game.state))
+ text(planting,"Auch ältere Waldflächen werden weiter aufgeforstet. Freie Pflanzaufträge wechseln zwischen allen abgeernteten Wäldern.",14,MUTED)
+ dynamic_text(planting,func(): return ForestCycle.recovery_status(Game.state))
  var allocation=row(planting)
  button(allocation,"Automatisch",func(): action(func(): Game.assign_planters(-1)))
  button(allocation,"Weniger",func(): action(func(): Game.assign_planters(maxi(0,ForestCycle.limit(Game.state)-1))))
@@ -894,6 +896,7 @@ func team_menu() -> void:
    var task=Game.state.forest.tasks[0]
    at=ForestLayout.point(int(task.biome),int(task.cell))
   focus_requested.emit(at); close_menu())
+ button(planting,"STARTER-WALD ANSEHEN",func(): focus_requested.emit(Catalog.biome_position(0)); close_menu())
  var builders=card("Bauteam & Sprinter","Bauarbeiter werden von der Arbeiterhütte zur Baustelle gefahren. Sie beginnen nach der Ankunft und warten auf das Material ihrer Bauphase.")
  dynamic_text(builders,func(): return "%s Bauarbeiter · %s frei · %s/%s Sprinter unterwegs" % [int(Game.state.builders),Game.free_builders(),Game.state.crew.missions.size(),CrewTransport.fleet_size(Game.state)])
  button(builders,"BAUSTELLEN ANSEHEN",func(): logistics_tab="sites"; open_menu("logistics"))

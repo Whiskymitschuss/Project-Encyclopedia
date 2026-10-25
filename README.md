@@ -2,7 +2,22 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.17-alpha.1 · Wiederaufforstung
+## Aktuell: 0.28.18-alpha.1 · Starterfeld und Waldwechsel
+
+Freie Pflanzmissionen wechseln zwischen allen bereits abgeernteten Waldflächen.
+Das alte Starterfeld wird auch bei fortlaufender Arbeit im Eichenwald mitversorgt.
+Der Verteilerzeiger wird gespeichert; selbst ein einzelner Pflanzer bedient die
+Wälder nacheinander. Bestehende Missionen und manuelle Zuweisungen bleiben erhalten.
+Das Teammenü zeigt die einzelnen Wälder und führt die Kamera zum Starterfeld.
+Keine Gratiswaren; weiterhin 45 Sekunden Wachstum nach tatsächlichem Pflanzen.
+
+[Fehlerursache, Messung und Hauptweltbilder](docs/STARTER-2818.md) ·
+[Installation](docs/alpha1-starter/START-HIER.txt) · [Downloads](releases/README.md).
+Android-Code **3013**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein physischer Android-/Hitzetest; die vollständige frühere Masterliste bleibt offen.
+
+## Vorher: 0.28.17-alpha.1 · Wiederaufforstung
 
 45 statt 90 Sekunden Wachstum nach echtem Pflanzen. Bei kahlem Wald reserviert
 die Automatik mehr der vorhandenen Helfer zur Aufforstung. Neue Pflanzmissionen

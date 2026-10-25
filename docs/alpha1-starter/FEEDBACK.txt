@@ -1,0 +1,8 @@
+Version: 0.28.18-alpha.1
+Handy / Android:
+Gewählter Produktionswald:
+Helfer / Pflanzzuweisung / Werkzeug:
+Starter-Wald laut Teamübersicht: Pflanzer / Jungbäume / Pflanzstellen:
+Wartezeit nach Rückkehr bestehender Missionen:
+Erste neue Jungbäume sichtbar:
+Neustart während einer Mission getestet:
