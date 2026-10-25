@@ -1,3 +1,20 @@
+## Tatsächliche APK-Dateien · 0.28.19-alpha.1
+
+6890 Headless- und 276 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Acht echte aktive Waldsimulationen, voller Abholvorrat, gespeicherte
+Ausweichwege, Forschung/Turbo, alte Reisen, Nachwuchs, Menü, Starterversorgung,
+Logistik und kalter Start sind eingeschlossen.
+[Paketprüfbericht](alpha1-active-forest/packaged-checks.json).
+APK-SHA256 `94e11ff5f684be37606917a9ae60bab0aacde01b2346237fb5feb99529a9453e`. Quellstand `22cb737b237e5dcb046d052581be0a45b2b7d4bd`.
+Paket, Versionscode 3014, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Die endgültigen Spieldateien, Nativebibliotheken und Spieleinträge im Ressourcenindex
+sind bytegleich zum vollständig geprüften Paket; ungenutzte Buildberichte wurden
+entfernt. Nachwuchs-Suite einschließlich 95-Stellen-Fall (132 Prüfungen) und
+Darstellung/UI (40 Prüfungen) wurden zusätzlich mit der endgültigen APK erneut
+ausgeführt. Der Paketbericht dokumentiert diesen Abgleich. Diese Desktop-Prüfung
+ersetzt keinen Android-Gerätelauf.
+
 ## Nachwuchs im aktiven Wald · 0.28.19-alpha.1
 
 43 numerische Headless-Suiten mit 21.431 Prüfungen, zwei natürliche

@@ -1,4 +1,33 @@
-# Aktuell: Starterfeld und Waldwechsel · 0.28.18-alpha.1
+# Aktuell: Nachwuchs im aktiven Wald · 0.28.19-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.19-alpha.1/releases/Timber-Loot-Tycoon-v0.28.19-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.19-alpha.1/releases/Timber-Loot-Tycoon-v0.28.19-Nachwuchs-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.19-source.zip) · [Ursache, Simulation und Bilder](../docs/ACTIVE-FOREST-2819.md)
+
+Pflanzer umgehen versperrte Zugänge und Maschinenflächen über freie Seitenwege.
+Neue Missionen speichern ihren echten Weg; Darstellung und Bauplatzreservierung
+benutzen ihn ebenfalls. Forstforschung beschleunigt auch Pflanzen und Wachstum,
+Turbo neue Pflanzreisen und Arbeit. Die Automatik kann bei stark abgeerntetem
+Wald mehr der vorhandenen Helfer zum Pflanzen einsetzen. Starterversorgung und
+manuelle Zuweisungen bleiben erhalten. Belegte/geschlossene Flächen bleiben gesperrt.
+Alte Missionen und Jungbäume behalten ihre bisherigen Zeiten. Keine Gratiswaren.
+
+Acht echte 900-Sekunden-Simulationen mit 8/31 Helfern, Forschung 0/10/12 und Turbo
+behalten nach der Einlaufphase mindestens zehn erntereife aktive Bäume. Auch bei
+vollem Abholvorrat wachsen alle 93 physisch freien Eichenwaldstellen wieder nach.
+Generierte Versuche, keine Garantie für jeden Spielstand und kein echter Handytest.
+
+Android-Code **3014**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+21431 Headless- und 276 relevante OpenGL-Prüfungen des Quellstands;
+zusätzlich 6890 Headless- und 276 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-active-forest/automated-checks.json).
+APK-Quellstand `22cb737b237e5dcb046d052581be0a45b2b7d4bd`. Quell-ZIP: 843 Dateien gegen Git geprüft.
+
+## Vorher: Starterfeld und Waldwechsel · 0.28.18-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.18-alpha.1/releases/Timber-Loot-Tycoon-v0.28.18-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.18-alpha.1/releases/Timber-Loot-Tycoon-v0.28.18-Starter-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.18-source.zip) · [Ursache, Messung und Bilder](../docs/STARTER-2818.md)
