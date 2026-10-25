@@ -93,7 +93,7 @@ run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt2','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", f"versionCode='{VERSION_CODE}'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:
+for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", f"versionCode='{VERSION_CODE}'", "minSdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'"]:
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
@@ -101,6 +101,7 @@ if expected_renderer=='mobile':
     assert 'mobile' in xml and 'android.hardware.vulkan.version' in xml
 else:
     assert 'gl_compatibility' in xml and 'android.hardware.vulkan' not in xml
+assert re.search(r'android:isGame[^\n]*0x1\b',xml)
 assert re.search(r'screenOrientation[^\n]*0x1\b',xml)
 with zipfile.ZipFile(output) as apk:
     assert apk.testzip() is None
