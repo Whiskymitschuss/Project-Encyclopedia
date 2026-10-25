@@ -1,6 +1,6 @@
 # Aktuell: Laufzeit und Messdetails · 0.28.22-alpha.1
 
-**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.22-alpha.1/releases/Timber-Loot-Tycoon-v0.28.22-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.22-source.zip) ·
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.22-alpha.1-android/releases/Timber-Loot-Tycoon-v0.28.22-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.22-source.zip) ·
 [Messungen und Grenzen](../docs/PERFORMANCE-2822.md)
 
 Vorbereitete Fahrzeugwege, weniger unveränderte Wald-Updates und feste
