@@ -1,4 +1,31 @@
-# Aktuell: Einheitlicher Weltstil · 0.28.16-alpha.1
+# Aktuell: Wiederaufforstung · 0.28.17-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.17-alpha.1/releases/Timber-Loot-Tycoon-v0.28.17-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.17-alpha.1/releases/Timber-Loot-Tycoon-v0.28.17-Wald-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.17-source.zip) · [Änderungen und Waldmessung](../docs/REGROWTH-2817.md)
+
+Jungbäume werden 45 statt 90 Sekunden nach tatsächlichem Pflanzen erntereif.
+Bei kahlem Wald teilt die Automatik mehr der vorhandenen Helfer zum Aufforsten ein.
+Neue Pflanzmissionen laufen zügiger, alte Jungbäume behalten bereits gewachsene Zeit.
+Pflanzer bleiben auch ohne verbliebene Holzfällerfiguren sichtbar. Team und Welt
+zeigen Nachwuchs und den nächsten Erntezeitpunkt. Ernte und Pflanzen verwenden
+dieselben erreichbaren Waldgänge. Keine Gratiswaren und keine zusätzlichen Arbeiter.
+
+Unter Team → Baumpflanzer bei bewusst deaktiviertem Pflanzen „Automatisch“ wählen.
+Manuelle Zuweisungen werden erhalten. Blockierte Pflanzzufahrten müssen frei bleiben.
+Vorhandene Gestaltung, Waren, Transportausbauten und Spielstände bleiben bestehen.
+
+Android-Code **3012**, gleiches Paket und Testzertifikat; 0.28-Basis.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0. Debug-signierte Testfassung.
+Kein echter Android-Gerätelauf und keine Temperaturmessung.
+
+21272 Headless- und 327 relevante OpenGL-Prüfungen des Quellstands;
+zusätzlich 6731 Headless- und 327 OpenGL-Prüfungen mit
+unveränderten Spieldateien aus der wirklichen APK.
+[Prüfbericht](../docs/alpha1-regrowth/automated-checks.json).
+APK-Quellstand `259b3c114f4e112e011757d98eb39cc04b22e35f`. Quell-ZIP: 815 Dateien gegen Git geprüft.
+
+## Vorher: Einheitlicher Weltstil · 0.28.16-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.16-alpha.1/releases/Timber-Loot-Tycoon-v0.28.16-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.16-alpha.1/releases/Timber-Loot-Tycoon-v0.28.16-Design-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.16-source.zip) · [Designbuch und Hauptweltbilder](../docs/DESIGN-2816.md)

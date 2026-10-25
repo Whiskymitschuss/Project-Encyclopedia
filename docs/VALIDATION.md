@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.17-alpha.1
+
+6731 Headless- und 327 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Wachstum, alte Fristen, manuelle Zuweisung, Waldstress,
+sichtbare Pflanzer im leeren Wald, echte Baumgeometrie, Logistik, Teammenü,
+Start und Offline-Nachrechnung sind eingeschlossen.
+[Paketprüfbericht](alpha1-regrowth/packaged-checks.json).
+APK-SHA256 `8e5c91d310a7e20bea3092881584c263a37bed57da94b03aa1d1a9a8e4504e0b`. Quellstand `259b3c114f4e112e011757d98eb39cc04b22e35f`.
+Paket, Versionscode 3012, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Wiederaufforstung · 0.28.17-alpha.1
 
 41 numerische Headless-Suiten mit 21.272 Prüfungen, zwei natürliche
