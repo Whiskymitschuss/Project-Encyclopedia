@@ -1,4 +1,29 @@
-# Aktuell: Lagergrenzen · 0.28.20-alpha.1
+# Aktuell: Kamera und Darstellung · 0.28.21-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.21-alpha.1/releases/Timber-Loot-Tycoon-v0.28.21-alpha.1.apk)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.21-source.zip) · [Änderungen und Messgrenzen](../docs/PERFORMANCE-2821.md)
+
+Vorbereitete Landschaftstransformationen und weniger Änderungen der sichtbaren
+Instanzplätze bei Kamerabewegung. Passende statische Lackflächen teilen sich
+Zeichenaufrufe. Keine ausgedünnten Wälder und keine Änderungen an Wirtschaft,
+Waren, Lagergrenzen, Personal oder Spielgeschwindigkeit.
+
+Quellvergleich: etwa 93 % weniger CPU-Zeit für Kameraaktualisierungen beim
+Abschnittswechsel; etwa ein Drittel weniger Zeichenaufrufe in der Fabrikansicht.
+Zusätzlicher [Vergleich der tatsächlichen APKs](../docs/alpha1-performance/apk-frames-benchmark.json).
+Identischer kompletter Firmenzustand, praktisch gleiche gerenderte Farben.
+Desktop/Software-Renderer, keine zugesicherten Handy-FPS. Weltkonstruktion kann
+durch einmaliges Zusammenfassen etwas länger dauern; kein Ladezeit-Update.
+
+Android-Code **3016**, bisheriges Paket und Testzertifikat.
+**Als Update installieren; nicht vorher deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, Debug-Testfassung.
+21.532 Headless- und 367 relevante OpenGL-Quellprüfungen bestanden;
+zusätzlich 10.939 Headless- und 243 OpenGL-Prüfungen mit unveränderten APK-Dateien.
+Kein physischer Android-Geräte-/Wärmetest; frühere vollständige Masterliste offen.
+APK-Quellstand `fd13f75a2bf3a32c888de01e3d9558b324c97991`. Quell-ZIP: 880 Dateien gegen Git geprüft.
+
+## Vorher: Lagergrenzen · 0.28.20-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.20-alpha.1/releases/Timber-Loot-Tycoon-v0.28.20-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.20-alpha.1/releases/Timber-Loot-Tycoon-v0.28.20-Lager-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.20-source.zip) · [Lagerregeln und Prüfungen](../docs/STORAGE-2820.md)

@@ -1,3 +1,17 @@
+## Tatsächliche APK-Dateien · 0.28.21-alpha.1
+
+Zwölf Headless-Module mit **10.939 Prüfungen** und neun relevante OpenGL-Module
+mit **243 Prüfungen** bestanden. Ausführung mit unveränderten Spieldateien aus
+der signierten APK; Tests und Profile lagen separat. Materialfarben, tatsächliche
+Instanzpuffer, Landschaft, Auswahl, Maschinen, Logistik, Lager und Wald inklusive.
+[Paketprüfbericht](alpha1-performance/packaged-checks.json).
+Zusätzlich wurde die wirkliche 0.28.21-APK gegen 0.28.20 unter derselben Kamera-
+und Qualitätskonfiguration gemessen; beide Firmenzustände sind identisch.
+[APK-Vergleich](alpha1-performance/apk-frames-benchmark.json).
+APK-SHA256 `d59bd9782211254190939bc7d4b45b0c9b7c142d11b24463f65f0dab0e29d0f6`; Quellstand `fd13f75a2bf3a32c888de01e3d9558b324c97991`.
+Paket, Android-Code 3016, bisheriges Zertifikat und 16-KiB-Ausrichtung geprüft.
+Desktop-Prüfung, kein echter Android-Gerätelauf und keine Temperaturmessung.
+
 ## Kamera und Darstellung · 0.28.21-alpha.1
 
 45 Headless-Module mit **21.532 Prüfungen**, zwei natürliche Fortschrittsfälle
