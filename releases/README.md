@@ -1,4 +1,23 @@
-# Aktuell: Laufzeit und Messdetails · 0.28.23-alpha.1
+# Aktuell: Laufzeit und Messdetails · 0.28.24-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.24-alpha.1/releases/Timber-Loot-Tycoon-v0.28.24-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.24-source.zip) ·
+[Messungen und Grenzen](../docs/DAYLIGHT-2824.md)
+
+Dauerhaft klares Tageslicht. Regen, Nebel, Wind, Pfützen und Tag-Nacht-Wechsel
+sind abgeschaltet; Regen- und Pfützenobjekte werden gar nicht mehr erzeugt.
+Auch ältere Nacht-/Regen-Spielstände starten im Tageslicht. Produktion,
+Lieferungen, Bauzeiten und Wachstum laufen unverändert weiter.
+
+Android-Code **3019**; bisheriges Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, Debug-Testfassung.
+Quellprüfungen: 21.579 Headless / 113 OpenGL. Tatsächliche APK-Dateien:
+10,736 Headless / 113 OpenGL.
+Kein echter Android-Geräte-/Wärmetest und keine garantierte Gesamtbildrate.
+Die Leistungsanzeige nennt „Dauerhaftes Tageslicht · Wetter aus“.
+Quellstand `433c765da76ee4f160f2f9de3c6d39884e7c595c`; 913 Dateien der Quell-ZIP gegen Git geprüft.
+
+## Vorher: Laufzeit und Messdetails · 0.28.23-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.23-alpha.1/releases/Timber-Loot-Tycoon-v0.28.23-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.23-source.zip) ·
 [Messungen und Grenzen](../docs/PERFORMANCE-2823.md)

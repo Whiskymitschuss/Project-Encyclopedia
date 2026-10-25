@@ -1,3 +1,10 @@
+## Tatsächliche APK-Dateien · 0.28.24-alpha.1
+
+10736 Headless-Prüfungen in 9 Modulen und 113 OpenGL-Prüfungen in 5 Modulen mit unveränderten Dateien aus der signierten APK bestanden. Tests und Profile extern. Prüfungen für feste Tagesbeleuchtung, alte Nacht-/Regenstände, fehlende Wetterobjekte und unveränderte Produktion/Logistik enthalten. [Paketprüfbericht](alpha1-daylight/packaged-checks.json).
+APK-SHA256 `a9cc7bf65ea6fea173065d1177dcb0bbc509faa203427c27d0276c56c2a9925d`; Quellstand `433c765da76ee4f160f2f9de3c6d39884e7c595c`.
+Paket, Android-Code 3019, bisheriges Zertifikat und APK-ZIP-Ausrichtung geprüft.
+Das ist kein Android-Gerätelauf und keine Zusicherung einer bestimmten Handy-Bildrate.
+
 ## Dauerhaftes Tageslicht · 0.28.24-alpha.1
 
 21.579 Headless-Prüfungen in 48 Modulen sowie 113 OpenGL-Prüfungen in fünf Modulen bestanden. Alte Regen-/Nachtstände werden ohne Bestandsreset normalisiert. Ein kompletter früherer Tages-/Wetterzyklus bleibt bei Mittag und klarem Wetter, während die Wirtschaft weiterläuft. Die neue OpenGL-Prüfung zeigt identische tatsächlich gerenderte Waldbilder über alle alten Wetterzustände und Nachtwerte; unabhängige Arbeiter-/Produktionseffekte sind dafür eingefroren. Keine Regen- oder Pfützenobjekte werden mehr erzeugt, Nebel bleibt aus. Die bisherigen Nacht-/Regen-/Windtests wurden auf die ausdrücklich gewünschte Abschaltung umgestellt.
