@@ -1,3 +1,10 @@
+## Externe Downloads Adaptive Darstellung · 0.28.24 geprüft
+
+APK und Quell-ZIP vom festen Tag `v0.28.24-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2824.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.24-alpha.1
 
 10736 Headless-Prüfungen in 9 Modulen und 113 OpenGL-Prüfungen in 5 Modulen mit unveränderten Dateien aus der signierten APK bestanden. Tests und Profile extern. Prüfungen für feste Tagesbeleuchtung, alte Nacht-/Regenstände, fehlende Wetterobjekte und unveränderte Produktion/Logistik enthalten. [Paketprüfbericht](alpha1-daylight/packaged-checks.json).
