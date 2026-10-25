@@ -1,3 +1,9 @@
+## Tatsächliche APK-Dateien · 0.28.25-alpha.1
+
+Beide signierten Varianten mit je 10539 Headless-Prüfungen in 7 Modulen getestet. Vulkan zusätzlich 77, OpenGL 29 Grafikprüfungen mit unveränderten APK-Dateien. Tatsächliche Backend-Initialisierung, effektive Android-Projekteinstellungen, GPU-Timer, Hauptwelt, Tageslicht, Maschinen und Materiallogistik geprüft. Tests und Profile extern. [Paketprüfbericht](alpha1-renderer/packaged-checks.json).
+
+Gleiche Version, Android-Code 3020, Paket, Testzertifikat und APK-Ausrichtung geprüft. Quellstand `d85dc7164feb7014a70ce12433d02163074b5f60`. Keine Zusicherung einer besseren Bildrate auf dem Samsung; Desktop-Vulkan läuft per Lavapipe.
+
 ## Renderer-Vergleich · 0.28.25-alpha.1
 
 21.588 Headless-Prüfungen in 49 Modulen, danach gezielte Prüfungen der abschließenden Schutzfunktionen. 77 Vulkan- und 29 OpenGL-Grafikprüfungen der echten Hauptwelt bestanden. Wetterabschaltung, Maschinen, Biber, adaptive Geometrie, Fotoqualität, native Oberfläche und tatsächliche GPU-Timer enthalten. Vulkan wurde wirklich initialisiert; ein absichtlicher Initialisierungsausfall startete unter OpenGL weiter. Sehr kleine Vulkan-Pixelabweichungen werden unter einer dokumentierten engen Toleranz geprüft; OpenGL bleibt bitgenau.

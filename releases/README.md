@@ -1,4 +1,26 @@
-# Aktuell: Laufzeit und Messdetails · 0.28.24-alpha.1
+# Aktuell: Vulkan-Vergleich · 0.28.25-alpha.1
+
+**[Vulkan-Test herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.25-alpha.1/releases/Timber-Loot-Tycoon-v0.28.25-alpha.1-vulkan.apk)** ·
+**[OpenGL-Rückfall herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.25-alpha.1/releases/Timber-Loot-Tycoon-v0.28.25-alpha.1-opengl.apk)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.25-source.zip) · [Umfang und Grenzen](../docs/RENDERER-2825.md)
+
+Zwei Vergleichsvarianten derselben Hauptwelt für die weiterhin gemeldeten
+7 FPS auf dem SM-S721B. Zuerst Vulkan testen. Kein nachgewiesener Handy-FPS-Gewinn;
+auf Desktop-Softwaregrafik war Vulkan nicht schneller. Die GPU und eine optionale
+zehnsekündige Grafikzeitmessung erscheinen im Leistungsvergleich. CPU-Spitzen
+bleiben seit Welteinstieg sichtbar. Wetter bleibt vollständig aus.
+
+Beide APKs: Android-Code **3020**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; zum Wechseln nicht deinstallieren und keine Daten löschen.**
+Android 7.0+, ARM64/ARMv7, Debug-Testfassung. Vulkan benötigt Vulkan-Hardware;
+für ältere Geräte oder bei Problemen die OpenGL-Variante verwenden.
+
+Quellprüfungen: 21.588 Headless, 77 Vulkan, 29 OpenGL. Tatsächliche APK-Dateien:
+je 10539 Headless, 77 Vulkan bzw. 29 OpenGL.
+Kein physischer Android-Gerätetest. Quellstand `d85dc7164feb7014a70ce12433d02163074b5f60`;
+922 Dateien der Quell-ZIP gegen Git geprüft.
+
+## Vorher: Laufzeit und Messdetails · 0.28.24-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.24-alpha.1/releases/Timber-Loot-Tycoon-v0.28.24-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.24-source.zip) ·
 [Messungen und Grenzen](../docs/DAYLIGHT-2824.md)

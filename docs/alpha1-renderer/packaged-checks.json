@@ -1,0 +1,53 @@
+{
+  "vulkan": {
+    "apk": "Timber-Loot-Tycoon-v0.28.25-alpha.1-vulkan.apk",
+    "apk_sha256": "f6fb13ccaa56b6e1816cafbc8fa087a4ca917e004688abc7339a4e968ededad5",
+    "apk_source_commit": "d85dc7164feb7014a70ce12433d02163074b5f60",
+    "android_renderer": "mobile",
+    "headless_checks": 10539,
+    "headless_results": {
+      "Renderer2825": 9,
+      "Daylight2824": 10,
+      "Rules": 234,
+      "Scene": 4080,
+      "Delivery": 6057,
+      "ActiveForest2819": 132,
+      "Performance2823": 17
+    },
+    "visual_checks": 77,
+    "visual_results": {
+      "VisualRenderer2825": 8,
+      "VisualDaylight2824": 6,
+      "VisualPerformance2823": 15,
+      "VisualFactory284": 48
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false
+  },
+  "opengl": {
+    "apk": "Timber-Loot-Tycoon-v0.28.25-alpha.1-opengl.apk",
+    "apk_sha256": "7f01fd11c8fd35fe6dbdd9934da5f31912b26461782c4fa557563386a6ec8890",
+    "apk_source_commit": "d85dc7164feb7014a70ce12433d02163074b5f60",
+    "android_renderer": "gl_compatibility",
+    "headless_checks": 10539,
+    "headless_results": {
+      "Renderer2825": 9,
+      "Daylight2824": 10,
+      "Rules": 234,
+      "Scene": 4080,
+      "Delivery": 6057,
+      "ActiveForest2819": 132,
+      "Performance2823": 17
+    },
+    "visual_checks": 29,
+    "visual_results": {
+      "VisualRenderer2825": 8,
+      "VisualDaylight2824": 6,
+      "VisualPerformance2823": 15
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false
+  }
+}
