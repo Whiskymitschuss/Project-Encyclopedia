@@ -71,3 +71,12 @@ Nächster Gerätetest: .22 als Update installieren, Version im Leistungsmenü pr
 Kamerarunde im Standardmodus vollständig beenden. Danach Ergebnis und Messdetails
 senden. Dieselbe Runde im Akkumodus hilft, Darstellungsdruck weiter einzugrenzen.
 Ein früher Screenshot der laufenden Sitzungsanzeige ersetzt das Endergebnis nicht.
+
+## Auslieferung
+
+Die signierte APK und Quell-ZIP liegen im unveränderlichen Tag
+`v0.28.22-alpha.1-android`. Der vorher angelegte Tag `v0.28.22-alpha.1`
+enthält die Paketberichte, aber wegen der allgemeinen APK-Ausschlussregel noch
+keine APK. Er wurde nicht überschrieben. Der Android-Tag ergänzt exakt die
+geprüfte Datei; Versionsname 0.28.22-alpha.1 und Android-Code 3017 bleiben gleich.
+[Prüfung der vollständigen HTTPS-Downloads](download-verification-alpha2822.json).

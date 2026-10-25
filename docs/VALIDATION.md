@@ -1,3 +1,10 @@
+## Externe Downloads Laufzeit · 0.28.22 geprüft
+
+APK und Quell-ZIP vom festen Tag `v0.28.22-alpha.1-android` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2822.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.22-alpha.1
 
 10959 Headless-Prüfungen in 13 Modulen und 274 OpenGL-Prüfungen in 11 Modulen mit unveränderten Dateien aus der signierten APK bestanden. Tests und Profile extern. Neue Routen-/Wald-/Messprüfungen sowie bestehende Logistik, Lager, Forst, Hauptwelt und Grafik enthalten. [Paketprüfbericht](alpha1-runtime/packaged-checks.json).
