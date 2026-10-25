@@ -1,3 +1,10 @@
+## Externe Downloads Adaptive Darstellung · 0.28.23 geprüft
+
+APK und Quell-ZIP vom festen Tag `v0.28.23-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2823.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.23-alpha.1
 
 10976 Headless-Prüfungen in 14 Modulen und 326 OpenGL-Prüfungen in 13 Modulen mit unveränderten Dateien aus der signierten APK bestanden. Tests und Profile extern. Neue Routen-/Wald-/Messprüfungen sowie bestehende Logistik, Lager, Forst, Hauptwelt und Grafik enthalten. [Paketprüfbericht](alpha1-adaptive/packaged-checks.json).
