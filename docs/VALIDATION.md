@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.20-alpha.1
+
+Zwölf Headless-Module mit **11647 Prüfungen** und sechs
+relevante OpenGL-Module mit **167 Prüfungen** bestanden.
+Ausführung mit unveränderten Spieldateien aus der signierten APK; Tests und
+Profile lagen separat. Lagergrenzen, mehrere Höfe, volle Fächer, Wiederanlauf,
+Wirtschaft, Lieferungen, Steinindustrie, Waldnachwuchs und echte Menüansichten
+sind eingeschlossen. [Paketprüfbericht](alpha1-storage/packaged-checks.json).
+APK-SHA256 `bc24aa875ae517ca50cb67898bac0956740aa5ad6578e225de8c88000eca8ac5`; Quellstand `0ed25d73bb897735021d8c575ba314a5cc87e2ba`.
+Paket, Android-Code 3015, bisheriges Zertifikat und 16-KiB-Ausrichtung geprüft.
+Diese Desktop-Prüfungen ersetzen keinen Android-Gerätelauf.
+
 ## Lagergrenzen · 0.28.20-alpha.1
 
 44 Headless-Module mit **21.510 Prüfungen**, zwei natürliche Fortschrittsfälle

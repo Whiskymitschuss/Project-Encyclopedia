@@ -1,4 +1,30 @@
-# Aktuell: Nachwuchs im aktiven Wald · 0.28.19-alpha.1
+# Aktuell: Lagergrenzen · 0.28.20-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.20-alpha.1/releases/Timber-Loot-Tycoon-v0.28.20-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.20-alpha.1/releases/Timber-Loot-Tycoon-v0.28.20-Lager-Testerpaket.zip)** ·
+[Passender Quellcode](Timber-Loot-Tycoon-v0.28.20-source.zip) · [Lagerregeln und Prüfungen](../docs/STORAGE-2820.md)
+
+Feste ausbaufähige Fächer je Warenart: Start 1.000, mit erstem Zentrallager 2.500.
+Abhol-Express 96 bis 312, ausgebaute Werkspuffer bis 384 je Ware. Keine neuen
+Gratisbestände. Gebuchte LKW-Ladungen sind auch vor Käufen und Ablieferung
+reserviert; mehrere zentrale Höfe teilen dieselbe begrenzte Zentrale. Volle
+Ausgänge stoppen den Rohstoffverbrauch. Nach Entnahme/Verkauf geht der Warenfluss
+automatisch weiter. Alte Überbestände bleiben erhalten, nehmen keine neuen
+Gutschriften an und können verbraucht werden.
+
+Hauptanzeige: genauer gesamter Vorrat; darunter L = Zentrale / Kapazität.
+! meldet das volle/gebuchte Zentralfach, ↻ die wartende Holzabholung.
+Warendetail und Logistik erklären Plätze und verknüpfen den Lagerausbau.
+
+Android-Code **3015**, gleiches Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, Debug-Testfassung.
+21510 Headless- und 487 relevante OpenGL-Quellprüfungen;
+zusätzlich 11647 Headless- und 167 OpenGL-Prüfungen mit
+unveränderten Dateien aus der tatsächlichen APK. Kein echter Android-Gerätetest.
+APK-Quellstand `0ed25d73bb897735021d8c575ba314a5cc87e2ba`. Quell-ZIP: 858 Dateien gegen Git geprüft.
+Die frühere vollständige Masterliste bleibt offen.
+
+## Vorher: Nachwuchs im aktiven Wald · 0.28.19-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.19-alpha.1/releases/Timber-Loot-Tycoon-v0.28.19-alpha.1.apk)** · **[Testerpaket](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.19-alpha.1/releases/Timber-Loot-Tycoon-v0.28.19-Nachwuchs-Testerpaket.zip)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.19-source.zip) · [Ursache, Simulation und Bilder](../docs/ACTIVE-FOREST-2819.md)
