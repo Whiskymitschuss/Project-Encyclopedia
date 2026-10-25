@@ -1,3 +1,10 @@
+## Externe Downloads Weltgestaltung · 0.28.16 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.16-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2816.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.16-alpha.1
 
 6710 Headless- und 625 OpenGL-Prüfungen mit unveränderten,
