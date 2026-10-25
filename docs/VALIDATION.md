@@ -1,3 +1,15 @@
+## Tatsächliche APK-Dateien · 0.28.18-alpha.1
+
+6758 Headless- und 259 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Altes Starterfeld bei aktiver Eichenwaldernte, ein Pflanzer,
+bereits laufende Altmissionen, Verteilungszeiger nach Neustart, echte Jungbäume,
+Teammenü, Kamerasprung, Logistik und kalter Start sind eingeschlossen.
+[Paketprüfbericht](alpha1-starter/packaged-checks.json).
+APK-SHA256 `fe1b3f8606ee9aebad044ea1067faaa64f0f6d9bf1e484abf25e88912270d42a`. Quellstand `bd95f341ccb4acfc839c8eea27ac31bcea13c068`.
+Paket, Versionscode 3013, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Starterfeld und Waldwechsel · 0.28.18-alpha.1
 
 42 numerische Headless-Suiten mit 21.299 Prüfungen, zwei natürliche
