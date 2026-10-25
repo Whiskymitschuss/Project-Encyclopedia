@@ -1,0 +1,220 @@
+{
+ "company_sha256": "458d56b6a230232bf70d125ae7b8f892655328f9dc61ac8f0e451be18833bf53",
+ "company_unchanged": true,
+ "delta": 0.0333333333333333,
+ "desktop_cpu_only": true,
+ "engine_memory_bytes": 94476198,
+ "frames": 180,
+ "scripts": {
+  "res://Audio/WorldAudio.gd": {
+   "calls": 180,
+   "max_ms": 0.071,
+   "per_frame_ms": 0.01005,
+   "total_ms": 1.809
+  },
+  "res://Buildings/ConstructionSite.gd": {
+   "calls": 1980,
+   "max_ms": 0.168,
+   "per_frame_ms": 0.131333333333333,
+   "total_ms": 23.64
+  },
+  "res://Components/ChimneySmoke.gd": {
+   "calls": 900,
+   "max_ms": 0.077,
+   "per_frame_ms": 0.0191944444444442,
+   "total_ms": 3.45499999999996
+  },
+  "res://Components/CityTraffic.gd": {
+   "calls": 180,
+   "max_ms": 0.193,
+   "per_frame_ms": 0.00774999999999999,
+   "total_ms": 1.395
+  },
+  "res://Components/CrewWorld.gd": {
+   "calls": 180,
+   "max_ms": 0.215,
+   "per_frame_ms": 0.01175,
+   "total_ms": 2.115
+  },
+  "res://Components/DeliveryWorld.gd": {
+   "calls": 180,
+   "max_ms": 17.504,
+   "per_frame_ms": 0.695233333333333,
+   "total_ms": 125.142
+  },
+  "res://Components/DepotStock.gd": {
+   "calls": 360,
+   "max_ms": 0.161,
+   "per_frame_ms": 0.00938888888888884,
+   "total_ms": 1.68999999999999
+  },
+  "res://Components/FireWorld.gd": {
+   "calls": 180,
+   "max_ms": 0.138,
+   "per_frame_ms": 0.0163722222222222,
+   "total_ms": 2.947
+  },
+  "res://Components/ForestFauna.gd": {
+   "calls": 180,
+   "max_ms": 1.189,
+   "per_frame_ms": 0.06445,
+   "total_ms": 11.601
+  },
+  "res://Components/ForestWorld.gd": {
+   "calls": 180,
+   "max_ms": 3.453,
+   "per_frame_ms": 0.185738888888889,
+   "total_ms": 33.433
+  },
+  "res://Components/LoadingHoist.gd": {
+   "calls": 720,
+   "max_ms": 0.264,
+   "per_frame_ms": 0.0491666666666668,
+   "total_ms": 8.85000000000002
+  },
+  "res://Components/ProductionBeacon.gd": {
+   "calls": 1980,
+   "max_ms": 4.734,
+   "per_frame_ms": 0.110894444444444,
+   "total_ms": 19.961
+  },
+  "res://Components/ProductionMachine.gd": {
+   "calls": 720,
+   "max_ms": 0.094,
+   "per_frame_ms": 0.0563944444444443,
+   "total_ms": 10.151
+  },
+  "res://Components/SawmillView.gd": {
+   "calls": 540,
+   "max_ms": 0.16,
+   "per_frame_ms": 0.111133333333333,
+   "total_ms": 20.004
+  },
+  "res://Components/SelectionWorld.gd": {
+   "calls": 180,
+   "max_ms": 0.045,
+   "per_frame_ms": 0.00195,
+   "total_ms": 0.351
+  },
+  "res://Components/TownWorld.gd": {
+   "calls": 180,
+   "max_ms": 0.044,
+   "per_frame_ms": 0.00292222222222222,
+   "total_ms": 0.526
+  },
+  "res://Components/TradeWorld.gd": {
+   "calls": 180,
+   "max_ms": 0.248,
+   "per_frame_ms": 0.00282222222222222,
+   "total_ms": 0.508
+  },
+  "res://Components/UpgradeReveal.gd": {
+   "calls": 180,
+   "max_ms": 0.037,
+   "per_frame_ms": 0.00782777777777776,
+   "total_ms": 1.409
+  },
+  "res://Components/ValleyLandscape.gd": {
+   "calls": 180,
+   "max_ms": 0.022,
+   "per_frame_ms": 0.00340555555555556,
+   "total_ms": 0.613
+  },
+  "res://Components/World.gd": {
+   "calls": 180,
+   "max_ms": 0.39,
+   "per_frame_ms": 0.147927777777778,
+   "total_ms": 26.627
+  },
+  "res://Components/WorldChunks.gd": {
+   "calls": 180,
+   "max_ms": 0.008,
+   "per_frame_ms": 0.00162777777777778,
+   "total_ms": 0.293
+  },
+  "res://Components/WorldFeedback.gd": {
+   "calls": 180,
+   "max_ms": 2.674,
+   "per_frame_ms": 0.0290555555555555,
+   "total_ms": 5.22999999999999
+  },
+  "res://Components/WorldLife.gd": {
+   "calls": 180,
+   "max_ms": 0.054,
+   "per_frame_ms": 0.00515555555555556,
+   "total_ms": 0.928000000000001
+  },
+  "res://Components/YardHandling.gd": {
+   "calls": 1800,
+   "max_ms": 0.1,
+   "per_frame_ms": 0.0942888888888892,
+   "total_ms": 16.9720000000001
+  },
+  "res://NPCs/ConstructionWorker.gd": {
+   "calls": 540,
+   "max_ms": 0.085,
+   "per_frame_ms": 0.0469388888888888,
+   "total_ms": 8.44899999999998
+  },
+  "res://NPCs/Worker.gd": {
+   "calls": 3420,
+   "max_ms": 0.253,
+   "per_frame_ms": 0.152300000000001,
+   "total_ms": 27.4140000000002
+  },
+  "res://UI/BeaverPortrait.gd": {
+   "calls": 180,
+   "max_ms": 0.002,
+   "per_frame_ms": 0.000455555555555556,
+   "total_ms": 0.0820000000000001
+  },
+  "res://UI/CityUX.gd": {
+   "calls": 180,
+   "max_ms": 0.204,
+   "per_frame_ms": 0.0072111111111111,
+   "total_ms": 1.298
+  },
+  "res://UI/Companion.gd": {
+   "calls": 180,
+   "max_ms": 0.059,
+   "per_frame_ms": 0.00807777777777777,
+   "total_ms": 1.454
+  },
+  "res://UI/HUD.gd": {
+   "calls": 180,
+   "max_ms": 0.115,
+   "per_frame_ms": 0.0197277777777777,
+   "total_ms": 3.55099999999999
+  },
+  "res://UI/ProductionAlerts.gd": {
+   "calls": 180,
+   "max_ms": 1.797,
+   "per_frame_ms": 0.125883333333333,
+   "total_ms": 22.659
+  },
+  "res://UI/TouchScroll.gd": {
+   "calls": 720,
+   "max_ms": 0.021,
+   "per_frame_ms": 0.00242777777777778,
+   "total_ms": 0.437
+  },
+  "res://UI/TutorialCoach.gd": {
+   "calls": 180,
+   "max_ms": 0.048,
+   "per_frame_ms": 0.00535555555555556,
+   "total_ms": 0.964000000000001
+  },
+  "res://Vehicles/ForestryMachine.gd": {
+   "calls": 540,
+   "max_ms": 0.082,
+   "per_frame_ms": 0.0309555555555554,
+   "total_ms": 5.57199999999998
+  },
+  "res://characters/beavers/BeaverRig.gd": {
+   "calls": 9900,
+   "max_ms": 0.277,
+   "per_frame_ms": 0.173538888888897,
+   "total_ms": 31.2370000000014
+  }
+ }
+}

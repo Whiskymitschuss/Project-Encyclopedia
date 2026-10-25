@@ -1,30 +1,36 @@
 class_name TimberTruck
 extends Node3D
 
-var road_freight = false
-var fleet="general"
-var cargo_boards = false
-var cargo_stone = false
+@export var road_freight = false
+@export var fleet="general"
+@export var cargo_boards = false
+@export var cargo_stone = false
+@export var prepared_nodes={}
 var trailer: Node3D
 var previous_heading = 0.0
-var cargo_boxes = false
-var cargo_furniture = false
+@export var cargo_boxes = false
+@export var cargo_furniture = false
 var cargo: Node3D
 var path: Array[Vector3] = []
 var segment = 0
 var speed = 10.0
-var tier = 3
+@export var tier = 3
 var wheels: Array = []
 var lift: Node3D
 var clock = 0.0
 
 func wheel(at: Vector3, radius: float = 0.85) -> void:
  var node=Models.cylinder(self,radius,0.4,at,Color("34484b"))
+ node.name="Wheel%s" % wheels.size()
  node.rotation.z=PI/2
  node.set_meta("animated",true)
  wheels.append(node)
 
 func _ready() -> void:
+ if not prepared_nodes.is_empty():
+  bind_prepared()
+  set_process(not path.is_empty())
+  return
  set_meta("transport_tier",tier)
  if road_freight:
   build_rig()
@@ -60,6 +66,7 @@ func _ready() -> void:
     wheel(Vector3(x,0.8,z))
   if industrial:
    lift=Node3D.new()
+   lift.name="Lift"
    add_child(lift)
    lift.position=Vector3(0,2.5,-1.5)
    Models.cylinder(lift,0.6,0.6,Vector3.ZERO,Color("477386"))
@@ -145,8 +152,15 @@ func build_rig() -> void:
  Models.soft_box(carrier,Vector3(2.0,0.24,4.2),Vector3(0,1.05,-0.85),Color("edb848"))
  for x in [-0.97,0.97]:
   for z in [-2.8,0.85]: Models.soft_box(carrier,Vector3(0.12,0.7,0.12),Vector3(x,1.45,z),color)
+ cargo=build_freight_cargo(carrier)
+ if trailer!=null: Models.bake(trailer)
+ Models.bake(self)
+
+func build_freight_cargo(carrier: Node3D) -> Node3D:
+ var color=Color("ffffff") if fleet in ["central","construction"] else Color("35a8d6") if tier>=6 else Color("ffc640")
+ var cargo: Node3D
  cargo=Node3D.new()
- cargo.name="FreightLoad"
+ cargo.name="FreightLoad_"+cargo_key()
  cargo.position=Vector3(0,1.25,-0.9)
  carrier.add_child(cargo)
  if cargo_boards:
@@ -166,8 +180,28 @@ func build_rig() -> void:
     var end=Models.cylinder(cargo,0.34,0.03,Vector3(x,0.35,z),Color("f1c985"))
     end.rotation.x=PI/2
  Models.bake(cargo)
- if trailer!=null: Models.bake(trailer)
- Models.bake(self)
+ return cargo
+
+
+func cargo_key() -> String:
+ return "boards" if cargo_boards else "stone" if cargo_stone else "crates" if cargo_boxes else "furniture" if cargo_furniture else "wood"
+
+func remember_prepared(cargos: Dictionary) -> void:
+ prepared_nodes={"wheels":wheels.map(func(node):return get_path_to(node)),"cargos":{}}
+ for key in cargos:prepared_nodes.cargos[key]=get_path_to(cargos[key])
+ for entry in [["trailer",trailer],["lift",lift]]:
+  if entry[1]!=null:prepared_nodes[entry[0]]=get_path_to(entry[1])
+
+func bind_prepared() -> void:
+ wheels=prepared_nodes.wheels.map(func(path):return get_node(path))
+ trailer=get_node(prepared_nodes.trailer) if prepared_nodes.has("trailer") else null
+ lift=get_node(prepared_nodes.lift) if prepared_nodes.has("lift") else null
+ var key=cargo_key()
+ if not prepared_nodes.cargos.has(key):key=prepared_nodes.cargos.keys()[0]
+ for name_value in prepared_nodes.cargos:
+  var holder=get_node(prepared_nodes.cargos[name_value])
+  holder.visible=name_value==key
+ cargo=get_node(prepared_nodes.cargos[key])
 
 func follow_heading(direction: Vector3, delta: float) -> void:
  if direction.length_squared()<0.00001: return

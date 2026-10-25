@@ -21,6 +21,7 @@ if [ "$#" -gt 0 ]; then
  done
  exit 0
 fi
+check --script res://Tests/Performance2826.gd
 check --script res://Tests/Renderer2825.gd
 check --script res://Tests/Daylight2824.gd
 check --script res://Tests/Performance2823.gd
@@ -73,4 +74,4 @@ check --script res://Tests/Quality.gd
 check --script res://Tests/Presentation26.gd
 check --script res://Tests/Startup.gd
 check res://Scenes/Main.tscn --quit-after 90
-check --quit-after 90
+check --script res://Tests/StartupSmoke2826.gd

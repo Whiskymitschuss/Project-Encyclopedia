@@ -2,7 +2,19 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.25-alpha.1 · Vulkan-Vergleich
+## Aktuell: 0.28.26-alpha.1 · Performance Update 1.0
+
+Vorbereitete Gebäude, Landschaft, Biber und Fahrzeuge; vorhandene Modelle und
+Wirtschaft bleiben erhalten. Unveränderte Gebäude werden wiederverwendet,
+64-Einheiten-Sichtbereiche setzen entfernte Animationen aus. Vier Grafikprofile,
+getaktete Animationen, begrenzte Fahrzeugpools und ein gestufter Ladeablauf.
+
+[Abschlussbericht und Messgrenzen](docs/PERFORMANCE-1.0.md) ·
+[Prüfungen](docs/performance-1/source-checks.json). Android-Code **3021**,
+bisheriges Paket/Testzertifikat. Noch kein nachgewiesener 30-FPS-Erfolg auf dem
+Samsung oder Windows-Hardwaretest; „Performance Update 1.0“ ist kein Store-Release.
+
+## Vorher: 0.28.25-alpha.1 · Vulkan-Vergleich
 
 Android-Vulkan-Test der vorhandenen Hauptwelt, plus gleich versionierte OpenGL-
 Rückfall-APK. GPU-Name und optionale zehnsekündige Render-CPU-/GPU-Messung.

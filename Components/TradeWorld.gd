@@ -4,6 +4,7 @@ var world: Node3D
 var borders: Node3D
 var gate_label: Label3D
 var status_clock=0.0
+var border_unlocked=-1
 
 func _ready() -> void:
  build_highway()
@@ -44,7 +45,8 @@ func build_highway() -> void:
  gate_label=Models.label(self,"Straße verbinden",Vector3(294,8.7,161),24)
 
 func refresh_borders() -> void:
- if borders==null: return
+ if borders==null or border_unlocked==int(Game.state.unlocked): return
+ border_unlocked=int(Game.state.unlocked)
  for node in borders.get_children(): borders.remove_child(node); node.queue_free()
  for i in range(int(Game.state.unlocked),Catalog.BIOMES.size()):
   var center=Catalog.biome_position(i)

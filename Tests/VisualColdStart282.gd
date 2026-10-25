@@ -33,7 +33,9 @@ func run() -> void:
  check(absf(float(game.state.elapsed)-initial_elapsed-28800)<1,"Cold start computes eight hours once")
  check(store.valid_shape(store.load_game()),"Cold start commits a valid complete company")
  var world_deadline=Time.get_ticks_msec()+10000
- while current_scene==boot and Time.get_ticks_msec()<world_deadline: await process_frame
+ while Time.get_ticks_msec()<world_deadline:
+  if current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn" and current_scene.is_processing():break
+  await process_frame
  check(not paused and current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn","Cold startup automatically enters the actual world after complete replay")
  print("COLD START 282 MEASURE: first script frame ",first," ms, total ",Time.get_ticks_msec()-began," ms, responsive frames ",frames)
  print("VISUAL COLD START 282: ",checks," checks, ",failures.size()," failures")

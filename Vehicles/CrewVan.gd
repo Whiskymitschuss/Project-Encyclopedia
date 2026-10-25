@@ -1,5 +1,6 @@
 extends Node3D
 
+@export var prepared_nodes={}
 var wheels=[]
 var passengers=[]
 var door: Node3D
@@ -8,6 +9,11 @@ var people=0
 var moving=false
 
 func _ready() -> void:
+ if not prepared_nodes.is_empty():
+  wheels=prepared_nodes.wheels.map(func(path):return get_node(path))
+  passengers=prepared_nodes.passengers.map(func(path):return get_node(path))
+  door=get_node(prepared_nodes.door)
+  return
  scale=Vector3.ONE*0.84
  Models.soft_box(self,Vector3(2.8,0.7,6.8),Vector3(0,1.0,0),Color("f6f0dc"))
  Models.soft_box(self,Vector3(2.65,1.8,3.6),Vector3(0,2.0,-1.35),Color("f6f0dc"))
@@ -18,6 +24,7 @@ func _ready() -> void:
  get_node("Driver").position.x=-0.6
  for i in SEAT_POSITIONS.size():
   var beaver=BeaverModels.create(i+3,"industry",true)
+  beaver.name="Passenger%s" % i
   beaver.position=SEAT_POSITIONS[i]
   beaver.scale=Vector3.ONE*0.43
   beaver.hide()
@@ -27,6 +34,7 @@ func _ready() -> void:
   Models.soft_box(self,Vector3(0.07,0.7,2.7),Vector3(x,2.25,-1.25),Color("78aeb2"))
   for z in [-2.25,2.25]:
    var wheel=Models.cylinder(self,0.61,0.35,Vector3(x,0.65,z),Color("324653"))
+   wheel.name="Wheel%s" % wheels.size()
    wheel.rotation.z=PI/2
    wheel.set_meta("animated",true)
    wheels.append(wheel)
@@ -57,3 +65,6 @@ func _process(delta: float) -> void:
  door.position.z=lerpf(door.position.z,-0.7-door_open*1.7,minf(1,delta*8))
  if moving:
   for wheel in wheels: wheel.rotate_object_local(Vector3.UP,delta*7)
+
+func remember_prepared() -> void:
+ prepared_nodes={"wheels":wheels.map(func(node):return get_path_to(node)),"passengers":passengers.map(func(node):return get_path_to(node)),"door":get_path_to(door)}

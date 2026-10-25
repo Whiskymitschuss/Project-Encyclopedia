@@ -3,12 +3,16 @@ static func populate(hud: Control,tab: String) -> void:
  if tab=="performance":
   hud.modal_title.text="LEISTUNGSVERGLEICH"
   var device=hud.card("Dein Gerät")
-  hud.text(device,"%s · Version %s\n%s Betriebe · %s Häuser · %s · maximal %s Bilder/s" % [OS.get_model_name(),ProjectSettings.get_setting("application/config/version"),Game.state.buildings.size(),Game.state.homes.size(),"Akku" if Game.state.quality==0 else "Standard",Engine.max_fps],14,hud.MUTED)
+  hud.text(device,"%s · Version %s\n%s Betriebe · %s Häuser · %s · maximal %s Bilder/s" % [OS.get_model_name(),ProjectSettings.get_setting("application/config/version"),Game.state.buildings.size(),Game.state.homes.size(),GraphicsProfiles.profile(int(Game.state.quality)).name,Engine.max_fps],14,hud.MUTED)
   var live=hud.card("Startzeit & aktuelle Leistung","Während des Spielens gemessen. Menü in voller Auflösung; keine Temperaturmessung.")
   hud.dynamic_text(live,func(): return RuntimeStats.summary())
   hud.button(live,"EINSTELLUNGEN",func(): hud.open_menu("settings"))
   var automatic=hud.card("Automatische Messdetails","Auf Android beim Spielen aktiv; keine Kamerarunde nötig. Es wird nichts gesendet.")
   hud.dynamic_text(automatic,func():return RuntimeStats.passive_summary())
+  var startup=hud.card("Weltaufbau nach Bereichen")
+  hud.text(startup,RuntimeStats.startup_summary(),14,hud.MUTED)
+  var memory=hud.card("Speicher und Szenenobjekte")
+  hud.dynamic_text(memory,func():return "Engine-Speicher: %.1f MiB · %s Nodes\nGPU-Speicher (Engine): %.1f MiB. Kein Android-Gesamtspeicher oder Temperaturwert." % [OS.get_static_memory_usage()/1048576.0,hud.get_tree().get_node_count(),Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)/1048576.0])
   var graphics=hud.card("Grafikzeit messen")
   hud.dynamic_text(graphics,func():return RuntimeStats.render_probe_summary())
   hud.button(graphics,"10 SEKUNDEN MESSEN",func(): RuntimeStats.start_render_probe())

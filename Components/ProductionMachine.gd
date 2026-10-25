@@ -1,8 +1,8 @@
 extends Node3D
 
-var kind="sawmill"
-var input_key="wood"
-var output_key="boards"
+@export var kind="sawmill"
+@export var input_key="wood"
+@export var output_key="boards"
 var building_index=-1
 var phase=0.0
 var active=false

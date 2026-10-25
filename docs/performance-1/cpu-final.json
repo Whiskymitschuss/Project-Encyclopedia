@@ -1,0 +1,95 @@
+{
+ "calls": {
+  "city": {
+   "max_ms": 0.018,
+   "median_ms": 0.002,
+   "p95_ms": 0.002
+  },
+  "crew": {
+   "max_ms": 0.151,
+   "median_ms": 0.004,
+   "p95_ms": 0.006
+  },
+  "deliveries": {
+   "max_ms": 17.683,
+   "median_ms": 0.477,
+   "p95_ms": 1.458
+  },
+  "forest": {
+   "max_ms": 23.252,
+   "median_ms": 0.054,
+   "p95_ms": 0.988
+  },
+  "hud": {
+   "max_ms": 0.083,
+   "median_ms": 0.005,
+   "p95_ms": 0.005
+  },
+  "world": {
+   "max_ms": 1.814,
+   "median_ms": 0.1,
+   "p95_ms": 0.184
+  }
+ },
+ "company_sha256": "2415fb9eee53c9835fff62c7a22ecdf1aaf40830f29fe45371d4f8917aa8f990",
+ "company_unchanged": true,
+ "construction_ms": {
+  "actor_sync_first": 100.347,
+  "forest_clearance": 8.374,
+  "landscape_refresh": 36.937,
+  "street_rebuild": 22.831,
+  "total": 1735.664
+ },
+ "desktop_only": true,
+ "memory_bytes": 94632764,
+ "mesh_nodes": 1738,
+ "mesh_surfaces": 1738,
+ "node_count": 4862,
+ "nodes": 3478,
+ "orphan_count": 10.0,
+ "rebuild_ms": [
+  0.263,
+  0.161
+ ],
+ "script_counts": {
+  "res://Audio/Sound.gd": 1,
+  "res://Audio/WorldAudio.gd": 1,
+  "res://Buildings/ConstructionSite.gd": 14,
+  "res://Components/Beaver.gd": 1,
+  "res://Components/ChimneySmoke.gd": 5,
+  "res://Components/CityTraffic.gd": 1,
+  "res://Components/CrewWorld.gd": 1,
+  "res://Components/DeliveryWorld.gd": 1,
+  "res://Components/DepotStock.gd": 2,
+  "res://Components/FireWorld.gd": 1,
+  "res://Components/ForestFauna.gd": 1,
+  "res://Components/ForestWorld.gd": 1,
+  "res://Components/LoadingHoist.gd": 4,
+  "res://Components/ProductionBeacon.gd": 11,
+  "res://Components/ProductionMachine.gd": 4,
+  "res://Components/SawmillView.gd": 3,
+  "res://Components/SelectionWorld.gd": 1,
+  "res://Components/TownWorld.gd": 1,
+  "res://Components/TradeWorld.gd": 1,
+  "res://Components/UpgradeReveal.gd": 1,
+  "res://Components/ValleyLandscape.gd": 1,
+  "res://Components/World.gd": 1,
+  "res://Components/WorldChunks.gd": 1,
+  "res://Components/WorldFeedback.gd": 1,
+  "res://Components/WorldLife.gd": 1,
+  "res://Components/YardHandling.gd": 10,
+  "res://NPCs/ConstructionWorker.gd": 3,
+  "res://UI/BeaverPortrait.gd": 1,
+  "res://UI/CityUX.gd": 1,
+  "res://UI/Companion.gd": 1,
+  "res://UI/HUD.gd": 1,
+  "res://UI/MaterialBar.gd": 1,
+  "res://UI/PhotoMode.gd": 1,
+  "res://UI/ProductionAlerts.gd": 1,
+  "res://UI/SpatialIcons.gd": 1,
+  "res://UI/TouchScroll.gd": 4,
+  "res://UI/TutorialCoach.gd": 1,
+  "res://characters/beavers/BeaverRig.gd": 36
+ },
+ "triangles": 389307
+}

@@ -17,6 +17,7 @@ const VARIANTS=[
  {"name":"Nova","fur":"89664f","body":1.02,"head":Vector3(0.78,0.72,0.55),"ears":0.23,"tail":Vector2(0.49,0.88),"muzzle":0.30}]
 const CLOTHES={"planter":Color("5c9945"),"forester":TycoonStyle.COPPER,"industry":TycoonStyle.BLUE,"logistics":Color("79ad50"),"civilian":Color("aa7bb5"),"fire":Color("29485f")}
 static var scenes={}
+static var use_baked=true
 static var sphere_mesh: SphereMesh
 static var palette: StandardMaterial3D
 
@@ -45,6 +46,8 @@ static func create(variant_id: int,profession: String="civilian",seated: bool=fa
  var id=posmod(variant_id,10)
  if not CLOTHES.has(profession): profession="civilian"
  var key="%s/%s/%s" % [id,profession,seated]
+ var path="res://Assets/Baked/beaver-%s-%s-%s.scn" % [id,profession,int(seated)]
+ if not scenes.has(key) and use_baked and ResourceLoader.exists(path): scenes[key]=load(path)
  if not scenes.has(key):
   var root=build(id,profession,seated)
   own(root,root)

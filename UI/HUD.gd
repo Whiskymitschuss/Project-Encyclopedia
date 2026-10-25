@@ -1183,10 +1183,19 @@ func settings_menu() -> void:
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
- button(box,"Qualität: AKKUMODUS" if Game.state.quality == 0 else "Qualität: STANDARD",func(): action(func(): Game.state.quality = 1-int(Game.state.quality); Game.apply_device_profile()))
+ var graphics=card("Grafikprofil","Das gewählte Profil setzt die Obergrenze. Automatische Entlastung reagiert auf gemessene Bildzeiten; Menüs bleiben scharf.")
+ dynamic_text(graphics,func():return RuntimeStats.graphics_recommendation())
+ for profile_id in 4:
+  var id=profile_id
+  var preset=GraphicsProfiles.profile(id)
+  button(graphics,("✓ " if int(Game.state.quality)==id else "")+str(preset.name)+" · "+str(preset.fps)+" FPS",func():action(func():
+   Game.state.quality=id
+   RuntimeStats.detail_level=0;RuntimeStats.low_detail=false;RuntimeStats.slow_seconds=0;RuntimeStats.severe_seconds=0;RuntimeStats.stable_seconds=0
+   Game.apply_device_profile()))
+  text(graphics,preset.description,13,MUTED)
  button(box,"Automatische Detailentlastung: AN" if Game.state.ux.get("adaptive_detail",true) else "Automatische Detailentlastung: AUS",func(): action(func(): Game.state.ux.adaptive_detail=not Game.state.ux.get("adaptive_detail",true); RuntimeStats.low_detail=false))
  button(box,"STARTZEIT & FPS ANSEHEN",func(): open_menu("performance"))
- text(box,"Android: maximal 30 Bilder/s. Im Hintergrund ruht die Darstellung. Akkumodus reduziert zusätzlich 3D-Auflösung, Schatten und Umwelteffekte. Automatische Detailentlastung reagiert auf schlechte Bildzeiten; ein Temperatursensor wird nicht ausgelesen.",14,MUTED)
+ text(box,"Sparmodus und Standard zielen auf 30 Bilder/s, Hoch und Ultra auf 60. Die erreichbare Bildrate hängt vom Gerät ab. Im Hintergrund ruht die Darstellung. Wetter bleibt aus; ein Temperatursensor wird nicht ausgelesen.",14,MUTED)
  if ux!=null: ux.settings_controls(box)
  text(contents,"Alpha 1 · %s · Testfassung\nKeine Werbung, keine In-App-Käufe, kein Cloud-Save. Geräteleistung und langfristige Balance werden separat geprüft." % ProjectSettings.get_setting("application/config/version"),14,MUTED)
 

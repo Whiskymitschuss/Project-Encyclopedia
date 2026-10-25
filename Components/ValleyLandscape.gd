@@ -5,6 +5,9 @@ extends Node3D
 const HALF = Vector2(390,340)
 const GRID = 8
 const DECOR_LIMIT = 2500
+const BLUEPRINT="res://Assets/Baked/valley.res"
+static var use_baked=true
+var blueprint: Resource
 var world: Node3D
 var noise = FastNoiseLite.new()
 var detail_noise = FastNoiseLite.new()
@@ -66,6 +69,18 @@ func ground_color(point: Vector2) -> Color:
 
 func build() -> void:
  build_water()
+ if use_baked and ResourceLoader.exists(BLUEPRINT): blueprint=load(BLUEPRINT)
+ var land=MeshInstance3D.new()
+ land.name="ValleyTerrain"
+ land.mesh=blueprint.terrain if blueprint!=null else build_terrain()
+ add_child(land)
+ landmarks=Node3D.new()
+ add_child(landmarks)
+ build_landmarks()
+ seed_decor()
+ refresh()
+
+func build_terrain() -> Mesh:
  var surface=SurfaceTool.new()
  surface.begin(Mesh.PRIMITIVE_TRIANGLES)
  for z in range(-344,345,GRID):
@@ -86,15 +101,7 @@ func build() -> void:
  material.roughness=0.95
  surface.set_material(material)
  surface.index()
- var land=MeshInstance3D.new()
- land.name="ValleyTerrain"
- land.mesh=surface.commit()
- add_child(land)
- landmarks=Node3D.new()
- add_child(landmarks)
- build_landmarks()
- seed_decor()
- refresh()
+ return surface.commit()
 
 func build_water() -> void:
  water=MeshInstance3D.new()
@@ -166,6 +173,12 @@ func build_landmarks() -> void:
  Models.bake(landmarks)
 
 func seed_decor() -> void:
+ if blueprint!=null:
+  records=blueprint.decor.duplicate(true)
+ else: generate_decor()
+ build_decor_batches()
+
+func generate_decor() -> void:
  var rng=RandomNumberGenerator.new()
  rng.seed=141706
  # Dense reeds, shrubs and stones make the water belong to the landscape.
@@ -210,6 +223,8 @@ func seed_decor() -> void:
   if type=="rock": tone=Color("a1ada0")
   elif type=="flowers": tone=Color("f5cc72") if rng.randf()<0.65 else Color("e895a7")
   records.append({"point":p,"kind":type,"scale":rng.randf_range(0.65,1.25),"angle":rng.randf_range(0,TAU),"color":tone.darkened(rng.randf_range(0,0.16)),"blocked":false})
+
+func build_decor_batches() -> void:
  for kind in ["pine","leaf","bush","rock","flowers","trunk"]:
   var entries=[]
   for record in records:

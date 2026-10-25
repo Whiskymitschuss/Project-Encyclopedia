@@ -112,7 +112,7 @@ func run() -> void:
  await tap(hud.placement_confirm)
  check(scene.placement.is_empty() and game.home_position(0)==Vector3(-40,0,148),"Physical confirmation really relocates the house")
  check(game.state.coins==coins and game.state.homes[0].level==3 and game.state.homes[0].rent_bank==55,"Touch relocation preserves upgrades, rent and money")
- check(Engine.max_fps==60,"Desktop presentation has a bounded frame rate")
+ check(Engine.max_fps==30,"Standard presentation uses the requested 30-FPS budget on desktop too")
  game.state.quality=0
  game.apply_device_profile()
  check(Engine.max_fps==30,"Battery mode applies the lower frame budget immediately")

@@ -29,12 +29,17 @@ var warmup=0.0
 var previous_us=0
 var profiling=false
 var work={}
+var startup_sections={}
+var profile_clock=0.0
 
 func _ready() -> void:
  process_mode=Node.PROCESS_MODE_ALWAYS
  previous_us=Time.get_ticks_usec()
 
 func _process(_delta: float) -> void:
+ profile_clock+=_delta
+ if profile_clock>=2.0 and not Game.state.is_empty() and Game.live_world and not Game.application_suspended:
+  profile_clock=0;Game.apply_device_profile()
  if render_probe_left>0:sample_render_probe(_delta)
  var now=Time.get_ticks_usec()
  var seconds=float(now-previous_us)/1000000.0
@@ -100,7 +105,8 @@ func resolution_scale(pixels: Vector2i,quality: int,adaptive: bool,mobile: bool,
  if photo: return 1.0
  # High-DPI Android panels should not render millions of extra world pixels
  # just because they can sustain 30 FPS. Canvas/UI stays at native resolution.
- var base=clampf(sqrt(2000000.0/maxf(1,float(pixels.x)*pixels.y)),0.25,1.0) if mobile and adaptive else 1.0
+ var budget=float(GraphicsProfiles.profile(quality).pixels)
+ var base=clampf(sqrt(budget/maxf(1,float(pixels.x)*pixels.y)),0.25,1.0) if mobile and adaptive and budget>0 else 1.0
  var adaptive_scale=float(DETAIL_SCALES[clampi(maxi(detail_level,1 if low_detail else 0),0,3)]) if adaptive else 1.0
  # Preserve the existing first-stage battery profile. Severe load can now
  # reduce either selected profile further without resizing the Canvas/HUD.
@@ -198,3 +204,15 @@ func _notification(what: int) -> void:
   render_probe_left=0
   render_probe_samples.clear()
   render_probe_result.clear()
+
+func mark_startup(section: String,began: int) -> int:
+ var now=Time.get_ticks_usec()
+ startup_sections[section]=(now-began)/1000.0
+ return now
+func startup_summary() -> String:
+ var rows=[]
+ for section in startup_sections:rows.append("%s: %.1f ms" % [section,float(startup_sections[section])])
+ return "\n".join(rows)
+func graphics_recommendation() -> String:
+ var s=snapshot()
+ return GraphicsProfiles.recommendation(int(s.frames),float(s.fps),float(s.p95_ms),render_probe_result)

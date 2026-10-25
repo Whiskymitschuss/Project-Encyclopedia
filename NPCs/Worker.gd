@@ -1,5 +1,6 @@
 class_name TimberWorker
 extends Node3D
+var presentation_delta=0.0
 
 var origin_point = Vector3.ZERO
 var destination = Vector3.ZERO
@@ -65,6 +66,9 @@ func _ready() -> void:
   for mesh in body.find_children("*","MeshInstance3D",true,false): mesh.visibility_range_end=0
 
 func _process(delta: float) -> void:
+ presentation_delta+=delta
+ if delta>0 and presentation_delta<PresentationBudget.animation_interval(self):return
+ delta=presentation_delta;presentation_delta=0.0
  if not Game.state.ux.motion: return
  handling=false
  if axe!=null: axe.hide()

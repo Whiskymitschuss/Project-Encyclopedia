@@ -24,12 +24,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path, default=ROOT / f'exports/Timber-Loot-Tycoon-v{VERSION_NAME}.apk')
 parser.add_argument('--verify-only', action='store_true')
 parser.add_argument('--renderer', choices=['mobile','gl_compatibility'], help='Android renderer for this export; project.godot is restored afterward')
+parser.add_argument('--abi', choices=['universal','arm64-v8a','armeabi-v7a'], help='Build an ABI-specific APK; universal keeps the configured architectures')
 args = parser.parse_args()
 output = args.output.resolve()
 project_renderer = re.search(r'^renderer/rendering_method.mobile="([^"]+)"', (ROOT/'project.godot').read_text(), re.M).group(1)
 expected_renderer = args.renderer or project_renderer
+expected_architectures = [name for name in ['arm64-v8a','armeabi-v7a'] if f'architectures/{name}=true' in PRESET] if args.abi in [None,'universal'] else [args.abi]
 if args.verify_only and not args.renderer and output.with_suffix('.apk.json').exists():
-    expected_renderer = json.loads(output.with_suffix('.apk.json').read_text()).get('android_renderer',project_renderer)
+    prior_report=json.loads(output.with_suffix('.apk.json').read_text())
+    expected_renderer = prior_report.get('android_renderer',project_renderer)
+    if args.abi is None:expected_architectures=prior_report.get('architectures',expected_architectures)
 
 def run(command, **kwargs):
     return subprocess.check_output([str(x) for x in command], text=True, stderr=subprocess.STDOUT, **kwargs)
@@ -44,6 +48,7 @@ if not args.verify_only:
     key = RUNTIME / 'android/TimberLoot-Reborn-debug.keystore'
     if not key.exists():
         raise SystemExit('New-line signing key is missing: restore TimberLoot-Reborn-debug.keystore securely outside Git. Never regenerate a key for an already distributed package.')
+    subprocess.run([sys.executable, ROOT / 'scripts/bake_runtime.py','--verify-only'],check=True)
     subprocess.run([sys.executable, ROOT / 'scripts/setup_android.py'], check=True)
     java = Path(os.environ.get('JAVA_HOME', Path(shutil.which('java')).resolve().parents[1]))
     env = os.environ.copy()
@@ -69,7 +74,14 @@ if not args.verify_only:
             ('renderer/rendering_method.mobile='+json.dumps(args.renderer)).encode(),original_project,flags=re.M)
         if export_project==original_project and expected_renderer!=project_renderer:
             raise RuntimeError('Android renderer setting was not found for the explicit export override.')
+    preset_file=ROOT/'export_presets.cfg'
+    original_preset=preset_file.read_bytes()
+    export_preset=original_preset
+    if args.abi not in [None,'universal']:
+        for name in ['arm64-v8a','armeabi-v7a']:
+            export_preset=re.sub(('^architectures/'+name+'=(true|false)').encode(),('architectures/'+name+'='+('true' if name==args.abi else 'false')).encode(),export_preset,flags=re.M)
     try:
+        if export_preset!=original_preset:preset_file.write_bytes(export_preset)
         if export_project!=original_project: project_file.write_bytes(export_project)
         for label, commands in [('import',['--headless','--editor','--import','--quit']),
                                 ('export',['--headless','--export-debug','Android Test',output])]:
@@ -78,10 +90,13 @@ if not args.verify_only:
             if re.search(r'^(SCRIPT ERROR|ERROR):',log,re.M): raise RuntimeError(log[-5000:])
             print(label,'completed',flush=True)
     finally:
-        if export_project!=original_project:
-            if project_file.read_bytes()!=export_project:
-                raise RuntimeError('project.godot changed externally during export; preserving it for review.')
-            project_file.write_bytes(original_project)
+        changed=[]
+        for path,original,exported in [(project_file,original_project,export_project),(preset_file,original_preset,export_preset)]:
+            if exported==original:continue
+            if path.read_bytes()!=exported:
+                changed.append(path.name);continue
+            path.write_bytes(original)
+        if changed:raise RuntimeError('External changes during export preserved for review: '+', '.join(changed))
 
 signature = run([TOOLS/'apksigner','verify','--verbose','--print-certs',output])
 assert 'Verified using v2 scheme (APK Signature Scheme v2): true' in signature
@@ -93,7 +108,7 @@ run([TOOLS/'zipalign','-c','-P','16','4',output])
 manifest = run([TOOLS/'aapt2','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
-for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", f"versionCode='{VERSION_CODE}'", "minSdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'"]:
+for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", f"versionCode='{VERSION_CODE}'", "minSdkVersion:'24'", "native-code: "+" ".join(repr(name) for name in expected_architectures)]:
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
@@ -124,7 +139,7 @@ with zipfile.ZipFile(output) as apk:
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
     'version':VERSION_NAME,'package':PACKAGE,
-    'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
+    'android_min_api':24,'architectures':expected_architectures,
     'signer_sha256':re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',signature).group(1),
     'android_renderer':expected_renderer,'android_vulkan_hardware_required':expected_renderer=='mobile','debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],
     'source_commit':source_commit,

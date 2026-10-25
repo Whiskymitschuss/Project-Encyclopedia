@@ -11,7 +11,7 @@ func _process(delta: float) -> void:
   var id=int(mission.id)
   present[id]=true
   if not vans.has(id):
-   var van=pool.pop_back() if not pool.is_empty() else load("res://Vehicles/CrewVan.gd").new()
+   var van=pool.pop_back() if not pool.is_empty() else VehicleBlueprints.crew_van()
    if van.get_parent()==null: add_child(van)
    vans[id]=van
   var van=vans[id]

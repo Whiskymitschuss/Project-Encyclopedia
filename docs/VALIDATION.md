@@ -1,3 +1,15 @@
+## Performance Update 1.0 · 0.28.26-alpha.1
+
+21.657 Headless-Prüfungen in 51 berichteten Modulen, vollständiger Lauf plus finale
+zielgerichtete Schutzprüfungen; 485 OpenGL- und 125 Vulkan-Grafikprüfungen bestanden.
+Feste erzeugte Firmen, unveränderte Zustände beim Renderer-Vergleich, echte
+Produktion bei verschiedenen Bildraten, korrekt weiterlaufende Wirtschaft bei
+schlafenden Sichtbereichen und keine verwaisten Nodes in den geprüften Lade-/
+Freigabeszenarien. [Prüfprotokoll](performance-1/source-checks.json).
+
+[Abschlussbericht, Messmethoden und offene Geräteziele](PERFORMANCE-1.0.md).
+Der Erfolg auf dem SM-S721B ist noch nicht nachgewiesen; kein Windows-Hardwaretest.
+
 ## Tatsächliche APK-Dateien · 0.28.25-alpha.1
 
 Beide signierten Varianten mit je 10539 Headless-Prüfungen in 7 Modulen getestet. Vulkan zusätzlich 77, OpenGL 29 Grafikprüfungen mit unveränderten APK-Dateien. Tatsächliche Backend-Initialisierung, effektive Android-Projekteinstellungen, GPU-Timer, Hauptwelt, Tageslicht, Maschinen und Materiallogistik geprüft. Tests und Profile extern. [Paketprüfbericht](alpha1-renderer/packaged-checks.json).

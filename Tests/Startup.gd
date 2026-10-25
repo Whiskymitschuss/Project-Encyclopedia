@@ -52,7 +52,10 @@ func run() -> void:
  check(boot.starting and not boot.play.visible,"An ordinary launch automatically enters without an intro timer or Play tap")
  boot.start_game()
  check(boot.starting and boot.play.disabled,"Repeated entry cannot enqueue a second world transition")
- for i in 12: await process_frame
+ var opening_deadline=Time.get_ticks_msec()+15000
+ while Time.get_ticks_msec()<opening_deadline:
+  if current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn" and current_scene.is_processing():break
+  await process_frame
  check(current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn","Automatic entry opens the real playable main scene")
  check(current_scene.get("hud")!=null,"Automatic entry retains the actual HUD and onboarding")
  print("STARTUP: ",checks," checks, ",failures.size()," failures")

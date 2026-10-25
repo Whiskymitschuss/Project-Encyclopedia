@@ -7,6 +7,8 @@ var visual_pool: Dictionary = {}
 var overlay: Control
 var clock = 0.0
 var truck_visual_count = 0
+var pool_generation=-1
+const POOL_LIMIT=12
 
 func _ready() -> void:
  overlay = Control.new()
@@ -17,11 +19,8 @@ func _ready() -> void:
  rebuild()
 
 func rebuild() -> void:
- for child in get_children(): child.queue_free()
  for item in badges: item.button.queue_free()
  badges.clear()
- visuals.clear()
- visual_pool.clear()
  if Game.state.delivery.active:
   for kind in DeliveryChain.KINDS:
    var index = int(Game.state.delivery.nodes[kind])
@@ -132,6 +131,10 @@ func _process(delta: float) -> void:
  RuntimeStats.end_work("Transportdarstellung",measured)
 
 func _process_measured(delta: float) -> void:
+ if pool_generation!=int(Game.state.vehicle):
+  for entries in visual_pool.values():
+   for node in entries:node.queue_free()
+  visual_pool.clear();pool_generation=int(Game.state.vehicle)
  clock += delta
  if clock>=0.5: clock=0; refresh_badges()
  var occupied: Array[Rect2] = []
@@ -175,17 +178,15 @@ func _process_measured(delta: float) -> void:
   if visuals.has(id) and str(visuals[id].get_meta("pool_key"))!=signature:
    var old=visuals[id]
    var old_key=str(old.get_meta("pool_key"))
-   old.hide()
-   if not visual_pool.has(old_key): visual_pool[old_key]=[]
-   if visual_pool[old_key].size()<4: visual_pool[old_key].append(old)
-   else: old.queue_free()
+   release_visual(old)
    visuals.erase(id)
   if not visuals.has(id) and visual_pool.has(signature) and not visual_pool[signature].is_empty():
    visuals[id]=visual_pool[signature].pop_back()
+   visuals[id].process_mode=int(visuals[id].get_meta("pool_process",Node.PROCESS_MODE_INHERIT))
    visuals[id].show()
   if not visuals.has(id):
    var node: Node3D
-   node = load("res://Vehicles/DumpTruck.gd").new() if shipment.key in ["rock","gravel"] else TimberTruck.new()
+   node = VehicleBlueprints.truck(maxi(2,int(Game.state.vehicle)),str(shipment.get("fleet","general")),shipment.key in ["rock","gravel"])
    node.tier = maxi(2,int(Game.state.vehicle))
    node.cargo_furniture = shipment.key=="furniture"
    node.cargo_boxes = shipment.key not in ["wood","boards","furniture"]
@@ -196,6 +197,7 @@ func _process_measured(delta: float) -> void:
    add_child(node)
    StaticPaintBatch.reduce(node)
    node.set_meta("pool_key",signature)
+   node.set_meta("pool_version",int(Game.state.vehicle))
    var cargo_label=Label3D.new()
    cargo_label.layers=Models.WORLD_LABEL_LAYER
    cargo_label.name="RouteLabel"
@@ -255,11 +257,24 @@ func _process_measured(delta: float) -> void:
   if not present.has(id):
    var node=visuals[id]
    var key=str(node.get_meta("pool_key"))
-   node.hide()
-   if not visual_pool.has(key): visual_pool[key]=[]
-   if visual_pool[key].size()<4: visual_pool[key].append(node)
-   else: node.queue_free()
+   release_visual(node)
    visuals.erase(id)
+
+func pooled_count() -> int:
+ var total=0
+ for entries in visual_pool.values():total+=entries.size()
+ return total
+
+func release_visual(node: Node3D) -> void:
+ node.hide()
+ if int(node.get_meta("pool_version",-1))!=int(Game.state.vehicle) or pooled_count()>=POOL_LIMIT:
+  node.queue_free();return
+ var key=str(node.get_meta("pool_key"))
+ if not visual_pool.has(key):visual_pool[key]=[]
+ if visual_pool[key].size()>=4:node.queue_free();return
+ if not node.has_meta("pool_process"):node.set_meta("pool_process",node.process_mode)
+ node.process_mode=Node.PROCESS_MODE_DISABLED
+ visual_pool[key].append(node)
 
 func visual_key(shipment: Dictionary) -> String:
  # Saves retain their original IDs. Separate domains prevent two simultaneous

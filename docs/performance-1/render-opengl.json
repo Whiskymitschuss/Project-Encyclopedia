@@ -1,0 +1,110 @@
+{
+  "before": {
+    "adapter": "llvmpipe (LLVM 19.1.7, 256 bits)",
+    "android_device_tested": false,
+    "built_ms": 2377.646,
+    "cases": [
+      {
+        "case": "normal",
+        "draw_calls": 576.0,
+        "median_ms": 66.409,
+        "p95_ms": 79.905,
+        "render_cpu_ms": 58.548999786377,
+        "render_gpu_ms": 58.4700012207031,
+        "triangles": 196114.0
+      },
+      {
+        "case": "no_3d",
+        "draw_calls": 79.0,
+        "median_ms": 30.798,
+        "p95_ms": 35.514,
+        "render_cpu_ms": 18.0289993286133,
+        "render_gpu_ms": 22.1720008850098,
+        "triangles": 12560.0
+      },
+      {
+        "case": "no_hud",
+        "draw_calls": 497.0,
+        "median_ms": 67.141,
+        "p95_ms": 74.807,
+        "render_cpu_ms": 59.7719993591309,
+        "render_gpu_ms": 59.6049995422363,
+        "triangles": 183554.0
+      },
+      {
+        "case": "overview",
+        "draw_calls": 978.0,
+        "median_ms": 108.023,
+        "p95_ms": 121.725,
+        "render_cpu_ms": 96.9219970703125,
+        "render_gpu_ms": 101.425003051758,
+        "triangles": 612964.0
+      }
+    ],
+    "company_sha256": "fc3f4aff54de19ac560aa74c107e33c7dc53378458123e40d8b4b1b62ac63a42",
+    "company_unchanged": true,
+    "desktop_only": true,
+    "driver": "opengl3",
+    "engine_memory_bytes": 92408267,
+    "nodes": 4645,
+    "render_scale": 0.444800436496735,
+    "renderer": "gl_compatibility",
+    "synthetic_pressure_seconds": 16,
+    "video_memory_bytes": 61236421.0
+  },
+  "after": {
+    "adapter": "llvmpipe (LLVM 19.1.7, 256 bits)",
+    "android_device_tested": false,
+    "built_ms": 1583.843,
+    "cases": [
+      {
+        "case": "normal",
+        "draw_calls": 578.0,
+        "median_ms": 58.061,
+        "p95_ms": 66.467,
+        "render_cpu_ms": 49.2849998474121,
+        "render_gpu_ms": 49.1180000305176,
+        "triangles": 142312.0
+      },
+      {
+        "case": "no_3d",
+        "draw_calls": 79.0,
+        "median_ms": 25.424,
+        "p95_ms": 29.616,
+        "render_cpu_ms": 15.0170001983643,
+        "render_gpu_ms": 19.0130004882812,
+        "triangles": 12560.0
+      },
+      {
+        "case": "no_hud",
+        "draw_calls": 499.0,
+        "median_ms": 50.35,
+        "p95_ms": 55.163,
+        "render_cpu_ms": 43.9230003356934,
+        "render_gpu_ms": 43.8479995727539,
+        "triangles": 129752.0
+      },
+      {
+        "case": "overview",
+        "draw_calls": 985.0,
+        "median_ms": 99.064,
+        "p95_ms": 115.271,
+        "render_cpu_ms": 87.2170028686523,
+        "render_gpu_ms": 91.3119964599609,
+        "triangles": 558838.0
+      }
+    ],
+    "company_sha256": "fc3f4aff54de19ac560aa74c107e33c7dc53378458123e40d8b4b1b62ac63a42",
+    "company_unchanged": true,
+    "desktop_only": true,
+    "driver": "opengl3",
+    "engine_memory_bytes": 99190850,
+    "nodes": 4750,
+    "render_scale": 0.444800436496735,
+    "renderer": "gl_compatibility",
+    "synthetic_pressure_seconds": 16,
+    "video_memory_bytes": 61490000.0
+  },
+  "method": "Same generated 18-factory/12-home company, 180 simulated seconds then frozen economy/presentation, 1080x2340, fixed daylight, synthetic tier-3 relief, sequential cases with 12 warmup and 30 measured frames. Root-viewport CPU/GPU timestamp medians; desktop software rendering. No phone FPS claim.",
+  "android_device_tested": false
+}

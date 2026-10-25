@@ -59,7 +59,10 @@ func run() -> void:
  boot.enter_requested=true
  boot._process(0)
  boot.start_game()
- for i in 12: await process_frame
+ var opening_deadline=Time.get_ticks_msec()+15000
+ while Time.get_ticks_msec()<opening_deadline:
+  if current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn" and current_scene.is_processing():break
+  await process_frame
  check(current_scene!=null and current_scene.scene_file_path=="res://Scenes/Main.tscn","The loaded cover enters the actual main scene once")
  check(current_scene.get("hud")!=null,"Main-world HUD remains integrated after the new cover")
  print("VISUAL LOADING 2814: ",checks," checks, ",failures.size()," failures")

@@ -14,9 +14,11 @@ signal construction_phase_completed(job_id: int, phase: int)
 signal company_level_unlocked(level: int)
 signal construction_finished(point: Vector3, job_type: String)
 
+var staged_world_requested=false
 var live_world=true
 # Explicit menu return holds the cover; ordinary app launches enter directly.
 var title_requested=false
+var state_revision=0
 var state: Dictionary
 var flow: Dictionary = {}
 var tick_clock = 0.0
@@ -87,6 +89,7 @@ func _ready() -> void:
  process_mode = Node.PROCESS_MODE_ALWAYS
 
 func restore(saved: Dictionary) -> void:
+ state_revision+=1
  stock_history.clear()
  state = initial_state()
  for key in state:
@@ -154,7 +157,7 @@ func apply_device_profile() -> void:
  # Do not drive high-refresh Android screens at 90/120 FPS. Headless tests
  # deliberately remain uncapped; simulation still uses elapsed seconds.
  if not simulation_only and DisplayServer.get_name()!="headless":
-  Engine.max_fps=30 if OS.has_feature("mobile") or int(state.quality)==0 else 60
+  Engine.max_fps=int(GraphicsProfiles.profile(GraphicsProfiles.effective(int(state.quality),RuntimeStats.detail_level,bool(state.ux.get("adaptive_detail",true)))).fps)
 
 func suspend_presentation() -> void:
  if application_suspended: return

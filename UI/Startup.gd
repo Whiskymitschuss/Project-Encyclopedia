@@ -100,8 +100,11 @@ func open_after_frame() -> void:
  if Game.catching_up or Game.application_suspended:
   starting=false
   return
+ Game.staged_world_requested=true
  var error=get_tree().change_scene_to_packed(scene_ready)
- if error!=OK: loading_error()
+ if error!=OK:
+  Game.staged_world_requested=false
+  loading_error()
 
 func show_recovery() -> void:
  for child in recovery_box.get_children(): recovery_box.remove_child(child); child.queue_free()

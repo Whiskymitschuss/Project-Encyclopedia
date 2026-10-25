@@ -3,9 +3,9 @@ extends Node3D
 # A bounded visual handler for the actual output of an active workshop.
 # It never creates cargo, changes stock or awards money.
 var building_index=-1
-var depot_handler=true
-var handler_lane=0
-var handler_lanes=1
+@export var depot_handler=true
+@export var handler_lane=0
+@export var handler_lanes=1
 var cycle_trip={}
 var cycle_route=[]
 var cycle_legs=[]
@@ -22,7 +22,7 @@ var forks: Node3D
 var payload: Node3D
 var chassis: Node3D
 var operator: Node3D
-var points=[Vector3(8,0.6,8),Vector3(6,0.6,5),Vector3(3.5,0.6,8),Vector3(8,0.6,8),Vector3(8,0.6,8)]
+@export var points=[Vector3(8,0.6,8),Vector3(6,0.6,5),Vector3(3.5,0.6,8),Vector3(8,0.6,8),Vector3(8,0.6,8)]
 
 func _ready() -> void:
  position=points[0]

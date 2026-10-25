@@ -5,6 +5,8 @@ const WORLD_LABEL_LAYER=1<<19
 
 static var materials: Dictionary = {}
 static var grain: ImageTexture
+static var use_baked=true
+static var building_scenes={}
 
 static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
  color=TycoonStyle.paint(color)
@@ -109,7 +111,20 @@ static func log_pile(parent: Node3D, at: Vector3, count: int = 4) -> void:
   var end = cylinder(parent,0.32,0.04,at+Vector3((i%3)*0.8,0.4+int(i/3.0)*0.7,-1.62),Color("f2d197"))
   end.rotation.x = PI/2
 
+static func blueprint_path(kind: String,level: int,city: bool=false) -> String:
+ var style="Shared" if not city and (Catalog.RECIPES.has(kind) or kind in ["station","warehouse","central_depot","express","quarry","stoneworks"]) else str(Game.state.skin)
+ return "res://Assets/Baked/building-%s-%s-%s-%s.scn" % [int(city),kind,level,style]
+
 static func building(kind: String, level: int, city: bool = false) -> Node3D:
+ var path=blueprint_path(kind,level,city)
+ if use_baked and ResourceLoader.exists(path):
+  if not building_scenes.has(path):
+   if building_scenes.size()>=48:building_scenes.clear()
+   building_scenes[path]=load(path)
+  return building_scenes[path].instantiate()
+ return build_building(kind,level,city)
+
+static func build_building(kind: String, level: int, city: bool = false) -> Node3D:
  if kind in ["central_depot","express"] and not city: return load("res://Buildings/CentralDepotModels.gd").create(kind,level)
  if city: return load("res://Buildings/TownModels.gd").create(kind,level)
  if kind in ["quarry","stoneworks"]: return load("res://Buildings/StoneModels.gd").create(kind,level)

@@ -1,5 +1,6 @@
 extends Node3D
 
+var initializing_world=true
 var camera: Camera3D
 var sun: DirectionalLight3D
 var focus = Vector3(-58,0,-78)
@@ -12,6 +13,7 @@ var scenery: Node3D
 var time = 0.0
 var moving_goods: Array = []
 var actor_signature = ""
+var actor_check_clock=0.5
 var dragging = false
 var drag_distance = 0.0
 var last_pointer = Vector2.ZERO
@@ -80,10 +82,36 @@ var industry_name_labels=[]
 var yard_handlers=[]
 var handler_clock=0.0
 var forest_world: Node3D
+var graphics_key=[]
+var chunks: WorldChunks
+var visual_cache=WorldVisualCache.new()
+var last_visual_signature=0
+var last_layout_signature=0
+var approach_root: Node3D
+var rebuild_count=0
+var skipped_rebuilds=0
 var access_preview: Node3D
 
 func _ready() -> void:
- Game.live_world=true
+ var build_clock=Time.get_ticks_usec()
+ var loading_started=build_clock
+ var elapsed_before=float(Game.state.elapsed)
+ var staged=Game.staged_world_requested
+ Game.staged_world_requested=false
+ var curtain: CanvasLayer
+ var loading_art: Control
+ var loading_cull_mask=0
+ var preloaded=[]
+ set_process(false)
+ if staged:
+  Game.live_world=false
+  curtain=CanvasLayer.new();curtain.layer=200;add_child(curtain)
+  loading_art=load("res://UI/LoadingArtwork.gd").new();curtain.add_child(loading_art)
+  loading_art.mouse_filter=Control.MOUSE_FILTER_STOP
+  preloaded=await WorldPreloader.prepare(Game.state,get_tree(),loading_art)
+ RuntimeStats.startup_sections.clear()
+ build_clock=RuntimeStats.mark_startup("Ressourcen vorladen",build_clock)
+ Game.live_world=not staged
  RenderingServer.set_default_clear_color(Color("53bbd3"))
  var environment_node = WorldEnvironment.new()
  var env = Environment.new()
@@ -117,11 +145,22 @@ func _ready() -> void:
  camera.near = 5.0
  camera.far = 1800
  add_child(camera)
+ if staged:
+  loading_cull_mask=camera.cull_mask
+  camera.cull_mask=0
+  sun.shadow_enabled=false
+ apply_graphics_profile()
+ get_viewport().scaling_3d_scale=RuntimeStats.resolution_scale(get_window().size,int(Game.state.quality),bool(Game.state.ux.get("adaptive_detail",true)),OS.has_feature("mobile"))
  set_camera()
  scenery = Node3D.new()
  add_child(scenery)
+ build_clock=RuntimeStats.mark_startup("Kamera und Licht",build_clock)
  build_landscape()
+ build_clock=RuntimeStats.mark_startup("Landschaft",build_clock)
+ if staged:await loading_step(loading_art,40,"DEIN WALD WIRD VORBEREITET")
  build_forest()
+ build_clock=RuntimeStats.mark_startup("Wald",build_clock)
+ if staged:await loading_step(loading_art,50,"DEINE WERKE WERDEN AUFGEBAUT")
  forest_detail_key=Vector4(INF,INF,INF,INF)
  update_forest_detail()
  world_buildings = Node3D.new()
@@ -132,6 +171,8 @@ func _ready() -> void:
  actors = Node3D.new()
  add_child(actors)
  rebuild()
+ build_clock=RuntimeStats.mark_startup("Gebäude und Straßen",build_clock)
+ if staged:await loading_step(loading_art,65,"DEIN TEAM MACHT SICH BEREIT")
  var layer = CanvasLayer.new()
  add_child(layer)
  hud = load("res://UI/HUD.gd").new()
@@ -140,6 +181,8 @@ func _ready() -> void:
  hud.focus_requested.connect(focus_at)
  hud.placement_requested.connect(begin_placement)
  hud.placement_action.connect(placement_action)
+ build_clock=RuntimeStats.mark_startup("Oberfläche",build_clock)
+ if staged:await loading_step(loading_art,75,"DEINE TRANSPORTE WERDEN VORBEREITET")
  delivery_world=load("res://Components/DeliveryWorld.gd").new()
  delivery_world.world=self
  add_child(delivery_world)
@@ -152,6 +195,8 @@ func _ready() -> void:
  selection_world=load("res://Components/SelectionWorld.gd").new()
  selection_world.world=self
  add_child(selection_world)
+ build_clock=RuntimeStats.mark_startup("Verkehr",build_clock)
+ Game.changed.connect(func():actor_check_clock=0.5)
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
  make_chip_pool()
@@ -161,6 +206,8 @@ func _ready() -> void:
  spatial_audio.world=self
  add_child(spatial_audio)
  Game.loot_found.connect(func(_r): audio.play_tone(780,0.22))
+ build_clock=RuntimeStats.mark_startup("Audio und Effekte",build_clock)
+ if staged:await loading_step(loading_art,85,"DEIN WALD WACHT AUF")
  life=load("res://Components/WorldLife.gd").new()
  life.world=self
  add_child(life)
@@ -186,7 +233,45 @@ func _ready() -> void:
  forest_world.world=self
  add_child(forest_world)
  forest_world.sync_trees(false)
+ chunks=WorldChunks.new();chunks.world=self;add_child(chunks);chunks.reindex()
+ apply_graphics_profile()
+ RuntimeStats.mark_startup("Alltag und Sichtbereiche",build_clock)
+ if staged:
+  await loading_step(loading_art,92,"DEINE BIBER SIND BEREIT")
+  var actor_started=Time.get_ticks_usec()
+  sync_actors()
+  RuntimeStats.mark_startup("Arbeiter",actor_started)
+  while Game.catching_up or Game.application_suspended:await get_tree().process_frame
+  # Presentation loading does not grant or lose economic time. Resume catchup
+  # may already have simulated part of the interval; count that part only once.
+  var passed=clampf((Time.get_ticks_usec()-loading_started)/1000000.0,0,28800)
+  var accounted=maxf(0,float(Game.state.elapsed)-elapsed_before)
+  if passed>accounted:Game.simulate(passed-accounted)
+  Game.live_world=true
+  camera.cull_mask=loading_cull_mask
+  sun.shadow_enabled=Game.state.quality>0 and not (Game.state.ux.get("adaptive_detail",true) and RuntimeStats.low_detail) and zoom<300
+  loading_art.progress(100,"DEINE FIRMA IST BEREIT","Gleich geht’s los.")
+  await get_tree().process_frame
+  if DisplayServer.get_name()!="headless":await RenderingServer.frame_post_draw
+  curtain.queue_free()
+ else:Game.live_world=true
+ initializing_world=false
+ set_process(true)
  call_deferred("mark_first_world_frame")
+
+func loading_step(art: Control,progress: float,title: String) -> void:
+ art.progress(progress,title,"Dein Fortschritt bleibt erhalten.")
+ await get_tree().process_frame
+
+func apply_graphics_profile() -> void:
+ var level=GraphicsProfiles.effective(int(Game.state.quality),RuntimeStats.detail_level,bool(Game.state.ux.get("adaptive_detail",true)))
+ var key=[level,photo!=null and photo.active]
+ if key==graphics_key:return
+ graphics_key=key
+ var profile=GraphicsProfiles.profile(3 if key[1] else level)
+ get_viewport().msaa_3d=profile.msaa
+ get_viewport().mesh_lod_threshold=profile.lod_pixels
+ Game.apply_device_profile()
 
 func mark_first_world_frame() -> void:
  if DisplayServer.get_name()!="headless": await RenderingServer.frame_post_draw
@@ -339,8 +424,36 @@ func clear_children(parent: Node) -> void:
 
 func rebuild() -> void:
  if world_buildings == null: return
- rebuild_streets()
- clear_children(world_buildings)
+ var measured=RuntimeStats.begin_work()
+ var lots=[]
+ var revisions=[]
+ for i in Game.state.buildings.size():
+  var b=Game.state.buildings[i]
+  lots.append([b.kind,Game.building_position(i),int(b.get("rotation",0))])
+  revisions.append([b.kind,b.level])
+ for i in Game.state.homes.size():
+  var h=Game.state.homes[i]
+  lots.append([h.kind,Game.home_position(i),int(h.get("rotation",0))])
+  revisions.append([h.kind,h.level])
+ var jobs=[]
+ for job in Game.state.jobs:
+  jobs.append([job.get("id",-1),job.type,job.get("kind",""),job_position(job),job.get("rotation",0),job.get("workers",0),CrewTransport.onsite(Game.state,job),job.has("phases")])
+ var town=[Game.state.town.roads,Game.state.town.stops,Game.state.town.lines,Game.state.town.districts]
+ var layout_signature=hash([lots,jobs.map(func(job):return job.slice(0,5)),town])
+ var signature=hash([Game.state_revision,layout_signature,revisions,jobs,Game.state.projects,Game.state.skin,int(Game.state.quality)==0,Game.state.delivery.active,Game.state.delivery.nodes])
+ if signature==last_visual_signature:
+  skipped_rebuilds+=1
+  RuntimeStats.end_work("Gebäudeabgleich",measured)
+  return
+ last_visual_signature=signature;rebuild_count+=1
+ var layout_changed=layout_signature!=last_layout_signature
+ last_layout_signature=layout_signature
+ if layout_changed:
+  rebuild_streets()
+  if approach_root==null:
+   approach_root=Node3D.new();approach_root.name="ServiceApproaches";world_buildings.add_child(approach_root)
+  clear_children(approach_root)
+ visual_cache.begin()
  moving_goods.clear()
  machines.clear()
  cranes.clear()
@@ -350,10 +463,10 @@ func rebuild() -> void:
  yard_handlers.clear()
  for i in Game.state.buildings.size():
   var b = Game.state.buildings[i]
-  var model = Models.building(b.kind,int(b.level))
+  var model = visual_cache.take("building:%s" % i,[b.kind,b.level,Game.state.skin],func():return Models.building(b.kind,int(b.level)))
   model.position = Game.building_position(i)
   model.rotation_degrees.y = int(b.get("rotation",0))
-  world_buildings.add_child(model)
+  if model.get_parent()==null: world_buildings.add_child(model)
   var floor_mesh=model.get_node_or_null("FactoryFloor")
   if floor_mesh!=null: floor_mesh.visible=true
   var depot_stock=model.get_node_or_null("DepotStock")
@@ -375,34 +488,45 @@ func rebuild() -> void:
     extra.building_index=i
     yard_handlers.append(extra)
   if not Game.delivery_owns(i):
-   var label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,float(model.get_meta("height",8.6))+1.4,0),24)
+   var label=model.get_meta("industry_label") if model.has_meta("industry_label") else null
+   if label==null:
+    label=Models.label(model,"%s · %s" % [Catalog.BUILDINGS[b.kind].name,int(b.level)],Vector3(0,float(model.get_meta("height",8.6))+1.4,0),24)
+    model.set_meta("industry_label",label)
    label.set_meta("building_index",i)
    industry_name_labels.append(label)
-  add_approach(model.position,int(b.get("rotation",0)))
+  if layout_changed: add_approach(model.position,int(b.get("rotation",0)))
   var fill = model.get_node_or_null("SawdustFill")
   if fill!=null:
-   var label = Models.label(model,"Spänebox",fill.get_meta("label_point",Vector3(7.5,5.2,-3)),28)
+   var label=model.get_meta("sawdust_label") if model.has_meta("sawdust_label") else null
+   if label==null:
+    label=Models.label(model,"Spänebox",fill.get_meta("label_point",Vector3(7.5,5.2,-3)),28)
+    model.set_meta("sawdust_label",label)
    label.set_meta("building_index",i)
    if b.kind=="sawmill": label.hide()
    else: industry_name_labels.append(label)
    bins.append({"fill":fill,"label":label})
   if Catalog.RECIPES.has(b.kind) and not model.get_meta("open_factory",false):
    for j in 3:
-    var good = Models.box(world_buildings,Vector3(2.2,0.55,1),model.position+Vector3(5,2.1,6+j*2),Color("e4b77a"))
+    var good=visual_cache.take("goods:%s:%s" % [i,j],[b.kind,b.level],func():return Models.box(world_buildings,Vector3(2.2,0.55,1),model.position+Vector3(5,2.1,6+j*2),Color("e4b77a")))
     moving_goods.append({"mesh":good,"origin":model.position,"rotation":model.rotation,"phase":j/3.0,"index":i})
  for home_index in Game.state.homes.size():
   var h = Game.state.homes[home_index]
-  var model = Models.building(h.kind,int(h.level),true)
+  var model = visual_cache.take("home:%s" % home_index,[h.kind,h.level,Game.state.skin],func():return Models.building(h.kind,int(h.level),true))
   model.position = Game.home_position(home_index)
   model.rotation_degrees.y = int(h.get("rotation",0))
-  world_buildings.add_child(model)
-  var name_label=Models.label(model,"%s · %s" % [TownEvolution.title(h.kind,int(h.level)),int(h.level)],Vector3(0,float(model.get_meta("height",10))+1,0),24)
+  if model.get_parent()==null: world_buildings.add_child(model)
+  var name_label=model.get_meta("home_label") if model.has_meta("home_label") else null
+  if name_label==null:
+   name_label=Models.label(model,"%s · %s" % [TownEvolution.title(h.kind,int(h.level)),int(h.level)],Vector3(0,float(model.get_meta("height",10))+1,0),24)
+   model.set_meta("home_label",name_label)
   name_label.set_meta("home_index",home_index)
   town_name_labels.append(name_label)
-  add_approach(model.position,int(h.get("rotation",0)))
+  if layout_changed: add_approach(model.position,int(h.get("rotation",0)))
  for job in Game.state.jobs:
   if job.type in ["building","home","upgrade","home_upgrade","project"]:
-   var model = load("res://Buildings/ConstructionSite.gd").new() if job.has("phases") else Models.construction(1.0-float(job.left)/float(job.total))
+   var revision=[job.type,job.get("kind",""),job.get("workers",0),CrewTransport.onsite(Game.state,job),int(Game.state.quality)==0,job.has("phases")]
+   if not job.has("phases"):revision.append(floori((1.0-float(job.left)/float(job.total))*7))
+   var model=visual_cache.take("job:%s" % job.get("id",hash(job)),revision,func():return load("res://Buildings/ConstructionSite.gd").new() if job.has("phases") else Models.construction(1.0-float(job.left)/float(job.total)))
    if job.has("phases"): model.job_id=int(job.id)
    if job.type=="home": model.position = Placement.position_of(job,Catalog.home_position(int(job.plot)))
    elif job.type=="home_upgrade": model.position = Game.home_position(int(job.index))
@@ -412,33 +536,41 @@ func rebuild() -> void:
    elif job.type == "project": model.position = Catalog.PROJECTS[int(job.index)].position
    else: model.position = Placement.position_of(job,Catalog.industry_position(int(job.slot)))
    model.rotation_degrees.y = int(job.get("rotation",0))
-   world_buildings.add_child(model)
+   if model.get_parent()==null: world_buildings.add_child(model)
    cranes.append({"node":model.get_node("Crane"),"job":job})
  for i in Catalog.PROJECTS.size():
   var project = Catalog.PROJECTS[i]
   var stage = int(Game.state.projects.get(str(i),0))
   if stage > 0:
-   var model = Models.building("hotel" if i < 2 else "office",stage*3,true)
+   var model = visual_cache.take("project:%s" % i,[stage,Game.state.skin],func():return Models.building("hotel" if i < 2 else "office",stage*3,true))
    model.position = project.position
-   world_buildings.add_child(model)
-   Models.label(model,project.name,Vector3(0,19,0),30)
-  else: Models.label(world_buildings,project.name,project.position+Vector3(0,2,0),26)
- actor_signature = ""
+   if model.get_parent()==null:
+    world_buildings.add_child(model)
+    Models.label(model,project.name,Vector3(0,19,0),30)
+  else: visual_cache.take("project-label:%s" % i,project.name,func():return Models.label(world_buildings,project.name,project.position+Vector3(0,2,0),26))
+ visual_cache.finish()
+ for id in visual_cache.instances:
+  if id.begins_with("building:") or id.begins_with("home:") or id.begins_with("job:") or id.begins_with("project:"):visual_cache.instances[id].node.set_meta("chunk_visual",true)
+ if chunks!=null:chunks.reindex()
+ # Keep conventional factory indices first for existing tools and inspectors.
+ for i in Game.state.buildings.size():world_buildings.move_child(visual_cache.instances["building:%s" % i].node,i)
  if town_layer!=null: town_layer.rebuild()
- refresh_forest_clearance()
- if landscape!=null: landscape.refresh()
+ if layout_changed:
+  refresh_forest_clearance()
+  if landscape!=null: landscape.refresh()
  if delivery_world!=null: delivery_world.rebuild()
  StaticPaintBatch.reduce(world_buildings)
  StaticPaintBatch.reduce(base_streets)
  if town_layer!=null:StaticPaintBatch.reduce(town_layer)
  update_yard_handlers()
+ RuntimeStats.end_work("Gebäudeabgleich",measured)
 
 func add_approach(point: Vector3, rotation: int) -> void:
  var path = Placement.approach(point,rotation,Game.state.town)
  if path.size()<2: return
  var length = path[0].distance_to(path[1])
  if length>0.1:
-  var strip=Models.box(world_buildings,Vector3(2.4,0.06,length),Vector3((path[0].x+path[1].x)/2,0.60,(path[0].z+path[1].z)/2),Color("d9cba7"))
+  var strip=Models.box(approach_root,Vector3(2.4,0.06,length),Vector3((path[0].x+path[1].x)/2,0.60,(path[0].z+path[1].z)/2),Color("d9cba7"))
   strip.rotation.y=atan2(path[1].x-path[0].x,path[1].z-path[0].z)
 
 func refresh_forest_clearance() -> void:
@@ -480,7 +612,10 @@ func sync_actors() -> void:
   if not paused: stations.append(index)
  if stations.is_empty():
   for entry in station_policy: stations.append(entry[0])
- var signature = "%s/%s/%s/%s/%s/%s" % [Game.state.workers,Game.state.biome,Game.state.quality,Game.state.tool,Game.state.delivery.active,station_policy]
+ var worksites=[]
+ for i in Game.state.buildings.size():worksites.append([Game.state.buildings[i].kind,Game.building_position(i),Game.state.buildings[i].get("rotation",0)])
+ for i in Game.state.homes.size():worksites.append([Game.state.homes[i].kind,Game.home_position(i),Game.state.homes[i].get("rotation",0)])
+ var signature = str(hash([Game.state_revision,Game.state.workers,Game.state.biome,int(Game.state.quality)==0,Game.state.tool,Game.state.delivery.active,station_policy,worksites,Game.residents()]))
  if signature == actor_signature: return
  actor_signature = signature
  clear_children(actors)
@@ -563,6 +698,7 @@ func _process_measured(delta: float) -> void:
  if handler_clock>=0.5:
   handler_clock=0
   update_yard_handlers()
+  apply_graphics_profile()
   var render_scale=RuntimeStats.resolution_scale(get_window().size,int(Game.state.quality),bool(Game.state.ux.get("adaptive_detail",true)),OS.has_feature("mobile"),photo!=null and photo.active)
   get_viewport().scaling_3d_scale=render_scale
  time += delta
@@ -578,10 +714,12 @@ func _process_measured(delta: float) -> void:
  if not placement.is_empty():
   placement_check_clock+=delta
   if placement_check_clock>=0.5: placement_check_clock=0; update_ghost()
- sync_actors()
+ actor_check_clock+=delta
+ if actor_check_clock>=0.5:
+  actor_check_clock=0;sync_actors()
  sun.shadow_enabled=Game.state.quality>0 and not (Game.state.ux.get("adaptive_detail",true) and RuntimeStats.low_detail) and zoom<300
  update_forest_detail()
- sun.directional_shadow_max_distance=clampf(zoom*1.2,160,260)
+ sun.directional_shadow_max_distance=minf(float(GraphicsProfiles.profile(int(Game.state.quality)).shadow_distance),clampf(zoom*1.2,160,260))
  var burning_homes={}
  for incident in Game.state.city_services.fires: burning_homes[int(incident.target_ref.index)]=true
  for label in town_name_labels:
@@ -765,6 +903,7 @@ func stop_camera_navigation() -> void:
  pan_velocity=Vector3.ZERO
 
 func _unhandled_input(event: InputEvent) -> void:
+ if initializing_world:return
  if hud!=null and hud.overlay.visible: return
  if photo!=null and photo.active and photo.gallery.visible: return
  if event is InputEventMouse and event.device==-1: return
