@@ -63,7 +63,7 @@ func initial_state() -> Dictionary:
   "town":TownRules.initial(), "plan":{}, "skin":"Rustikal", "skin_tool":"Holz", "permanent_loot":0,
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
-  "boss_hp":100.0, "bosses":0, "time":9.0, "elapsed":0.0, "weather":0,
+  "boss_hp":100.0, "bosses":0, "time":12.0, "elapsed":0.0, "weather":0,
   "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false, "companion_enabled":true, "ambient_enabled":true,
   "last_seen":Time.get_unix_time_from_system()}
 
@@ -92,6 +92,9 @@ func restore(saved: Dictionary) -> void:
  for key in state:
   if saved.has(key):
    state[key] = saved[key].duplicate(true) if saved[key] is Dictionary or saved[key] is Array else saved[key]
+ # Legacy night/rain saves resume in the permanently clear daytime world.
+ state.time=12.0
+ state.weather=0
  for key in ForestCycle.initial():
   if not state.forest.has(key): state.forest[key]=ForestCycle.initial()[key]
  for key in SawmillProduction.initial():
@@ -453,8 +456,8 @@ func step_measured(delta: float) -> void:
  CentralLogistics.tick(state,delta)
  ConstructionRules.transport_tick(state,delta)
  state.elapsed += delta
- state.time = fmod(float(state.time) + delta / 60.0,24.0)
- state.weather = int(float(state.elapsed)/180.0) % 4
+ state.time = 12.0
+ state.weather = 0
  for key in state.boosters:
   state.boosters[key].left = maxf(0,float(state.boosters[key].left)-delta)
  ForestCycle.tick(state,delta)

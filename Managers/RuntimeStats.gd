@@ -112,7 +112,7 @@ func snapshot() -> Dictionary:
 func summary() -> String:
  var s=snapshot()
  var live="%.1f FPS · P95 %.1f ms" % [s.fps,s.p95_ms] if s.frames>0 else "FPS-Messung startet nach zwei Sekunden in der Welt"
- return "%s\nErster Script-Frame: %s ms seit Engine-Start\nWeltaufbau: %s ms\nLetzte Offline-Berechnung: %.1f s für %.1f Min.\n3D-Auflösung: %s %% · Menü in voller Auflösung\nDarstellung: %s" % [live,s.first_frame_ms,s.world_ready_ms,s.replay_ms/1000.0,s.replay_seconds/60.0,roundi(s.render_scale*100),"Entlastungsstufe %s/3" % detail_level if low_detail else "gewähltes Qualitätsprofil"]+"\nHänger über 100 ms: %s · längster %.0f ms\nZeichenaufrufe: %s · %s/%s" % [s.hitches,s.longest_hitch_ms,int(s.draw_calls),RenderingServer.get_current_rendering_method(),RenderingServer.get_current_rendering_driver_name()]
+ return "Dauerhaftes Tageslicht · Wetter aus\n%s\nErster Script-Frame: %s ms seit Engine-Start\nWeltaufbau: %s ms\nLetzte Offline-Berechnung: %.1f s für %.1f Min.\n3D-Auflösung: %s %% · Menü in voller Auflösung\nDarstellung: %s" % [live,s.first_frame_ms,s.world_ready_ms,s.replay_ms/1000.0,s.replay_seconds/60.0,roundi(s.render_scale*100),"Entlastungsstufe %s/3" % detail_level if low_detail else "gewähltes Qualitätsprofil"]+"\nHänger über 100 ms: %s · längster %.0f ms\nZeichenaufrufe: %s · %s/%s" % [s.hitches,s.longest_hitch_ms,int(s.draw_calls),RenderingServer.get_current_rendering_method(),RenderingServer.get_current_rendering_driver_name()]
 
 # Explicit camera-tour measurements. Bounded CPU samples distinguish script work
 # from rendering pressure without claiming a GPU profiler or collecting data.

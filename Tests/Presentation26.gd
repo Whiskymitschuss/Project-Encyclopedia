@@ -19,15 +19,15 @@ func run() -> void:
  root.add_child(scene)
  await process_frame
  scene.set_process(false)
- for node in [scene.fauna,scene.spatial_audio,scene.wet_weather,scene.upgrade_reveal,scene.production_alerts]: node.set_process(false)
+ for node in [scene.fauna,scene.spatial_audio,scene.upgrade_reveal,scene.production_alerts]: node.set_process(false)
  var atmosphere=load("res://Components/Atmosphere.gd")
  var wind=atmosphere.wind(game.state)
- check(wind.y==0 and wind.length()>0.9,"A real horizontal wind exists without changing the weather schedule")
+ check(wind==Vector3.ZERO,"Permanent clear daylight has no weather wind")
  var chimney=scene.world_buildings.get_child(3).get_node("ChimneySmoke")
  chimney.get_parent().rotation_degrees.y=90
  chimney._process(0)
  var actual=chimney.smoke.global_basis*chimney.smoke.gravity
- check(Vector3(actual.x,0,actual.z).normalized().dot(wind.normalized())>0.99,"A rotated chimney still emits down the common world wind")
+ check(Vector3(actual.x,0,actual.z).length()<0.0001,"Production smoke rises vertically without weather drift")
  for cut_action in 6: game.chop() # Consume one entire real 24-wood tree.
  var before=game.state.duplicate(true)
  scene.focus=Catalog.biome_position(0)
@@ -51,13 +51,13 @@ func run() -> void:
  var dry=asphalt.albedo_color
  game.state.weather=2
  before=game.state.duplicate(true)
- scene.wet_weather._process(5)
- check(asphalt.roughness<0.3 and asphalt.albedo_color.v<dry.v,"Actual rain darkens roads and lowers their roughness")
- check(scene.wet_weather.puddles.visible and scene.wet_weather.puddles.multimesh.visible_instance_count==28,"Rain exposes a bounded puddle batch")
- check(surfaces.material(Color("84979a"),"roof").roughness<0.3,"Roofs built during rain inherit wet weather immediately")
+ scene._process(5)
+ check(asphalt.roughness>0.8 and asphalt.albedo_color==dry,"Legacy rain state cannot darken or wet roads")
+ check(scene.wet_weather==null and scene.weather==null,"No rain emitter or puddle controller is instantiated")
+ check(surfaces.material(Color("84979a"),"roof").roughness>0.8,"New roofs stay dry even with legacy rain fields")
  check(game.state==before,"Wet surfaces do not modify resources, weather timing or save state")
  game.state.weather=0
- scene.wet_weather._process(30)
+ scene._process(30)
  check(asphalt.albedo_color==dry and asphalt.roughness>0.8,"Roads fully dry again instead of permanently changing shared materials")
  var fauna=scene.fauna
  check(fauna.animals.size()==9,"Wildlife uses nine fixed models")

@@ -40,7 +40,6 @@ func run() -> void:
  root.add_child(scene)
  await settle()
  scene.set_process(false)
- scene.wet_weather.set_process(false)
  scene.fauna.set_process(false)
  var hud=scene.hud
  for cut_action in 6: game.chop() # Actual finite timber, rather than a decorative cut callback.
@@ -78,16 +77,16 @@ func run() -> void:
  scene.focus=game.building_position(1)
  scene.zoom=100
  scene.set_camera()
- scene.wet_weather._process(30)
+ scene._process(0)
  await settle()
  var dry=root.get_texture().get_image()
  game.state.weather=2
  before=game.state.duplicate(true)
- scene.wet_weather._process(5)
+ scene._process(0)
  await settle()
  var rain=root.get_texture().get_image()
- check(rain.get_data()!=dry.get_data(),"Rain changes the actual rendered surfaces")
- check(scene.wet_weather.puddles.multimesh.get_instance_transform(0).origin.y>0.9,"Rendered puddles sit above the road")
+ check(scene.environment_resource.fog_enabled==false and SurfaceLibrary.wetness==0,"Legacy rain state cannot activate fog or wet rendering")
+ check(scene.wet_weather==null and scene.weather==null,"No weather or puddle GPU nodes exist in the real scene")
  check(game.state==before,"Wet rendering never changes real production or weather state")
  rain.save_png("/workspace/timber-detail26-rain.png")
  # Touch the public menu entry, then exercise every photo control on phone/tablet.

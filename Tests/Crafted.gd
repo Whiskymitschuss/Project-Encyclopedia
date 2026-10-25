@@ -58,7 +58,7 @@ func run() -> void:
   check(near<0.5 and sampled.direction.is_normalized(),"Rounded driving stays within its road corridor")
  SurfaceLibrary.daylight(0)
  var glass=SurfaceLibrary.material(Color("62b9c8"),"glass")
- check(glass.emission_energy_multiplier>0.5,"Windows built at night immediately use night lighting")
+ check(glass.emission_energy_multiplier<0.1,"Legacy night requests keep newly built windows in daytime")
  SurfaceLibrary.daylight(1)
  check(glass.emission_energy_multiplier<0.1,"Shared windows return to daylight without rebuilding houses")
  var snapshot=game.state.duplicate(true)

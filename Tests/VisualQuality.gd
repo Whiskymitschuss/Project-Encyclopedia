@@ -10,6 +10,7 @@ func settle() -> void:
  await RenderingServer.frame_post_draw
 func run() -> void:
  await process_frame
+ root.get_node("RuntimeStats").set_process(false)
  var game=root.get_node("Game")
  game.set_process(false)
  game.state=game.initial_state()
@@ -45,8 +46,11 @@ func run() -> void:
  scene.focus=Catalog.biome_position(0)
  scene.zoom=75
  scene.set_camera()
- # Freeze scene scripts so image differences isolate the vertex wind animation.
- for node in scene.find_children("*","Node",true,false): node.set_process(false)
+ # Initialize representatives before freezing; isolate the stationary forest.
+ scene._process(0)
+ for node in scene.find_children("*","Node",true,false):
+  node.set_process(false)
+  if node is CPUParticles3D or node is GPUParticles3D:node.hide()
  scene._process(0)
  await settle()
  var still=root.get_texture().get_image()
@@ -54,7 +58,7 @@ func run() -> void:
  scene._process(0.8)
  await settle()
  var breeze=root.get_texture().get_image()
- check(still.get_data()!=breeze.get_data(),"Batched wind changes the actual OpenGL frame")
+ check(still.get_data()==breeze.get_data(),"Clear daylight keeps the actual frozen forest frame unchanged")
  check(game.state==saved,"Rendered wind never mutates saved resources or progress")
  breeze.save_png("/workspace/timber-quality-forest25.png")
  game.state.buildings=[{"kind":"sawmill","level":1,"slot":0,"paused":false,"position":[0,0]}]

@@ -32,15 +32,15 @@ func run() -> void:
  scene._process(0.25)
  check(game.state==before,"Wind, shadows and world animation never change simulation values")
  var wind=scene.tree_batches[0][1].material_override
- check(wind is ShaderMaterial and wind.get_shader_parameter("wind_strength")==1.0,"Normal quality enables batched tree wind")
+ check(wind is ShaderMaterial and not wind.shader.code.contains("wind_strength"),"Normal quality keeps tree wind disabled")
  var clock=scene.wind_clock
  game.state.ux.motion=false
  scene._process(0.5)
- check(scene.wind_clock==clock and wind.get_shader_parameter("wind_strength")==0.0,"Reduced motion stops both wind displacement and its clock")
+ check(scene.wind_clock==clock and not wind.shader.code.contains("wind_strength"),"Reduced motion stops both wind displacement and its clock")
  game.state.ux.motion=true
  game.state.quality=0
  scene._process(0.1)
- check(wind.get_shader_parameter("wind_strength")==0.0,"Battery mode eliminates canopy displacement")
+ check(not wind.shader.code.contains("wind_strength"),"Battery mode eliminates canopy displacement")
  game.state.quality=1
  var machine=scene.world_buildings.get_child(1).get_node("Processing")
  machine.set_process(false)

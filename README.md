@@ -2,7 +2,17 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.23-alpha.1 · Mehrstufige Entlastung
+## Aktuell: 0.28.24-alpha.1 · Dauerhaftes Tageslicht
+
+Kein Regen, Nebel, Wind, Pfützen oder Tag-Nacht-Wechsel mehr. Wetterobjekte und
+Pfützensteuerung aus der Hauptwelt entfernt, statische Baumkronen und trockenes
+Tageslicht. Auch ältere Nacht-/Regen-Spielstände starten bei klarem Mittag.
+Produktions-, Bau-, Liefer- und Wachstumszeiten laufen weiter.
+[Details](docs/DAYLIGHT-2824.md) · [Installation](docs/alpha1-daylight/START-HIER.txt).
+Android-Code **3019**, unverändertes Paket/Testzertifikat; als Update installieren.
+Kein echter Android-Gerätetest und keine zugesicherte Gesamtbildrate.
+
+## Vorher: 0.28.23-alpha.1 · Mehrstufige Entlastung
 
 Die Grafik reagiert bei anhaltend sehr niedrigen FPS in drei Stufen weiter.
 Vorhandene grobe Wald-/Landschaftsmeshes, native Menüs und volle Fotoauflösung.
@@ -789,7 +799,7 @@ Die damaligen Bandfahrten sind seit 0.16 durch den oben beschriebenen Straßenve
 - 15 Werkzeug- und zehn Fahrzeugstufen; Mitarbeiter, automatische Möbel-Exporte, wiederholbare Lieferaufträge, elf Meilensteine, fünf Forschungsrichtungen.
 - Sechs Loot-Seltenheiten mit offen angezeigten Wahrscheinlichkeiten. Werkzeug- und Fahrzeugteile sind zum Herstellen verwendbar; freigeschaltete Skins lassen sich anlegen. Münzen, Diamanten, Tickets, Geldscheine und Mythic Tokens werden gespeichert; Tokens verbessern dauerhaft die Loot-Chance. Geldscheine dienen derzeit als Auftragszähler/Vorratswährung.
 - Zeitlich begrenzte Booster, steigende Prestige-Kosten und dauerhafte Geld-, Produktions- und Loot-Boni. Permanente Währungen, Inventar und Skins überstehen den Neustart; der Prestige-Hain benötigt eine vorherige Ära.
-- Tageszeit, Regen, Nebel, Holzsplitter-Pool und Originalsounds. Akkumodus reduziert dargestellte Arbeiter, LKWs und Wettereffekte; Wälder verwenden MultiMeshes und statische Modelle zusammengefasste Geometrie.
+- Dauerhaft klares Tageslicht ohne Wetterwechsel, Holzsplitter-Pool und Originalsounds. Akkumodus reduziert dargestellte Arbeiter, LKWs und Wettereffekte; Wälder verwenden MultiMeshes und statische Modelle zusammengefasste Geometrie.
 - Versionierter Spielstand, atomare Übernahme, Backup-Fallback, Hintergrund-Speicherung und bis zu acht Stunden deterministischer Offline-Fortschritt.
 
 ## Erste Schritte

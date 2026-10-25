@@ -1,3 +1,9 @@
+## Dauerhaftes Tageslicht · 0.28.24-alpha.1
+
+21.579 Headless-Prüfungen in 48 Modulen sowie 113 OpenGL-Prüfungen in fünf Modulen bestanden. Alte Regen-/Nachtstände werden ohne Bestandsreset normalisiert. Ein kompletter früherer Tages-/Wetterzyklus bleibt bei Mittag und klarem Wetter, während die Wirtschaft weiterläuft. Die neue OpenGL-Prüfung zeigt identische tatsächlich gerenderte Waldbilder über alle alten Wetterzustände und Nachtwerte; unabhängige Arbeiter-/Produktionseffekte sind dafür eingefroren. Keine Regen- oder Pfützenobjekte werden mehr erzeugt, Nebel bleibt aus. Die bisherigen Nacht-/Regen-/Windtests wurden auf die ausdrücklich gewünschte Abschaltung umgestellt.
+
+[Prüfbericht](alpha1-daylight/automated-checks.json) · [Änderungsumfang](DAYLIGHT-2824.md). Kein privater Spielstand, kein physischer Android-/Temperaturtest und keine garantierte Handy-Bildrate.
+
 ## Externe Downloads Adaptive Darstellung · 0.28.23 geprüft
 
 APK und Quell-ZIP vom festen Tag `v0.28.23-alpha.1` vollständig per

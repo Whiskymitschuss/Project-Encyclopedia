@@ -56,8 +56,8 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
  materials[key]=mat
  return mat
 
-static func daylight(day: float) -> void:
- var night=snappedf(1.0-clampf(day*1.8,0,1),0.05)
+static func daylight(_day: float) -> void:
+ var night=0.0
  if night==last_night: return
  last_night=night
  for entry in windows:
@@ -68,8 +68,8 @@ static func apply_wet(entry: Dictionary) -> void:
  entry.material.albedo_color=entry.color.darkened(wetness*0.08)
  entry.material.roughness=lerpf(float(entry.roughness),0.22,wetness)
 
-static func weather(amount: float) -> void:
- var value=snappedf(clampf(amount,0,1),0.02)
+static func weather(_amount: float) -> void:
+ var value=0.0
  if is_equal_approx(value,wetness): return
  wetness=value
  for entry in wet_surfaces: apply_wet(entry)

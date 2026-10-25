@@ -54,7 +54,7 @@ func run() -> void:
  game.state.time=23
  scene._process(0)
  await shot("night")
- check(SurfaceLibrary.last_night>=0.95,"Actual night state lights the new house windows")
+ check(SurfaceLibrary.last_night==0.0,"Legacy night values keep the house windows in daytime")
  game.state.time=11
  scene._process(0)
  scene.focus=Vector3(-21,0,86)

@@ -1,0 +1,9 @@
+Timber Loot Tycoon 0.28.24-alpha.1 · Dauerhaftes Tageslicht
+Android-Code 3019. Gleiche Paketkennung und Testsignatur.
+
+Als Update installieren. Nicht deinstallieren, keine App-Daten löschen.
+
+Wetter vollständig ausgeschaltet: kein Regen, Nebel, Wind, Pfützen oder
+Tag-Nacht-Wechsel. Alte Nacht-/Regenstände starten ebenfalls im Tageslicht.
+Produktion, Lieferung, Bauzeiten und Baumwachstum laufen weiter.
+Die Leistungsanzeige nennt „Dauerhaftes Tageslicht · Wetter aus“.

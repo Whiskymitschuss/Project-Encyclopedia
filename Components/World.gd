@@ -92,16 +92,19 @@ func _ready() -> void:
  env.background_color = Color("53bbd3")
  env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
  env.ambient_light_color = Color("e5efff")
- var first_daylight=clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- env.ambient_light_energy = 0.38+first_daylight*0.06
+ env.ambient_light_energy = 0.44
+ env.fog_enabled=false
+ env.fog_density=0.0
+ SurfaceLibrary.daylight(1.0)
+ SurfaceLibrary.weather(0.0)
  env.tonemap_mode = Environment.TONE_MAPPER_REINHARDT
  env.tonemap_white=2.0
  environment_node.environment = env
  add_child(environment_node)
  sun = DirectionalLight3D.new()
- sun.rotation_degrees = Vector3(-48,-25,0)
- sun.light_color = Color("fff2df")
- sun.light_energy=0.24+first_daylight*0.45
+ sun.rotation_degrees = Vector3(-65,-25,0)
+ sun.light_color = Color("fff0d5")
+ sun.light_energy=0.69
  sun.shadow_opacity=0.45
  sun.shadow_enabled = Game.state.quality>0
  sun.directional_shadow_mode=DirectionalLight3D.SHADOW_ORTHOGONAL
@@ -151,7 +154,6 @@ func _ready() -> void:
  add_child(selection_world)
  Game.rebuild_world.connect(rebuild)
  Game.harvested.connect(on_harvested)
- make_weather()
  make_chip_pool()
  audio = load("res://Audio/Sound.gd").new()
  add_child(audio)
@@ -165,9 +167,6 @@ func _ready() -> void:
  feedback=load("res://Components/WorldFeedback.gd").new()
  feedback.world=self
  add_child(feedback)
- wet_weather=load("res://Components/WetWeather.gd").new()
- wet_weather.world=self
- add_child(wet_weather)
  fauna=load("res://Components/ForestFauna.gd").new()
  fauna.world=self
  add_child(fauna)
@@ -282,7 +281,7 @@ func build_forest() -> void:
    node.material_override.vertex_color_use_as_albedo = true
    if part>0:
     var wind=ShaderMaterial.new()
-    wind.shader=preload("res://Shaders/ForestWind.gdshader")
+    wind.shader=preload("res://Shaders/ForestCanopy.gdshader")
     wind.set_shader_parameter("canopy_tone",Color(Catalog.BIOMES[biome].tree))
     node.material_override=wind
    node.set_meta("near_mesh",mesh)
@@ -551,27 +550,6 @@ func sync_actors() -> void:
  refresh_forest_clearance()
  if landscape!=null: landscape.refresh()
 
-func make_weather() -> void:
- weather = GPUParticles3D.new()
- weather.amount = 140
- weather.lifetime = 2.5
- var process_material = ParticleProcessMaterial.new()
- process_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
- process_material.emission_box_extents = Vector3(60,1,55)
- process_material.direction = Vector3(0,-1,0.15)
- process_material.gravity = Vector3(0,-4,0)
- process_material.initial_velocity_min = 16
- process_material.initial_velocity_max = 22
- process_material.scale_min = 0.06
- process_material.scale_max = 0.12
- weather.process_material = process_material
- var mesh = BoxMesh.new()
- mesh.size = Vector3(0.25,5,0.25)
- mesh.material = Models.material(Color("b5d8df"))
- weather.draw_pass_1 = mesh
- weather.visibility_aabb = AABB(Vector3(-100,-100,-100),Vector3(200,200,200))
- add_child(weather)
-
 func _process(delta: float) -> void:
  var measured=RuntimeStats.begin_work()
  _process_measured(delta)
@@ -589,13 +567,6 @@ func _process_measured(delta: float) -> void:
   get_viewport().scaling_3d_scale=render_scale
  time += delta
  var animate=bool(Game.state.ux.motion) and bool(Game.state.ambient_enabled)
- if animate: wind_clock+=delta
- for batch in tree_batches:
-  for part in [1,2]:
-   var wind=Atmosphere.wind(Game.state).normalized()
-   batch[part].material_override.set_shader_parameter("wind_direction",Vector2(wind.x,wind.z))
-   batch[part].material_override.set_shader_parameter("wind_clock",wind_clock)
-   batch[part].material_override.set_shader_parameter("wind_strength",1.0 if animate and Game.state.quality>0 else 0.0)
  for fall in falling_trees:
   if fall.left<=0: continue
   fall.left=maxf(0,float(fall.left)-delta)
@@ -611,11 +582,6 @@ func _process_measured(delta: float) -> void:
  sun.shadow_enabled=Game.state.quality>0 and not (Game.state.ux.get("adaptive_detail",true) and RuntimeStats.low_detail) and zoom<300
  update_forest_detail()
  sun.directional_shadow_max_distance=clampf(zoom*1.2,160,260)
- var daylight = clampf(sin((float(Game.state.time)-6.0)/24.0*TAU),0.0,1.0)
- sun.light_energy = 0.24+daylight*0.45
- sun.light_color=Color("b6cce6").lerp(Color("fff0d5"),daylight)
- environment_resource.ambient_light_energy = 0.38+daylight*0.06
- SurfaceLibrary.daylight(daylight)
  var burning_homes={}
  for incident in Game.state.city_services.fires: burning_homes[int(incident.target_ref.index)]=true
  for label in town_name_labels:
@@ -625,13 +591,6 @@ func _process_measured(delta: float) -> void:
   label.visible=zoom<70 or (hud.ux.selection.get("kind","")=="building" and int(hud.ux.selection.get("index",-1))==int(label.get_meta("building_index",-1)))
  for label in biome_labels: label.visible=zoom<300
  for label in boss_labels: label.visible=zoom<180
- environment_resource.background_color = Color("294654").lerp(Color("53bbd3"),daylight)
- environment_resource.fog_enabled = int(Game.state.weather)==3 and Game.state.quality>0
- environment_resource.fog_light_color = Color("9ebdb5")
- environment_resource.fog_density = 0.0002
- sun.rotation_degrees.x = -25-daylight*40
- weather.position = focus+Vector3(0,36,0)
- weather.emitting = int(Game.state.weather) == 2 and Game.state.quality > 0 and animate
  for machine in machines:
   if animate and float(Game.flow.get("building:%s" % machine.index,0))>0: machine.node.rotate_y(delta*8)
  for crane in cranes:
