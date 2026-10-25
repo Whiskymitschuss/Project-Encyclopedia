@@ -208,6 +208,7 @@ func build_landscape() -> void:
    var lamp=Models.box(scenery,Vector3(1.2,0.4,1.2),Vector3(x,5.6,z),Color("eddda5"))
    lamp.material_override=Models.material(Color("f5d797"),true)
  Models.bake(scenery)
+ StaticPaintBatch.reduce(scenery)
  base_streets=Node3D.new()
  add_child(base_streets)
 
@@ -429,6 +430,8 @@ func rebuild() -> void:
  if landscape!=null: landscape.refresh()
  if delivery_world!=null: delivery_world.rebuild()
  StaticPaintBatch.reduce(world_buildings)
+ StaticPaintBatch.reduce(base_streets)
+ if town_layer!=null:StaticPaintBatch.reduce(town_layer)
  update_yard_handlers()
 
 func add_approach(point: Vector3, rotation: int) -> void:
@@ -463,6 +466,10 @@ func refresh_forest_clearance() -> void:
    for rectangle in rectangles:
     if rectangle.has_point(Vector2(tree.point.x,tree.point.z)): tree.blocked = true; break
    set_tree_visible(biome,i,not tree.blocked and tree.regrow<=0)
+
+ if forest_world!=null:
+  forest_world.rendered.clear()
+  forest_world.sync_trees(false)
 
 func sync_actors() -> void:
  var stations=[]
@@ -566,6 +573,11 @@ func make_weather() -> void:
  add_child(weather)
 
 func _process(delta: float) -> void:
+ var measured=RuntimeStats.begin_work()
+ _process_measured(delta)
+ RuntimeStats.end_work("Welt",measured)
+
+func _process_measured(delta: float) -> void:
  if hold_pointer>=0 and not hold_consumed and touches.size()==1 and not pinch_active and drag_distance<8 and placement.is_empty() and Time.get_ticks_msec()-hold_started>=550:
   hold_consumed=pick_tall_home(hold_point,0,true)
  update_camera(delta)

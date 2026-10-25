@@ -1,0 +1,126 @@
+{
+  "baseline_apk_sha256": "d59bd9782211254190939bc7d4b45b0c9b7c142d11b24463f65f0dab0e29d0f6",
+  "candidate_apk_sha256": null,
+  "fixture_sha256": "9dddec207c4487df35390af568fced752d5a23b679bf10b0f68a46fecf4bced8",
+  "method": "Sequential real Main.tscn with generated 18-factory/12-home fixture; 180 seconds simulation then frozen economy, live presentation; 4 camera views x 40 moving-camera frames; median of 3 x 120 forced grid crossings. Same 540x960 resolution, standard quality, adaptive detail off, Mesa llvmpipe/OpenGL. Full company state compared.",
+  "before": {
+    "built_us": 2428810,
+    "camera_trials_us": [
+      1362.78333333333,
+      1466.71666666667,
+      1493.14166666667
+    ],
+    "cases": [
+      {
+        "case": 0,
+        "draw_calls": 370.0,
+        "frame_median_ms": 79.41,
+        "frame_p95_ms": 84.671,
+        "objects": 555.0,
+        "process_median_ms": 84.494
+      },
+      {
+        "case": 1,
+        "draw_calls": 1336.0,
+        "frame_median_ms": 95.04,
+        "frame_p95_ms": 102.293,
+        "objects": 1529.0,
+        "process_median_ms": 102.135
+      },
+      {
+        "case": 2,
+        "draw_calls": 932.0,
+        "frame_median_ms": 79.436,
+        "frame_p95_ms": 89.903,
+        "objects": 1119.0,
+        "process_median_ms": 83.866
+      },
+      {
+        "case": 3,
+        "draw_calls": 1443.0,
+        "frame_median_ms": 153.257,
+        "frame_p95_ms": 183.328,
+        "objects": 1628.0,
+        "process_median_ms": 182.333
+      }
+    ],
+    "company_sha256": "40b80373be4c99bb78780922c612f166eb1a1f9cc473db36f0f79b7cc91f2403",
+    "company_unchanged": true,
+    "cpu_us": {
+      "alerts": 85.8166666666667,
+      "camera_grid_crossing": 1466.71666666667,
+      "city_traffic": 1.65,
+      "deliveries": 739.729166666667,
+      "hud": 5.10833333333333,
+      "planters": 151.175,
+      "world": 1065.44166666667
+    },
+    "meshes": 1761,
+    "nodes": 3506
+  },
+  "after": {
+    "built_us": 2718413,
+    "camera_trials_us": [
+      1242.14166666667,
+      1278.10833333333,
+      1348.05833333333
+    ],
+    "cases": [
+      {
+        "case": 0,
+        "draw_calls": 348.0,
+        "frame_median_ms": 69.817,
+        "frame_p95_ms": 88.389,
+        "objects": 533.0,
+        "process_median_ms": 94.214
+      },
+      {
+        "case": 1,
+        "draw_calls": 1317.0,
+        "frame_median_ms": 90.959,
+        "frame_p95_ms": 104.17,
+        "objects": 1510.0,
+        "process_median_ms": 104.053
+      },
+      {
+        "case": 2,
+        "draw_calls": 904.0,
+        "frame_median_ms": 78.796,
+        "frame_p95_ms": 87.51,
+        "objects": 1091.0,
+        "process_median_ms": 87.32
+      },
+      {
+        "case": 3,
+        "draw_calls": 1402.0,
+        "frame_median_ms": 145.951,
+        "frame_p95_ms": 166.528,
+        "objects": 1587.0,
+        "process_median_ms": 157.585
+      }
+    ],
+    "company_sha256": "40b80373be4c99bb78780922c612f166eb1a1f9cc473db36f0f79b7cc91f2403",
+    "company_unchanged": true,
+    "cpu_us": {
+      "alerts": 80.9458333333333,
+      "camera_grid_crossing": 1278.10833333333,
+      "city_traffic": 2.0625,
+      "deliveries": 567.35,
+      "hud": 4.875,
+      "planters": 113.045833333333,
+      "world": 958.729166666667
+    },
+    "meshes": 1731,
+    "nodes": 3476
+  },
+  "paint_mean_absolute_rgb_error_0_to_255": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "camera_cpu_reduction_percent": 12.859220708385378,
+  "desktop_only": true,
+  "android_device_tested": false,
+  "temperature_measured": false,
+  "note": "Desktop only. Small additional draw-call reduction; frame times do not improve uniformly. No claim that the reported 6.2 phone FPS or 14.3s world loading is fixed. The separate CPU benchmark measures route and alert savings."
+}

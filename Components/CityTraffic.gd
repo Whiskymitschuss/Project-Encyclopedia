@@ -40,6 +40,11 @@ func obtain(key: String) -> Node3D:
  return node
 
 func _process(_delta: float) -> void:
+ var measured=RuntimeStats.begin_work()
+ _process_measured(_delta)
+ RuntimeStats.end_work("Stadtverkehr",measured)
+
+func _process_measured(_delta: float) -> void:
  var present={}
  var folk={}
  moving_vehicles=0

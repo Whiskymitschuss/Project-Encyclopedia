@@ -229,6 +229,11 @@ func resume_company(now: float, asynchronous: bool=false) -> void:
  save(true)
 
 func _process(delta: float) -> void:
+ var measured=RuntimeStats.begin_work()
+ _process_measured(delta)
+ RuntimeStats.end_work("Spielverwaltung",measured)
+
+func _process_measured(delta: float) -> void:
  if catching_up:
   poll_replay()
   return
@@ -424,6 +429,11 @@ func production_status(index: int) -> String:
  return "Bereit · startet mit dem nächsten Produktionstakt"
 
 func step(delta: float) -> void:
+ var measured=0 if simulation_only else RuntimeStats.begin_work()
+ step_measured(delta)
+ RuntimeStats.end_work("Wirtschaftstakt",measured)
+
+func step_measured(delta: float) -> void:
  LogisticsDispatch.synchronize(state)
  CrewTransport.tick(state,delta)
  var stone_before=float(state.stone.delivered)

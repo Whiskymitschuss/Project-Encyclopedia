@@ -1,3 +1,9 @@
+## Laufzeit und Gerätemessung · 0.28.22-alpha.1
+
+**21.552 Headless-Prüfungen in 46 Modulen** und **398 OpenGL-Prüfungen in 13 Modulen** bestanden. Zwei natürliche Progressionsfälle sowie Hauptwelt- und Boot-Start enthalten. Neue Prüfungen vergleichen vorbereitete Routen gegen den bisherigen linearen Algorithmus, geänderte Kontrollpunkte, begrenzte Caches und Messpuffer. Echte GPU-Instanzen prüfen Fällung, Wachstum und Wiederherstellung nach Platzierungsänderungen. Die reale Kamerarunde zeigt Versionsnummer, Zeichenaufrufe und begrenzte CPU-Messwerte; Kamera und vollständiger Firmenzustand bleiben erhalten.
+
+[Prüfbericht](alpha1-runtime/automated-checks.json) · [Messung und Grenzen](PERFORMANCE-2822.md). Unveränderte wirtschaftliche Entwicklung; kein privater Spielstand verwendet. Desktop-Prüfungen, keine behauptete Behebung der 6,2 FPS auf dem SM-S721B und kein Android-/Wärmetest.
+
 ## Externe Downloads Performance · 0.28.21 geprüft
 
 APK und Quell-ZIP vom festen Tag `v0.28.21-alpha.1` vollständig per

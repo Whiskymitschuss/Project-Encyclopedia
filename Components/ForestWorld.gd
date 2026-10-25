@@ -5,9 +5,16 @@ var previous={}
 var planters={}
 var pool=[]
 var initialized=false
+var tree_updates=0
+var rendered={}
 var work_status: Label3D
 
 func _process(delta: float) -> void:
+ var measured=RuntimeStats.begin_work()
+ _process_measured(delta)
+ RuntimeStats.end_work("Walddarstellung",measured)
+
+func _process_measured(delta: float) -> void:
  clock+=delta
  if clock>=0.5:
   clock=0
@@ -36,12 +43,17 @@ func sync_trees(falling: bool=false) -> void:
    if stage=="stump": growth=0.001
    elif stage=="growing": growth=lerpf(0.12,1,clampf(1-(float(state.ready_at)-float(Game.state.elapsed))/float(state.get("grow_seconds",ForestCycle.LEGACY_GROW_SECONDS)),0,1))
    tree.regrow=maxf(0.01,float(state.get("ready_at",Game.state.elapsed+1))-float(Game.state.elapsed)) if stage!="mature" else 0.0
+   var visual_key=Vector3(float(tree.scale),growth,1.0 if tree.blocked else 0.0)
+   var slot="%s:%s" % [biome,index]
+   if rendered.get(slot,Vector3.INF)==visual_key:continue
+   rendered[slot]=visual_key
    for part in 3:
     var size_value=float(tree.scale)*(0.001 if tree.blocked else growth)
     var y=[1.8,4.7,7.1][part]*size_value
     world.tree_batches[biome][part].multimesh.set_instance_transform(index,Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*size_value),tree.point+Vector3.UP*y))
    var stump_size=float(tree.scale) if stage=="stump" and not tree.blocked else 0.001
    world.stump_batches[biome].multimesh.set_instance_transform(index,Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*stump_size),tree.point+Vector3.UP*0.35*stump_size))
+   tree_updates+=1
   var remembered={}
   for id in cells: remembered[id]=str(cells[id].state)
   previous[str(biome)]=remembered

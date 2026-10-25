@@ -1,0 +1,35 @@
+{
+  "method": "CPU-only desktop Godot 4.6.3, generated forestry288-company fixture, 780 simulated seconds then frozen company. First-use node construction excluded; 240 direct calls/section and 1000 samples of a synthetic 160-checkpoint route. Baseline: unchanged actual .21 APK assets. Candidate: source. Not phone FPS.",
+  "before": {
+    "company_sha256": "15cb5371a17c26608d9348f7e976ee8e0cdd60069594387dd807e8b377719caa",
+    "company_unchanged": true,
+    "cpu_us": {
+      "alerts": 597.191666666667,
+      "city_traffic": 20.625,
+      "deliveries": 493.604166666667,
+      "forest": 174.829166666667,
+      "long_route_sample": 734.958,
+      "world": 134.6875
+    },
+    "desktop_only": true,
+    "samples_per_section": 240,
+    "simulation_seconds_before_measurement": 780
+  },
+  "after": {
+    "company_sha256": "15cb5371a17c26608d9348f7e976ee8e0cdd60069594387dd807e8b377719caa",
+    "company_unchanged": true,
+    "cpu_us": {
+      "alerts": 95.8666666666667,
+      "city_traffic": 15.4916666666667,
+      "deliveries": 442.254166666667,
+      "forest": 135.9625,
+      "long_route_sample": 7.484,
+      "world": 133.270833333333
+    },
+    "desktop_only": true,
+    "samples_per_section": 240,
+    "simulation_seconds_before_measurement": 780
+  },
+  "android_device_tested": false,
+  "temperature_measured": false
+}

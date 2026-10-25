@@ -17,6 +17,8 @@ var stable_seconds=0.0
 var since_change=45.0
 var warmup=0.0
 var previous_us=0
+var profiling=false
+var work={}
 
 func _ready() -> void:
  process_mode=Node.PROCESS_MODE_ALWAYS
@@ -87,3 +89,39 @@ func summary() -> String:
  var s=snapshot()
  var live="%.1f FPS · P95 %.1f ms" % [s.fps,s.p95_ms] if s.frames>0 else "FPS-Messung startet nach zwei Sekunden in der Welt"
  return "%s\nErster Script-Frame: %s ms seit Engine-Start\nWeltaufbau: %s ms\nLetzte Offline-Berechnung: %.1f s für %.1f Min.\n3D-Auflösung: %s %% · Menü in voller Auflösung\nDarstellung: %s" % [live,s.first_frame_ms,s.world_ready_ms,s.replay_ms/1000.0,s.replay_seconds/60.0,roundi(s.render_scale*100),"Details automatisch reduziert" if low_detail else "gewähltes Qualitätsprofil"]
+
+# Explicit camera-tour measurements. Bounded CPU samples distinguish script work
+# from rendering pressure without claiming a GPU profiler or collecting data.
+func begin_work() -> int:
+ return Time.get_ticks_usec() if profiling else 0
+
+func end_work(section: String,started: int) -> void:
+ if started<=0 or not profiling:return
+ if not work.has(section):work[section]={"samples":PackedFloat64Array(),"cursor":0}
+ var data=work[section]
+ var milliseconds=(Time.get_ticks_usec()-started)/1000.0
+ if data.samples.size()<SAMPLE_LIMIT:data.samples.append(milliseconds)
+ else:
+  data.samples[data.cursor]=milliseconds
+  data.cursor=(int(data.cursor)+1)%SAMPLE_LIMIT
+
+func start_profile() -> void:
+ work.clear()
+ profiling=true
+
+func finish_profile() -> Dictionary:
+ profiling=false
+ var result={}
+ for section in work:
+  var values=work[section].samples.duplicate();values.sort()
+  var total=0.0
+  for value in values:total+=value
+  result[section]={"mean_ms":total/maxi(1,values.size()),"p95_ms":values[mini(values.size()-1,floori(values.size()*0.95))] if not values.is_empty() else 0.0,"samples":values.size()}
+ return result
+
+func profile_summary(results: Dictionary) -> String:
+ var rows=[]
+ for section in results:
+  var value=results[section]
+  rows.append("%s: Ø %.2f · P95 %.2f ms" % [section,value.mean_ms,value.p95_ms])
+ return "\n".join(rows)

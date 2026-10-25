@@ -1,0 +1,14 @@
+Timber Loot Tycoon 0.28.22-alpha.1 · Laufzeit und Messdetails
+
+APK als Update installieren. Nicht vorher deinstallieren, keine App-Daten löschen.
+Paket und bisheriger Testschlüssel bleiben gleich. Android-Code 3017.
+
+Mehr → Hilfe → Startzeit, FPS & Kamerarunde.
+Dort muss Version 0.28.22-alpha.1 stehen.
+Standardprofil wählen und die 30-Sekunden-Runde vollständig beenden.
+Bitte „Deine letzte Messung“ und „Messdetails“ senden; bei Bedarf nach unten scrollen.
+Die Runde anschließend im Akkumodus wiederholen.
+
+Weniger Wiederholungsarbeit an Routen, Waldinstanzen und Betriebshinweisen.
+Keine zugesicherten 30 FPS. Das Ergebnis auf dem SM-S721B bleibt zu messen.
+Die 14,3 Sekunden Weltaufbau sind noch nicht als behoben nachgewiesen.

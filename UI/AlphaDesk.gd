@@ -19,6 +19,8 @@ func populate() -> void:
  if draft.is_empty() and not Game.performance_results.is_empty():
   var result=Game.performance_results
   report.text+="\nKamerarunde: %.1f FPS · P95 %.1f ms · %s · %.1f Sekunden\nWärme am Gerät: [bitte ergänzen]\n" % [result.fps,result.p95_ms,result.profile,result.seconds]
+  if result.has("work"):
+   report.text+="Version: %s · Zeichenaufrufe: %s\n%s\n" % [result.get("version",""),int(result.draw_calls),RuntimeStats.profile_summary(result.work)]
  if draft.is_empty(): report.text+="\nStart & Leistung:\n"+RuntimeStats.summary()+"\nWärme am Gerät: [bitte ergänzen]\n"
  original=report.text
  report.custom_minimum_size=Vector2(0,clampf(hud.size.y*0.15,96,180))

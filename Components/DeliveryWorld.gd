@@ -127,6 +127,11 @@ func refresh_badges() -> void:
   b.button.add_theme_stylebox_override("normal",load("res://UI/SculptedSurface.gd").create(color,12))
 
 func _process(delta: float) -> void:
+ var measured=RuntimeStats.begin_work()
+ _process_measured(delta)
+ RuntimeStats.end_work("Transportdarstellung",measured)
+
+func _process_measured(delta: float) -> void:
  clock += delta
  if clock>=0.5: clock=0; refresh_badges()
  var occupied: Array[Rect2] = []

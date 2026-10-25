@@ -3,6 +3,9 @@ extends RefCounted
 
 static var curve_cache: Dictionary={}
 static var route_cache: Dictionary={}
+# Derived presentation data only; never written into trips or saves.
+static var sample_cache: Dictionary={}
+static var sample_builds=0
 
 static func driving_path(points: Array) -> Array:
  # Keep authoritative saved checkpoints intact: reservations, road protection,
@@ -98,15 +101,40 @@ static func vector(p: Array) -> Vector3:
 
 static func sample(points: Array, fraction: float) -> Dictionary:
  if points.size()<2: return {"position":Vector3.ZERO,"direction":Vector3.FORWARD}
- points=driving_path(points)
- var along = length(points)*clampf(fraction,0,1)
- for i in range(1,points.size()):
-  var a = vector(points[i-1])
-  var b = vector(points[i])
-  var d = a.distance_to(b)
-  if along<=d and d>0.00001: return {"position":a.lerp(b,along/d),"direction":(b-a).normalized()}
-  along -= d
- return {"position":vector(points[-1]),"direction":(vector(points[-1])-vector(points[-2])).normalized()}
+ var key=hash(points)
+ var data=sample_cache.get(key,{})
+ if data.is_empty() or data.source!=points:
+  var line=driving_path(points)
+  var positions=PackedVector3Array()
+  var ends=PackedFloat64Array()
+  var total=0.0
+  for point in line: positions.append(vector(point))
+  for i in range(1,positions.size()):
+   total+=positions[i-1].distance_to(positions[i])
+   ends.append(total)
+  data={"source":points.duplicate(true),"positions":positions,"ends":ends,"total":total}
+  # FIFO eviction avoids invalidating every active truck at once.
+  if sample_cache.size()>=512: sample_cache.erase(sample_cache.keys()[0])
+  sample_cache[key]=data
+  sample_builds+=1
+ var along=float(data.total)*clampf(fraction,0,1)
+ var positions: PackedVector3Array=data.positions
+ var ends: PackedFloat64Array=data.ends
+ var low=0
+ var high=ends.size()-1
+ while low<high:
+  var middle=(low+high)>>1
+  if ends[middle]<along: low=middle+1
+  else: high=middle
+ # A duplicate first/last checkpoint is legal in older saved routes.
+ while low<ends.size():
+  var start=ends[low-1] if low>0 else 0.0
+  var distance=ends[low]-start
+  if along<=ends[low] and distance>0.00001:
+   var a=positions[low];var b=positions[low+1]
+   return {"position":a.lerp(b,(along-start)/distance),"direction":(b-a).normalized()}
+  low+=1
+ return {"position":positions[-1],"direction":(positions[-1]-positions[-2]).normalized()}
 
 static func presentation_sample(points: Array, fraction: float) -> Dictionary:
  # Legacy saves retain their route, clocks and cargo; only their short private

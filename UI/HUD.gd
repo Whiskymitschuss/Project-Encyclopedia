@@ -524,6 +524,11 @@ func update_goal_progress(goal: Dictionary) -> void:
  compact_style(mission_button,Color("628840") if goal.get("ready",false) else Color("825031"))
 
 func update_stats() -> void:
+ var measured=RuntimeStats.begin_work()
+ update_stats_measured()
+ RuntimeStats.end_work("HUD-Anzeigen",measured)
+
+func update_stats_measured() -> void:
  emergency_button.visible=not Game.state.city_services.fires.is_empty()
  emergency_button.text="FEUERWEHR · %s\nEINSÄTZE ANSEHEN" % Game.state.city_services.fires.size()
  edition.text="WALDKONTO"
