@@ -35,6 +35,9 @@ und Pflanzanimationen füllen keine Warenlager. Erst wirklich gefällte reife B�
 liefern Holz. Eine volle Abholstation stoppt weiterhin die Ernte, aber nicht die
 Aufforstung. Es werden keine zusätzlichen Helfer erfunden.
 
+Exportierte Buildberichte und andere Dateien unter `exports/` werden außerdem
+aus dem Android-Paket ausgeschlossen; die Bauprüfung kontrolliert dies.
+
 ## Prüfung und Grenzen
 
 Der später gemeldete Teambildschirm zeigt zehn zugewiesene Helfer, aber null

@@ -94,7 +94,7 @@ with zipfile.ZipFile(output) as apk:
     assert any('UI/LoadingArtwork.gd' in x for x in names)
     assert b'SIL OPEN FONT LICENSE' in apk.read('assets/Assets/Fonts/Anton-OFL.txt')
     assert any('Economy/FireSafety.gd' in x for x in names)
-    assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/')) for x in names)
+    assert not any(x.startswith(('assets/Tests/','assets/scripts/','assets/releases/','assets/exports/')) for x in names)
 report = {'file':output.name,'bytes':output.stat().st_size,
     'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
     'version':VERSION_NAME,'package':PACKAGE,
