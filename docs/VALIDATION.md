@@ -1,3 +1,10 @@
+## Externe Downloads Lagergrenzen · 0.28.20 geprüft
+
+APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.20-alpha.1` vollständig per
+HTTPS zurückgeladen. Alle liefern HTTP 200; Bytezahl und SHA256 stimmen mit den
+gebauten Dateien überein. [Download-Prüfbericht](download-verification-alpha2820.json).
+Das bestätigt Dateien und Auslieferung, keinen echten Android-Gerätelauf.
+
 ## Tatsächliche APK-Dateien · 0.28.20-alpha.1
 
 Zwölf Headless-Module mit **11647 Prüfungen** und sechs
