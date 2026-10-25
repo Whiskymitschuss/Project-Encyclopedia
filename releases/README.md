@@ -1,4 +1,24 @@
-# Aktuell: Laufzeit und Messdetails · 0.28.22-alpha.1
+# Aktuell: Laufzeit und Messdetails · 0.28.23-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.23-alpha.1/releases/Timber-Loot-Tycoon-v0.28.23-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.23-source.zip) ·
+[Messungen und Grenzen](../docs/PERFORMANCE-2823.md)
+
+Drei adaptive Entlastungsstufen reagieren auch bei anhaltend 4–5 FPS weiter.
+Vorhandene grobe Wald-/Landschaftsmeshes, native Menüs und volle Fotoauflösung.
+CPU- und Hängermessungen laufen auf Android ohne Kamerarunde; wichtige Werte
+stehen im Leistungsmenü zuerst. Keine Änderung an Waren oder Produktion.
+
+Android-Code **3018**; bisheriges Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, Debug-Testfassung.
+Quellprüfungen: 21.569 Headless / 257 OpenGL. Tatsächliche APK-Dateien:
+10,976 Headless / 326 OpenGL.
+Kein echter Android-Geräte-/Wärmetest. Die gemeldeten 4,8 Handy-FPS sind noch nicht als behoben nachgewiesen.
+Etwa eine Minute normal spielen, dann aktuelle Leistung und automatische Messdetails senden.
+Eine Kamerarunde ist dafür nicht mehr nötig.
+Quellstand `25cc8f4dbe3fb4c7b3d1dcf05c67f9115e7661c3`; 906 Dateien der Quell-ZIP gegen Git geprüft.
+
+## Vorher: Laufzeit und Messdetails · 0.28.22-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.22-alpha.1-android/releases/Timber-Loot-Tycoon-v0.28.22-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.22-source.zip) ·
 [Messungen und Grenzen](../docs/PERFORMANCE-2822.md)

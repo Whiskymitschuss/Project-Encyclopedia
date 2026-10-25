@@ -1,3 +1,10 @@
+## Tatsächliche APK-Dateien · 0.28.23-alpha.1
+
+10976 Headless-Prüfungen in 14 Modulen und 326 OpenGL-Prüfungen in 13 Modulen mit unveränderten Dateien aus der signierten APK bestanden. Tests und Profile extern. Neue Routen-/Wald-/Messprüfungen sowie bestehende Logistik, Lager, Forst, Hauptwelt und Grafik enthalten. [Paketprüfbericht](alpha1-adaptive/packaged-checks.json).
+APK-SHA256 `0db532f5ee82b1e32c5fd848dee996ace48e9ccb12af0da8302e1f2b9a7127ca`; Quellstand `25cc8f4dbe3fb4c7b3d1dcf05c67f9115e7661c3`.
+Paket, Android-Code 3018, bisheriges Zertifikat und APK-ZIP-Ausrichtung geprüft.
+Das ist kein Android-Gerätelauf und kein Nachweis, dass 4,8 Handy-FPS behoben sind.
+
 ## Mehrstufige Entlastung · 0.28.23-alpha.1
 
 21.569 Headless-Prüfungen in 47 Modulen, zwei natürliche Progressionsfälle und Haupt-/Boot-Start bestanden. Danach gezielte Regel-/Touchprüfungen der abschließenden Eingabeänderung. 257 OpenGL-Prüfungen in zehn Modulen bestanden, einschließlich tatsächlicher LOD-Meshauswahl, Fotoqualität, nativer HUD-Geometrie und physischer LKW-Auswahl. Die zuerst fehlgeschlagene LKW-Auswahl während einer Kamerafahrt wurde durch Stoppen der Navigation bei Berührung korrigiert; die ursprüngliche Touch-Assertion bleibt unverändert.
