@@ -1,0 +1,9 @@
+1. Version 0.28.21 unter Mehr / Alpha prüfen. Als Update installieren.
+2. Ohne Menü durch Wald, Fabriken und Stadt schwenken und stufenlos zoomen.
+3. Dasselbe mit Akku-/Standardprofil vergleichen. Bäume dürfen nicht verspringen,
+   Gebäude nicht entfärbt werden und Straßen nicht verschwinden.
+4. Stapler, Maschinen, sichtbare Biberfahrer, Be- und Entladen beobachten.
+5. Lagergrenzen und automatisches Wiederanlaufen nach Verbrauch prüfen.
+6. Spielstand schließen/öffnen und Fortschritt kontrollieren.
+7. Wenn möglich Kamerarunde vor/nach Update mit demselben Zoom/Profil messen.
+   FPS, P95, Handymodell und Wärmegefühl im Alpha-Bericht ergänzen.

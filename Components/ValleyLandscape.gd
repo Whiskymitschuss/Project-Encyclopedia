@@ -15,6 +15,8 @@ var landmarks: Node3D
 var quality = -1
 var water: MeshInstance3D
 var view_key=Vector3(INF,INF,INF)
+var view_uploads=0
+var view_rebuilds=0
 
 func _init() -> void:
  noise.seed=140718
@@ -334,7 +336,8 @@ func refresh() -> void:
    entry.blocked=not clear_at(entry.point,radius,bounds,spans)
    var size=0.001 if entry.blocked else float(entry.scale)
    var basis=Basis(Vector3.UP,float(entry.angle)).scaled(Vector3.ONE*size)
-   data.mesh.set_instance_transform(i,Transform3D(basis,Vector3(entry.point.x,height_at(entry.point),entry.point.y)))
+   entry.render_transform=Transform3D(basis,Vector3(entry.point.x,height_at(entry.point),entry.point.y))
+   data.mesh.set_instance_transform(i,entry.render_transform)
    data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else entry.color)
  update_view(true)
 
@@ -343,20 +346,42 @@ func update_view(force: bool=false) -> void:
  var key=Vector3(snappedf(world.view_focus.x,16),snappedf(world.view_focus.z,16),snappedf(world.view_zoom,12))
  if not force and key==view_key: return
  view_key=key
+ view_rebuilds+=1
  var center=Vector2(world.view_focus.x,world.view_focus.z)
  var radius=maxf(65,world.view_zoom*0.95+35)
+ var radius_squared=radius*radius
  for kind in batches:
   var data=batches[kind]
-  data.entries.sort_custom(func(a,b): return a.point.distance_squared_to(center)<b.point.distance_squared_to(center))
+  var chosen={}
+  var battery=quality==0
+  if battery:
+   # Preserve the old nearest-45% battery budget. Normal presentation needs
+   # only a membership pass, never a whole-pool distance sort.
+   var candidates=data.entries.filter(func(entry): return entry.point.distance_squared_to(center)<=radius_squared)
+   var limit=ceili(data.entries.size()*0.45)
+   if candidates.size()>limit:
+    candidates.sort_custom(func(a,b): return a.point.distance_squared_to(center)<b.point.distance_squared_to(center))
+    candidates.resize(limit)
+   for entry in candidates: chosen[entry.point]=true
   var visible_count=0
   for i in data.entries.size():
    var entry=data.entries[i]
-   if entry.point.distance_to(center)<=radius: visible_count+=1
-   var size=0.001 if entry.blocked else float(entry.scale)
-   data.mesh.set_instance_transform(i,Transform3D(Basis(Vector3.UP,float(entry.angle)).scaled(Vector3.ONE*size),Vector3(entry.point.x,height_at(entry.point),entry.point.y)))
-   data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else entry.color)
+   var selected=chosen.has(entry.point) if battery else entry.point.distance_squared_to(center)<=radius_squared
+   if not selected: continue
+   # MultiMesh draws a prefix. Partition that prefix in place, uploading only
+   # the two changed slots; unchanged scenery keeps its cached GPU transform.
+   if i!=visible_count:
+    var previous=data.entries[visible_count]
+    data.entries[visible_count]=entry
+    data.entries[i]=previous
+    data.mesh.set_instance_transform(visible_count,entry.render_transform)
+    data.mesh.set_instance_transform(i,previous.render_transform)
+    data.mesh.set_instance_color(visible_count,Color.WHITE if kind=="trunk" else entry.color)
+    data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else previous.color)
+    view_uploads+=2
+   visible_count+=1
   data.mesh.mesh=data.near if world.view_zoom<180 and quality>0 else data.far
-  data.mesh.visible_instance_count=mini(visible_count,ceili(data.entries.size()*0.45)) if quality==0 else visible_count
+  data.mesh.visible_instance_count=visible_count
 
 func _process(_delta: float) -> void:
  if quality!=int(Game.state.quality): refresh()

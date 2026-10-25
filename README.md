@@ -2,7 +2,24 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.20-alpha.1 · Lagergrenzen
+## Aktuell: 0.28.21-alpha.1 · Kamera und Darstellung
+
+Vorbereitete Landschaftstransformationen ersetzen vollständiges Sortieren und
+Neuschreiben bei Kameraschwenks. Passende statische Lackflächen werden gemeinsam
+gezeichnet. Wälder, Bauteile, bewegliche Maschinen, Fahrer und Waren bleiben
+erhalten; Wirtschaft und Spielgeschwindigkeit ändern sich nicht.
+
+Im reproduzierten Desktop-Quellvergleich ungefähr **93 % weniger CPU-Zeit für
+Kameraaktualisierungen** und **ein Drittel weniger Zeichenaufrufe** in der
+Fabrikansicht. Das sind keine zugesicherten Handy-FPS. Die einmalige
+Weltkonstruktion kann etwas länger dauern; der Schwerpunkt ist das laufende Spiel.
+[Messung und Grenzen](docs/PERFORMANCE-2821.md) ·
+[Installation](docs/alpha1-performance/START-HIER.txt) · [Downloads](releases/README.md).
+Android-Code **3016**, bisheriges Paket und Testzertifikat. **Als Update
+installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein echter Android-Geräte-/Wärmetest; die frühere vollständige Masterliste bleibt offen.
+
+## Vorher: 0.28.20-alpha.1 · Lagergrenzen
 
 Zentrale und Express haben feste, getrennte Plätze je Warenart. Die bisherigen
 Grenzen sind jetzt in der Hauptanzeige und im Warendetail sichtbar. Einkäufe,

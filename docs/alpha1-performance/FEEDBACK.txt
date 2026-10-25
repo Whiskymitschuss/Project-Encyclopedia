@@ -1,0 +1,7 @@
+Version: 0.28.21-alpha.1
+Handymodell / Android:
+Standard oder Akku / automatische Detailreduktion:
+Ruckeln: Wald / Fabrik / Stadt / Übersicht:
+Kamerarunde FPS / P95:
+Warm direkt nach Start oder erst nach einigen Minuten?:
+Grafikfehler, verschwundene Dinge oder abweichende Lagerstände?:

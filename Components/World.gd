@@ -428,6 +428,7 @@ func rebuild() -> void:
  refresh_forest_clearance()
  if landscape!=null: landscape.refresh()
  if delivery_world!=null: delivery_world.rebuild()
+ StaticPaintBatch.reduce(world_buildings)
  update_yard_handlers()
 
 func add_approach(point: Vector3, rotation: int) -> void:

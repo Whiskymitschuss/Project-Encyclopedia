@@ -1,3 +1,21 @@
+## Kamera und Darstellung · 0.28.21-alpha.1
+
+45 Headless-Module mit **21.532 Prüfungen**, zwei natürliche Fortschrittsfälle
+und Haupt-/Boot-Szenenstart bestanden. Elf relevante OpenGL-Module mit
+**367 Prüfungen** bestanden. Neue Geometrie-, Material-, Attachments-,
+Instanzmitgliedschafts- und Renderfarbprüfungen ergänzen die bestehenden
+Wirtschafts-, Lager-, Logistik-, Forst-, Straßen- und Auswahlprüfungen.
+[Prüfbericht](alpha1-performance/automated-checks.json) ·
+[Reproduzierbarer Vergleich](alpha1-performance/frames-benchmark.json) ·
+[Verhalten, Messung und Grenzen](PERFORMANCE-2821.md).
+
+Quellvergleich mit unveränderten 0.28.20-APK-Dateien: 18,44 → 1,33 ms für
+Kameraaktualisierungen bei Abschnittswechsel; Fabrikansicht 1.990 → 1.338
+Zeichenaufrufe. Vollständiger Firmenzustand identisch. Dieselbe Geometrie und
+nahezu identische gerenderte Farben. Desktop-/Software-Renderer, keine Garantie
+für Handy-FPS. Einmalige Konstruktion ungefähr 2,43 → 2,76 s; kein Ladezeit-Pass.
+Kein physischer Android-Geräte- oder Wärmetest. Frühere Masterliste bleibt offen.
+
 ## Externe Downloads Lagergrenzen · 0.28.20 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.20-alpha.1` vollständig per

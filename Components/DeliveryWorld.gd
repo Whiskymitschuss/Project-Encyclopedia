@@ -189,6 +189,7 @@ func _process(delta: float) -> void:
    node.road_freight = true
    node.fleet=str(shipment.get("fleet","general"))
    add_child(node)
+   StaticPaintBatch.reduce(node)
    node.set_meta("pool_key",signature)
    var cargo_label=Label3D.new()
    cargo_label.layers=Models.WORLD_LABEL_LAYER

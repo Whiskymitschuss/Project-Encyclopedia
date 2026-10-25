@@ -1,0 +1,14 @@
+Timber Loot Tycoon · 0.28.21-alpha.1 · Kamera und Darstellung
+Android-Code 3016. Als Update installieren; nicht vorher deinstallieren und
+keine App-Daten löschen. Bisheriges Paket und Testzertifikat bleiben erhalten.
+
+Kamerabewegungen ändern deutlich weniger Dekorationsplätze. Passende statische
+Bauteile werden gemeinsam gezeichnet. Keine ausgedünnten Wälder, keine neue
+Spielgeschwindigkeit, keine Änderungen an Produktion oder Lagergrenzen.
+
+Auf deinem Handy: dieselbe Fabrikansicht und denselben Zoom wie vorher testen.
+Unter Mehr / Hilfe / Startzeit, FPS & Kamerarunde kann gemessen werden.
+Das Testmenü beschreibt die tatsächlich verfügbaren Werte. Bitte Handymodell,
+Grafikprofil und Ergebnis im Alpha-Bericht ergänzen, falls es weiter ruckelt.
+Die Desktop-Messungen versprechen keine bestimmte Handy-FPS-Zahl.
+Die einmalige Weltkonstruktion kann etwas länger dauern. Kein Ladezeit-Update.

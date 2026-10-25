@@ -13,6 +13,7 @@ static func material(color: Color, glow: bool = false) -> StandardMaterial3D:
  var result = StandardMaterial3D.new()
  result.albedo_color = color
  result.roughness = 0.76
+ if not glow: result.set_meta("static_paint",true)
  if grain == null:
   var image = Image.create(32,32,false,Image.FORMAT_RGB8)
   for y in 32:
@@ -240,6 +241,7 @@ static func bake(root: Node3D) -> void:
  for key in batches:
   var combined = MeshInstance3D.new()
   combined.mesh = batches[key].commit()
+  combined.set_meta("static_paint_batch",true)
   root.add_child(combined)
  for child in old:
   root.remove_child(child)

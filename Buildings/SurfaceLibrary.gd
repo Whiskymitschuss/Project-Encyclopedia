@@ -36,6 +36,7 @@ static func material(color: Color,kind: String="plaster") -> StandardMaterial3D:
  if materials.has(key): return materials[key]
  var mat=StandardMaterial3D.new()
  mat.albedo_color=color
+ if kind in ["paint","plaster"]: mat.set_meta("static_paint",true)
  mat.roughness=0.9
  mat.albedo_texture=texture(kind) if kind in ["timber","paving","roof"] else null
  if kind=="glass":
