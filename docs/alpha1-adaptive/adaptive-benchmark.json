@@ -1,0 +1,35 @@
+{
+  "before": {
+    "company_sha256": "f496ed619af24476b45a9bb047dbc33e0666330d52ee0dbd4d5861e4e2387393",
+    "company_unchanged": true,
+    "desktop_only": true,
+    "draw_calls": 258.0,
+    "frame_median_ms": 95.55,
+    "frame_p95_ms": 120.322,
+    "pixel_size": [
+      1080,
+      2340
+    ],
+    "requested_render_scale": 0.756160736083984,
+    "synthetic_pressure_seconds": 16,
+    "triangles": 232504.0
+  },
+  "after": {
+    "company_sha256": "f496ed619af24476b45a9bb047dbc33e0666330d52ee0dbd4d5861e4e2387393",
+    "company_unchanged": true,
+    "desktop_only": true,
+    "draw_calls": 258.0,
+    "frame_median_ms": 69.907,
+    "frame_p95_ms": 97.015,
+    "pixel_size": [
+      1080,
+      2340
+    ],
+    "requested_render_scale": 0.444800436496735,
+    "synthetic_pressure_seconds": 16,
+    "triangles": 192152.0
+  },
+  "method": "Sequential isolated desktop Godot 4.6.3 OpenGL/Mesa llvmpipe, four rendering threads. Real Main.tscn at 1080x2340, generated forestry288-company fixture after 180 simulated seconds, company frozen, synthetic 16s of 200ms frames fed to existing/new adaptive controller, then 12 warm-up and 30 measured render frames. .22 APK files vs .23 source. No other test runner during this final comparison.",
+  "phone_fps_claimed": false,
+  "temperature_measured": false
+}

@@ -1,3 +1,9 @@
+## Mehrstufige Entlastung · 0.28.23-alpha.1
+
+21.569 Headless-Prüfungen in 47 Modulen, zwei natürliche Progressionsfälle und Haupt-/Boot-Start bestanden. Danach gezielte Regel-/Touchprüfungen der abschließenden Eingabeänderung. 257 OpenGL-Prüfungen in zehn Modulen bestanden, einschließlich tatsächlicher LOD-Meshauswahl, Fotoqualität, nativer HUD-Geometrie und physischer LKW-Auswahl. Die zuerst fehlgeschlagene LKW-Auswahl während einer Kamerafahrt wurde durch Stoppen der Navigation bei Berührung korrigiert; die ursprüngliche Touch-Assertion bleibt unverändert.
+
+[Prüfbericht](alpha1-adaptive/automated-checks.json) · [Desktop-Vergleich](alpha1-adaptive/adaptive-benchmark.json) · [Umfang und Grenzen](PERFORMANCE-2823.md). Keine Behauptung einer bestätigten Behebung der 4,8 FPS auf dem SM-S721B. Kein Android-Geräte-/Temperaturtest, keine geänderte Wirtschaft und kein privater Testspielstand.
+
 ## Externe Downloads Laufzeit · 0.28.22 geprüft
 
 APK und Quell-ZIP vom festen Tag `v0.28.22-alpha.1-android` vollständig per

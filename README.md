@@ -2,7 +2,17 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.22-alpha.1 · Laufzeit und Gerätemessung
+## Aktuell: 0.28.23-alpha.1 · Mehrstufige Entlastung
+
+Die Grafik reagiert bei anhaltend sehr niedrigen FPS in drei Stufen weiter.
+Vorhandene grobe Wald-/Landschaftsmeshes, native Menüs und volle Fotoauflösung.
+CPU- und Hängermessungen laufen auf Android ohne Kamerarunde; wichtige Werte
+stehen im Leistungsmenü zuerst. [Details und Grenzen](docs/PERFORMANCE-2823.md)
+· [Installation](docs/alpha1-adaptive/START-HIER.txt).
+Android-Code **3018**, gleiches Paket/Testzertifikat; als Update installieren.
+Keine bestätigte Behebung der 4,8 Handy-FPS, kein physischer Android-Gerätetest.
+
+## Vorher: 0.28.22-alpha.1 · Laufzeit und Gerätemessung
 
 Vorbereitete Fahrzeugrouten, weniger unveränderte Wald-Updates und feste
 Zustandsprüfungen für Betriebshinweise. Die Kamerarunde zeigt zusätzlich Version,

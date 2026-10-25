@@ -763,12 +763,13 @@ func update_camera(delta: float) -> void:
   apply_camera()
 
 func update_forest_detail() -> void:
- var key=Vector4(snappedf(view_focus.x,16),snappedf(view_focus.z,16),snappedf(view_zoom,12),float(Game.state.quality))
+ var reduced=RuntimeStats.low_detail and not (photo!=null and photo.active)
+ var key=Vector4(snappedf(view_focus.x,16),snappedf(view_focus.z,16),snappedf(view_zoom,12),float(Game.state.quality)+(10 if reduced else 0))
  if key==forest_detail_key: return
  forest_detail_key=key
  for i in tree_batches.size():
   var distance=Catalog.biome_position(i).distance_to(view_focus)
-  var near=view_zoom<180 and Game.state.quality>0 and distance<view_zoom*0.8+65
+  var near=not reduced and view_zoom<180 and Game.state.quality>0 and distance<view_zoom*0.8+65
   stump_batches[i].visible=distance<view_zoom*1.3+60
   for node in tree_batches[i]:
    node.multimesh.mesh=node.get_meta("near_mesh" if near else "far_mesh")
@@ -796,6 +797,14 @@ func camera_action(action: String) -> void:
   "world": focus = Vector3(0,0,20); zoom = 390
  ease_camera()
 
+# A tap must refer to the same view on press and release. Otherwise a smooth
+# focus transition can slide a small truck out from under the finger.
+func stop_camera_navigation() -> void:
+ focus=view_focus
+ zoom=view_zoom
+ camera_transition=false
+ pan_velocity=Vector3.ZERO
+
 func _unhandled_input(event: InputEvent) -> void:
  if hud!=null and hud.overlay.visible: return
  if photo!=null and photo.active and photo.gallery.visible: return
@@ -807,6 +816,7 @@ func _unhandled_input(event: InputEvent) -> void:
   elif event.button_index == MOUSE_BUTTON_LEFT:
    dragging = event.pressed
    if event.pressed:
+    stop_camera_navigation()
     drag_distance = 0
     last_pointer = event.position
     start_network_drag(event.position)
@@ -818,6 +828,7 @@ func _unhandled_input(event: InputEvent) -> void:
   else: pan(event.relative)
  elif event is InputEventScreenTouch:
   if event.pressed:
+   stop_camera_navigation()
    hold_pointer=event.index
    hold_started=Time.get_ticks_msec()
    hold_point=event.position

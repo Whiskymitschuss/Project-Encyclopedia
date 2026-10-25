@@ -1,0 +1,15 @@
+Timber Loot Tycoon · 0.28.23-alpha.1 · Android-Code 3018
+
+Als Update installieren. Nicht deinstallieren und keine App-Daten löschen.
+Gleiche Paketkennung und bisheriges Testzertifikat.
+
+Bei langsamen Bildern reagiert die Grafik jetzt in drei Stufen weiter.
+Die Welt kann dabei weicher werden; Menüs bleiben scharf.
+Waren, Biber, Produktion und Baumwachstum ändern sich nicht.
+
+Etwa eine Minute normal spielen, dann Mehr → Hilfe → Startzeit, FPS & Kamerarunde.
+Oben steht jetzt die aktuelle Leistung. Darunter: Automatische Messdetails.
+Beide Anzeigen bitte schicken. Eine Kamerarunde ist dafür nicht mehr nötig.
+Die Version muss 0.28.23-alpha.1 lauten.
+
+Keine garantierten 30 FPS, noch kein physischer Gerätetest.

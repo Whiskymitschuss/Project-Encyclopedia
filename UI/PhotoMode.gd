@@ -99,6 +99,7 @@ func enter() -> void:
  world.hud.close_menu()
  world.hud.ux.hide_panels()
  active=true
+ world.apply_camera()
  world.hud.ux.apply_fonts(root_control)
  world.hud.hide()
  world.selection_world.hide()

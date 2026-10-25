@@ -12,6 +12,7 @@ var records: Array = []
 var batches: Dictionary = {}
 var spans: Array = []
 var landmarks: Node3D
+var reduced_detail=false
 var quality = -1
 var water: MeshInstance3D
 var view_key=Vector3(INF,INF,INF)
@@ -344,7 +345,9 @@ func refresh() -> void:
 func update_view(force: bool=false) -> void:
  if world==null: return
  var key=Vector3(snappedf(world.view_focus.x,16),snappedf(world.view_focus.z,16),snappedf(world.view_zoom,12))
- if not force and key==view_key: return
+ var reduced=RuntimeStats.low_detail and not (world.photo!=null and world.photo.active)
+ if not force and key==view_key and reduced==reduced_detail: return
+ reduced_detail=reduced
  view_key=key
  view_rebuilds+=1
  var center=Vector2(world.view_focus.x,world.view_focus.z)
@@ -380,8 +383,9 @@ func update_view(force: bool=false) -> void:
     data.mesh.set_instance_color(i,Color.WHITE if kind=="trunk" else previous.color)
     view_uploads+=2
    visible_count+=1
-  data.mesh.mesh=data.near if world.view_zoom<180 and quality>0 else data.far
+  data.mesh.mesh=data.near if world.view_zoom<180 and quality>0 and not reduced_detail else data.far
   data.mesh.visible_instance_count=visible_count
 
 func _process(_delta: float) -> void:
  if quality!=int(Game.state.quality): refresh()
+ update_view()

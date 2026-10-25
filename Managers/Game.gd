@@ -178,7 +178,9 @@ func save(silent: bool = false) -> bool:
  if simulation_only: return true
  if catching_up: return false
  var previously_ok=last_save_ok
+ var measured=RuntimeStats.begin_work()
  last_save_ok = Store.save_game(snapshot())
+ RuntimeStats.end_work("Speichern",measured)
  if silent and previously_ok and not last_save_ok: notice.emit("Speichern fehlgeschlagen · "+Store.last_error)
  if not silent: notice.emit("Spielstand gespeichert" if last_save_ok else Store.last_error)
  return last_save_ok
