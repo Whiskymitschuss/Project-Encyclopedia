@@ -45,6 +45,24 @@ func run():
  var stock=s.resources.duplicate(true)
  for second in 240:s.elapsed+=1;ForestCycle.tick(s,1)
  check(ForestCycle.availability(s,1).growing==0 and int(ForestCycle.availability(s,1).mature)>75 and s.resources==stock,"Old bare land really regrows around an obstructed entrance without granting warehouse wood")
+ # Screenshot reproduction: ten assigned helpers, 95 open oak cells,
+ # no growing trees, and the one old entrance blocked by a plot.
+ s=company(10);s.tool=0;s.forest.assignment=10
+ center=Catalog.biome_position(1)
+ s.buildings.append({"kind":"warehouse","level":1,"position":[center.x+28,center.z+28]})
+ var old_reachable=0;var free_cells=0
+ for index in 100:
+  if ForestLayout.blocked(s,1,index):continue
+  free_cells+=1
+  var old_route=ForestLayout.path(1,index)
+  if not ForestLayout.rectangles(s).any(func(rect):return ForestLayout.intersects(old_route,rect.grow(0.4))):old_reachable+=1
+ check(free_cells==95 and old_reachable==0,"Screenshot-shaped old layout reproduces 95 open cells with no usable legacy entrance")
+ stock=s.resources.duplicate(true)
+ s.elapsed+=1;ForestCycle.tick(s,1)
+ check(s.forest.tasks.size()==10 and s.forest.tasks.all(func(item):return int(item.biome)==1),"The ten explicitly assigned helpers actually start oak replanting on free side paths")
+ for second in 240:s.elapsed+=1;ForestCycle.tick(s,1)
+ check(int(ForestCycle.availability(s,1).mature)==95 and s.resources==stock,"All 95 free screenshot-shaped oak cells regrow without a stock grant")
+ print("SCREENSHOT 2819: 10 assigned helpers, 95 open cells, 0 legacy routes -> 10 missions, 95 mature after 240 simulated seconds")
  # Legacy in-flight trips retain their route and times when bonuses change.
  s=company();s.forest.tasks=[{"id":1,"biome":1,"cell":0,"age":1.0,"walk":20.0,"total":44.0,"planted":false}];s.forest.next_id=2
  s.research.forestry=10;s.boosters.workers={"factor":2.0,"left":2000.0}

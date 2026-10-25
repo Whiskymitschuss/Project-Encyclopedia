@@ -37,6 +37,14 @@ Aufforstung. Es werden keine zusätzlichen Helfer erfunden.
 
 ## Prüfung und Grenzen
 
+Der später gemeldete Teambildschirm zeigt zehn zugewiesene Helfer, aber null
+Pflanzmissionen und 95 offene Eichenwaldstellen. Ein zusätzlicher generierter
+Fall bildet genau diese Zahlen mit einem versperrten alten Eingang nach:
+vorher null nutzbare Wege, jetzt zehn tatsächlich startende Pflanzmissionen und
+95 wieder ausgewachsene freie Stellen nach 240 simulierten Sekunden. Keine
+Waren werden durch die Wiederaufforstung gutgeschrieben. Das ist eine
+Reproduktion des beobachteten Symptoms, kein eingelesener privater Spielstand.
+
 In der generierten Ausgangskonfiguration waren 93 Eichenwaldstellen physisch
 frei, mit dem alten einzelnen Anlaufweg aber nur 81 erreichbar. Die freien
 93 Stellen besitzen nun geprüfte Wege. Zusätzliche Fälle decken einen zugebauten

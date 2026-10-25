@@ -1,6 +1,6 @@
 ## Nachwuchs im aktiven Wald · 0.28.19-alpha.1
 
-43 numerische Headless-Suiten mit 21.428 Prüfungen, zwei natürliche
+43 numerische Headless-Suiten mit 21.431 Prüfungen, zwei natürliche
 Fortschrittsszenarien und beide Szenenstarts bestanden. 13 relevante OpenGL-Suiten
 mit 276 Prüfungen bestanden. [Quellprüfbericht](alpha1-active-forest/automated-checks.json).
 Die fokussierte Nachwuchs-Suite wurde um maximale Forschung und Speicherung
