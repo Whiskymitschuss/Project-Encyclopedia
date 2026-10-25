@@ -1,0 +1,23 @@
+{
+  "baseline_commit": "ed7ca551c4d7dd429409e9d3f33775076be008b9",
+  "phone_report": {
+    "device": "SM-S721B",
+    "gpu": "Samsung Xclipse 940",
+    "renderer": "mobile/vulkan",
+    "fps": 4.7,
+    "p95_frame_ms": 395,
+    "world_ready_ms": 21861,
+    "hitches_over_100_ms": 197,
+    "max_hitch_ms": 692,
+    "draw_calls": 223,
+    "render_scale": 0.44,
+    "adaptive_tier": 3,
+    "world_cpu_peak_ms": 1851.04,
+    "transport_cpu_peak_ms": 548.09
+  },
+  "baseline_archive": "/workspace/timber-backups/Timber-Loot-Tycoon-ed7ca551c4.bundle",
+  "baseline_archive_recovery_verified": true,
+  "private_player_save_used": false,
+  "phone_measured_by_user": true,
+  "cloud_measurements": "Separate deterministic generated company, headless Godot 4.6.3; not Android FPS."
+}
