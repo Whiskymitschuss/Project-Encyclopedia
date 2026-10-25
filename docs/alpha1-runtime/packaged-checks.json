@@ -1,0 +1,39 @@
+{
+  "apk": "Timber-Loot-Tycoon-v0.28.22-alpha.1.apk",
+  "apk_sha256": "762a9226cee67d3080430f0707db4e34114d60634683b7630b1f54e64d607e30",
+  "apk_source_commit": "e6a71e237c2440ae9213e309b0cbef7b0137a867",
+  "headless_checks": 10959,
+  "headless_results": {
+    "Performance2822": 20,
+    "Performance2821": 22,
+    "Scene": 4080,
+    "Design2816": 187,
+    "Valley": 177,
+    "Performance2811": 19,
+    "Storage2820": 79,
+    "FactorySupply286": 34,
+    "ActiveForest2819": 132,
+    "Logistics2810": 65,
+    "Throughput2815": 31,
+    "Delivery": 6057,
+    "Construction": 56
+  },
+  "visual_checks": 274,
+  "visual_results": {
+    "VisualPerformance2822": 14,
+    "VisualPerformance2821": 14,
+    "VisualActiveForest2819": 17,
+    "VisualValley": 9,
+    "VisualCrafted": 14,
+    "VisualDesign2816": 23,
+    "VisualPerformance2811": 26,
+    "VisualFactory284": 48,
+    "VisualStorage2820": 32,
+    "VisualCityUX": 45,
+    "VisualMap2842": 32
+  },
+  "fixture": "Generated test companies only; no private player save",
+  "execution": "Desktop Godot 4.6.3 on unchanged assets extracted from the actual APK; tests and profiles external to the package",
+  "android_device_tested": false,
+  "temperature_measured": false
+}

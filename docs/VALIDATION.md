@@ -1,3 +1,10 @@
+## Tatsächliche APK-Dateien · 0.28.22-alpha.1
+
+10959 Headless-Prüfungen in 13 Modulen und 274 OpenGL-Prüfungen in 11 Modulen mit unveränderten Dateien aus der signierten APK bestanden. Tests und Profile extern. Neue Routen-/Wald-/Messprüfungen sowie bestehende Logistik, Lager, Forst, Hauptwelt und Grafik enthalten. [Paketprüfbericht](alpha1-runtime/packaged-checks.json).
+APK-SHA256 `762a9226cee67d3080430f0707db4e34114d60634683b7630b1f54e64d607e30`; Quellstand `e6a71e237c2440ae9213e309b0cbef7b0137a867`.
+Paket, Android-Code 3017, bisheriges Zertifikat und APK-ZIP-Ausrichtung geprüft.
+Das ist kein Android-Gerätelauf und kein Nachweis, dass 6,2 Handy-FPS behoben sind.
+
 ## Laufzeit und Gerätemessung · 0.28.22-alpha.1
 
 **21.552 Headless-Prüfungen in 46 Modulen** und **398 OpenGL-Prüfungen in 13 Modulen** bestanden. Zwei natürliche Progressionsfälle sowie Hauptwelt- und Boot-Start enthalten. Neue Prüfungen vergleichen vorbereitete Routen gegen den bisherigen linearen Algorithmus, geänderte Kontrollpunkte, begrenzte Caches und Messpuffer. Echte GPU-Instanzen prüfen Fällung, Wachstum und Wiederherstellung nach Platzierungsänderungen. Die reale Kamerarunde zeigt Versionsnummer, Zeichenaufrufe und begrenzte CPU-Messwerte; Kamera und vollständiger Firmenzustand bleiben erhalten.

@@ -1,4 +1,24 @@
-# Aktuell: Kamera und Darstellung · 0.28.21-alpha.1
+# Aktuell: Laufzeit und Messdetails · 0.28.22-alpha.1
+
+**[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.22-alpha.1/releases/Timber-Loot-Tycoon-v0.28.22-alpha.1.apk)** · [Passender Quellcode](Timber-Loot-Tycoon-v0.28.22-source.zip) ·
+[Messungen und Grenzen](../docs/PERFORMANCE-2822.md)
+
+Vorbereitete Fahrzeugwege, weniger unveränderte Wald-Updates und feste
+Zustandsprüfungen für Betriebshinweise. Die Kamerarunde nennt zusätzlich die
+Version, Zeichenaufrufe und CPU-Zeiten. Keine Änderung an Waren, Lagergrenzen,
+Personal, Wachstum oder Spielgeschwindigkeit.
+
+Android-Code **3017**; bisheriges Paket und Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Android 7.0+, ARM64/ARMv7, OpenGL ES 3.0, Debug-Testfassung.
+Quellprüfungen: 21.552 Headless / 398 OpenGL. Tatsächliche APK-Dateien:
+10,959 Headless / 274 OpenGL.
+Kein echter Android-Geräte-/Wärmetest. Die gemeldeten 6,2 Handy-FPS und
+14,3 Sekunden Weltaufbau sind noch nicht als behoben nachgewiesen.
+Bitte die 30-Sekunden-Runde vollständig beenden und Ergebnis plus Messdetails senden.
+Quellstand `e6a71e237c2440ae9213e309b0cbef7b0137a867`; 894 Dateien der Quell-ZIP gegen Git geprüft.
+
+## Vorher: Kamera und Darstellung · 0.28.21-alpha.1
 
 **[APK herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.21-alpha.1/releases/Timber-Loot-Tycoon-v0.28.21-alpha.1.apk)** ·
 [Passender Quellcode](Timber-Loot-Tycoon-v0.28.21-source.zip) · [Änderungen und Messgrenzen](../docs/PERFORMANCE-2821.md)
