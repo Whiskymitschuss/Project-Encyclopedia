@@ -1,0 +1,10 @@
+1. Als Update installieren; Versionsnummer unter Mehr/Alpha prüfen: 0.28.20.
+2. Vorräte beobachten: obere Zahl und L (Zentrale / Lagergrenze). Ware antippen, zentrale Kapazität
+   und für LKW reservierte Plätze vergleichen. Unterwegs zählt nicht doppelt.
+3. Ein volles Fach darf keine neuen Abholungen aufnehmen. Ein voller Ausgang
+   darf keine weiteren Rohstoffe verbrauchen. Andere Waren laufen weiter.
+4. Ware verkaufen oder verbauen: LKW und Werke müssen automatisch weiterarbeiten.
+5. Lager ausbauen: Maximum steigt, ohne dass Ware kostenlos erscheint.
+6. Alte Überbestände dürfen nicht verschwinden oder weiter aufgefüllt werden.
+7. App schließen/öffnen: Waren und gebuchte Ladungen müssen erhalten bleiben.
+8. Starter-/Eichenwald beobachten: Biber pflanzen auch bei vollem Abholvorrat.

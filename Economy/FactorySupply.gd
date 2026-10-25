@@ -163,7 +163,7 @@ static func status(state: Dictionary,index: int) -> String:
  if not reason.is_empty(): return reason
  var parts=[]
  for key in requirements(state,index):
-  var text="%s: %s vor Ort" % [Catalog.RESOURCES[key],Catalog.number(float(stock(state,index).get(key,0)))]
+  var text="%s: %s/%s vor Ort" % [Catalog.RESOURCES[key],Catalog.number(float(stock(state,index).get(key,0))),Catalog.number(capacity(state,index))]
   var inbound=incoming(state,index,key)
   var waiting=queued(state,index,key)
   if inbound>0: text+=" · %s im LKW · %s" % [Catalog.number(inbound),delivery_status(state,index,key)]

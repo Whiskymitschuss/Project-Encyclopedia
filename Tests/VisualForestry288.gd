@@ -31,7 +31,7 @@ func run() -> void:
  await settle()
  var bar=scene.hud.material_bar
  bar.refresh()
- check(bar.warehouse_counts.wood.text=="Lager 0 · Abholung","A full forest and empty central shelf expose the pickup wait on the actual main screen")
+ check(bar.warehouse_counts.wood.text.begins_with("L 0/") and bar.captions.wood.text.contains("↻") and bar.controls.wood.tooltip_text.contains("Abholung"),"A full forest and empty central shelf expose the pickup wait on the actual main screen")
  bar.controls.wood.pressed.emit()
  await settle()
  check(scene.hud.contents.find_children("*","Button",true,false).any(func(button): return button.text.contains("Abholvorrat 104/104")),"Tapping the main wood tile opens the actual collection-point stock and reason")
@@ -60,7 +60,7 @@ func run() -> void:
  check(scene.delivery_world.visuals.size()>0,"Priority pickup cargo appears as a real road vehicle in the advanced company's world")
  check(s==before,"Rendering machines, tree falls and trucks leaves actual inventory and freight ownership unchanged")
  bar.refresh()
- check(not bar.warehouse_counts.wood.text.contains("Abholung"),"The wait label clears once the actual harvest resumes")
+ check(not bar.captions.wood.text.contains("↻"),"The wait label clears once the actual harvest resumes")
  await settle()
  root.get_texture().get_image().save_png("/workspace/timber288-forest.png")
  for resolution in [Vector2i(360,640),Vector2i(540,960)]:

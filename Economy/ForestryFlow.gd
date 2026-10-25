@@ -20,7 +20,7 @@ static func harvest(state: Dictionary,potential: float,delta: float) -> Dictiona
   stations.append({"index":index,"room":available})
   room+=available
  var amount=minf(maxf(0,potential),room)
- if not centralized: amount=minf(amount,maxf(0,CentralLogistics.capacity(state)-float(state.resources.wood)))
+ if not centralized: amount=minf(amount,CentralLogistics.storage_room(state,"wood"))
  amount=ForestCycle.take(state,int(state.biome),amount)
  var sources={}
  for station in stations:

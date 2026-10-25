@@ -220,6 +220,9 @@ func render_sheet() -> void:
   else: hud.button(actions,"Wege ausblenden" if world().get("selection_world")!=null and world().selection_world.show_routes else "Wege anzeigen",func(): toggle_routes())
   if city and FireSafety.eligible(Game.state,index):
    hud.button(sheet_body,"BRANDSCHUTZ · RAUCHMELDER & HYDRANT",func(): hud.open_menu("fire_protection"))
+  if not city and b.kind in ["warehouse","central_depot","express"]:
+   hud.text(sheet_body,StorageLimits.depot_status(Game.state,index) if b.kind!="warehouse" else "Lagerausbau: +%s je Ware · Zentrale insgesamt %s je Ware" % [int(b.level)*500,Catalog.number(CentralLogistics.capacity(Game.state))],13,hud.MUTED)
+   hud.button(sheet_body,"LAGERPLÄTZE & BESTÄNDE",func(): hud.open_menu("stock"))
   if not city and b.kind=="express":
    hud.button(sheet_body,"REGIONALBESTAND ZUR ZENTRALE FAHREN",func(): hud.action(func(): CentralLogistics.recall_express(Game.state,index)))
   if not city and not FactorySupply.requirements(Game.state,index).is_empty():
@@ -393,11 +396,10 @@ func populate_menu(tab: String) -> void:
 func material_menu() -> void:
  var key=material_key
  hud.modal_title.text=Catalog.RESOURCES.get(key,key).to_upper()+" · VERSORGUNG"
- var box=hud.card("Wo liegt die Ware?","Lager, lokale Ausgänge und LKW-Ladungen werden getrennt gezählt. Tippe auf den nummerierten Betrieb für seinen Zustand und die Lieferwege.")
+ var box=hud.card("Wo liegt die Ware?","Zentrale, Betriebe und LKW zählen getrennt. Tippe auf einen Betrieb für Waren und Lieferwege.")
  hud.dynamic_text(box,func():
   var amount=UXRules.material_stock(Game.state,key)
-  var trend=Game.material_trend(key)
-  return "%s Lager · %s Betriebe · %s unterwegs\n%s" % [Catalog.number(amount.warehouse),Catalog.number(amount.local),Catalog.number(amount.transit),("Warenannahme: %s · " % Catalog.number(amount.receiving) if amount.receiving>0 else "")+("Bestandstrend: %+.1f / Min." % float(trend.rate) if trend.ready else "Bestandstrend wird beim Spielen gemessen.")])
+  return StorageLimits.central_status(Game.state,key)+"\n%s Betriebe · %s unterwegs" % [Catalog.number(amount.local),Catalog.number(amount.transit)])
  if Game.state.delivery.active:
   for kind_value in Game.state.delivery.buffers:
    var kind=str(kind_value)
@@ -406,6 +408,14 @@ func material_menu() -> void:
  for source in UXRules.material_sources(Game.state,key):
   var index=int(source.index)
   hud.button(box,"%s · %s\n%s →" % [source.name,"Hauptlager" if source.get("shared",false) else "%s lokal" % Catalog.number(source.amount),Game.production_status(index)],func(): select_building(index,false,true))
+ var expansion=hud.card("Lagerplätze erweitern","Jede Ware hat eigene Plätze. Volle Werksausgänge pausieren die Produktion. Entnahme oder Verkauf schafft automatisch wieder Platz.")
+ var storage_kinds=[]
+ for index_value in Game.state.buildings.size():
+  var storage_kind=str(Game.state.buildings[index_value].kind)
+  if storage_kind not in ["warehouse","central_depot"] or storage_kind in storage_kinds: continue
+  storage_kinds.append(storage_kind)
+  var storage_index=index_value
+  hud.button(expansion,"%s · LAGER AUSBAUEN ›" % UXRules.factory_name(Game.state,storage_index),func(): hud.show_building(storage_index))
  for job in Game.state.jobs:
   if not job.get("materials",{}).has(key): continue
   var id=int(job.get("id",-1))
@@ -424,9 +434,9 @@ func material_menu() -> void:
   hud.button(cargo,"%s %s · %s\nLKW ansehen" % [Catalog.number(s.amount),Catalog.RESOURCES[key],FreightFlow.status(s)],func(): hud.focus_requested.emit(at); select_truck(selected))
  if not found: hud.text(cargo,"Momentan keine beladene Lieferung dieser Ware.",15,hud.MUTED)
  if ConstructionRules.HARDWARE.has(key):
-  hud.button(box,"10 EINHEITEN KAUFEN · %s MÜNZEN" % Catalog.number(float(ConstructionRules.HARDWARE[key])*10*Game.difficulty()),func(): hud.action(func(): Game.buy_hardware(key,10)),float(Game.state.resources[key])+10<=Game.capacity() and float(Game.state.coins)>=float(ConstructionRules.HARDWARE[key])*10*Game.difficulty())
+  hud.button(box,"10 EINHEITEN KAUFEN · %s MÜNZEN" % Catalog.number(float(ConstructionRules.HARDWARE[key])*10*Game.difficulty()),func(): hud.action(func(): Game.buy_hardware(key,10)),CentralLogistics.storage_room(Game.state,key)>=10 and float(Game.state.coins)>=float(ConstructionRules.HARDWARE[key])*10*Game.difficulty())
  elif key in ["stone","gravel"]:
-  hud.button(box,"10 EINHEITEN NOTMATERIAL · %s MÜNZEN" % Catalog.number(Game.stone_trader_price(key)*10),func(): hud.action(func(): Game.buy_stone_material(key,10)),Game.company_level()>=5 and float(Game.state.resources[key])+10<=Game.capacity() and float(Game.state.coins)>=Game.stone_trader_price(key)*10)
+  hud.button(box,"10 EINHEITEN NOTMATERIAL · %s MÜNZEN" % Catalog.number(Game.stone_trader_price(key)*10),func(): hud.action(func(): Game.buy_stone_material(key,10)),Game.company_level()>=5 and CentralLogistics.storage_room(Game.state,key)>=10 and float(Game.state.coins)>=Game.stone_trader_price(key)*10)
  var kind={"wood":"station","boards":"sawmill","dry":"kiln","furniture":"furniture","walls":"prefab","roofs":"prefab","parts":"joinery","paper":"paper","design":"design","pellets":"pellet","sawdust":"sawmill","rock":"quarry","stone":"stoneworks","gravel":"stoneworks"}.get(key,"")
  if not kind.is_empty(): hud.button(box,"WEITERE PRODUKTIONSQUELLE BAUEN",func(): hud.request_placement({"kind":kind,"city":false,"index":-1}),Game.available(kind))
  hud.button(hud.contents,"BAUMATERIAL & HARDWARE",func(): hud.open_menu("construction"))

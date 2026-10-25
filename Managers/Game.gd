@@ -376,7 +376,7 @@ func boost(key: String) -> float:
 func add_resource(key: String, amount: float) -> void:
  var current=float(state.resources.get(key,0))
  # An old surplus belongs to the player; a zero/positive award cannot erase it.
- state.resources[key]=maxf(0,current+amount) if amount<0 else current+minf(amount,maxf(0,capacity()-current))
+ state.resources[key]=maxf(0,current+amount) if amount<0 else current+minf(amount,CentralLogistics.storage_room(state,key))
 
 func earn(amount: float) -> void:
  state.coins += amount
@@ -464,7 +464,7 @@ func step(delta: float) -> void:
  for i in state.buildings.size():
   var b=state.buildings[i]
   if b.kind!="sawmill" or delivery_owns(i): continue
-  var room=CentralLogistics.output_room(state,i,"boards") if CentralLogistics.active(state) else maxf(0,capacity()-float(state.resources.boards)-float(saw_finished.get("boards",0)))
+  var room=CentralLogistics.output_room(state,i,"boards") if CentralLogistics.active(state) else maxf(0,CentralLogistics.storage_room(state,"boards")-float(saw_finished.get("boards",0)))
   var rate=0.9*int(b.level)*(1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5))*multiplier()*boost("processing")
   var result=SawmillProduction.advance(state,i,delta,rate,room)
   saw_reports[i]=result
@@ -477,12 +477,11 @@ func step(delta: float) -> void:
    saw_finished.sawdust=float(saw_finished.get("sawdust",0))+float(result.finished)
   flow["building:%s" % i]=float(result.working)
   flow.sawmill=float(flow.get("sawmill",0))+float(result.finished)/maxf(delta,0.001)
- var saw_space=maxf(0,capacity()-float(state.resources.boards)-SawmillProduction.pending_total(state)-float(saw_finished.get("boards",0)))
+ var saw_space=maxf(0,CentralLogistics.storage_room(state,"boards")-SawmillProduction.pending_total(state)-float(saw_finished.get("boards",0)))
  var proposals = []
  var demand = {}
  var output_demand = {}
  var centralized=CentralLogistics.active(state)
- var production_capacity=capacity()
  var production_bonus=1+research_level("production")*0.12+minf(public_level("school")*0.04,0.5)
  for building_index in state.buildings.size():
   var b = state.buildings[building_index]
@@ -512,7 +511,7 @@ func step(delta: float) -> void:
   for key in recipe.out:
    if fraction<=0: break
    if key in recipe.get("overflow_sell",[]): continue
-   var room=CentralLogistics.output_room(state,int(proposal.index),key) if centralized else production_capacity-float(state.resources[key])
+   var room=CentralLogistics.output_room(state,int(proposal.index),key) if centralized else CentralLogistics.storage_room(state,key)
    if proposal.kind=="sawmill" and key=="boards": room=maxf(0,room-SawmillProduction.pending(state,int(proposal.index))) if centralized else saw_space
    var requested=float(recipe.out[key])*float(proposal.cycles) if centralized else float(output_demand[key])
    fraction = minf(fraction,room/maxf(requested,0.0001))
@@ -539,7 +538,7 @@ func step(delta: float) -> void:
  for key in consumed: state.resources[key] = maxf(0,float(state.resources[key])-float(consumed[key]))
  for key in produced:
   var amount = float(produced[key])
-  var excess = maxf(0.0,amount-maxf(0.0,capacity()-float(state.resources[key])))
+  var excess = maxf(0.0,amount-CentralLogistics.storage_room(state,key))
   add_resource(key,amount)
   Journey.add(state,key,amount-excess)
   # Sawdust is a recoverable by-product, never a reason to stop sawing.
@@ -644,7 +643,7 @@ func chop() -> void:
  changed.emit()
 
 func deposit() -> void:
- var room=CentralLogistics.storage_room(state,"wood") if CentralLogistics.active(state) else maxf(0,capacity()-float(state.resources.wood))
+ var room=CentralLogistics.storage_room(state,"wood")
  var amount = minf(float(state.bag),room)
  if amount>0: add_resource("wood",amount)
  state.bag -= amount
@@ -1611,7 +1610,7 @@ func step_delivery(delta: float) -> void:
  for key in report.produced: Journey.add(state,key,float(report.produced[key]))
  state.tickets += int(report.tickets)
  if float(report.sawdust)>0:
-  var excess = maxf(0,float(report.sawdust)-(capacity()-float(state.resources.sawdust)))
+  var excess = maxf(0,float(report.sawdust)-CentralLogistics.storage_room(state,"sawdust"))
   add_resource("sawdust",float(report.sawdust))
   if excess>0 and state.auto_sawdust: earn(excess*float(Catalog.PRICES.sawdust)*multiplier()*boost("money"))
  flow.merge(report.flow,true)
@@ -1625,7 +1624,7 @@ func unload_delivery(kind: String) -> float:
  if not state.delivery.active or not state.delivery.buffers.has(kind): return 0.0
  var total = 0.0
  for key in state.delivery.buffers[kind]:
-  var amount = minf(float(state.delivery.buffers[kind][key]),capacity()-float(state.resources[key]))
+  var amount = minf(float(state.delivery.buffers[kind][key]),CentralLogistics.storage_room(state,key))
   state.delivery.buffers[kind][key] -= amount
   state.resources[key] += amount
   total += amount
@@ -1634,7 +1633,7 @@ func unload_delivery(kind: String) -> float:
 
 func buy_hardware(key: String, amount: int) -> bool:
  if not ConstructionRules.HARDWARE.has(key) or amount<=0 or amount>1000: return false
- if float(state.resources[key])+amount>capacity(): return false
+ if amount>CentralLogistics.storage_room(state,key): notice.emit("Lagerplatz voll oder für Lieferungen reserviert"); return false
  if not pay(float(ConstructionRules.HARDWARE[key])*amount*difficulty()): return false
  state.resources[key] += amount
  changed.emit()
@@ -1664,7 +1663,7 @@ func stop_delivery() -> bool:
  for shipment in state.delivery.shipments:
   if not shipment.arrived: returned[shipment.key] = float(returned.get(shipment.key,0))+float(shipment.amount)
  for key in returned:
-  if float(state.resources[key])+float(returned[key])>capacity():
+  if float(returned[key])>CentralLogistics.storage_room(state,key):
    notice.emit("Im Lager Platz schaffen, bevor die Linie aufgelöst wird")
    return false
  for key in returned: state.resources[key] += float(returned[key])
@@ -1693,7 +1692,7 @@ func buy_job_hardware(id: int) -> bool:
   var needed = {}
   for key in ConstructionRules.HARDWARE:
    needed[key] = ceili(maxf(0,ConstructionRules.remaining(job,key)-float(state.resources[key])))
-   if float(state.resources[key])+int(needed[key])>capacity(): return false
+   if int(needed[key])>CentralLogistics.storage_room(state,key): notice.emit("Lagerplatz voll oder für Lieferungen reserviert"); return false
   var cost = job_hardware_cost(id)
   if cost<=0 or not pay(cost): return false
   for key in needed: state.resources[key] += int(needed[key])
@@ -1750,7 +1749,7 @@ func cancel_construction(id: int) -> bool:
   for s in state.construction_shipments:
    if int(s.job)==id and not s.arrived: returned[s.key]=float(returned.get(s.key,0))+float(s.amount)
   for key in returned:
-   if float(state.resources[key])+float(returned[key])>capacity(): notice.emit("Zuerst Platz im Lager schaffen"); return false
+   if float(returned[key])>CentralLogistics.storage_room(state,key): notice.emit("Zuerst Platz im Lager schaffen"); return false
   for key in returned: state.resources[key]+=float(returned[key])
   state.construction_shipments=state.construction_shipments.filter(func(s): return int(s.job)!=id)
   state.jobs.erase(job)
@@ -1806,7 +1805,8 @@ func stone_trader_price(key: String) -> float:
 
 func buy_stone_material(key: String, amount: int) -> bool:
  if company_level()<5 or not StoneIndustry.definitions.trader.has(key) or amount<=0 or amount>1000: return false
- if float(state.resources[key])+amount>capacity() or not pay(stone_trader_price(key)*amount): return false
+ if amount>CentralLogistics.storage_room(state,key): notice.emit("Lagerplatz voll oder für Lieferungen reserviert"); return false
+ if not pay(stone_trader_price(key)*amount): return false
  state.resources[key]+=amount
  changed.emit()
  return true

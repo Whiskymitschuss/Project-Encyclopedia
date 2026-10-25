@@ -144,7 +144,7 @@ static func requests(state: Dictionary, cache: Dictionary) -> Array:
   if data.is_empty(): continue
   for key in ["stone","gravel"]:
    if CentralLogistics.active(state): continue
-   var amount=minf(float(data.stock[key]),warehouse_capacity(state)-float(state.resources[key])-incoming(state,-1,key))
+   var amount=minf(float(data.stock[key]),CentralLogistics.storage_room(state,key))
    if amount<1: continue
    var path=route(state,i,depot,cache)
    if path.size()>1: result.append({"origin":i,"destination":-1,"dock":depot,"key":key,"amount":amount,"path":path})

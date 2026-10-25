@@ -13,7 +13,7 @@ static func depots(state: Dictionary) -> Array:
  return result
 
 static func capacity(state: Dictionary,index: int) -> float:
- return CentralLogistics.capacity(state) if state.buildings[index].kind=="central_depot" else 96.0+maxi(0,int(state.buildings[index].level)-1)*24
+ return CentralLogistics.capacity(state) if state.buildings[index].kind=="central_depot" else 96.0+(clampi(int(state.buildings[index].level),1,int(Catalog.BUILDINGS.express.max))-1)*24
 
 static func room(state: Dictionary,index: int,key: String) -> float:
  if state.buildings[index].kind=="central_depot": return CentralLogistics.storage_room(state,key)

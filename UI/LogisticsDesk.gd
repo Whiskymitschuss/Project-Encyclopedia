@@ -21,6 +21,7 @@ static func populate(hud: Control) -> void:
  var state=Game.state
  var summary=hud.card("Dein Warenfluss","Automatisch: Fabrik → Lager → Baustelle. Das Bauteam reist separat im Sprinter an.")
  hud.dynamic_text(summary,func(): return overview(Game))
+ hud.dynamic_text(summary,func(): return "Zentrale: maximal %s je Warenart. Volle Fächer stoppen neue Abholungen; Verbrauch schafft automatisch wieder Platz." % Catalog.number(CentralLogistics.capacity(Game.state)))
  if not CentralLogistics.active(state):
   hud.text(summary,"Baue ein Zentrallager für die automatische Versorgung aller Werke und die regionalen Abholungen.",15,hud.GOLD)
   hud.button(summary,"ZENTRALLAGER BAUEN",func(): hud.request_placement({"kind":"central_depot","city":false,"index":-1}))

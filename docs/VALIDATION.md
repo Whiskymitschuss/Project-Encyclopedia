@@ -1,3 +1,18 @@
+## Lagergrenzen · 0.28.20-alpha.1
+
+44 Headless-Module mit **21.510 Prüfungen**, zwei natürliche Fortschrittsfälle
+und Haupt-/Boot-Szenenstart bestanden. Elf relevante OpenGL-Module mit
+**487 Prüfungen** bestanden. Darin enthalten sind der echte Warenfluss bei
+vollen Fächern, LKW-Platzbuchungen über mehrere Höfe, Materialkäufe, alte
+Überbestände, pausierte Entladung und automatisches Wiederanlaufen.
+Die neue Lageranzeige und Warendetails wurden auf 360 × 640 und 591 × 1280 mit
+normaler/großer Schrift sowie maximalen Lagerstufen geprüft. Bestehende Mengen,
+Warenquellen, Touch-Auswahl und Abholhinweise bleiben erhalten.
+[Quellprüfbericht](alpha1-storage/automated-checks.json) ·
+[Verhalten und Grenzen](STORAGE-2820.md).
+Kein physischer Android-Gerätetest, keine Temperaturmessung, keine komplette
+Erfüllung der früheren Masterliste. Nur generierte Firmen, kein privater Spielstand.
+
 ## Externe Downloads Aktiver Wald · 0.28.19 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.19-alpha.1` vollständig per

@@ -236,10 +236,7 @@ static func transport_tick(state: Dictionary, delta: float) -> void:
      found=true
      break
    if not found:
-    var cap = 500.0
-    for b in state.buildings:
-     if b.kind=="warehouse": cap+=int(b.level)*500
-     elif b.kind=="central_depot": cap+=int(b.level)*1500
+    var cap = CentralLogistics.capacity(state)
     if float(state.resources.get(s.key,0))+float(s.amount)>cap:
      s.age=float(s.travel)
      continue

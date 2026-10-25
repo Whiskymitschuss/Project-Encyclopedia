@@ -12,7 +12,7 @@ const BUILDINGS = {
  "sawmill":{"name":"Sägewerk","cost":250,"max":100,"color":"278fa9","desc":"2 Holz → 1 Brett + 1 Sägespäne"},
  "kiln":{"name":"Trockenkammer","cost":500,"max":50,"color":"d9844f","desc":"2 Bretter → 1 Trockenholz"},
  "furniture":{"name":"Möbelfabrik","cost":900,"max":100,"color":"428dc2","desc":"2 Trockenholz + 1 Brett → 1 Möbel"},
- "warehouse":{"name":"Lagerhaus","cost":350,"max":50,"color":"e8b646","desc":"Vergrößert die Kapazität aller Materialpuffer."},
+ "warehouse":{"name":"Lagerhaus","cost":350,"max":50,"color":"e8b646","desc":"+500 Lagerplätze je Warenart und Stufe in der Zentrale. Betriebs- und Expresspuffer werden separat ausgebaut."},
  "cabin":{"name":"Arbeiterhütte","cost":200,"max":25,"color":"f07e53","desc":"Wohnraum für jeweils fünf zusätzliche Helfer."},
  "market":{"name":"Verkaufsstelle","cost":450,"max":50,"color":"f1a33e","desc":"Lokaler Verkauf; jede Stufe erhöht die Ladung im Fernhandel."},
  "research":{"name":"Forschungszentrum","cost":1800,"max":25,"color":"4b9fcb","desc":"Ermöglicht Forschung für Produktion, Loot und Bauwirtschaft."},

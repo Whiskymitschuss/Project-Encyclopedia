@@ -1,0 +1,12 @@
+Timber Loot Tycoon · 0.28.20-alpha.1 · Lagergrenzen
+Android-Code 3015. APK als Update der vorhandenen App installieren.
+Nicht vorher deinstallieren und keine App-Daten löschen.
+
+Vorrat: obere Zahl = gesamte Ware; L darunter = Zentrale / Lagergrenze.
+! am Warennamen: Das Zentralfach ist voll oder für Anlieferungen gebucht.
+Ware antippen: zentrale Belegung, freie/gebuchte Plätze und Lagerausbau ansehen.
+Volle Ausgänge pausieren ohne Rohstoffverbrauch. Nach Verbrauch oder Verkauf
+laufen Abholung und Produktion automatisch wieder an, sofern Wege/LKW frei sind.
+Bestehende Überbestände bleiben erhalten; sie wachsen bis zum Abbau nicht weiter.
+Getrennte Fächer je Ware, sodass Trockenholz keine Holzplätze verbraucht.
+Kein echter Android-Gerätetest erfolgt. Spielstände bleiben lokal auf dem Handy.

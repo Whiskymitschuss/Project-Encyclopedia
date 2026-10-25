@@ -22,13 +22,13 @@ static func stock(state: Dictionary,index: int,express: bool=false) -> Dictionar
 static func capacity(state: Dictionary) -> float:
  var result=500.0
  for b in state.buildings:
-  if b.kind=="warehouse": result+=int(b.level)*500
-  elif b.kind=="central_depot": result+=int(b.level)*1500
+  if b.kind=="warehouse": result+=clampi(int(b.level),1,int(Catalog.BUILDINGS.warehouse.max))*500
+  elif b.kind=="central_depot": result+=clampi(int(b.level),1,int(Catalog.BUILDINGS.central_depot.max))*1500
  return result
 
 static func storage_room(state: Dictionary,key: String) -> float:
  # Manual deposits and fresh pickups cannot occupy an already booked shelf.
- return maxf(0,capacity(state)-float(state.resources.get(key,0))-float(state.hub.get("receiving",{}).get(key,0))-incoming(state,depot(state),key))
+ return maxf(0,capacity(state)-float(state.resources.get(key,0))-StorageLimits.central_reserved(state,key))
 
 static func receiving_capacity(state: Dictionary) -> float:
  return maxf(96,fleet_size(state)*pickup_capacity(state,"wood"))
@@ -142,7 +142,7 @@ static func tick(state: Dictionary,delta: float) -> void:
    else:
     var recovered=trip.target=="factory" and not FactorySupply.requirements(state,int(trip.destination)).has(trip.key)
     var destination=stock(state,int(trip.destination)) if recovered else FactorySupply.stock(state,int(trip.destination)) if trip.target=="factory" else stock(state,int(trip.destination),true)
-    var limit=maxf(64+int(state.buildings[int(trip.destination)].level)*8,float(destination.get(trip.key,0))+float(trip.amount)) if recovered else FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else DepotNetwork.capacity(state,int(trip.destination))
+    var limit=output_capacity(state,int(trip.destination)) if recovered else FactorySupply.capacity(state,int(trip.destination)) if trip.target=="factory" else DepotNetwork.capacity(state,int(trip.destination))
     if float(destination.get(trip.key,0))+float(trip.amount)>limit+0.00001:
      trip.age=float(trip.travel)
      continue
@@ -185,8 +185,14 @@ static func pickup_sources(state: Dictionary) -> Array:
  return result
 
 static func launch(state: Dictionary,origin: int,destination: int,key: String,amount: float,target: String,source_stock: Dictionary) -> bool:
+ if amount<=0 or amount>float(source_stock.get(key,0))+0.00001: return false
+ var room=0.0
+ if target=="central": room=storage_room(state,key)
+ elif target=="express": room=DepotNetwork.room(state,destination,key)
+ elif target=="factory": room=maxf(0,FactorySupply.capacity(state,destination)-float(FactorySupply.stock(state,destination).get(key,0))-FactorySupply.incoming(state,destination,key))
+ if amount>room+0.00001: return false
  var route=LogisticsRoutes.road_route(state,origin,destination)
- if route.size()<2 or amount<=0: return false
+ if route.size()<2: return false
  var drive=maxf(2,LogisticsRoutes.length(route)/(10+int(state.vehicle)))
  var handling=TransportCapacity.handling_seconds(state,origin,destination) if LogisticsDispatch.enabled(state) else 6.0
  var trip={"id":state.hub.next_id,"source":state.buildings[origin].kind,"origin":origin,"destination":destination,"target":target,"fleet":"central","key":key,"amount":amount,"mode":"truck","path":route,"age":0.0,"load":handling,"drive":drive,"unload":handling,"travel":drive+handling*2,"total":drive*2+handling*2+2,"arrived":false}

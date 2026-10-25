@@ -2,7 +2,25 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.19-alpha.1 · Nachwuchs im aktiven Wald
+## Aktuell: 0.28.20-alpha.1 · Lagergrenzen
+
+Zentrale und Express haben feste, getrennte Plätze je Warenart. Die bisherigen
+Grenzen sind jetzt in der Hauptanzeige und im Warendetail sichtbar. Einkäufe,
+Ablieferung und Produktion respektieren auch bereits für LKW gebuchte Plätze;
+mehrere zentrale Höfe können dieselben Plätze nicht doppelt buchen. Volle
+Ausgänge pausieren ohne weiteren Rohstoffverbrauch. Nach Entnahme läuft der
+Warenfluss automatisch wieder an. Bestehende Überbestände bleiben erhalten.
+
+Start: **1.000 je Ware**, mit erstem Zentrallager **2.500**; Lagerausbau erhöht die
+Kapazität. Abhol-Express: **96 bis 312**, ausgebaute Werkspuffer bis **384** je Ware.
+Keine Gratiswaren und keine automatische Löschung älterer Vorräte.
+[Details und Grenzen](docs/STORAGE-2820.md) ·
+[Installation](docs/alpha1-storage/START-HIER.txt) · [Downloads](releases/README.md).
+Android-Code **3015**, gleiches Paket und bisheriges Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Kein physischer Android-Gerätetest; die frühere vollständige Masterliste bleibt offen.
+
+## Vorher: 0.28.19-alpha.1 · Nachwuchs im aktiven Wald
 
 Pflanzer prüfen freie Seitenwege und speichern ihren tatsächlichen Missionsweg.
 Die Automatik verstärkt bei abgeerntetem Wald das Pflanzteam. Forstforschung und

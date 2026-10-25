@@ -88,6 +88,11 @@ static func tick(state: Dictionary, delta: float, routes: Dictionary, speed_bonu
  for shipment in data.shipments:
   FreightFlow.advance(shipment,delta)
   if not shipment.arrived and float(shipment.age)>=float(shipment.travel):
+   # Restored or reassigned trucks can meet an already occupied shelf. Keep
+   # their real cargo on the truck until unloading fits; never credit twice.
+   if float(data.buffers[shipment.target].get(shipment.key,0))+float(shipment.amount)>capacity(state,str(shipment.target))+0.00001:
+    shipment.age=float(shipment.travel)
+    continue
    data.buffers[shipment.target][shipment.key] += float(shipment.amount)
    shipment.arrived = true
   if float(shipment.age)>=float(shipment.total): finished.append(shipment)

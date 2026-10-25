@@ -62,7 +62,7 @@ func run() -> void:
  await settle()
  var bar=scene.hud.material_bar
  check(bar.counters.boards.text==bar.compact_number(UXRules.material_stock(s,"boards").stored),"The main counter retains the complete actual stored quantity")
- check(bar.warehouse_counts.boards.text=="Lager "+bar.compact_number(s.resources.boards),"The main material card separately identifies the amount actually in the warehouse")
+ check(bar.warehouse_counts.boards.text=="L %s/%s" % [bar.compact_limit(s.resources.boards),bar.compact_limit(game.capacity())],"The main material card separately identifies the amount actually in the warehouse")
  check(s==before,"Drawing material locations and upgraded logistics never mutates the company")
  root.get_texture().get_image().save_png("/workspace/timber286-supply.png")
  for resolution in [Vector2i(360,640),Vector2i(540,960)]:

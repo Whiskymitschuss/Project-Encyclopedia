@@ -1,0 +1,10 @@
+Version: 0.28.20-alpha.1
+Gerät/Android:
+Welche Ware:
+Vorrat / Max in der Hauptanzeige:
+Zentrale Belegung / Maximum:
+Gebuchte Plätze / Warenannahme:
+Werkseingang / Werksausgang:
+LKW-Status und Straßenanschluss:
+Nach Entnahme/Verkauf wieder angelaufen?:
+Fehler/Erwartung:

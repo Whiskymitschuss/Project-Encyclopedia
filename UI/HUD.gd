@@ -1114,20 +1114,22 @@ func confirm_prestige_menu() -> void:
 func stock_menu() -> void:
  modal_title.text="MATERIALBESTÄNDE"
  button(contents,"LOGISTIK · WER LIEFERT WOHIN?",func(): open_menu("logistics"))
- card("Deine Vorräte auf einen Blick","Die Hauptanzeige zählt Lager und lokale Betriebsbestände. LKW-Ladungen stehen separat unter unterwegs. Bereits verbaute Materialien sind keine Vorräte mehr.")
+ card("Deine Vorräte auf einen Blick","Oben: alle Vorräte. L darunter: Zentrale / Lagergrenze. ! meldet ein volles oder gebuchtes Zentralfach, ↻ eine wartende Holzabholung. Jede Warenart hat eigene Plätze. Volle Ausgänge pausieren die Produktion; nach Verbrauch oder Verkauf läuft sie automatisch weiter. Vorhandene Überbestände bleiben erhalten.")
  for key_value in Catalog.RESOURCES:
   var key=str(key_value)
   var box=card(Catalog.RESOURCES[key])
   dynamic_text(box,func():
    var stock=UXRules.material_stock(Game.state,key)
    var reading="%s Vorrat\n%s Zentrale · %s Abhol-Express · %s Betriebe · %s unterwegs" % [Catalog.number(stock.stored),Catalog.number(float(stock.warehouse)+float(stock.receiving)),Catalog.number(stock.regional),Catalog.number(float(stock.local)-float(stock.regional)-float(stock.receiving)),Catalog.number(stock.transit)]
+   reading+="\n"+StorageLimits.central_status(Game.state,key)
+   reading+="\nGesamte Lagerplätze: %s je Ware (Zentrale + Express + Werkspuffer)" % Catalog.number(StorageLimits.network_capacity(Game.state,key))
    if key=="wood" and float(stock.processing)>0: reading+="\n%s Holz in Verarbeitung · noch nicht lieferbar" % Catalog.number(stock.processing)
    return reading)
   button(box,"QUELLEN & LIEFERUNGEN ›",func(): ux.open_material(key))
 
 func market_menu() -> void:
  modal_title.text = "LAGER & VERKAUF"
- var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Manuelle Verkäufe verwenden auch reservierte Vorräte. Die Baureserve schützt Material für neue Häuser. Die Spänebox lässt sich direkt unten oder am Sägewerk öffnen; ihr voller Behälter stoppt nie die Bretterproduktion.")
+ var box = card("Kapazität: %s je Rohstoff" % Catalog.number(Game.capacity()),"Lagerhaus: +500 je Stufe; Zentrallager: +1.500 je Stufe. Volle Warenfächer stoppen neue Abholungen. Werkspuffer und Abhol-Express besitzen eigene Grenzen. Manuelle Verkäufe verwenden auch reservierte Vorräte. Die Baureserve schützt Material für neue Häuser. Die Spänebox lässt sich direkt unten oder am Sägewerk öffnen; ihr voller Behälter stoppt nie die Bretterproduktion.")
  button(box,"Baureserve: AN" if Game.state.reserve else "Baureserve: AUS",func(): action(func(): Game.state.reserve = not Game.state.reserve))
  button(box,"AUTOBAHN & EXPORTHANDEL",func(): open_menu("export"))
  text(box,"Hier verkaufst du direkt am lokalen Markt. Autobahnexport benötigt eine Straßenverbindung und bezahlt erst bei Ankunft.",15,MUTED)
