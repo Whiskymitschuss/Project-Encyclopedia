@@ -1,3 +1,14 @@
+## Tatsächliche APK-Dateien · 0.28.16-alpha.1
+
+6710 Headless- und 625 OpenGL-Prüfungen mit unveränderten,
+aus der signierten APK entpackten Spieldateien bestanden. Tests und Profile
+lagen separat. Neue Architektur und Materialien, zehn Bibervarianten/Fahrer,
+Maschinen und Logistik, Holzabholung, Baustellen, Touch-Menüs, Start und kalte
+Offline-Nachrechnung sind eingeschlossen. [Paketprüfbericht](alpha1-style/packaged-checks.json).
+APK-SHA256 `f91ad1c468010581c6b705e2bfeb7313ebabc0046fcd72a1d79a08371b945785`. Quellstand `14fdfd5931c1d53d1ff74315b81d36b9e2aaf15e`.
+Paket, Versionscode 3011, bisheriges Zertifikat und 16-KiB-Zip-Ausrichtung geprüft.
+Diese Desktop-Prüfung entpackter APK-Dateien ersetzt keinen Android-Gerätelauf.
+
 ## Einheitlicher Weltstil · 0.28.16-alpha.1
 
 40 numerische Headless-Suiten mit 21.251 Prüfungen, zwei natürliche
