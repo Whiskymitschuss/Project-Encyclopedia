@@ -1,0 +1,9 @@
+1. Update installieren; vorhandene Helfer, Waren und Forschungsstufen prüfen.
+2. Team → Baumpflanzer: aktive und ältere Wälder sowie freie/gesperrte Stellen ansehen.
+3. Bei kahlem aktiven Wald Pflanzmissionen beobachten. Sie müssen freie Seitenwege
+   benutzen, wenn der ehemalige Eingang oder die direkte Anlaufrichtung versperrt ist.
+4. Forstforschung/Turbo sollen auch neue Pflanzmissionen unterstützen. Bestehende
+   Missionen und Jungbäume dürfen ihre bereits gebuchten Zeiten behalten.
+5. Auch bei vollem Holz-Abholvorrat muss die freie Waldfläche weiter nachwachsen.
+6. Neustart während einer Ausweichmission: Weg, Rückkehr und Wachstum fortsetzen.
+7. Kleine Anzeige/große Schrift: Waldübersicht weiterhin lesen und scrollen können.

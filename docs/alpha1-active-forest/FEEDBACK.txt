@@ -1,0 +1,8 @@
+Version: 0.28.19-alpha.1
+Handy / Android:
+Aktueller Wald / Helfer / Pflanzzuweisung:
+Forstforschung / Werkzeug / Turbo aktiv:
+Laut Teamübersicht: Pflanzer / Jungbäume / freie / gesperrte Stellen:
+Holz-Abholvorrat voll oder frei:
+Welche Gebäude/Maschinen stehen am Waldzugang:
+Beobachtete Zeit bis zu neuen Jungbäumen / erntereifen Bäumen:

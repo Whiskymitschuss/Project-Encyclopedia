@@ -2,7 +2,23 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.18-alpha.1 · Starterfeld und Waldwechsel
+## Aktuell: 0.28.19-alpha.1 · Nachwuchs im aktiven Wald
+
+Pflanzer prüfen freie Seitenwege und speichern ihren tatsächlichen Missionsweg.
+Die Automatik verstärkt bei abgeerntetem Wald das Pflanzteam. Forstforschung und
+Turbo helfen nun auch bei der Wiederaufforstung: Forschung verkürzt Pflanzarbeit
+und Wachstum, Turbo beschleunigt neue Pflanzmissionen. Alte Missionen und
+Jungbäume behalten ihre bisherigen Zeiten. Freie und gesperrte Stellen sind
+getrennt sichtbar. Volle Abholvorräte halten das Nachwachsen nicht an.
+
+[Änderungen, echte Simulation und Hauptweltbilder](docs/ACTIVE-FOREST-2819.md) ·
+[Installation](docs/alpha1-active-forest/START-HIER.txt) · [Downloads](releases/README.md).
+Keine Gratiswaren oder zusätzlichen Helfer. Android-Code **3014**, gleiches
+Paket und bisheriges Testzertifikat. **Als Update installieren; nicht vorher
+deinstallieren und keine App-Daten löschen.** Kein physischer Android-/Hitzetest;
+die vollständige frühere Masterliste bleibt offen.
+
+## Vorher: 0.28.18-alpha.1 · Starterfeld und Waldwechsel
 
 Freie Pflanzmissionen wechseln zwischen allen bereits abgeernteten Waldflächen.
 Das alte Starterfeld wird auch bei fortlaufender Arbeit im Eichenwald mitversorgt.

@@ -1,3 +1,27 @@
+## Nachwuchs im aktiven Wald · 0.28.19-alpha.1
+
+43 numerische Headless-Suiten mit 21.428 Prüfungen, zwei natürliche
+Fortschrittsszenarien und beide Szenenstarts bestanden. 13 relevante OpenGL-Suiten
+mit 276 Prüfungen bestanden. [Quellprüfbericht](alpha1-active-forest/automated-checks.json).
+Die fokussierte Nachwuchs-Suite wurde um maximale Forschung und Speicherung
+unter Bonus erweitert und mit dem endgültigen Stand erneut ausgeführt.
+
+Alle 93 physisch freien Eichenwaldstellen haben geprüfte Pflanzwege statt nur
+81 über den alten Eingang. Ein zugebauter Eingang, vollständig eingeschlossene
+Stellen, gespeicherte Ausweichwege und Bauplatzreservierungen sind geprüft.
+Echte Game.step-Läufe mit 8/31 Helfern, Forschung 0/10/12 und Turbo behalten
+nach der Einlaufphase mindestens zehn erntereife Bäume. Acht Läufe à 900 Sekunden;
+kein Lauf hat danach eine Sekunde ohne erntereife aktive Bäume. Ein voller
+Abholvorrat hält die Aufforstung nicht an und wird dadurch nicht vermehrt.
+
+Die Hauptwelt zeigt den Biber am gebuchten Ausweichweg, reale Jungbäume und
+ausgewachsene aktive Eichen. Kleine/große Schrift, Starterfeld, gespeicherte
+Missionen, Logistik, Start und kalte Nachrechnung sind eingeschlossen.
+[Änderungen und Bilder](ACTIVE-FOREST-2819.md).
+
+Generierte Profile; kein privater Handyspielstand und kein physischer Android-/
+Hitzetest. Die vollständige frühere Masterliste bleibt offen.
+
 ## Externe Downloads Starterfeld · 0.28.18 geprüft
 
 APK, Quell-ZIP und Testerpaket vom festen Tag `v0.28.18-alpha.1` vollständig per

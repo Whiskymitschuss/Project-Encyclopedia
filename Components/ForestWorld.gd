@@ -75,14 +75,15 @@ func update_planters(delta: float) -> void:
   var id=int(task.id); ids[id]=true
   if not planters.has(id): planters[id]=pool.pop_back() if not pool.is_empty() else make_planter()
   var worker=planters[id]
-  var path=ForestLayout.path(int(task.biome),int(task.cell))
+  var path=ForestLayout.task_path(task)
   var age=float(task.age)+minf(Game.tick_clock,0.99)
   var walk=float(task.walk)
-  var planting=age>=walk and age<walk+4
-  var fraction=clampf(age/walk,0,1) if age<walk+4 else 1-clampf((age-walk-4)/walk,0,1)
+  var plant=float(task.get("plant",4.0))
+  var planting=age>=walk and age<walk+plant
+  var fraction=clampf(age/walk,0,1) if age<walk+plant else 1-clampf((age-walk-plant)/walk,0,1)
   var sample=LogisticsRoutes.sample(LogisticsRoutes.encode(PackedVector3Array(path)),fraction)
   worker.position=sample.position+Vector3.UP*0.6
-  var direction: Vector3=sample.direction*(1 if age<walk+4 else -1)
+  var direction: Vector3=sample.direction*(1 if age<walk+plant else -1)
   worker.rotation.y=atan2(direction.x,direction.z)
   worker.visible=PresentationBudget.detailed(worker)
   var body=worker.get_node("Beaver")

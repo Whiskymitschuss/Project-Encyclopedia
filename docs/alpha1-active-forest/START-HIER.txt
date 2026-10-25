@@ -1,0 +1,14 @@
+Timber Loot Tycoon · 0.28.19-alpha.1 · Nachwuchs im aktiven Wald
+
+Als Update installieren, nicht vorher deinstallieren und keine App-Daten löschen.
+Android-Code 3014, gleiches Paket und bisheriges Testzertifikat.
+
+Neu: freie Ausweichzugänge für Pflanzer, gespeicherte tatsächliche Missionswege,
+mehr automatische Aufforstung bei stark abgeernteten Wäldern. Forstforschung
+beschleunigt jetzt auch Pflanzen und Wachstum; Turbo beschleunigt neue Missionen.
+Alte Missionen und bereits wachsende Bäume behalten ihre bisherigen Zeiten.
+
+Unter Team → Biber-Baumpflanzer stehen Pflanzer, Jungbäume, freie und gesperrte
+Pflanzstellen. Auf null gesetztes Pflanzteam bleibt ausdrücklich deaktiviert;
+bei Bedarf Automatisch oder eine positive Helferzahl wählen. Maschinen-/Bauflächen
+bleiben frei. Eine volle Holz-Abholstation hält das Nachwachsen nicht an.

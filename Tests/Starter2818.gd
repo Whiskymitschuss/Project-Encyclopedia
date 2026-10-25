@@ -78,10 +78,13 @@ func run():
  for second in 100:tick(s)
  check(s.forest.tasks.is_empty() and s.forest.stands==before,"Zero assigned planters remains zero across both forests")
  # A blocked older route cannot prevent all other stands from being planted.
- s=company();var center=Catalog.biome_position(0)
- s.buildings.append({"kind":"warehouse","level":1,"position":[center.x+34,center.z+34]})
+ s=company();s.tool=0
+ var center=ForestLayout.point(0,44)
+ s.forest.stands["0"].cells={"44":{"state":"stump","wood":0.0}}
+ for offset in [Vector3(16,0,0),Vector3(-16,0,0),Vector3(0,0,18),Vector3(0,0,-18)]:
+  s.buildings.append({"kind":"warehouse","level":1,"position":[center.x+offset.x,center.z+offset.z]})
  tick(s)
- check(not s.forest.tasks.is_empty() and s.forest.tasks.all(func(task):return int(task.biome)==1),"Unreachable starter approaches are skipped without deadlocking the other forest")
+ check(not s.forest.tasks.is_empty() and s.forest.tasks.all(func(task):return int(task.biome)==1),"Fully enclosed starter approaches are skipped without deadlocking the other forest")
  # Already saved current-forest missions must finish before slots rotate.
  s=company(8)
  var old_starter=s.forest.stands["0"]

@@ -1,6 +1,7 @@
 class_name ForestLayout
 extends RefCounted
 static var layout=[]
+static var planting_cache={}
 
 static func records() -> Array:
  if not layout.is_empty(): return layout
@@ -50,11 +51,42 @@ static func path(biome: int,index: int) -> Array:
  var center=Catalog.biome_position(biome)
  var target=point(biome,index)
  return [center+Vector3(34,0,34),Vector3(center.x+34,0,target.z+2.4),target+Vector3(0,0,2.4),target+Vector3(0,0,1.2)]
+static func planting_path(state: Dictionary,biome: int,index: int,obstacles: Array=[]) -> Array:
+ var bounds=rectangles(state) if obstacles.is_empty() else obstacles
+ var key=str(biome)+":"+str(index)+":"+str(hash(bounds))
+ if planting_cache.has(key) and planting_cache[key].bounds==bounds:
+  return planting_cache[key].path.duplicate()
+ var target=point(biome,index)
+ var route=[]
+ if not bounds.any(func(rect):return rect.has_point(Vector2(target.x,target.z))):
+  var original=path(biome,index)
+  if not bounds.any(func(rect):return intersects(original,rect.grow(0.4))):route=original
+  else:
+   # Keep the ordinary private aisle when clear; try the other forest sides
+   # and approach the stump from a free side when a machine or plot blocks it.
+   var center=Catalog.biome_position(biome)
+   var best=INF
+   for gate in [Vector3(34,0,34),Vector3(-34,0,34),Vector3(34,0,-29),Vector3(-34,0,-29)]:
+    var start=center+gate
+    for direction in [Vector3(0,0,1),Vector3(0,0,-1),Vector3(1,0,0),Vector3(-1,0,0)]:
+     var aisle=target+direction*2.4
+     var end=target+direction*1.2
+     for corner in [Vector3(start.x,0,aisle.z),Vector3(aisle.x,0,start.z)]:
+      var candidate=[start,corner,aisle,end]
+      if bounds.any(func(rect):return intersects(candidate,rect.grow(0.4))):continue
+      var length=0.0
+      for i in range(1,candidate.size()):length+=candidate[i-1].distance_to(candidate[i])
+      if length<best:route=candidate;best=length
+ if planting_cache.size()>=512:planting_cache.clear()
+ planting_cache[key]={"bounds":bounds,"path":route.duplicate()}
+ return route
+static func task_path(task: Dictionary) -> Array:
+ if not task.has("route"):return path(int(task.biome),int(task.cell))
+ var result=[]
+ for point in task.route:result.append(LogisticsRoutes.vector(point))
+ return result
 static func walkable(state: Dictionary,biome: int,index: int) -> bool:
- var route=path(biome,index)
- for rectangle in rectangles(state):
-  if intersects(route,rectangle.grow(0.4)): return false
- return true
+ return not planting_path(state,biome,index).is_empty()
 static func intersects(route: Array,rectangle: Rect2) -> bool:
  for i in range(1,route.size()):
   var a=Vector2(route[i-1].x,route[i-1].z)
@@ -66,7 +98,7 @@ static func intersects(route: Array,rectangle: Rect2) -> bool:
  return false
 static func reserved(state: Dictionary,rectangle: Rect2) -> bool:
  for task in state.get("forest",{}).get("tasks",[]):
-  if intersects(path(int(task.biome),int(task.cell)),rectangle.grow(0.5)): return true
+  if intersects(task_path(task),rectangle.grow(0.5)): return true
  return false
 
 # Shared by felling representatives and the already authoritative planting paths.
@@ -89,13 +121,22 @@ static func worksite(state: Dictionary,slot: int,count: int) -> Dictionary:
   candidates.append({"index":index,"point":target,"distance":target.distance_squared_to(preferred)})
  candidates.sort_custom(func(a,b): return a.distance<b.distance)
  for candidate in candidates:
-  var origin: Vector3=candidate.point+Vector3(1.4,0,3)
+  var approach=planting_path(state,biome,int(candidate.index))
+  if approach.is_empty():continue
+  var origin: Vector3=approach[-1]
   if absf(origin.x-center.x)<8 and origin.z>center.z+17: continue
   var landing=center+Vector3(across*0.8,0,ForestryFlow.LANDING_EDGE)
-  var route=path(biome,int(candidate.index)); route.reverse(); route[0]=origin
-  if candidate.point.z>center.z+20:
-   route=[origin,Vector3(origin.x,0,center.z+29),Vector3(origin.x,0,center.z+34),center+Vector3(34,0,34)]
-  route.append(Vector3(center.x+34,0,landing.z));route.append(landing)
-  if rectangles.any(func(rect): return intersects(route,rect.grow(0.4))): continue
+  var route=approach.duplicate();route.reverse()
+  var gate: Vector3=route[-1]
+  var exits=[
+   [Vector3(gate.x,0,landing.z),landing],
+   [Vector3(center.x-34,0,gate.z),Vector3(center.x-34,0,landing.z),landing],
+   [Vector3(center.x+34,0,gate.z),Vector3(center.x+34,0,landing.z),landing]]
+  var complete=[]
+  for exit in exits:
+   var trial=route.duplicate();trial.append_array(exit)
+   if not rectangles.any(func(rect):return intersects(trial,rect.grow(0.4))):complete=trial;break
+  if complete.is_empty():continue
+  route=complete
   return {"cell":int(candidate.index),"origin":route[0],"landing":landing,"route":LogisticsRoutes.encode(PackedVector3Array(route))}
  return {}

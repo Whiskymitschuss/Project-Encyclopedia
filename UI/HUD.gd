@@ -882,7 +882,7 @@ func team_menu() -> void:
  var box = card("%s / %s Arbeiter" % [int(Game.state.workers),Game.worker_capacity()],"Helfer fällen und liefern Holz automatisch. Hütten und Stadtbewohner schaffen zusätzlichen Wohnraum. Forschungsboni erhöhen die Leistung.")
  dynamic_text(box,func(): return ForestryFlow.team_status(Game.state,Game.flow))
  button(box,"HOLZFÄLLER ANSEHEN",func(): focus_requested.emit(ForestryFlow.work_position(Game.state)); close_menu())
- var planting=card("Biber-Baumpflanzer","Das Pflanzteam stammt aus deinen eingestellten Helfern. Es pflanzt echte abgeerntete Stellen nach; während Hinweg, Pflanzen und Rückkehr sind diese Biber keine Holzfäller. Jungbäume sind nach 45 Sekunden erntereif. Die Automatik verstärkt bei kahlem Wald das Pflanzteam und gibt die Helfer anschließend wieder zum Fällen frei.")
+ var planting=card("Biber-Baumpflanzer","Das Pflanzteam stammt aus deinen eingestellten Helfern. Es pflanzt echte abgeerntete Stellen nach; während Hinweg, Pflanzen und Rückkehr sind diese Biber keine Holzfäller. Jungbäume brauchen ohne Forschung 45 Sekunden. Forstforschung verkürzt das Wachstum; Turbo-Arbeiter beschleunigen neue Pflanzmissionen. Die Automatik verstärkt bei kahlem Wald das Pflanzteam und gibt die Helfer anschließend wieder zum Fällen frei.")
  dynamic_text(planting,func(): return ForestCycle.status(Game.state))
  text(planting,"Auch ältere Waldflächen werden weiter aufgeforstet. Freie Pflanzaufträge wechseln zwischen allen abgeernteten Wäldern.",14,MUTED)
  dynamic_text(planting,func(): return ForestCycle.recovery_status(Game.state))
@@ -1086,7 +1086,7 @@ func research_menu() -> void:
  if Game.level("research") < 1: card("Forschungszentrum bauen","Im Industrie-Baukatalog freischalten. Danach stehen fünf Forschungsrichtungen bereit.")
  for key in Catalog.RESEARCH:
   var id = str(key)
-  var box = card("%s · %s/12" % [Catalog.RESEARCH[key],Game.research_level(key)],{"production":"+12 % Verarbeitung pro Stufe","forestry":"+15 % automatische Holzgewinnung pro Stufe","logistics":"+12 % automatische Exportkapazität pro Stufe","loot":"+8 % Ticket-Fundchance pro Stufe","construction":"+12 % Baugeschwindigkeit pro Stufe"}[key])
+  var box = card("%s · %s/12" % [Catalog.RESEARCH[key],Game.research_level(key)],{"production":"+12 % Verarbeitung pro Stufe","forestry":"+15 % automatische Holzgewinnung pro Stufe; schnelleres Pflanzen und Baumwachstum","logistics":"+12 % automatische Exportkapazität pro Stufe","loot":"+8 % Ticket-Fundchance pro Stufe","construction":"+12 % Baugeschwindigkeit pro Stufe"}[key])
   button(box,"FORSCHEN · %s" % Catalog.number(Game.research_cost(key)),func(): action(func(): Game.research_buy(id)),Game.level("research")>0 and Game.research_level(key)<12)
 
 func boosters_menu() -> void:

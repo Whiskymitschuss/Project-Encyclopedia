@@ -33,7 +33,7 @@ func run():
  check(ForestCycle.limit(s)==16,"Healthy automatic woodland keeps its ordinary half-team allocation")
  var cut=ForestCycle.take(s,1,100000)
  check(cut>0 and ForestCycle.availability(s).mature==0,"Stress fixture genuinely depletes reachable mature timber")
- check(ForestCycle.limit(s)==25 and ForestCycle.limit(s)<int(s.workers),"A depleted forest automatically reserves more planters while retaining cutters")
+ check(ForestCycle.limit(s)==28 and ForestCycle.limit(s)<int(s.workers),"A depleted forest automatically reserves more planters while retaining cutters")
  s.forest.assignment=3
  check(ForestCycle.limit(s)==3,"Explicit manual allocation remains authoritative")
  s.forest.assignment=0
@@ -75,15 +75,15 @@ func run():
  game.restore(saved);s=game.state
  for second in 25:tick(s)
  check(same(s.forest,expected),"Migrated deadlines continue identically after a full-precision save")
- # An obstructed planting approach must also block new felling at that cell.
- s=company();s.forest.assignment=0;cells=ForestCycle.stand(s,1).cells
- var unreachable=-1
- for index in 100:
-  cells[str(index)]={"state":"stump","wood":0.0}
-  if not ForestLayout.blocked(s,1,index) and not ForestLayout.walkable(s,1,index):unreachable=index
- check(unreachable>=0,"Obstructed-approach fixture exists outside a building's actual footprint")
- cells[str(unreachable)]={"state":"mature","wood":ForestCycle.timber_per_tree(1)}
- check(ForestCycle.take(s,1,100000)==0 and cells[str(unreachable)].state=="mature","Felling never creates a permanent stump behind an unreachable planting aisle")
+ # A fully enclosed tree remains unreachable, even with alternate aisles.
+ s=company();s.tool=0;s.forest.assignment=0;cells=ForestCycle.stand(s,1).cells
+ var center=ForestLayout.point(1,44)
+ for offset in [Vector3(16,0,0),Vector3(-16,0,0),Vector3(0,0,18),Vector3(0,0,-18)]:
+  s.buildings.append({"kind":"warehouse","level":1,"position":[center.x+offset.x,center.z+offset.z]})
+ for index in 100:cells[str(index)]={"state":"stump","wood":0.0}
+ check(not ForestLayout.blocked(s,1,44) and not ForestLayout.walkable(s,1,44),"Enclosed-approach fixture leaves the actual tree free but blocks every route")
+ cells["44"]={"state":"mature","wood":ForestCycle.timber_per_tree(1)}
+ check(ForestCycle.take(s,1,100000)==0 and cells["44"].state=="mature","Felling never creates a permanent stump behind an unreachable planting aisle")
  # Continuous explicit demand stresses only real forest stock, not warehouse capacity.
  var measurements=[]
  for workers in [8,31]:
