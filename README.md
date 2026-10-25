@@ -2,7 +2,16 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.24-alpha.1 · Dauerhaftes Tageslicht
+## Aktuell: 0.28.25-alpha.1 · Vulkan-Vergleich
+
+Android-Vulkan-Test der vorhandenen Hauptwelt, plus gleich versionierte OpenGL-
+Rückfall-APK. GPU-Name und optionale zehnsekündige Render-CPU-/GPU-Messung.
+Wetter bleibt aus; keine Änderung der Wirtschaft oder Spielstände.
+[Umfang und Grenzen](docs/RENDERER-2825.md) · [Installation](docs/alpha1-renderer/START-HIER.txt).
+Android-Code **3020** in beiden Varianten, gleiches Paket und Testzertifikat.
+Kein bestätigter Handy-FPS-Gewinn und kein physischer Android-Gerätetest.
+
+## Vorher: 0.28.24-alpha.1 · Dauerhaftes Tageslicht
 
 Kein Regen, Nebel, Wind, Pfützen oder Tag-Nacht-Wechsel mehr. Wetterobjekte und
 Pfützensteuerung aus der Hauptwelt entfernt, statische Baumkronen und trockenes

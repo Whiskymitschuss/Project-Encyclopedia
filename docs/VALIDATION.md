@@ -1,3 +1,9 @@
+## Renderer-Vergleich · 0.28.25-alpha.1
+
+21.587 Headless-Prüfungen in 49 Modulen, danach gezielte Prüfungen der abschließenden Schutzfunktionen. 77 Vulkan- und 29 OpenGL-Grafikprüfungen der echten Hauptwelt bestanden. Wetterabschaltung, Maschinen, Biber, adaptive Geometrie, Fotoqualität, native Oberfläche und tatsächliche GPU-Timer enthalten. Vulkan wurde wirklich initialisiert; ein absichtlicher Initialisierungsausfall startete unter OpenGL weiter. Sehr kleine Vulkan-Pixelabweichungen werden unter einer dokumentierten engen Toleranz geprüft; OpenGL bleibt bitgenau.
+
+[Prüfbericht](alpha1-renderer/automated-checks.json) · [Umfang und Grenzen](RENDERER-2825.md). Desktop/Lavapipe ist kein Samsung-Gerätetest und kein Beweis eines FPS-Gewinns. Keine Spielstands-/Wirtschaftsänderung.
+
 ## Externe Downloads Adaptive Darstellung · 0.28.24 geprüft
 
 APK und Quell-ZIP vom festen Tag `v0.28.24-alpha.1` vollständig per

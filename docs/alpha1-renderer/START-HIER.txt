@@ -1,0 +1,15 @@
+Timber Loot Tycoon 0.28.25-alpha.1 · Grafikvergleich
+
+Zuerst die APK mit -vulkan installieren. Als Update, nicht deinstallieren.
+Das Wetter bleibt vollständig aus. Produktion und Spielstand bleiben erhalten.
+Nach etwa einer Minute dieselbe Stadt bewegen und Leistungswerte ansehen.
+Als Grafikweg muss mobile/vulkan erscheinen; zusätzlich wird der GPU-Name gezeigt.
+
+Falls die neue Variante nicht funktioniert oder schlechter läuft, die APK mit
+-opengl darüber installieren. Beide haben Android-Code 3020 und denselben
+Testschlüssel. Kein Löschen der App-Daten nötig.
+
+Optional: Leistungsvergleich → Grafikzeit messen → 10 Sekunden messen.
+Render-CPU und GPU sind getrennt; Temperatur wird nicht gemessen.
+Vulkan wurde am Desktop getestet, noch nicht auf deinem Samsung.
+Es gibt keine garantierte FPS-Zahl und keine Store-Release-Signierung.

@@ -19,6 +19,9 @@ var hitch_count=0
 var longest_hitch_ms=0.0
 var passive_enabled=OS.has_feature("mobile")
 var passive_work={}
+var render_probe_left=0.0
+var render_probe_samples=[]
+var render_probe_result={}
 var slow_seconds=0.0
 var stable_seconds=0.0
 var since_change=45.0
@@ -32,6 +35,7 @@ func _ready() -> void:
  previous_us=Time.get_ticks_usec()
 
 func _process(_delta: float) -> void:
+ if render_probe_left>0:sample_render_probe(_delta)
  var now=Time.get_ticks_usec()
  var seconds=float(now-previous_us)/1000000.0
  previous_us=now
@@ -112,7 +116,7 @@ func snapshot() -> Dictionary:
 func summary() -> String:
  var s=snapshot()
  var live="%.1f FPS · P95 %.1f ms" % [s.fps,s.p95_ms] if s.frames>0 else "FPS-Messung startet nach zwei Sekunden in der Welt"
- return "Dauerhaftes Tageslicht · Wetter aus\n%s\nErster Script-Frame: %s ms seit Engine-Start\nWeltaufbau: %s ms\nLetzte Offline-Berechnung: %.1f s für %.1f Min.\n3D-Auflösung: %s %% · Menü in voller Auflösung\nDarstellung: %s" % [live,s.first_frame_ms,s.world_ready_ms,s.replay_ms/1000.0,s.replay_seconds/60.0,roundi(s.render_scale*100),"Entlastungsstufe %s/3" % detail_level if low_detail else "gewähltes Qualitätsprofil"]+"\nHänger über 100 ms: %s · längster %.0f ms\nZeichenaufrufe: %s · %s/%s" % [s.hitches,s.longest_hitch_ms,int(s.draw_calls),RenderingServer.get_current_rendering_method(),RenderingServer.get_current_rendering_driver_name()]
+ return "Dauerhaftes Tageslicht · Wetter aus\n%s\nErster Script-Frame: %s ms seit Engine-Start\nWeltaufbau: %s ms\nLetzte Offline-Berechnung: %.1f s für %.1f Min.\n3D-Auflösung: %s %% · Menü in voller Auflösung\nDarstellung: %s" % [live,s.first_frame_ms,s.world_ready_ms,s.replay_ms/1000.0,s.replay_seconds/60.0,roundi(s.render_scale*100),"Entlastungsstufe %s/3" % detail_level if low_detail else "gewähltes Qualitätsprofil"]+"\nHänger über 100 ms: %s · längster %.0f ms\nZeichenaufrufe: %s · %s/%s" % [s.hitches,s.longest_hitch_ms,int(s.draw_calls),RenderingServer.get_current_rendering_method(),RenderingServer.get_current_rendering_driver_name()]+"\nGrafikgerät: "+RenderingServer.get_video_adapter_name()
 
 # Explicit camera-tour measurements. Bounded CPU samples distinguish script work
 # from rendering pressure without claiming a GPU profiler or collecting data.
@@ -161,3 +165,35 @@ func passive_summary() -> String:
  var values=summarize_work(passive_work)
  if values.is_empty():return "Messung läuft beim Spielen auf Android automatisch an."
  return "Letzte bis zu 180 Aufrufe je Bereich. CPU-Zeiten; Unterbereiche überschneiden sich.\n"+profile_summary(values)
+
+func start_render_probe() -> void:
+ render_probe_result.clear()
+ render_probe_samples.clear()
+ render_probe_left=10.0
+ RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(),true)
+
+func sample_render_probe(delta: float) -> void:
+ render_probe_left=maxf(0,render_probe_left-delta)
+ var viewport=get_viewport().get_viewport_rid()
+ var cpu=RenderingServer.viewport_get_measured_render_time_cpu(viewport)
+ var gpu=RenderingServer.viewport_get_measured_render_time_gpu(viewport)
+ if cpu>0 and gpu>0 and render_probe_samples.size()<600:render_probe_samples.append(Vector2(cpu,gpu))
+ if render_probe_left>0:return
+ RenderingServer.viewport_set_measure_render_time(viewport,false)
+ if render_probe_samples.is_empty():return
+ var cpu_samples=[];var gpu_samples=[]
+ for value in render_probe_samples:cpu_samples.append(value.x);gpu_samples.append(value.y)
+ cpu_samples.sort();gpu_samples.sort()
+ render_probe_result={"cpu_ms":cpu_samples[cpu_samples.size()/2],"gpu_ms":gpu_samples[gpu_samples.size()/2],"samples":cpu_samples.size(),"renderer":RenderingServer.get_current_rendering_method(),"driver":RenderingServer.get_current_rendering_driver_name()}
+
+func render_probe_summary() -> String:
+ if render_probe_left>0:return "Grafikmessung läuft · noch %s s" % ceili(render_probe_left)
+ if render_probe_result.is_empty():return "Optionaler 10-Sekunden-Test der Renderzeiten; auf manchen Treibern nicht verfügbar."
+ return "Render-CPU: %.2f ms · GPU: %.2f ms (Median)\n%s Messbilder · %s/%s. Hauptansicht; keine Skriptzeiten oder Temperaturmessung." % [render_probe_result.cpu_ms,render_probe_result.gpu_ms,render_probe_result.samples,render_probe_result.renderer,render_probe_result.driver]
+
+func _notification(what: int) -> void:
+ if what==NOTIFICATION_APPLICATION_PAUSED and render_probe_left>0:
+  RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(),false)
+  render_probe_left=0
+  render_probe_samples.clear()
+  render_probe_result.clear()

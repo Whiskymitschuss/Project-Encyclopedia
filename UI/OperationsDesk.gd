@@ -9,6 +9,9 @@ static func populate(hud: Control,tab: String) -> void:
   hud.button(live,"EINSTELLUNGEN",func(): hud.open_menu("settings"))
   var automatic=hud.card("Automatische Messdetails","Auf Android beim Spielen aktiv; keine Kamerarunde nötig. Es wird nichts gesendet.")
   hud.dynamic_text(automatic,func():return RuntimeStats.passive_summary())
+  var graphics=hud.card("Grafikzeit messen")
+  hud.dynamic_text(graphics,func():return RuntimeStats.render_probe_summary())
+  hud.button(graphics,"10 SEKUNDEN MESSEN",func(): RuntimeStats.start_render_probe())
   var box=hud.card("Eine Runde durch deine Stadt","Optionaler Vergleich: 30 Sekunden dieselben drei Ansichten. Erst in Standard, danach im Akkumodus vergleichen. Das Spiel läuft weiter.")
   hud.button(box,"KAMERARUNDE STARTEN",func(): hud.close_menu(); hud.camera_action.emit("benchmark"))
   if not Game.performance_results.is_empty():

@@ -23,8 +23,13 @@ PACKAGE = re.search(r'^package/unique_name="([^"]+)"', PRESET, re.M).group(1)
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path, default=ROOT / f'exports/Timber-Loot-Tycoon-v{VERSION_NAME}.apk')
 parser.add_argument('--verify-only', action='store_true')
+parser.add_argument('--renderer', choices=['mobile','gl_compatibility'], help='Export-only Android renderer override; does not edit project.godot')
 args = parser.parse_args()
 output = args.output.resolve()
+project_renderer = re.search(r'^renderer/rendering_method.mobile="([^"]+)"', (ROOT/'project.godot').read_text(), re.M).group(1)
+expected_renderer = args.renderer or project_renderer
+if args.verify_only and not args.renderer and output.with_suffix('.apk.json').exists():
+    expected_renderer = json.loads(output.with_suffix('.apk.json').read_text()).get('android_renderer',project_renderer)
 
 def run(command, **kwargs):
     return subprocess.check_output([str(x) for x in command], text=True, stderr=subprocess.STDOUT, **kwargs)
@@ -56,12 +61,26 @@ if not args.verify_only:
     lines.extend(k+' = '+json.dumps(v) for k,v in values.items())
     settings.write_text('\n'.join(lines)+'\n')
     output.parent.mkdir(parents=True, exist_ok=True)
-    for label, commands in [('import',['--headless','--editor','--import','--quit']),
-                            ('export',['--headless','--export-debug','Android Test',output])]:
-        log = run(['bash',ROOT/'scripts/godot.sh',*commands], cwd=ROOT, env=env)
-        (RUNTIME/('android-'+label+'.log')).write_text(log)
-        if re.search(r'^(SCRIPT ERROR|ERROR):',log,re.M): raise RuntimeError(log[-5000:])
-        print(label,'completed',flush=True)
+    override = ROOT/'override.cfg'
+    if override.exists():
+        raise SystemExit('Existing override.cfg must be preserved; refusing to overwrite local project settings.')
+    override_created = False
+    override_text = '[rendering]\nrenderer/rendering_method.mobile='+json.dumps(args.renderer)+'\n'
+    try:
+        if args.renderer:
+            with override.open('x') as override_file: override_file.write(override_text)
+            override_created = True
+        for label, commands in [('import',['--headless','--editor','--import','--quit']),
+                                ('export',['--headless','--export-debug','Android Test',output])]:
+            log = run(['bash',ROOT/'scripts/godot.sh',*commands], cwd=ROOT, env=env)
+            (RUNTIME/('android-'+label+'.log')).write_text(log)
+            if re.search(r'^(SCRIPT ERROR|ERROR):',log,re.M): raise RuntimeError(log[-5000:])
+            print(label,'completed',flush=True)
+    finally:
+        if override_created and override.exists():
+            if override.read_text()!=override_text:
+                raise RuntimeError('Export override was changed externally; preserving it for review.')
+            override.unlink()
 
 signature = run([TOOLS/'apksigner','verify','--verbose','--print-certs',output])
 assert 'Verified using v2 scheme (APK Signature Scheme v2): true' in signature
@@ -76,12 +95,16 @@ for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", 
     assert required in manifest, required
 permission_names = re.findall(r"uses-permission: name='([^']+)'",permissions)
 assert permission_names == ['android.permission.VIBRATE'], permission_names
-assert 'gl_compatibility' in xml and 'android.hardware.vulkan' not in xml
+if expected_renderer=='mobile':
+    assert 'mobile' in xml and 'android.hardware.vulkan.version' in xml
+else:
+    assert 'gl_compatibility' in xml and 'android.hardware.vulkan' not in xml
 assert re.search(r'screenOrientation[^\n]*0x1\b',xml)
 with zipfile.ZipFile(output) as apk:
     assert apk.testzip() is None
     names = apk.namelist()
     assert 'assets/project.binary' in names
+    assert 'assets/override.cfg' not in names
     assert b'res://Scenes/Boot.tscn' in apk.read('assets/project.binary')
     assert 'assets/Economy/stone_industry.json' in names
     data=json.loads(apk.read('assets/Economy/stone_industry.json'))
@@ -100,7 +123,7 @@ report = {'file':output.name,'bytes':output.stat().st_size,
     'version':VERSION_NAME,'package':PACKAGE,
     'android_min_api':24,'architectures':['arm64-v8a','armeabi-v7a'],
     'signer_sha256':re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',signature).group(1),
-    'debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],
+    'android_renderer':expected_renderer,'android_vulkan_hardware_required':expected_renderer=='mobile','debug_signed':True,'zipalign_16k':True,'permissions':['android.permission.VIBRATE'],
     'source_commit':source_commit,
     'device_install_or_launch_tested':False}
 output.with_suffix('.apk.json').write_text(json.dumps(report,indent=2)+'\n')
