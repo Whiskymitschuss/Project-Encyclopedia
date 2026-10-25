@@ -24,6 +24,10 @@ func run():
  check(stats.render_probe_result.is_empty() and stats.render_probe_summary().contains("nicht verfügbar"),"Unsupported render timers never masquerade as zero-cost GPU results")
  stats.start_render_probe();stats._notification(Node.NOTIFICATION_APPLICATION_PAUSED)
  check(stats.render_probe_left==0 and stats.render_probe_result.is_empty(),"Backgrounding cancels optional GPU queries instead of reporting stale frames")
+ stats.append_work(stats.passive_work,"Seltene Spitze",450)
+ for i in 250:stats.append_work(stats.passive_work,"Seltene Spitze",1)
+ var recent=stats.summarize_work(stats.passive_work)["Seltene Spitze"]
+ check(recent.mean_ms==1 and recent.max_ms==450,"A rare long stall stays visible after it leaves the rolling frame window")
  check(game.state==before,"Backend diagnostics cannot edit progress, stock or saved settings")
  print("RENDERER 2825: %s checks, %s failures" % [checks,failures.size()])
  quit(0 if failures.is_empty() else 1)

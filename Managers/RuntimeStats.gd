@@ -132,6 +132,7 @@ func end_work(section: String,started: int) -> void:
 func append_work(table: Dictionary,section: String,milliseconds: float) -> void:
  if not table.has(section):table[section]={"samples":PackedFloat64Array(),"cursor":0}
  var data=table[section]
+ data.peak_ms=maxf(float(data.get("peak_ms",0)),milliseconds)
  if data.samples.size()<SAMPLE_LIMIT:data.samples.append(milliseconds)
  else:
   data.samples[data.cursor]=milliseconds
@@ -151,20 +152,20 @@ func summarize_work(table: Dictionary) -> Dictionary:
   var values=table[section].samples.duplicate();values.sort()
   var total=0.0
   for value in values:total+=value
-  result[section]={"mean_ms":total/maxi(1,values.size()),"p95_ms":values[mini(values.size()-1,floori(values.size()*0.95))] if not values.is_empty() else 0.0,"samples":values.size()}
+  result[section]={"mean_ms":total/maxi(1,values.size()),"p95_ms":values[mini(values.size()-1,floori(values.size()*0.95))] if not values.is_empty() else 0.0,"samples":values.size(),"max_ms":float(table[section].get("peak_ms",0))}
  return result
 
 func profile_summary(results: Dictionary) -> String:
  var rows=[]
  for section in results:
   var value=results[section]
-  rows.append("%s: Ø %.2f · P95 %.2f ms" % [section,value.mean_ms,value.p95_ms])
+  rows.append("%s: Ø %.2f · P95 %.2f · Spitze %.2f ms" % [section,value.mean_ms,value.p95_ms,float(value.get("max_ms",value.p95_ms))])
  return "\n".join(rows)
 
 func passive_summary() -> String:
  var values=summarize_work(passive_work)
  if values.is_empty():return "Messung läuft beim Spielen auf Android automatisch an."
- return "Letzte bis zu 180 Aufrufe je Bereich. CPU-Zeiten; Unterbereiche überschneiden sich.\n"+profile_summary(values)
+ return "Letzte bis zu 180 Aufrufe je Bereich; Spitze seit Welteinstieg. CPU-Zeiten überschneiden sich.\n"+profile_summary(values)
 
 func start_render_probe() -> void:
  render_probe_result.clear()

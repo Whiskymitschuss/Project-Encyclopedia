@@ -9,6 +9,3 @@ __pycache__/
 docs/*.import
 
 docs/**/*.import
-
-# Temporary export-only renderer override; never a player preference.
-override.cfg

@@ -25,15 +25,19 @@ dieser ist kein Ersatz für die separate OpenGL-APK bei Installationsproblemen.
 Desktop bleibt standardmäßig OpenGL. Kein Gradle-Wechsel, keine neue Berechtigung.
 
 `python3 scripts/build_android.py --renderer gl_compatibility --output ...-opengl.apk`
-erzeugt die zweite Variante mit einer exklusiv angelegten temporären override.cfg.
-Vorhandene Override-Dateien werden nicht überschrieben; fremde Änderungen nicht
-gelöscht. Die Datei wird nach dem Export entfernt und niemals ins APK gepackt.
-Projektdatei und Quell-Commit bleiben gleich. Paketbericht und Manifestprüfung
-halten das tatsächliche Android-Backend jeder Variante fest.
+erzeugt die zweite Variante mit einer vorübergehenden, ausdrücklich deklarierten
+Änderung nur der Android-Renderer-Zeile in project.godot. Der Builder stellt
+die Originalbytes im finally-Block wieder her und überschreibt keine zwischen-
+zeitlichen fremden Änderungen. Der Editor ignoriert override.cfg bei Exporten;
+ein früher Probeexport wurde deshalb verworfen. Manifest und project.binary
+werden in beiden fertigen Varianten separat geprüft. AAPT2 prüft auch die von
+Godot erzeugten Vulkan-Hardwareattribute; AAPT1 kann diese nicht korrekt auswerten.
 
 ## Diagnose und unveränderte Funktionen
 
-Die Leistungsanzeige ergänzt den tatsächlichen GPU-Namen. Eine optionale,
+Die Leistungsanzeige ergänzt den tatsächlichen GPU-Namen. Seltene CPU-Spitzen
+bleiben zusätzlich als Sitzungsmaximum sichtbar, auch wenn sie aus dem jüngsten
+180-Aufrufe-Fenster verschwinden. Eine optionale,
 zehn Sekunden begrenzte Messung erfasst Root-Viewport-Render-CPU und GPU mit
 Godots Render-Timern. Skriptzeiten sind darin nicht enthalten. Nicht verfügbare
 Timer werden als nicht verfügbar gezeigt, nicht als 0-ms-GPU behauptet.

@@ -23,7 +23,7 @@ PACKAGE = re.search(r'^package/unique_name="([^"]+)"', PRESET, re.M).group(1)
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path, default=ROOT / f'exports/Timber-Loot-Tycoon-v{VERSION_NAME}.apk')
 parser.add_argument('--verify-only', action='store_true')
-parser.add_argument('--renderer', choices=['mobile','gl_compatibility'], help='Export-only Android renderer override; does not edit project.godot')
+parser.add_argument('--renderer', choices=['mobile','gl_compatibility'], help='Android renderer for this export; project.godot is restored afterward')
 args = parser.parse_args()
 output = args.output.resolve()
 project_renderer = re.search(r'^renderer/rendering_method.mobile="([^"]+)"', (ROOT/'project.godot').read_text(), re.M).group(1)
@@ -61,15 +61,16 @@ if not args.verify_only:
     lines.extend(k+' = '+json.dumps(v) for k,v in values.items())
     settings.write_text('\n'.join(lines)+'\n')
     output.parent.mkdir(parents=True, exist_ok=True)
-    override = ROOT/'override.cfg'
-    if override.exists():
-        raise SystemExit('Existing override.cfg must be preserved; refusing to overwrite local project settings.')
-    override_created = False
-    override_text = '[rendering]\nrenderer/rendering_method.mobile='+json.dumps(args.renderer)+'\n'
+    project_file = ROOT/'project.godot'
+    original_project = project_file.read_bytes()
+    export_project = original_project
+    if args.renderer:
+        export_project = re.sub(rb'^renderer/rendering_method.mobile="[^"\n]+"',
+            ('renderer/rendering_method.mobile='+json.dumps(args.renderer)).encode(),original_project,flags=re.M)
+        if export_project==original_project and expected_renderer!=project_renderer:
+            raise RuntimeError('Android renderer setting was not found for the explicit export override.')
     try:
-        if args.renderer:
-            with override.open('x') as override_file: override_file.write(override_text)
-            override_created = True
+        if export_project!=original_project: project_file.write_bytes(export_project)
         for label, commands in [('import',['--headless','--editor','--import','--quit']),
                                 ('export',['--headless','--export-debug','Android Test',output])]:
             log = run(['bash',ROOT/'scripts/godot.sh',*commands], cwd=ROOT, env=env)
@@ -77,10 +78,10 @@ if not args.verify_only:
             if re.search(r'^(SCRIPT ERROR|ERROR):',log,re.M): raise RuntimeError(log[-5000:])
             print(label,'completed',flush=True)
     finally:
-        if override_created and override.exists():
-            if override.read_text()!=override_text:
-                raise RuntimeError('Export override was changed externally; preserving it for review.')
-            override.unlink()
+        if export_project!=original_project:
+            if project_file.read_bytes()!=export_project:
+                raise RuntimeError('project.godot changed externally during export; preserving it for review.')
+            project_file.write_bytes(original_project)
 
 signature = run([TOOLS/'apksigner','verify','--verbose','--print-certs',output])
 assert 'Verified using v2 scheme (APK Signature Scheme v2): true' in signature
@@ -88,7 +89,8 @@ actual_signer = re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',s
 if actual_signer != EXPECTED_SIGNER:
     raise RuntimeError('Signing certificate differs from the installed 0.23 line; refusing an incompatible update.')
 run([TOOLS/'zipalign','-c','-P','16','4',output])
-manifest = run([TOOLS/'aapt','dump','badging',output])
+# aapt2 understands Godot 4.6's generated Vulkan feature attributes.
+manifest = run([TOOLS/'aapt2','dump','badging',output])
 permissions = run([TOOLS/'aapt','dump','permissions',output])
 xml = run([TOOLS/'aapt','dump','xmltree',output,'AndroidManifest.xml'])
 for required in [f"package: name='{PACKAGE}'", f"versionName='{VERSION_NAME}'", f"versionCode='{VERSION_CODE}'", "sdkVersion:'24'", "native-code: 'arm64-v8a' 'armeabi-v7a'", 'application-isGame']:

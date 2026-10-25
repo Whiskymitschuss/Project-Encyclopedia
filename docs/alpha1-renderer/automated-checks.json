@@ -1,7 +1,7 @@
 {
-  "headless_checks": 21587,
+  "headless_checks": 21588,
   "headless_results": {
-    "RENDERER 2825": 8,
+    "RENDERER 2825": 9,
     "DAYLIGHT 2824": 10,
     "PERFORMANCE 2823": 17,
     "PERFORMANCE 2822": 20,
