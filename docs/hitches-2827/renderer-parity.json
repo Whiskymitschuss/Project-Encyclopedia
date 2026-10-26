@@ -1,0 +1,13 @@
+{
+  "version": "0.28.27-alpha.1",
+  "compared_asset_files": 1006,
+  "different_assets": [
+    "assets/assets.sparsepck",
+    "assets/project.binary"
+  ],
+  "sparse_index_changed_records": [
+    "project.binary"
+  ],
+  "all_other_gameplay_assets_identical": true,
+  "save_worker_assets_present": true
+}

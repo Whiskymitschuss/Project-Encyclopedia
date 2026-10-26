@@ -1,3 +1,11 @@
+## Tatsächliche APK-Dateien · 0.28.27-alpha.1
+
+Beide ARM64-Pakete: je 10.737 Headless-Prüfungen in zwölf Modulen und 140
+Grafikprüfungen in sieben Modulen. Tatsächliche unveränderte Ressourcen aus der
+signierten APK, externe Tests und isolierte Profile. Quellen `873cb875edb1b3c408e61bca974bde36239e847e`,
+Code 3022, Paket und bisherige Signatur verifiziert. Kein Handy-/Windows-Lauf.
+[Paketprüfbericht](hitches-2827/packaged-checks.json).
+
 ## Speicheraufträge und lange Hänger · 0.28.27-alpha.1
 
 Vollständige Headless-Spieltests und ausgewählte Hauptwelt-/Menü-/Starttests unter

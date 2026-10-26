@@ -1,0 +1,70 @@
+{
+  "vulkan": {
+    "apk": "Timber-Loot-Tycoon-v0.28.27-alpha.1-vulkan-arm64.apk",
+    "apk_sha256": "ba785b8869a17695e7ab795614f199b10dd23759d34a4ae27e95bd7ed1a01795",
+    "apk_source_commit": "873cb875edb1b3c408e61bca974bde36239e847e",
+    "android_renderer": "mobile",
+    "headless_checks": 10737,
+    "headless_results": {
+      "Hitches2827": 22,
+      "Rollback028": 51,
+      "Construction": 56,
+      "Performance2826": 65,
+      "Renderer2825": 9,
+      "Daylight2824": 10,
+      "Rules": 234,
+      "Scene": 4080,
+      "Delivery": 6057,
+      "ActiveForest2819": 132,
+      "Performance2823": 17,
+      "StartupSmoke2826": 4
+    },
+    "visual_checks": 140,
+    "visual_results": {
+      "VisualHitches2827": 15,
+      "VisualPerformance2826": 15,
+      "VisualRenderer2825": 8,
+      "VisualDaylight2824": 6,
+      "VisualPerformance2823": 15,
+      "VisualFactory284": 48,
+      "VisualLoading2814": 33
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false
+  },
+  "opengl": {
+    "apk": "Timber-Loot-Tycoon-v0.28.27-alpha.1-opengl-arm64.apk",
+    "apk_sha256": "337644f14857ff78db909f80e0608155411773103d817a9282a9d3d6ee107950",
+    "apk_source_commit": "873cb875edb1b3c408e61bca974bde36239e847e",
+    "android_renderer": "gl_compatibility",
+    "headless_checks": 10737,
+    "headless_results": {
+      "Hitches2827": 22,
+      "Rollback028": 51,
+      "Construction": 56,
+      "Performance2826": 65,
+      "Renderer2825": 9,
+      "Daylight2824": 10,
+      "Rules": 234,
+      "Scene": 4080,
+      "Delivery": 6057,
+      "ActiveForest2819": 132,
+      "Performance2823": 17,
+      "StartupSmoke2826": 4
+    },
+    "visual_checks": 140,
+    "visual_results": {
+      "VisualHitches2827": 15,
+      "VisualPerformance2826": 15,
+      "VisualRenderer2825": 8,
+      "VisualDaylight2824": 6,
+      "VisualPerformance2823": 15,
+      "VisualFactory284": 48,
+      "VisualLoading2814": 33
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false
+  }
+}

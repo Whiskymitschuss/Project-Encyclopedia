@@ -1,4 +1,29 @@
-# Aktuell: Performance Update 1.0 · 0.28.26-alpha.1
+# Aktuell: Lange Einzelhänger · 0.28.27-alpha.1
+
+**[Android-Update mit Vulkan (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.27-alpha.1/releases/Timber-Loot-Tycoon-v0.28.27-alpha.1-vulkan-arm64.apk)** ·
+**[OpenGL-Variante (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.27-alpha.1/releases/Timber-Loot-Tycoon-v0.28.27-alpha.1-opengl-arm64.apk)** ·
+[Projektquellen mit allen Modellen](Timber-Loot-Tycoon-v0.28.27-source.zip) ·
+[Änderungen und Grenzen](../docs/HITCHES-2827.md)
+
+Routine-Speicherungen werden auf einem Dateiarbeiter ausgeführt. Geprüfte
+Momentaufnahmen, begrenzte Warteschlange und bisherige Sicherungsdateien.
+Die Hauptwelt bleibt bei kontrolliert verzögerter Dateioperation beweglich.
+Das Leistungsmenü zeigt lange Hänger mit ihrem längsten gemessenen Abschnitt.
+Die gemeldeten fünf bis zehn Sekunden auf dem Handy sind noch nicht als behoben
+nachgewiesen. Kein physischer Android-/Windows-Gerätetest, keine FPS-Garantie.
+
+Beide Pakete: rund 92 MiB, Code **3022**, Android 7.0+, bisheriges Paket und
+Debug-Testzertifikat, ARM64 für das SM-S721B. **Als Update installieren;
+nicht deinstallieren und keine App-Daten löschen.** Bei Vulkan-Problemen die
+OpenGL-Variante verwenden. Gleiches Spiel und gleiche Speicherstände.
+
+Quelltests: 21.679 Headless, 177 OpenGL und 63 Vulkan. Tatsächliche APK-Ressourcen:
+je 10.737 Headless und 140 Grafikprüfungen. Testausführung auf Linux, nicht auf
+Android-Hardware. Quellstand `873cb875edb1b3c408e61bca974bde36239e847e`; 1522 Archivdateien einzeln gegen
+Git geprüft. Alle Spiel-/Testquellen und 3D-Modelle enthalten. Historische
+Dokumentationsbilder (148) bleiben in Git und der vollständigen Sicherung.
+
+## Vorher: Performance Update 1.0 · 0.28.26-alpha.1
 
 **[Android-Update mit Vulkan (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-alpha.1-vulkan-arm64.apk)** ·
 **[OpenGL-Variante (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-alpha.1-opengl-arm64.apk)** ·
