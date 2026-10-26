@@ -1,0 +1,24 @@
+{
+  "checked_at_utc": "2026-10-26T00:02:06Z",
+  "full_response_bytes_verified": true,
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-alpha.1-vulkan-arm64.apk",
+      "status": 200,
+      "bytes": 96228125,
+      "sha256": "8a9736f9e4f9f6d1f1f0866ed97c3fe8957a8c8308c6c6aa26509057a5215f69"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-alpha.1-opengl-arm64.apk",
+      "status": 200,
+      "bytes": 96228125,
+      "sha256": "593339722d057789710c40fb09b8d56dfeb5aede4b04e9ee937cbae4e43b230b"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-source.zip",
+      "status": 200,
+      "bytes": 62556209,
+      "sha256": "73b17c375afa80fd829a2ef3649299dbcd6337619c5a08c480487060d8c8ffac"
+    }
+  ]
+}
