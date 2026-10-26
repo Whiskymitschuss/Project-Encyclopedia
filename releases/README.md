@@ -1,4 +1,26 @@
-# Aktuell: Hintergrundmusik · 0.28.28-alpha.1
+# Aktuell: Hintergrundmusik · 0.28.28-alpha.2
+
+**[Android-Update mit Vulkan (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.28-alpha.2/releases/Timber-Loot-Tycoon-v0.28.28-alpha.2-vulkan-arm64.apk)** ·
+**[OpenGL-Variante (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.28-alpha.2/releases/Timber-Loot-Tycoon-v0.28.28-alpha.2-opengl-arm64.apk)** ·
+[Projektquellen mit allen Modellen](Timber-Loot-Tycoon-v0.28.28-alpha.2-source.zip) ·
+[Details und Prüfungen](../docs/MUSIC-2828.md)
+
+„Whimsical Forest Adventure“ als wiederholte Hintergrundmusik über Start und
+Spiel hinweg. Eigener Schalter und Lautstärkeregler, Pause beim App-Wechsel.
+Ein Player, asynchrones Laden, gespeicherte Einstellungen. Die unveränderte
+Nutzerdatei ist enthalten; keine neue Berechtigung. Speicherentlastung und
+Hängerdiagnose aus 0.28.27 bleiben erhalten. Kein neuer Handy-FPS-Nachweis.
+
+Beide: Android-Code **3024**, ARM64, Android 7.0+, bisheriges Paket/Testzertifikat.
+**Als Update installieren; nicht deinstallieren und keine App-Daten löschen.**
+Quelltests: 322 Headless, 87 OpenGL, 36 Vulkan. Tatsächliche APK-Ressourcen:
+je 6.379 Headless- und 87 Grafikprüfungen auf Linux mit Dummy-Audio.
+Kein physischer Android-/Windows-Gerätetest und keine subjektive Klangprüfung.
+Quellen `e58cc7e64d3ab1db8084eb55c183e65e0a65818d`; 1540 Archivdateien einzeln gegen Git geprüft.
+Alle Spiel-/Testquellen und Modelle enthalten. Historische Dokumentationsbilder
+bleiben in Git und der vollständigen Sicherung.
+
+## Vorher: Hintergrundmusik · 0.28.28-alpha.1
 
 **[Android-Update mit Vulkan (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.28-alpha.1/releases/Timber-Loot-Tycoon-v0.28.28-alpha.1-vulkan-arm64.apk)** ·
 **[OpenGL-Variante (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.28-alpha.1/releases/Timber-Loot-Tycoon-v0.28.28-alpha.1-opengl-arm64.apk)** ·

@@ -1,0 +1,10 @@
+{
+  "version": "0.28.28-alpha.2",
+  "compared_assets": 1011,
+  "all_music_and_gameplay_assets_identical": true,
+  "different_assets": [
+    "assets/assets.sparsepck",
+    "assets/project.binary"
+  ],
+  "mp3_resource": "assets/.godot/imported/whimsical-forest-adventure.mp3-ae0a20b2306c47044176f421ddaf9035.mp3str"
+}
