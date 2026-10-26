@@ -1181,9 +1181,25 @@ func settings_menu() -> void:
  button(box,"JETZT SPEICHERN",func():
   if Game.queue_save(true):show_notice("Speichern läuft im Hintergrund."))
  button(box,"ALPHA 1 · TESTBERICHT & HILFE",func(): open_menu("alpha"))
- button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
+ button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted; Music.apply_settings()))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
+ var music=card("Hintergrundmusik","Whimsical Forest Adventure")
+ button(music,"Musik: AN" if Game.state.music_enabled else "Musik: AUS",func(): action(func(): Game.state.music_enabled=not Game.state.music_enabled; Music.apply_settings()))
+ var music_level=text(music,"Musiklautstärke: %s %%" % roundi(float(Game.state.music_volume)*100),14,MUTED)
+ var music_slider=HSlider.new()
+ music_slider.name="MusicVolume"
+ music_slider.min_value=0;music_slider.max_value=100;music_slider.step=5
+ music_slider.value=float(Game.state.music_volume)*100
+ music_slider.custom_minimum_size=Vector2(0,44)
+ music.add_child(music_slider)
+ music_slider.value_changed.connect(func(value):
+  Game.state.music_volume=value/100.0
+  music_level.text="Musiklautstärke: %s %%" % roundi(value)
+  Music.apply_settings())
+ # Persist after a gesture/focus change, not on every slider motion.
+ music_slider.drag_ended.connect(func(_changed):Game.queue_save())
+ music_slider.focus_exited.connect(func():Game.queue_save())
  var graphics=card("Grafikprofil","Das gewählte Profil setzt die Obergrenze. Automatische Entlastung reagiert auf gemessene Bildzeiten; Menüs bleiben scharf.")
  dynamic_text(graphics,func():return RuntimeStats.graphics_recommendation())
  for profile_id in 4:

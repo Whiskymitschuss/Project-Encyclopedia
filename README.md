@@ -2,7 +2,15 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.27-alpha.1 · Lange Einzelhänger
+## Aktuell: 0.28.28-alpha.1 · Hintergrundmusik
+
+„Whimsical Forest Adventure“ als wiederholte Hintergrundmusik über Start und
+Spiel hinweg. Eigener Musik-Schalter und Lautstärkeregler, gespeicherte Vorgaben
+und Pause beim App-Wechsel. Ein Player, asynchrones Laden, keine neue
+Frame-Schleife. Speicherentlastung und Hängerdiagnose bleiben erhalten.
+[Details und Prüfgrenzen](docs/MUSIC-2828.md). Android-Code **3023**.
+
+## Vorher: 0.28.27-alpha.1 · Lange Einzelhänger
 
 Routine-Speicherungen laufen im Hintergrund mit begrenzter Warteschlange,
 geprüftem Dateiaustausch und unverändertem Spielstand. Das Leistungsmenü zeigt

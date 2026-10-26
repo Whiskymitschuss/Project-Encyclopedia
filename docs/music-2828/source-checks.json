@@ -1,0 +1,33 @@
+{
+  "version": "0.28.28-alpha.1",
+  "execution": "Linux Godot 4.6.3 with software OpenGL/Vulkan and Dummy audio; isolated profiles",
+  "android_device_tested": false,
+  "subjective_audio_audition_performed": false,
+  "phone_long_stalls_fixed": false,
+  "headless_modules": {
+    "MUSIC 2828": 11,
+    "RULES": 234,
+    "ROLLBACK 028": 51,
+    "HITCHES 2827": 22,
+    "STARTUP SMOKE 2826": 4
+  },
+  "headless_checks": 322,
+  "headless_log_sha256": "15e11c8e3fba80fbb6cc1bf23c55a009fa191f4d06422ee2c1329ec612965dde",
+  "headless_exit_objectdb_warning": false,
+  "opengl_modules": {
+    "VISUAL MUSIC 2828": 19,
+    "VISUAL HITCHES 2827": 15,
+    "STARTUP OPENGL": 28
+  },
+  "opengl_checks": 62,
+  "opengl_log_sha256": "6b8d7ab2ead245329200c6d142fe9ac57c697ec60a55c15577923f1ee80fd30a",
+  "opengl_exit_objectdb_warning": false,
+  "vulkan_modules": {
+    "VISUAL MUSIC 2828": 19,
+    "VISUAL HITCHES 2827": 15
+  },
+  "vulkan_checks": 34,
+  "vulkan_log_sha256": "87afdd8891399899e0cad8f9031b1bd08f34beb7c73738cb837df02f9679a4e6",
+  "vulkan_exit_objectdb_warning": true,
+  "exit_warning_scope": "Some immediate quits with active Dummy-audio MP3 playback retain an AudioStreamMP3/AudioStreamPlaybackMP3 pair until audio-server shutdown. Explicit stop plus an audio tick in the dedicated music test is clean; native device behavior untested."
+}

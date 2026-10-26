@@ -13,8 +13,10 @@ func valid_shape(data: Variant) -> bool:
   if data.has(key) and not data[key] is Dictionary: return false
  for key in ["buildings","homes","jobs","construction_shipments"]:
   if data.has(key) and not data[key] is Array: return false
- for key in ["coins","diamonds","tickets","tokens","cash","bag","workers","trucks","vehicle","tool","biome","unlocked","tutorial","elapsed","last_seen"]:
+ for key in ["coins","diamonds","tickets","tokens","cash","bag","workers","trucks","vehicle","tool","biome","unlocked","tutorial","elapsed","last_seen","music_volume"]:
   if data.has(key) and (not data[key] is float and not data[key] is int or not is_finite(float(data[key])) or float(data[key])<0): return false
+ if data.has("music_enabled") and not data.music_enabled is bool:return false
+ if float(data.get("music_volume",0.35))>1.0:return false
  for key in data.get("resources",{}):
   var amount=data.resources[key]
   if not amount is float and not amount is int or not is_finite(float(amount)) or float(amount)<0: return false

@@ -67,7 +67,7 @@ func initial_state() -> Dictionary:
   "prestige":0, "prestige_points":0, "trees":0, "gathered":0.0,
   "exported":0.0, "earned":0.0, "missions_claimed":{}, "contracts":0,
   "boss_hp":100.0, "bosses":0, "time":12.0, "elapsed":0.0, "weather":0,
-  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false, "companion_enabled":true, "ambient_enabled":true,
+  "quality":1, "reserve":true, "auto_export":true, "auto_sawdust":false, "tutorial":0, "muted":false, "music_enabled":true, "music_volume":0.35, "companion_enabled":true, "ambient_enabled":true,
   "last_seen":Time.get_unix_time_from_system()}
 
 func _ready() -> void:
@@ -1321,7 +1321,7 @@ func prestige() -> bool:
  town_route_cache.clear()
  delivery_route_cache.clear()
  delivery_route_signature = 0
- for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled","muted","quality","journey"]: state[key] = old[key]
+ for key in ["diamonds","tokens","cash","inventory","skin","skin_tool","permanent_loot","companion_enabled","ambient_enabled","muted","music_enabled","music_volume","quality","journey"]: state[key] = old[key]
  state.journey.active={}
  for preference in ["vibration","large_text","high_contrast","motion"]: state.ux[preference]=old.ux[preference]
  stone_route_cache.clear()
