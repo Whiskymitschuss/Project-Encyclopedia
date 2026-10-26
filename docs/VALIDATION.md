@@ -1,3 +1,13 @@
+## Tatsächliche APK-Dateien · 0.28.28-alpha.1
+
+Beide ARM64-Pakete mit je 6.379 Headless-Prüfungen in sechs Modulen und 62
+Grafikprüfungen in drei Modulen. Enthaltener MP3-Decoder, echter Endübergang,
+Audio-Steuerung, UI-Regler und Speicherpfad geprüft. Tatsächliche APK-Ressourcen,
+externe Tests, isolierte Profile, Linux-Softwaregrafik und Dummy-Audio.
+Quellen `b54d1f5abfb74051e01346baf3f07f0a50e21dbf`, Code 3023 und bisherige Signatur verifiziert.
+Kein physischer Handy-/Windows-Gerätelauf oder subjektiver Hörtest.
+[Paketprüfbericht](music-2828/packaged-checks.json).
+
 ## Tatsächliche APK-Dateien · 0.28.27-alpha.1
 
 Beide ARM64-Pakete: je 10.737 Headless-Prüfungen in zwölf Modulen und 140

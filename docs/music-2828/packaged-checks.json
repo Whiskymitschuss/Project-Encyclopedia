@@ -1,0 +1,52 @@
+{
+  "vulkan": {
+    "apk": "Timber-Loot-Tycoon-v0.28.28-alpha.1-vulkan-arm64.apk",
+    "apk_sha256": "d1f250b36bedf635d1032f877fe0436463edebce6e935b6248431c7a52b04880",
+    "apk_source_commit": "b54d1f5abfb74051e01346baf3f07f0a50e21dbf",
+    "android_renderer": "mobile",
+    "headless_checks": 6379,
+    "headless_results": {
+      "Music2828": 11,
+      "Hitches2827": 22,
+      "Rules": 234,
+      "Rollback028": 51,
+      "Delivery": 6057,
+      "StartupSmoke2826": 4
+    },
+    "visual_checks": 62,
+    "visual_results": {
+      "VisualMusic2828": 19,
+      "VisualHitches2827": 15,
+      "VisualStartup": 28
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false,
+    "exit_objectdb_warning_modules": []
+  },
+  "opengl": {
+    "apk": "Timber-Loot-Tycoon-v0.28.28-alpha.1-opengl-arm64.apk",
+    "apk_sha256": "c4e3c57b22ea5dfea7e99f6c416182dfd8bd7b3d48ccbc7a85d11d5482999d07",
+    "apk_source_commit": "b54d1f5abfb74051e01346baf3f07f0a50e21dbf",
+    "android_renderer": "gl_compatibility",
+    "headless_checks": 6379,
+    "headless_results": {
+      "Music2828": 11,
+      "Hitches2827": 22,
+      "Rules": 234,
+      "Rollback028": 51,
+      "Delivery": 6057,
+      "StartupSmoke2826": 4
+    },
+    "visual_checks": 62,
+    "visual_results": {
+      "VisualMusic2828": 19,
+      "VisualHitches2827": 15,
+      "VisualStartup": 28
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false,
+    "exit_objectdb_warning_modules": []
+  }
+}
