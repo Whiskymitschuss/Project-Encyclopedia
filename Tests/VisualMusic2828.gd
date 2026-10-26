@@ -54,10 +54,30 @@ func run():
  check(slider is HSlider and slider.custom_minimum_size.y>=44,"Music volume has a touch-sized slider")
  if slider!=null:slider.value=70;slider.drag_ended.emit(true)
  check(is_equal_approx(game.state.music_volume,0.7) and absf(player.volume_db-(-6+linear_to_db(0.7)))<0.01,"The actual volume slider changes music gain")
+ # Exercise actual touch routing through the menu scroll container.
+ if slider!=null:
+  slider.value=20
+  for i in 5:await process_frame
+  scene.hud.scroll.ensure_control_visible(slider)
+  for i in 5:await process_frame
+  var transform=root.get_screen_transform()
+  var first=transform*(slider.global_position+Vector2(slider.size.x*0.2,slider.size.y*0.5))
+  var last=transform*(slider.global_position+Vector2(slider.size.x*0.85,slider.size.y*0.5))
+  print("TOUCH MUSIC: rect=",slider.get_global_rect()," scroll=",scene.hud.scroll.get_global_rect()," passthrough=",slider.get_meta("gesture_passthrough",false)," emulate=",ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch"))
+  var down=InputEventScreenTouch.new();down.index=0;down.position=first;down.pressed=true
+  Input.parse_input_event(down);await process_frame
+  var drag=InputEventScreenDrag.new();drag.index=0;drag.position=last;drag.relative=last-first
+  Input.parse_input_event(drag)
+  for i in 2:await process_frame
+  var up=InputEventScreenTouch.new();up.index=0;up.position=last;up.pressed=false
+  Input.parse_input_event(up)
+  for i in 3:await process_frame
+ check(slider!=null and not slider.get_meta("gesture_active",false) and scene.hud.scroll.pointer==-99,"Releasing the slider returns gesture ownership without leaving the menu stuck")
+ check(slider!=null and slider.value>=60,"A real touch drag reaches the slider instead of being consumed by menu scrolling")
  limit=Time.get_ticks_msec()+10000
  while store.is_saving() and Time.get_ticks_msec()<limit:await process_frame
  var saved=store.load_game()
- check(saved.music_enabled and is_equal_approx(saved.music_volume,0.7),"The completed gesture persists through the background save worker")
+ check(saved.music_enabled and is_equal_approx(saved.music_volume,game.state.music_volume),"The completed gesture persists through the background save worker")
  check(game.state.resources==resources,"Music, focus changes and settings leave factory/warehouse inventories untouched")
  scene.queue_free()
  for i in 3:await process_frame

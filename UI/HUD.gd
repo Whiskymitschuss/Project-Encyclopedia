@@ -1189,6 +1189,7 @@ func settings_menu() -> void:
  var music_level=text(music,"Musiklautstärke: %s %%" % roundi(float(Game.state.music_volume)*100),14,MUTED)
  var music_slider=HSlider.new()
  music_slider.name="MusicVolume"
+ music_slider.set_meta("gesture_passthrough",true)
  music_slider.min_value=0;music_slider.max_value=100;music_slider.step=5
  music_slider.value=float(Game.state.music_volume)*100
  music_slider.custom_minimum_size=Vector2(0,44)
@@ -1198,7 +1199,8 @@ func settings_menu() -> void:
   music_level.text="Musiklautstärke: %s %%" % roundi(value)
   Music.apply_settings())
  # Persist after a gesture/focus change, not on every slider motion.
- music_slider.drag_ended.connect(func(_changed):Game.queue_save())
+ music_slider.drag_started.connect(func():music_slider.set_meta("gesture_active",true))
+ music_slider.drag_ended.connect(func(_changed):music_slider.set_meta("gesture_active",false);Game.queue_save())
  music_slider.focus_exited.connect(func():Game.queue_save())
  var graphics=card("Grafikprofil","Das gewählte Profil setzt die Obergrenze. Automatische Entlastung reagiert auf gemessene Bildzeiten; Menüs bleiben scharf.")
  dynamic_text(graphics,func():return RuntimeStats.graphics_recommendation())

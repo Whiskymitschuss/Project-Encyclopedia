@@ -1,0 +1,35 @@
+{
+  "version": "0.28.28-alpha.2",
+  "execution": "Linux Godot 4.6.3, software OpenGL/Vulkan, Dummy audio, isolated profiles",
+  "android_device_tested": false,
+  "subjective_audio_audition_performed": false,
+  "phone_long_stalls_fixed": false,
+  "headless_checks": 322,
+  "headless_modules": {
+    "MUSIC 2828": 11,
+    "HITCHES 2827": 22,
+    "RULES": 234,
+    "ROLLBACK 028": 51,
+    "STARTUP SMOKE 2826": 4
+  },
+  "headless_log_sha256": "7fe0b2131b7eccf0af7a8ff96eebafa8454f58a0731a6b65e98361d16b601013",
+  "headless_exit_objectdb_warning": false,
+  "opengl_checks": 87,
+  "opengl_modules": {
+    "VISUAL MUSIC 2828": 21,
+    "VISUAL UI": 23,
+    "VISUAL HITCHES 2827": 15,
+    "STARTUP OPENGL": 28
+  },
+  "opengl_log_sha256": "7fe4690256a4a4c421f053fa7a3d013c4aad3f6296dc4350d776e6bbc86a7c75",
+  "opengl_exit_objectdb_warning": true,
+  "vulkan_checks": 36,
+  "vulkan_modules": {
+    "VISUAL MUSIC 2828": 21,
+    "VISUAL HITCHES 2827": 15
+  },
+  "vulkan_log_sha256": "1925214963b23180a3c0c2f8cb3827d42445c5d4eb859a7164aa2e056ad1d728",
+  "vulkan_exit_objectdb_warning": true,
+  "regression": "With the passthrough flag alone, a real primary-finger drag still failed (20 checks, one failure) because emulated mouse motion was consumed. Forwarding motion and retaining widget gesture ownership yields 21 music checks without failures on both renderers.",
+  "exit_warning_scope": "Existing immediate-quit Dummy-audio MP3 server cleanup warning; dedicated music stop/drain teardown is clean. Native hardware behavior untested."
+}

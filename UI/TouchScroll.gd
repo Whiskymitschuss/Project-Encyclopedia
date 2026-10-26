@@ -64,12 +64,12 @@ func end_gesture(point: Vector2, canceled: bool = false) -> void:
 func passes_to_child(node: Node,point: Vector2) -> bool:
  for child in node.get_children():
   if not child is Control or not child.is_visible_in_tree(): continue
-  if (child.get_meta("gesture_passthrough",false) or child is LineEdit or child is TextEdit) and child.get_global_rect().has_point(point): return true
+  if (child.get_meta("gesture_passthrough",false) or child is LineEdit or child is TextEdit) and (child.get_global_rect().has_point(point) or child.get_meta("gesture_active",false)): return true
   if passes_to_child(child,point): return true
  return false
 
 func _input(event: InputEvent) -> void:
- if pointer==-99 and (event is InputEventScreenTouch or event is InputEventMouseButton) and passes_to_child(self,event.position):
+ if pointer==-99 and (event is InputEventScreenTouch or event is InputEventScreenDrag or event is InputEventMouseButton or event is InputEventMouseMotion) and passes_to_child(self,event.position):
   velocity=0
   return
  if not is_visible_in_tree():

@@ -1,4 +1,4 @@
-# Hintergrundmusik · 0.28.28-alpha.1
+# Hintergrundmusik · 0.28.28-alpha.2
 
 „Whimsical Forest Adventure“ aus der bereitgestellten MP3 ist als Hintergrundmusik
 integriert. Die Datei wurde unverändert übernommen: 131,352 Sekunden, Stereo,
@@ -22,14 +22,14 @@ pausiert die Wiedergabe; Rückkehr setzt sie fort. Keine neuen Berechtigungen.
 
 Die Speicherentlastung und lokale Hängerdiagnose aus 0.28.27 bleiben enthalten.
 Das Musikupdate behauptet keinen neuen FPS-Gewinn und keine Behebung aller
-Handy-Hänger. Wetter bleibt aus. Android-Code 3023, bisheriges Paket/Testzertifikat.
+Handy-Hänger. Wetter bleibt aus. Android-Code 3024, bisheriges Paket/Testzertifikat.
 
 Geprüft werden der echte MP3-Endübergang, stumme/pausierte Wiedergabe,
 Szenenwechsel ohne doppelte Player, der echte Einstellungsregler, dauerhafte
 Einstellungen, alte Speicherstände und unveränderte Warenbestände. Grafiktests
 nutzen Linux-Softwaregrafik und Dummy-Audio; sie bestätigen die Decoder- und
 Steuerungsabläufe, keine subjektive Klangprüfung auf einem Handy. Prüfzahlen
-stehen in [source-checks.json](music-2828/source-checks.json).
+stehen in [source-checks.json](music-2828-alpha2/source-checks.json).
 
 Geänderte Laufzeitdateien: `Audio/Music.gd`, `Assets/Audio/`, `project.godot`,
 `Managers/Game.gd`, `SaveSystem/SaveFiles.gd`, `UI/HUD.gd`, `export_presets.cfg`.
@@ -39,3 +39,9 @@ Bei einzelnen sofortigen Testabbrüchen mit laufender Dummy-Audiowiedergabe meld
 Godot am Prozessende ein verbliebenes MP3-/Playback-Paar. Der gezielte Musiktest
 stoppt den Player und lässt den Audio-Server vor Testende abarbeiten; dieser
 Abschluss ist sauber. Das native Geräteverhalten ist noch nicht geprüft.
+
+Alpha 2 korrigiert zusätzlich die Touch-Weiterleitung: Der Lautstärkeregler ist
+als eigener Gestenbereich markiert; auch Bewegungsereignisse und die laufende
+Reglergeste bleiben bis zum Loslassen beim Regler. Damit fängt der Menü-
+Scrollcontainer das Ziehen nicht ab. Ein echter ScreenTouch-/ScreenDrag-Test scheitert vor der Korrektur
+und prüft danach sowohl den geänderten Pegel als auch dessen Speicherung.
