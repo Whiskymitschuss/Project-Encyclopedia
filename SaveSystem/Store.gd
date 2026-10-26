@@ -6,40 +6,22 @@ var last_error = ""
 var load_status="new"
 var recovery_required=false
 
-func valid_shape(data: Variant) -> bool:
- if not data is Dictionary or not data.get("schema") is float and not data.get("schema") is int: return false
- if int(data.schema)!=1: return false
- for key in ["resources","ux","onboarding","journey","town","trade","stone","city_services","research","boosters","delivery","inventory","projects","plan","missions_claimed","forest","sawmills"]:
-  if data.has(key) and not data[key] is Dictionary: return false
- for key in ["buildings","homes","jobs","construction_shipments"]:
-  if data.has(key) and not data[key] is Array: return false
- for key in ["coins","diamonds","tickets","tokens","cash","bag","workers","trucks","vehicle","tool","biome","unlocked","tutorial","elapsed","last_seen"]:
-  if data.has(key) and (not data[key] is float and not data[key] is int or not is_finite(float(data[key])) or float(data[key])<0): return false
- for key in data.get("resources",{}):
-  var amount=data.resources[key]
-  if not amount is float and not amount is int or not is_finite(float(amount)) or float(amount)<0: return false
- for group in ["buildings","homes"]:
-  var definitions=Catalog.BUILDINGS if group=="buildings" else Catalog.HOMES
-  for record in data.get(group,[]):
-   if not record is Dictionary or not record.get("kind") is String: return false
-   if not definitions.has(record.kind): return false
-   if not record.get("level",1) is float and not record.get("level",1) is int: return false
-   if not is_finite(float(record.get("level",1))) or float(record.get("level",1))<1: return false
-   if record.has("position"):
-    if not record.position is Array or record.position.size()!=2: return false
-    for coordinate in record.position:
-     if not coordinate is float and not coordinate is int or not is_finite(float(coordinate)): return false
- for pair in [["town","roads"],["town","stops"],["town","lines"],["trade","shipments"],["stone","shipments"],["delivery","shipments"],["city_services","missions"],["city_services","walkers"],["city_services","fires"]]:
-  if data.get(pair[0],{}).has(pair[1]) and not data[pair[0]][pair[1]] is Array: return false
- return true
+signal save_completed(result: Dictionary)
+const FILES=preload("res://SaveSystem/SaveFiles.gd")
+const TASK=preload("res://SaveSystem/SaveTask.gd")
+var writer_script: Script=FILES
+var active: RefCounted
+var pending={}
+var request_id=0
+var pending_id=0
+var last_completed={}
+var closing=false
 
-func read_file(path: String) -> Dictionary:
- if not FileAccess.file_exists(path): return {}
- var file = FileAccess.open(path, FileAccess.READ)
- if file == null or file.get_length()>16*1024*1024: return {}
- var parser = JSON.new()
- if parser.parse(file.get_as_text()) != OK: return {}
- return parser.data if valid_shape(parser.data) else {}
+func _ready() -> void:
+ process_mode=Node.PROCESS_MODE_ALWAYS
+
+func valid_shape(data: Variant) -> bool:return FILES.new().valid_shape(data)
+func read_file(path: String) -> Dictionary:return FILES.new().read_file(path)
 
 func load_game() -> Dictionary:
  recovery_required=false
@@ -72,42 +54,66 @@ func archive_unreadable() -> bool:
  return true
 
 func save_game(data: Dictionary) -> bool:
- last_error = ""
- if recovery_required:
-  last_error="Beschädigter Spielstand · bitte zuerst die Wiederherstellung öffnen."
+ # Explicit durable writes cannot race an older queued write or be overwritten
+ # later by a stale pending snapshot. Existing callers keep synchronous semantics.
+ if active!=null:finish_active()
+ pending.clear()
+ var writer=writer_script.new()
+ writer.recovery_required=recovery_required
+ var ok=writer.save_game(data)
+ last_error=writer.last_error
+ return ok
+
+func queue_game(data: Dictionary,seen: float=-1.0) -> bool:
+ if closing or recovery_required or not valid_shape(data):
+  last_error="Speicherauftrag abgelehnt · Spielstand prüfen."
   return false
- if not valid_shape(data):
-  last_error="Spielstand enthält ungültige Werte und wurde nicht übernommen."
+ # At most one active immutable snapshot and the newest pending snapshot.
+ pending=data.duplicate(true)
+ if seen>=0:pending.last_seen=seen
+ request_id+=1;pending_id=request_id
+ if active==null:return start_pending()
+ return true
+
+func start_pending() -> bool:
+ if pending.is_empty():return true
+ var task=TASK.new()
+ var snapshot=pending;var id=pending_id
+ pending={}
+ var error=task.start(writer_script,snapshot,id)
+ if error!=OK:
+  last_error="Speicherthread konnte nicht gestartet werden."
+  last_completed={"ok":false,"error":last_error,"id":id,"duration_ms":0.0}
+  save_completed.emit(last_completed)
   return false
- # Keep the original 0.29 bytes beyond the normal rotating .bak. Never
- # overwrite that copy on later autosaves or replace the source if copying fails.
- var source=PATH if not read_file(PATH).is_empty() else PATH+".bak"
- var previous=read_file(source)
- if (previous.has("traffic") or previous.has("foreman")) and not FileAccess.file_exists(ROLLBACK_COPY):
-  var archive_tmp=ROLLBACK_COPY+".tmp"
-  if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://recovery"))!=OK or DirAccess.copy_absolute(ProjectSettings.globalize_path(source),ProjectSettings.globalize_path(archive_tmp))!=OK:
-   last_error="Sicherung vor der Rückkehr auf 0.28 fehlgeschlagen · bisherige Datei bleibt erhalten."
-   return false
-  if FileAccess.get_sha256(source)!=FileAccess.get_sha256(archive_tmp) or DirAccess.rename_absolute(ProjectSettings.globalize_path(archive_tmp),ProjectSettings.globalize_path(ROLLBACK_COPY))!=OK:
-   last_error="Rollback-Sicherung konnte nicht geprüft werden · bisherige Datei bleibt erhalten."
-   return false
- var tmp = PATH + ".tmp"
- var file = FileAccess.open(tmp, FileAccess.WRITE)
- if file == null:
-  last_error = "Spielstand konnte nicht geschrieben werden."
-  return false
- file.store_string(JSON.stringify(data,"",true,true))
- file.flush()
- file.close()
- if read_file(tmp).is_empty():
-  last_error = "Spielstandprüfung fehlgeschlagen."
-  return false
- var current = ProjectSettings.globalize_path(PATH)
- if not read_file(PATH).is_empty():
-  var copy_error = DirAccess.copy_absolute(current,current + ".bak")
-  if copy_error != OK:
-   last_error = "Spielstand-Backup fehlgeschlagen."
-   return false
- var error = DirAccess.rename_absolute(ProjectSettings.globalize_path(tmp), current)
- if error != OK: last_error = "Spielstand konnte nicht übernommen werden."
- return error == OK
+ active=task
+ return true
+
+func finish_active() -> void:
+ if active==null:return
+ last_completed=active.take()
+ active=null
+ last_error=str(last_completed.error)
+ save_completed.emit(last_completed)
+
+func _process(_delta: float) -> void:
+ if active!=null and active.finished():finish_active()
+ if active==null and not pending.is_empty():start_pending()
+
+func is_saving() -> bool:return active!=null or not pending.is_empty()
+func flush_queued() -> bool:
+ var ok=true
+ while is_saving():
+  if active!=null:
+   finish_active();ok=bool(last_completed.ok) and ok
+  if not pending.is_empty():ok=start_pending() and ok
+ return ok
+
+func status_text() -> String:
+ if is_saving():return "Speichern läuft im Hintergrund · Spiel und Kamera laufen weiter."
+ if last_completed.is_empty():return "Noch keine Hintergrundspeicherung in dieser Sitzung."
+ return "Letzter Speicherauftrag: %.1f ms im Hintergrund · %s" % [float(last_completed.duration_ms),"erfolgreich" if last_completed.ok else str(last_completed.error)]
+
+func _exit_tree() -> void:
+ closing=true
+ flush_queued()

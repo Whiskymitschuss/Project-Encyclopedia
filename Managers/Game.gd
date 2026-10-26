@@ -30,6 +30,7 @@ var paused_at = 0.0
 var pause_capture: Dictionary = {}
 var skip_resume_delta = false
 var last_save_ok = true
+var notify_save_id=0
 var town_route_cache: Dictionary = {}
 var city_route_cache: Dictionary = {}
 var stone_route_cache: Dictionary = {}
@@ -71,6 +72,7 @@ func initial_state() -> Dictionary:
 
 func _ready() -> void:
  rng.randomize()
+ Store.save_completed.connect(on_queued_save_completed)
  changed.connect(func(): Journey.refresh(state))
  state = initial_state()
  apply_device_profile()
@@ -191,6 +193,29 @@ func save(silent: bool = false) -> bool:
  if not silent: notice.emit("Spielstand gespeichert" if last_save_ok else Store.last_error)
  return last_save_ok
 
+func queue_save(notify: bool=false) -> bool:
+ if simulation_only:return true
+ if catching_up:return false
+ # Deterministic headless simulations retain the established durable contract;
+ # dedicated worker tests and graphical tests exercise the asynchronous path.
+ if DisplayServer.get_name()=="headless":return save(true)
+ var began=RuntimeStats.begin_work()
+ var ok=Store.queue_game(state,Time.get_unix_time_from_system())
+ RuntimeStats.end_work("Speicherauftrag",began)
+ if ok and notify:notify_save_id=Store.request_id
+ if not ok:
+  last_save_ok=false
+  notice.emit("Speichern fehlgeschlagen · "+Store.last_error)
+ return ok
+
+func on_queued_save_completed(result: Dictionary) -> void:
+ var previous=last_save_ok
+ last_save_ok=bool(result.ok)
+ if not last_save_ok and (previous or notify_save_id>0):notice.emit("Speichern fehlgeschlagen · "+str(result.error))
+ if notify_save_id>0 and int(result.id)>=notify_save_id:
+  notify_save_id=0
+  if result.ok:notice.emit("Spielstand gespeichert")
+
 func _notification(what: int) -> void:
  if catching_up:
   if what==NOTIFICATION_APPLICATION_PAUSED:
@@ -262,7 +287,7 @@ func _process_measured(delta: float) -> void:
   changed.emit()
  if save_clock >= 20.0:
   save_clock = 0.0
-  save(true)
+  queue_save()
 
 func simulate(seconds: float) -> void:
  for i in int(seconds): step(1.0)
@@ -823,7 +848,7 @@ func move_building(index: int, point: Vector3, rotation: int = 0, city: bool = f
  records[index].rotation = posmod(rotation,360)
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func undo_building_move() -> bool:
@@ -855,7 +880,7 @@ func order_building(kind: String, point: Variant = null, rotation: int = 0, batc
  if not batch:
   rebuild_world.emit()
   changed.emit()
-  save(true)
+  queue_save()
  return true
 
 func job_for(type: String, index: int) -> bool:
@@ -874,7 +899,7 @@ func upgrade(index: int, batch: bool = false) -> bool:
  if not batch:
   rebuild_world.emit()
   changed.emit()
-  save(true)
+  queue_save()
  return true
 
 func home_available(kind: String) -> bool:
@@ -908,7 +933,7 @@ func order_home(kind: String, plot: int, point: Variant = null, rotation: int = 
  if not state.plan.is_empty() and (int(state.plan.plot)==plot or (kind=="townhall" and state.plan.kind==kind)): state.plan = {}
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func upgrade_home(index: int, batch: bool = false) -> bool:
@@ -935,7 +960,7 @@ func upgrade_home(index: int, batch: bool = false) -> bool:
  if not batch:
   rebuild_world.emit()
   changed.emit()
-  save(true)
+  queue_save()
  return true
 
 func finish_job(job: Dictionary) -> void:
@@ -1006,7 +1031,7 @@ func buy_central_truck() -> bool:
  if not pay(TransportCapacity.fleet_cost(state)): return false
  state.hub.extra_trucks=owned+1
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func upgrade_transport(index: int) -> bool:
@@ -1015,7 +1040,7 @@ func upgrade_transport(index: int) -> bool:
  if not pay(TransportCapacity.upgrade_cost(state,index)): return false
  state.buildings[index].transport_level=TransportCapacity.dock_level(state,index)+1
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func tool_cost() -> float:
@@ -1082,7 +1107,7 @@ func order_project(index: int) -> bool:
  state.jobs.append({"type":"project","kind":"project","index":index,"left":90.0,"total":90.0})
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func equip_skin(item: String) -> bool:
@@ -1165,7 +1190,7 @@ func open_loot() -> Dictionary:
  notice.emit("%s · %s · +%s Münzen" % [Catalog.RARITIES[rarity],item,reward])
  loot_found.emit(rarity)
  changed.emit()
- save(true)
+ queue_save()
  return {"rarity":rarity,"item":item,"coins":reward}
 
 func buy_booster(key: String, factor: float = 2.0) -> bool:
@@ -1226,7 +1251,7 @@ func claim_journey(id: String) -> bool:
  reward_claimed.emit("KAPITEL GESCHAFFT!" if completed else "ZIEL GESCHAFFT!",float(goal.coins))
  notice.emit("%s · +%s Münzen%s" % ["Kapitel geschafft!" if completed else "Ziel geschafft!",goal.coins," · neue Auszeichnung" if completed else ""])
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func accept_commission(key: String) -> bool:
@@ -1236,7 +1261,7 @@ func accept_commission(key: String) -> bool:
  order.baseline=float(state.journey.stats.get(order.metric,0))
  state.journey.active=order
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func claim_commission() -> bool:
@@ -1250,19 +1275,19 @@ func claim_commission() -> bool:
  reward_claimed.emit("AUFTRAG ERFÜLLT!",float(order.reward))
  notice.emit("Auftrag erfüllt · +%s Münzen" % order.reward)
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func cancel_commission() -> void:
  state.journey.active={}
  changed.emit()
- save(true)
+ queue_save()
 
 func select_trophy(id: String) -> bool:
  if id!="" and id not in state.journey.trophies: return false
  state.journey.selected=id
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func contract() -> Dictionary:
@@ -1306,7 +1331,7 @@ func prestige() -> bool:
  state.coins = 350.0*(1+int(state.prestige)*0.25)
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 # City expansion, rent and transit share the same saved economy as the factories.
@@ -1328,7 +1353,7 @@ func expand_district() -> bool:
  delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  notice.emit("Viertelzufahrt erschlossen · vorhandenes Straßennetz erweitert")
  return true
 
@@ -1349,7 +1374,7 @@ func collect_rent(index: int = -1) -> float:
   Journey.add(state,"rent",amount)
   earn(amount)
   changed.emit()
-  save(true)
+  queue_save()
   notice.emit("%s Münzen Miete abgeholt" % Catalog.number(amount))
  return amount
 
@@ -1360,7 +1385,7 @@ func set_rent_auto(enabled: bool) -> bool:
  collect_rent()
  state.town.rent_auto = enabled
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func road_cost(kind: String, cells: Array) -> float:
@@ -1429,7 +1454,7 @@ func build_road(kind: String, cells: Array) -> bool:
  delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func remove_road(index: int) -> bool:
@@ -1467,7 +1492,7 @@ func remove_road(index: int) -> bool:
  delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func stop_reason(point: Vector3) -> String:
@@ -1504,7 +1529,7 @@ func build_stop(point: Vector3) -> bool:
  delivery_route_signature = 0
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func remove_stop(id: int) -> bool:
@@ -1518,7 +1543,7 @@ func remove_stop(id: int) -> bool:
   delivery_route_signature = 0
   rebuild_world.emit()
   changed.emit()
-  save(true)
+  queue_save()
   return true
  return false
 
@@ -1542,7 +1567,7 @@ func create_bus_line(stops: Array) -> bool:
  state.town.next_line = id+1
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func remove_bus_line(index: int) -> bool:
@@ -1550,7 +1575,7 @@ func remove_bus_line(index: int) -> bool:
  state.town.lines.remove_at(index)
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func bus_profit(line: Dictionary, plan: Dictionary) -> float:
@@ -1606,14 +1631,14 @@ func start_delivery() -> bool:
  notice.emit("Lieferbetrieb eröffnet · Holz → Bretter → Möbel → Laden")
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 func request_material(index: int) -> String:
  var result=FactorySupply.request(state,index)
  notice.emit(result)
  changed.emit()
- save(true)
+ queue_save()
  return result
 
 func step_delivery(delta: float) -> void:
@@ -1690,7 +1715,7 @@ func stop_delivery() -> bool:
  delivery_route_cache.clear()
  rebuild_world.emit()
  changed.emit()
- save(true)
+ queue_save()
  return true
 
 
@@ -1839,7 +1864,7 @@ func create_group(a: Vector3,b: Vector3,name_value: String = "Neues Viertel") ->
  state.ux.next_group=int(state.ux.next_group)+1
  state.ux.groups.append(group)
  changed.emit()
- save(true)
+ queue_save()
  return int(group.id)
 
 func rename_group(id: int,name_value: String) -> bool:
@@ -1849,7 +1874,7 @@ func rename_group(id: int,name_value: String) -> bool:
   if int(group.id)==id:
    group.name=clean
    changed.emit()
-   save(true)
+   queue_save()
    return true
  return false
 
@@ -1875,7 +1900,7 @@ func upgrade_group(id: int,quoted_price: float=-1) -> bool:
     state.jobs.back().district_group=id
   rebuild_world.emit()
   changed.emit()
-  save(true)
+  queue_save()
   return true
  return false
 
@@ -1890,7 +1915,7 @@ func undo_road() -> bool:
   state.coins+=float(last.paid)
   state.ux.road_undo.pop_back()
   changed.emit()
-  save(true)
+  queue_save()
   notice.emit("Letzte unbenutzte Strecke zurückgenommen · Baukosten erstattet")
   return true
  return false
@@ -1940,13 +1965,13 @@ func begin_tutorial() -> void:
   state.onboarding.start_trees=int(state.trees)
   state.tutorial=1
  changed.emit()
- save(true)
+ queue_save()
 
 func pause_tutorial() -> void:
  state.onboarding.active=false
  state.onboarding.paused=true
  changed.emit()
- save(true)
+ queue_save()
 
 func end_tutorial(completed: bool=false) -> void:
  state.onboarding.active=false
@@ -1954,7 +1979,7 @@ func end_tutorial(completed: bool=false) -> void:
  state.onboarding.finished=completed
  state.tutorial=5
  changed.emit()
- save(true)
+ queue_save()
 
 func saw_line_cost(index: int) -> float:
  if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="sawmill": return 0.0
@@ -1971,12 +1996,12 @@ func order_saw_line(index: int) -> bool:
  var job={"id":state.next_job,"type":"upgrade","index":index,"kind":"sawmill","saw_line":true,"left":30.0+next*10,"total":30.0+next*10,"materials":{"boards":8.0*next,"dry":2.0*next,"nuts":float(next),"screws":2.0*next},"delivered":{}}
  ConstructionRules.attach(job,1 if free_builders()>0 else 0)
  state.jobs.append(job); state.next_job+=1
- rebuild_world.emit(); changed.emit(); save(true)
+ rebuild_world.emit(); changed.emit(); queue_save()
  return true
 
 func assign_planters(amount: int) -> void:
  state.forest.assignment=clampi(amount,-1,int(state.workers))
- changed.emit(); save(true)
+ changed.emit(); queue_save()
 
 func order_timber_campus(quoted_price: float) -> bool:
  var quote=TimberCampus.quote(self)
@@ -1989,5 +2014,5 @@ func order_timber_campus(quoted_price: float) -> bool:
    state=before
    notice.emit("Werkshof konnte nicht vollständig reserviert werden")
    return false
- rebuild_world.emit(); changed.emit(); save(true)
+ rebuild_world.emit(); changed.emit(); queue_save()
  return true

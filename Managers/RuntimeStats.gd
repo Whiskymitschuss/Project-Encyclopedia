@@ -30,6 +30,8 @@ var previous_us=0
 var profiling=false
 var work={}
 var startup_sections={}
+var slow_work=[]
+var long_stalls=[]
 var profile_clock=0.0
 
 func _ready() -> void:
@@ -59,6 +61,15 @@ func _process(_delta: float) -> void:
 func record_frame(milliseconds: float,seconds: float,adaptive: bool=true) -> void:
  if samples.size()<SAMPLE_LIMIT: samples.append(milliseconds)
  else: samples[cursor]=milliseconds; cursor=(cursor+1)%SAMPLE_LIMIT
+ if milliseconds>=1000:
+  var now=Time.get_ticks_usec()
+  var areas=[]
+  for event in slow_work:
+   if int(event.ended_us)>=now-int(milliseconds*1000)-20000:areas.append(event)
+  areas.sort_custom(func(a,b):return a.ms>b.ms)
+  var label=str(areas[0].area) if not areas.is_empty() else "Außerhalb der erfassten Skriptbereiche"
+  long_stalls.push_front({"ms":milliseconds,"area":label,"script_ms":float(areas[0].ms) if not areas.is_empty() else 0.0})
+  if long_stalls.size()>12:long_stalls.resize(12)
  if milliseconds>100:
   hitch_count+=1
   longest_hitch_ms=maxf(longest_hitch_ms,milliseconds)
@@ -92,6 +103,7 @@ func mark_world_ready() -> void:
  hitch_count=0
  longest_hitch_ms=0
  passive_work.clear()
+ slow_work.clear();long_stalls.clear()
 
 func begin_replay(seconds: float) -> void:
  replay_started_us=Time.get_ticks_usec()
@@ -132,6 +144,9 @@ func begin_work() -> int:
 func end_work(section: String,started: int) -> void:
  if started<=0:return
  var milliseconds=(Time.get_ticks_usec()-started)/1000.0
+ if milliseconds>=50:
+  slow_work.push_front({"area":section,"ms":milliseconds,"ended_us":Time.get_ticks_usec()})
+  if slow_work.size()>24:slow_work.resize(24)
  if profiling:append_work(work,section,milliseconds)
  if passive_enabled:append_work(passive_work,section,milliseconds)
 
@@ -216,3 +231,10 @@ func startup_summary() -> String:
 func graphics_recommendation() -> String:
  var s=snapshot()
  return GraphicsProfiles.recommendation(int(s.frames),float(s.fps),float(s.p95_ms),render_probe_result)
+
+func stalls_summary() -> String:
+ if long_stalls.is_empty():return "Noch kein Hänger ab einer Sekunde erfasst. Die Liste bleibt lokal im Speicher."
+ var rows=[]
+ for item in long_stalls.slice(0,5):
+  rows.append("%.1f s · %s%s" % [float(item.ms)/1000.0,item.area," (längster erfasster Abschnitt: %.0f ms)" % item.script_ms if float(item.script_ms)>0 else "; Render-/Treiber-/Engine-Wartezeit noch nicht zugeordnet"])
+ return "\n".join(rows)

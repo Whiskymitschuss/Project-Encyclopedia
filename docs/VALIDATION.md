@@ -1,3 +1,11 @@
+## Speicheraufträge und lange Hänger · 0.28.27-alpha.1
+
+Vollständige Headless-Spieltests und ausgewählte Hauptwelt-/Menü-/Starttests unter
+OpenGL und Vulkan. Kontrolliert verzögerte Dateioperationen lassen die echte
+Hauptwelt und Kamera weiterlaufen. Fehler-/Reihenfolge-/Sicherungsprüfungen;
+keine neuen Messwerte vom Handy. [Prüfzahlen und Messungen](hitches-2827/source-checks.json)
+· [Änderungen und Grenzen](HITCHES-2827.md).
+
 ## Tatsächliche APK-Dateien · 0.28.26-alpha.1
 
 Beide signierten ARM64-Varianten mit je 10.608 Headless-Prüfungen in neun Modulen

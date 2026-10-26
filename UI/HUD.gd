@@ -206,7 +206,7 @@ func _ready() -> void:
  stock_actions.add_theme_constant_override("separation",4)
  supply_row.add_child(stock_actions)
  sawdust_button = button(stock_actions,"SPÄNEBOX",func():
-  if float(Game.state.resources.sawdust)>0: Game.sell("sawdust"); Game.save(true)
+  if float(Game.state.resources.sawdust)>0: Game.sell("sawdust"); Game.queue_save()
   else: open_menu("sawdust"))
  sawdust_button.size_flags_horizontal=Control.SIZE_SHRINK_END
  sawdust_button.custom_minimum_size=Vector2(64,44)
@@ -489,7 +489,7 @@ func card(title: String, detail: String = "") -> VBoxContainer:
 
 func action(callback: Callable) -> void:
  callback.call()
- Game.save(true)
+ Game.queue_save()
  render_menu()
  update_stats()
 
@@ -592,7 +592,7 @@ func _process(delta: float) -> void:
  subtitle.modulate.a=0 if income_left>0 and not overlay.visible else 1
  if Game.company_level()>=4 and not Game.state.construction_intro and not overlay.visible and not placement_panel.visible:
   Game.state.construction_intro=true
-  Game.save(true)
+  Game.queue_save()
   open_menu("construction")
  refresh_clock += delta
  if refresh_clock >= 1.0:
@@ -1178,7 +1178,8 @@ Abrechnung erst nach Ankunft. Der beim Beladen vereinbarte Preis bleibt für die
 func settings_menu() -> void:
  modal_title.text = "EINSTELLUNGEN"
  var box = card("Lokaler Spielstand","Automatische Speicherung alle 20 Sekunden, beim Wechsel in den Hintergrund und nach Bauaufträgen. Eine Backup-Datei schützt den vorherigen gültigen Stand. Bis zu acht Stunden Offline-Wirtschaft.")
- button(box,"JETZT SPEICHERN",func(): Game.save())
+ button(box,"JETZT SPEICHERN",func():
+  if Game.queue_save(true):show_notice("Speichern läuft im Hintergrund."))
  button(box,"ALPHA 1 · TESTBERICHT & HILFE",func(): open_menu("alpha"))
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
@@ -1365,7 +1366,7 @@ func transit_menu() -> void:
 Ertrag nach Betriebskosten: %s Münzen je Runde" % [ceili(planned.duration),Catalog.number(Game.bus_profit({"stops":route_selection},planned))],15,MUTED)
  button(contents,"BUS KAUFEN & LINIE STARTEN · %s" % Catalog.number(1800*Game.difficulty()),func():
   if Game.create_bus_line(route_selection): route_selection.clear()
-  Game.save(true)
+  Game.queue_save()
   render_menu(),not planned.is_empty() and Game.state.town.lines.size()<3 and Game.residents()>=4)
  for i in Game.state.town.lines.size():
   var index=i

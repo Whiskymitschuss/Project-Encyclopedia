@@ -2,7 +2,17 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.26-alpha.1 · Performance Update 1.0
+## Aktuell: 0.28.27-alpha.1 · Lange Einzelhänger
+
+Routine-Speicherungen laufen im Hintergrund mit begrenzter Warteschlange,
+geprüftem Dateiaustausch und unverändertem Spielstand. Das Leistungsmenü zeigt
+lange Hänger und ihren längsten erfassten Skriptabschnitt. Hintergrundwechsel
+und explizites dauerhaftes Speichern bleiben abgesichert.
+[Änderungen, Tests und Grenzen](docs/HITCHES-2827.md). Android-Code **3022**.
+Die gemeldeten fünf bis zehn Sekunden auf dem Handy sind noch nicht als behoben
+nachgewiesen; kontrollierte Tests prüfen den entlasteten Speicherpfad.
+
+## Vorher: 0.28.26-alpha.1 · Performance Update 1.0
 
 Vorbereitete Gebäude, Landschaft, Biber und Fahrzeuge; vorhandene Modelle und
 Wirtschaft bleiben erhalten. Unveränderte Gebäude werden wiederverwendet,

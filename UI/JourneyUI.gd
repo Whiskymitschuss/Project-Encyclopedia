@@ -48,7 +48,7 @@ func go(action: String) -> void:
    hud.show_notice("Das Holzlager ist voll · erst Holz verkaufen oder verarbeiten")
    return
   Game.deposit()
-  Game.save(true)
+  Game.queue_save()
   hud.close_menu()
   hud.camera_action.emit("home")
   return

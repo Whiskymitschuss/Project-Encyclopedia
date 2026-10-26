@@ -507,11 +507,11 @@ func events_menu() -> void:
    else:
     hud.focus_requested.emit(Vector3(float(item.position[0]),0,float(item.position[1])))
     hud.close_menu()
-   Game.save(true)
+   Game.queue_save()
    refresh())
  hud.button(hud.contents,"ALLE ALS GELESEN MARKIEREN",func():
   for event in Game.state.ux.events: event.read=true
-  Game.save(true)
+  Game.queue_save()
   hud.render_menu()
   refresh())
  if not Game.state.ux.road_undo.is_empty(): hud.button(hud.contents,"LETZTE UNBENUTZTE STRASSE ZURÜCKNEHMEN",func(): hud.action(func(): Game.undo_road()))
@@ -539,12 +539,12 @@ func groups_menu() -> void:
    if world().get("selection_world")!=null: world().selection_world.choose({"kind":"group","id":id}))
   hud.button(choices,"AUSBAUPLAN BESTÄTIGEN",func(): hud.action(func(): Game.upgrade_group(id,float(bill.coins))),not bill.targets.is_empty())
   hud.text(box,"Bezahlt werden die gesamten angezeigten Baukosten. Material kommt danach per LKW; freie Bauarbeiter übernehmen automatisch den nächsten Viertelauftrag.",13,hud.MUTED)
-  hud.button(box,"NUR MARKIERUNG ENTFERNEN",func(): Game.state.ux.groups.erase(group); Game.save(true); hud.render_menu())
+  hud.button(box,"NUR MARKIERUNG ENTFERNEN",func(): Game.state.ux.groups.erase(group); Game.queue_save(); hud.render_menu())
 func settings_controls(box: Node) -> void:
  hud.text(box,"Vibration ist optional und beim ersten Start ausgeschaltet. Schrift, Kontrast und reduzierte Effekte bleiben gespeichert.",14,hud.MUTED)
  hud.button(box,"Vibration: AN" if Game.state.ux.vibration else "Vibration: AUS",func(): hud.action(func(): Game.state.ux.vibration=not Game.state.ux.vibration))
- hud.button(box,"Große Schrift: AN" if Game.state.ux.large_text else "Große Schrift: AUS",func(): Game.state.ux.large_text=not Game.state.ux.large_text; Game.save(true); hud.render_menu(); apply_accessibility())
- hud.button(box,"Starker Kontrast: AN" if Game.state.ux.high_contrast else "Starker Kontrast: AUS",func(): Game.state.ux.high_contrast=not Game.state.ux.high_contrast; Game.save(true); hud.render_menu(); apply_accessibility())
+ hud.button(box,"Große Schrift: AN" if Game.state.ux.large_text else "Große Schrift: AUS",func(): Game.state.ux.large_text=not Game.state.ux.large_text; Game.queue_save(); hud.render_menu(); apply_accessibility())
+ hud.button(box,"Starker Kontrast: AN" if Game.state.ux.high_contrast else "Starker Kontrast: AUS",func(): Game.state.ux.high_contrast=not Game.state.ux.high_contrast; Game.queue_save(); hud.render_menu(); apply_accessibility())
  hud.button(box,"Bewegung & Lieferfeedback: AN" if Game.state.ux.motion else "Bewegung & Lieferfeedback: REDUZIERT",func(): hud.action(func(): Game.state.ux.motion=not Game.state.ux.motion))
 func apply_accessibility() -> void:
  apply_fonts(hud)
@@ -581,7 +581,7 @@ func biome_menu() -> void:
   hud.button(box,"REGION BESUCHEN",func():
    Game.state.biome=index
    Game.changed.emit()
-   Game.save(true)
+   Game.queue_save()
    hud.focus_requested.emit(Catalog.biome_position(index))
    hud.close_menu())
  else:
