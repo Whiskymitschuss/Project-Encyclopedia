@@ -1,4 +1,30 @@
-# Aktuell: Vulkan-Vergleich · 0.28.25-alpha.1
+# Aktuell: Performance Update 1.0 · 0.28.26-alpha.1
+
+**[Android-Update mit Vulkan (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-alpha.1-vulkan-arm64.apk)** ·
+**[OpenGL-Variante (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.26-alpha.1/releases/Timber-Loot-Tycoon-v0.28.26-alpha.1-opengl-arm64.apk)** ·
+[Spielquellen mit allen Modellen](Timber-Loot-Tycoon-v0.28.26-source.zip) ·
+[Abschlussbericht](../docs/PERFORMANCE-1.0.md)
+
+Vorbereitete Landschaft, Gebäude, Biber und Fahrzeuge; wiederverwendete
+Gebäudedarstellung, Sichtbereiche, vier Grafikprofile und gestufter Start.
+Gleicher Warenfluss und Speicherpfad, Wetter bleibt aus. Kein bestätigter
+30-FPS-Erfolg auf dem Samsung; kein physischer Android- oder Windows-Gerätetest.
+Die beiden Renderer sind Vergleichsvarianten derselben Spielwelt.
+
+Beide: rund 92 MiB, Android-Code **3021**, ARM64 passend zum SM-S721B,
+bisheriges Paket und Testzertifikat. **Als Update installieren; nicht
+deinstallieren und keine App-Daten löschen.** Android 7.0+, Debug-Testfassung.
+Vulkan benötigt Vulkan-Hardware. Für Probleme die OpenGL-Variante verwenden.
+Das universelle ARM64/ARMv7-Preset bleibt im Quellprojekt verfügbar.
+
+Quellprüfungen: 21.657 Headless, 485 OpenGL, 125 Vulkan.
+Tatsächliche APK-Dateien: je 10.608 Headless und 125 Grafikprüfungen.
+Quellstand `7a5757b8139c1261114b43463ea3e5447faf6be0`; 1512 Dateien der Quell-ZIP gegen Git geprüft.
+Die Quell-ZIP enthält sämtliche Spiel-/Testquellen und Spielmodelle; lediglich
+historische Dokumentationsbilder (146 Dateien) verbleiben im Repository
+und in der vollständigen Wiederherstellungssicherung.
+
+## Vorher: Vulkan-Vergleich · 0.28.25-alpha.1
 
 **[Vulkan-Test herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.25-alpha.1/releases/Timber-Loot-Tycoon-v0.28.25-alpha.1-vulkan.apk)** ·
 **[OpenGL-Rückfall herunterladen](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.25-alpha.1/releases/Timber-Loot-Tycoon-v0.28.25-alpha.1-opengl.apk)** ·

@@ -129,3 +129,6 @@ b7999e07f3a6561f3bb02957d5ef42249228bbf3547ec5b045c7994749b957ca  Timber-Loot-Ty
 f6fb13ccaa56b6e1816cafbc8fa087a4ca917e004688abc7339a4e968ededad5  Timber-Loot-Tycoon-v0.28.25-alpha.1-vulkan.apk
 7f01fd11c8fd35fe6dbdd9934da5f31912b26461782c4fa557563386a6ec8890  Timber-Loot-Tycoon-v0.28.25-alpha.1-opengl.apk
 09b7e7fb526cf3e031aca083f475d57432899b47ee40c6e805d840390f3f9f58  Timber-Loot-Tycoon-v0.28.25-source.zip
+8a9736f9e4f9f6d1f1f0866ed97c3fe8957a8c8308c6c6aa26509057a5215f69  Timber-Loot-Tycoon-v0.28.26-alpha.1-vulkan-arm64.apk
+593339722d057789710c40fb09b8d56dfeb5aede4b04e9ee937cbae4e43b230b  Timber-Loot-Tycoon-v0.28.26-alpha.1-opengl-arm64.apk
+73b17c375afa80fd829a2ef3649299dbcd6337619c5a08c480487060d8c8ffac  Timber-Loot-Tycoon-v0.28.26-source.zip

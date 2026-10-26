@@ -1,3 +1,12 @@
+## Tatsächliche APK-Dateien · 0.28.26-alpha.1
+
+Beide signierten ARM64-Varianten mit je 10.608 Headless-Prüfungen in neun Modulen
+und je 125 Grafikprüfungen in sechs Modulen geprüft. Unveränderte Ressourcen aus
+der tatsächlichen APK, externe Testskripte und isolierte Profile. Unterschiedliche
+effektive Android-Renderer, identischer Quellstand `7a5757b8139c1261114b43463ea3e5447faf6be0`,
+Paket, Code 3021 und bisheriges Zertifikat verifiziert. Noch kein Handy- oder
+Windows-Gerätelauf. [Paketprüfbericht](performance-1/packaged-checks.json).
+
 ## Performance Update 1.0 · 0.28.26-alpha.1
 
 21.657 Headless-Prüfungen in 51 berichteten Modulen, vollständiger Lauf plus finale

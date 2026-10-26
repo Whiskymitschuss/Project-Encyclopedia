@@ -1,0 +1,62 @@
+{
+  "vulkan": {
+    "apk": "Timber-Loot-Tycoon-v0.28.26-alpha.1-vulkan-arm64.apk",
+    "apk_sha256": "8a9736f9e4f9f6d1f1f0866ed97c3fe8957a8c8308c6c6aa26509057a5215f69",
+    "apk_source_commit": "7a5757b8139c1261114b43463ea3e5447faf6be0",
+    "android_renderer": "mobile",
+    "headless_checks": 10608,
+    "headless_results": {
+      "Performance2826": 65,
+      "Renderer2825": 9,
+      "Daylight2824": 10,
+      "Rules": 234,
+      "Scene": 4080,
+      "Delivery": 6057,
+      "ActiveForest2819": 132,
+      "Performance2823": 17,
+      "StartupSmoke2826": 4
+    },
+    "visual_checks": 125,
+    "visual_results": {
+      "VisualPerformance2826": 15,
+      "VisualRenderer2825": 8,
+      "VisualDaylight2824": 6,
+      "VisualPerformance2823": 15,
+      "VisualFactory284": 48,
+      "VisualLoading2814": 33
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false
+  },
+  "opengl": {
+    "apk": "Timber-Loot-Tycoon-v0.28.26-alpha.1-opengl-arm64.apk",
+    "apk_sha256": "593339722d057789710c40fb09b8d56dfeb5aede4b04e9ee937cbae4e43b230b",
+    "apk_source_commit": "7a5757b8139c1261114b43463ea3e5447faf6be0",
+    "android_renderer": "gl_compatibility",
+    "headless_checks": 10608,
+    "headless_results": {
+      "Performance2826": 65,
+      "Renderer2825": 9,
+      "Daylight2824": 10,
+      "Rules": 234,
+      "Scene": 4080,
+      "Delivery": 6057,
+      "ActiveForest2819": 132,
+      "Performance2823": 17,
+      "StartupSmoke2826": 4
+    },
+    "visual_checks": 125,
+    "visual_results": {
+      "VisualPerformance2826": 15,
+      "VisualRenderer2825": 8,
+      "VisualDaylight2824": 6,
+      "VisualPerformance2823": 15,
+      "VisualFactory284": 48,
+      "VisualLoading2814": 33
+    },
+    "fixture": "Generated companies only; no private player save",
+    "execution": "Desktop Godot 4.6.3 using unchanged assets extracted from signed APK, external tests/profiles",
+    "android_device_tested": false
+  }
+}
