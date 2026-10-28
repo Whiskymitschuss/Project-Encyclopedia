@@ -719,6 +719,7 @@ func render_menu() -> void:
   "sawdust": sawdust_menu()
   "welcome": welcome_menu()
   "guide": guide_menu()
+  "guide_help","privacy": load("res://UI/PlayerHelp.gd").populate(self,current)
   "confirm_prestige": confirm_prestige_menu()
   _:
    if ux!=null: ux.populate_menu(current)
@@ -1181,6 +1182,8 @@ func settings_menu() -> void:
  button(box,"JETZT SPEICHERN",func():
   if Game.queue_save(true):show_notice("Speichern läuft im Hintergrund."))
  button(box,"ALPHA 1 · TESTBERICHT & HILFE",func(): open_menu("alpha"))
+ button(box,"HILFE · PRODUKTION & TRANSPORTE",func(): open_menu("guide_help"))
+ button(box,"SPEICHERN & DATENSCHUTZ",func(): open_menu("privacy"))
  button(box,"Sounds: AUS" if Game.state.muted else "Sounds: AN",func(): action(func(): Game.state.muted = not Game.state.muted; Music.apply_settings()))
  button(box,"Benno: AN" if Game.state.companion_enabled else "Benno: AUS",func(): action(func(): Game.state.companion_enabled=not Game.state.companion_enabled))
  button(box,"Alltagsszenen: AN" if Game.state.ambient_enabled else "Alltagsszenen: AUS",func(): action(func(): Game.state.ambient_enabled=not Game.state.ambient_enabled))
@@ -1587,7 +1590,7 @@ func fire_protection_menu() -> void:
 func game_menu() -> void:
  modal_title.text="DEIN WALD · SPIELMENÜ"
  button(contents,"WEITERSPIELEN",close_menu)
- button(contents,"ANLEITUNG & HILFE",func(): open_menu("guide"))
+ button(contents,"ANLEITUNG & HILFE",func(): open_menu("guide_help"))
  button(contents,"ALPHA 1 · FEEDBACK",func(): open_menu("alpha"))
  button(contents,"EINSTELLUNGEN",func(): open_menu("settings"))
  button(contents,"SPEICHERN & ZUM STARTBILDSCHIRM",func():

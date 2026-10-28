@@ -11,6 +11,7 @@ func populate() -> void:
  var actions=hud.row(hud.contents)
  hud.button(actions,"Text kopieren",copy_report)
  hud.button(actions,"Sichern",save_report)
+ hud.button(hud.contents,"AKTUELLE MESSWERTE ANHÄNGEN",append_measurement)
  var device={"os":OS.get_name(),"os_version":OS.get_version(),"model":OS.get_model_name(),"viewport":str(hud.get_viewport_rect().size)}
  var health=Store.load_status+(" · letzte Speicherung fehlgeschlagen" if not Game.last_save_ok else "")
  if draft.is_empty() and FileAccess.file_exists("user://Alpha-Testbericht.txt"): draft=FileAccess.get_file_as_string("user://Alpha-Testbericht.txt")
@@ -21,7 +22,7 @@ func populate() -> void:
   report.text+="\nKamerarunde: %.1f FPS · P95 %.1f ms · %s · %.1f Sekunden\nWärme am Gerät: [bitte ergänzen]\n" % [result.fps,result.p95_ms,result.profile,result.seconds]
   if result.has("work"):
    report.text+="Version: %s · Zeichenaufrufe: %s\n%s\n" % [result.get("version",""),int(result.draw_calls),RuntimeStats.profile_summary(result.work)]
- if draft.is_empty(): report.text+="\nStart & Leistung:\n"+RuntimeStats.summary()+"\nAutomatische Messdetails:\n"+RuntimeStats.passive_summary()+"\nWärme am Gerät: [bitte ergänzen]\n"
+ if draft.is_empty(): report.text+=measurement_text()
  original=report.text
  report.custom_minimum_size=Vector2(0,clampf(hud.size.y*0.15,96,180))
  report.wrap_mode=TextEdit.LINE_WRAPPING_BOUNDARY
@@ -34,6 +35,14 @@ func populate() -> void:
  if TutorialRules.can_resume(Game.state) and not Game.state.onboarding.active:
   hud.button(box,"BENNO WIEDER EINBLENDEN",func(): Game.begin_tutorial(); hud.close_menu())
  hud.text(box,"Hafen und Flughafen sind geplant. Schiffs- und Flugexport sind in Alpha 1 noch nicht aktiv. Dein Fortschritt wird auf diesem Gerät gespeichert. Der Testbericht enthält keine Spielstanddatei und keine automatisch angehängten Kontaktdaten.",14,hud.INK)
+
+func measurement_text() -> String:
+ return "\nMessung · %s\nStart & Leistung:\n" % Time.get_datetime_string_from_system()+RuntimeStats.summary()+"\nAutomatische Messdetails:\n"+RuntimeStats.passive_summary()+"\nLetzte lange Hänger:\n"+RuntimeStats.stalls_summary()+"\nWeltaufbau:\n"+RuntimeStats.startup_summary()+"\nSpeichern:\n"+Store.status_text()+"\nWärme am Gerät: [bitte ergänzen]\n"
+
+func append_measurement() -> void:
+ if not is_instance_valid(report):return
+ report.text+=measurement_text()
+ hud.show_notice("Aktuelle Messwerte angehängt · dein Text bleibt erhalten")
 
 func copy_report() -> void:
  if not is_instance_valid(report): return

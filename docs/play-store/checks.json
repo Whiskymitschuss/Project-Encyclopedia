@@ -1,0 +1,359 @@
+{
+  "baseline_commit": "254ffa3e13752da4ec03f7eebcecd010301a07b3",
+  "candidate": "source preparation after 0.28.28-alpha.2; no new APK/AAB",
+  "engine": "Godot 4.6.3",
+  "checks": {
+    "python_readiness": {
+      "tests": 6,
+      "failures": 0
+    },
+    "headless": {
+      "Journey": 215,
+      "Hitches2827": 22,
+      "Music2828": 11,
+      "failures": 0
+    },
+    "gl_compatibility": {
+      "VisualPlayerHelp": 29,
+      "VisualMusic2828": 21,
+      "failures": 0
+    },
+    "mobile_vulkan": {
+      "VisualPlayerHelp": 29,
+      "failures": 0,
+      "renderer": "Linux software Vulkan / llvmpipe; explicit local ICD selected"
+    },
+    "full_headless": {
+      "command": "bash scripts/test.sh",
+      "exit_code": 0,
+      "summaries": 53,
+      "assertions": 21690,
+      "failures": 0,
+      "modules": [
+        {
+          "name": "MUSIC 2828",
+          "checks": 11,
+          "failures": 0
+        },
+        {
+          "name": "HITCHES 2827",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2826",
+          "checks": 65,
+          "failures": 0
+        },
+        {
+          "name": "RENDERER 2825",
+          "checks": 9,
+          "failures": 0
+        },
+        {
+          "name": "DAYLIGHT 2824",
+          "checks": 10,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2823",
+          "checks": 17,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2822",
+          "checks": 20,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2821",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "STORAGE 2820",
+          "checks": 79,
+          "failures": 0
+        },
+        {
+          "name": "ACTIVE FOREST 2819",
+          "checks": 132,
+          "failures": 0
+        },
+        {
+          "name": "STARTER 2818",
+          "checks": 27,
+          "failures": 0
+        },
+        {
+          "name": "REGROWTH 2817",
+          "checks": 21,
+          "failures": 0
+        },
+        {
+          "name": "DESIGN 2816",
+          "checks": 187,
+          "failures": 0
+        },
+        {
+          "name": "THROUGHPUT 2815",
+          "checks": 31,
+          "failures": 0
+        },
+        {
+          "name": "FOREST ACCESS 2813",
+          "checks": 19,
+          "failures": 0
+        },
+        {
+          "name": "TIMBER 2812",
+          "checks": 37,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2811",
+          "checks": 19,
+          "failures": 0
+        },
+        {
+          "name": "LOGISTICS 2810",
+          "checks": 65,
+          "failures": 0
+        },
+        {
+          "name": "FORESTRY 289",
+          "checks": 26,
+          "failures": 0
+        },
+        {
+          "name": "FORESTRY 288",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "FORESTRY 287",
+          "checks": 23,
+          "failures": 0
+        },
+        {
+          "name": "FACTORY SUPPLY 286",
+          "checks": 34,
+          "failures": 0
+        },
+        {
+          "name": "SUPPLY 286",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "INFRASTRUCTURE 286",
+          "checks": 161,
+          "failures": 0
+        },
+        {
+          "name": "WORLD REWORK 285",
+          "checks": 907,
+          "failures": 0
+        },
+        {
+          "name": "CENTRAL LOGISTICS 284",
+          "checks": 34,
+          "failures": 0
+        },
+        {
+          "name": "FOREST 282",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "ROLLBACK 028",
+          "checks": 51,
+          "failures": 0
+        },
+        {
+          "name": "ALPHA 1",
+          "checks": 40,
+          "failures": 0
+        },
+        {
+          "name": "RULES",
+          "checks": 234,
+          "failures": 0
+        },
+        {
+          "name": "SCENE",
+          "checks": 4080,
+          "failures": 0
+        },
+        {
+          "name": "WORLD & HIGHWAY TRADE 27",
+          "checks": 61,
+          "failures": 0
+        },
+        {
+          "name": "PLACEMENT & ONBOARDING",
+          "checks": 52,
+          "failures": 0
+        },
+        {
+          "name": "WORKSHOP",
+          "checks": 42,
+          "failures": 0
+        },
+        {
+          "name": "COMPANION",
+          "checks": 23,
+          "failures": 0
+        },
+        {
+          "name": "WORLD LIFE",
+          "checks": 30,
+          "failures": 0
+        },
+        {
+          "name": "TOWN",
+          "checks": 206,
+          "failures": 0
+        },
+        {
+          "name": "VALLEY",
+          "checks": 177,
+          "failures": 0
+        },
+        {
+          "name": "CRAFTED WORLD",
+          "checks": 128,
+          "failures": 0
+        },
+        {
+          "name": "DELIVERY",
+          "checks": 6057,
+          "failures": 0
+        },
+        {
+          "name": "CONSTRUCTION",
+          "checks": 56,
+          "failures": 0
+        },
+        {
+          "name": "LOGISTICS FIX",
+          "checks": 431,
+          "failures": 0
+        },
+        {
+          "name": "CITY UX",
+          "checks": 797,
+          "failures": 0
+        },
+        {
+          "name": "BUILDING CARD",
+          "checks": 437,
+          "failures": 0
+        },
+        {
+          "name": "JOURNEY",
+          "checks": 215,
+          "failures": 0
+        },
+        {
+          "name": "TRAFFIC & TOUCH",
+          "checks": 1494,
+          "failures": 0
+        },
+        {
+          "name": "FIRE SAFETY",
+          "checks": 24,
+          "failures": 0
+        },
+        {
+          "name": "FIRE PROTECTION",
+          "checks": 38,
+          "failures": 0
+        },
+        {
+          "name": "STONE INDUSTRY",
+          "checks": 4870,
+          "failures": 0
+        },
+        {
+          "name": "QUALITY FEEDBACK",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "PRESENTATION 26",
+          "checks": 46,
+          "failures": 0
+        },
+        {
+          "name": "STARTUP",
+          "checks": 11,
+          "failures": 0
+        },
+        {
+          "name": "STARTUP SMOKE 2826",
+          "checks": 4,
+          "failures": 0
+        }
+      ],
+      "log_sha256": "f437c12464634517fcb5300da6ca5370751caec72e75d3a09c9da97e43265e33",
+      "objectdb_exit_warnings": 1
+    },
+    "fast_gl_visual": {
+      "command": "bash scripts/test_visual.sh VisualStartup VisualLogistics2810 VisualForestry289 VisualStorage2820 VisualBuildingCard VisualCityUX VisualUI",
+      "exit_code": 0,
+      "summaries": 7,
+      "assertions": 280,
+      "failures": 0,
+      "modules": [
+        {
+          "name": "STARTUP OPENGL",
+          "checks": 28,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL LOGISTICS 2810",
+          "checks": 40,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL FORESTRY 289",
+          "checks": 25,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL STORAGE 2820",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL BUILDING CARD",
+          "checks": 87,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL CITY UX",
+          "checks": 45,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL UI",
+          "checks": 23,
+          "failures": 0
+        }
+      ],
+      "log_sha256": "0f5ba5fc8a8ec84ec095be675e3307983c57685b83ac76107665d39409704955",
+      "objectdb_exit_warnings": 4
+    }
+  },
+  "limits": [
+    "Headless progression through later chapters uses seeded resources; not an end-to-end balance test",
+    "Graphics run on Linux Mesa llvmpipe; no Android performance claim",
+    "No store release bundle, physical Android test, or public policy verification"
+  ],
+  "notes": [
+    "Initial Vulkan attempt without a configured ICD fell back to OpenGL and was rejected by the test harness; configured Vulkan rerun passed.",
+    "Pre-existing ObjectDB shutdown warnings are observed in some legacy tests; no claim that all lifetime issues are fixed."
+  ],
+  "completed_utc": "2026-10-28"
+}

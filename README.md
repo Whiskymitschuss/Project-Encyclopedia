@@ -4,6 +4,11 @@ Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Text
 
 ## Aktuell: 0.28.28-alpha.2 · Hintergrundmusik
 
+In Arbeit: Vorbereitung auf Version 1.0 mit integrierter Hilfe für Warenfluss,
+lokalen Speicher-/Datenschutzhinweisen und erweiterten Hängerberichten.
+[Tatsächlicher Stand und offene Freigaben](docs/play-store/README.md).
+Quelländerung nach alpha.2; noch keine neue APK und keine Store-Freigabe.
+
 „Whimsical Forest Adventure“ als wiederholte Hintergrundmusik über Start und
 Spiel hinweg. Eigener Musik-Schalter und Lautstärkeregler, gespeicherte Vorgaben
 und Pause beim App-Wechsel. Ein Player, asynchrones Laden, keine neue

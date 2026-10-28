@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "version": "0.28.28-alpha.2",
+  "store_ready": false,
+  "scope": "Source configuration only; no device, AAB or current Google policy verification",
+  "checks": [
+    {
+      "id": "android_preset",
+      "status": "pass",
+      "detail": "1 Android preset(s)"
+    },
+    {
+      "id": "android_0_version",
+      "status": "pass",
+      "detail": "Android Test: app 0.28.28-alpha.2, export 0.28.28-alpha.2"
+    },
+    {
+      "id": "android_0_arm64",
+      "status": "pass",
+      "detail": "Android Test: ARM64 export flag (not an artifact ABI verification)"
+    },
+    {
+      "id": "android_0_export_scope",
+      "status": "pass",
+      "detail": "Android Test: tests and previous builds excluded"
+    },
+    {
+      "id": "android_0_offline_permissions",
+      "status": "pass",
+      "detail": "Android Test: explicitly enabled permissions: vibrate; final merged manifest still needs review"
+    },
+    {
+      "id": "aab_configuration",
+      "status": "blocked",
+      "detail": "Only test APK export configured; no production AAB preset"
+    },
+    {
+      "id": "release_artifact",
+      "status": "manual",
+      "detail": "Build and verify a release AAB: package, versionCode, non-debuggable manifest, intended upload certificate; never reuse the debug key as a production decision"
+    },
+    {
+      "id": "android_compatibility",
+      "status": "manual",
+      "detail": "Inspect actual native ELF LOAD alignment and APK split ZIP alignment; test a 16-KiB Android environment and supported ABIs/SDKs. zipalign alone is insufficient"
+    },
+    {
+      "id": "device_performance",
+      "status": "manual",
+      "detail": "Same candidate on physical Android hardware: sustained play, camera, long stalls, loading, background/resume. Software-GPU results do not establish 30 FPS"
+    },
+    {
+      "id": "fresh_progression",
+      "status": "manual",
+      "detail": "Fresh save through Rathaus 10 with actual earned resources; later Journey.gd fixtures currently inject resources"
+    },
+    {
+      "id": "save_upgrade",
+      "status": "manual",
+      "detail": "Install over the current signed test app without uninstalling; verify inventory, deliveries and one-time offline rewards. Plan production migration if signing/package changes"
+    },
+    {
+      "id": "public_privacy",
+      "status": "manual",
+      "detail": "Publish policy with real operator/contact and reviewed Data Safety answers; in-game local-data help is not the public policy"
+    },
+    {
+      "id": "content_rights",
+      "status": "manual",
+      "detail": "Document redistribution/commercial rights for graphics, fonts and supplied music; receipt of a file is not a licence"
+    },
+    {
+      "id": "play_console",
+      "status": "manual",
+      "detail": "Verify current target API, account-specific testing/access requirements, app content, age rating, listing and Play App Signing in Play Console before submission"
+    }
+  ]
+}

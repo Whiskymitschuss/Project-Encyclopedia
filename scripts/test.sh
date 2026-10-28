@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+python3 scripts/test_play_readiness.py
 test_data=$(mktemp -d /tmp/timber-tests.XXXXXX)
 trap 'rm -rf "$test_data"' EXIT
 export XDG_DATA_HOME="$test_data"
