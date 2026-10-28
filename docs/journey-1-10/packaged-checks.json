@@ -1,0 +1,148 @@
+{
+  "vulkan": {
+    "apk": "Timber-Loot-Tycoon-v0.28.29-alpha.1-vulkan-arm64.apk",
+    "sha256": "e7c5f534b81daba77dbe9e231c2759776ed05fdb89be26b228f444d514ae604f",
+    "method": "Desktop Godot 4.6.3 with unchanged extracted signed-APK assets; external tests only; no Android device test",
+    "checks": {
+      "JourneyLogistics": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "32",
+            "0"
+          ]
+        ]
+      },
+      "JourneyPlaythrough": {
+        "exit_code": 0,
+        "summaries": []
+      },
+      "Music2828": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "11",
+            "0"
+          ]
+        ]
+      },
+      "Hitches2827": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "22",
+            "0"
+          ]
+        ]
+      }
+    },
+    "playthrough": {
+      "passed": true,
+      "simulated_seconds": 32126.0,
+      "reload_checks": 13,
+      "invariant_samples": 536,
+      "offline_replay_equal": true,
+      "tutorial_completed": true
+    },
+    "visual": {
+      "renderer": "mobile",
+      "checks": 13,
+      "failures": 0,
+      "execution": "Linux Mesa software rendering with unchanged extracted signed-APK runtime assets; external tests; no Android device"
+    },
+    "packaging": {
+      "file": "Timber-Loot-Tycoon-v0.28.29-alpha.1-vulkan-arm64.apk",
+      "bytes": 99157706,
+      "sha256": "e7c5f534b81daba77dbe9e231c2759776ed05fdb89be26b228f444d514ae604f",
+      "version": "0.28.29-alpha.1",
+      "package": "com.whiskymitschuss.timberloot.reborn",
+      "android_min_api": 24,
+      "architectures": [
+        "arm64-v8a"
+      ],
+      "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+      "android_renderer": "mobile",
+      "android_vulkan_hardware_required": true,
+      "debug_signed": true,
+      "zipalign_16k": true,
+      "permissions": [
+        "android.permission.VIBRATE"
+      ],
+      "source_commit": "d4406588c5a72acba86bb536d45f729f8233cd87",
+      "device_install_or_launch_tested": false
+    }
+  },
+  "opengl": {
+    "apk": "Timber-Loot-Tycoon-v0.28.29-alpha.1-opengl-arm64.apk",
+    "sha256": "f84d3ce4e9215f4433d0914feed57e0290531af2a44e17b07b3bc9fd4ed4b761",
+    "method": "Desktop Godot 4.6.3 with unchanged extracted signed-APK assets; external tests only; no Android device test",
+    "checks": {
+      "JourneyLogistics": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "32",
+            "0"
+          ]
+        ]
+      },
+      "JourneyPlaythrough": {
+        "exit_code": 0,
+        "summaries": []
+      },
+      "Music2828": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "11",
+            "0"
+          ]
+        ]
+      },
+      "Hitches2827": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "22",
+            "0"
+          ]
+        ]
+      }
+    },
+    "playthrough": {
+      "passed": true,
+      "simulated_seconds": 32126.0,
+      "reload_checks": 13,
+      "invariant_samples": 536,
+      "offline_replay_equal": true,
+      "tutorial_completed": true
+    },
+    "visual": {
+      "renderer": "gl_compatibility",
+      "checks": 13,
+      "failures": 0,
+      "execution": "Linux Mesa software rendering with unchanged extracted signed-APK runtime assets; external tests; no Android device"
+    },
+    "packaging": {
+      "file": "Timber-Loot-Tycoon-v0.28.29-alpha.1-opengl-arm64.apk",
+      "bytes": 99153610,
+      "sha256": "f84d3ce4e9215f4433d0914feed57e0290531af2a44e17b07b3bc9fd4ed4b761",
+      "version": "0.28.29-alpha.1",
+      "package": "com.whiskymitschuss.timberloot.reborn",
+      "android_min_api": 24,
+      "architectures": [
+        "arm64-v8a"
+      ],
+      "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+      "android_renderer": "gl_compatibility",
+      "android_vulkan_hardware_required": false,
+      "debug_signed": true,
+      "zipalign_16k": true,
+      "permissions": [
+        "android.permission.VIBRATE"
+      ],
+      "source_commit": "d4406588c5a72acba86bb536d45f729f8233cd87",
+      "device_install_or_launch_tested": false
+    }
+  }
+}

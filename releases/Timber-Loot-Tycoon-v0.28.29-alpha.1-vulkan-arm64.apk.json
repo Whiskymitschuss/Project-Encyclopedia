@@ -1,0 +1,21 @@
+{
+  "file": "Timber-Loot-Tycoon-v0.28.29-alpha.1-vulkan-arm64.apk",
+  "bytes": 99157706,
+  "sha256": "e7c5f534b81daba77dbe9e231c2759776ed05fdb89be26b228f444d514ae604f",
+  "version": "0.28.29-alpha.1",
+  "package": "com.whiskymitschuss.timberloot.reborn",
+  "android_min_api": 24,
+  "architectures": [
+    "arm64-v8a"
+  ],
+  "signer_sha256": "a49068da04643fb31c8d142035aaecaade43061142d7bd4571117890abbd41e9",
+  "android_renderer": "mobile",
+  "android_vulkan_hardware_required": true,
+  "debug_signed": true,
+  "zipalign_16k": true,
+  "permissions": [
+    "android.permission.VIBRATE"
+  ],
+  "source_commit": "d4406588c5a72acba86bb536d45f729f8233cd87",
+  "device_install_or_launch_tested": false
+}

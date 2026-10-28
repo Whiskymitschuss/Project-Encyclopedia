@@ -1,3 +1,7 @@
+## Neu: 0.28.29-alpha.1 · Rathaus 1–10
+
+[APK-Updates, Installation und tatsächlicher Prüfstand](RATHAUS-0.28.29-alpha.1.md).
+
 # Aktuell: Hintergrundmusik · 0.28.28-alpha.2
 
 **[Android-Update mit Vulkan (ARM64)](https://raw.githubusercontent.com/Whiskymitschuss/Project-Encyclopedia/v0.28.28-alpha.2/releases/Timber-Loot-Tycoon-v0.28.28-alpha.2-vulkan-arm64.apk)** ·

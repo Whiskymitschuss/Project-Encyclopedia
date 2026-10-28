@@ -1,0 +1,11 @@
+{
+  "version": "0.28.29-alpha.1",
+  "source_commit": "d4406588c5a72acba86bb536d45f729f8233cd87",
+  "asset_count": 1013,
+  "different_assets": [
+    "assets/project.binary",
+    "assets/assets.sparsepck"
+  ],
+  "all_gameplay_and_music_assets_identical": true,
+  "note": "Only renderer settings and their sparse index differ; no Android performance result."
+}

@@ -109,3 +109,19 @@ nicht in die Android-App exportiert. Das Bildschirmbild zeigt diesen Zustand
 in der echten Hauptwelt mit Linux-Softwarerendering.
 
 ![Verdienter Rathaus-10-Spielstand in der Hauptwelt](rathaus10.png)
+
+## Android-Testpakete
+
+[APK-Updates und Installationshinweise](../../releases/RATHAUS-0.28.29-alpha.1.md).
+Beide ARM64-Varianten wurden aus Quell-Commit
+`d4406588c5a72acba86bb536d45f729f8233cd87` gebaut und mit dem bisherigen
+Testzertifikat geprüft. Ein weiterer vollständiger Durchlauf samt Einführung,
+Datei-Speicherungen und echtem Offline-Worker-Vergleich lief je Variante mit den
+unveränderten, aus der signierten APK entpackten Spielressourcen durch.
+Zusätzlich je 32 Transport-/Automatikprüfungen, 11 Musik- und 22 Speicherprüfungen
+sowie 13 grafische Endspiel-/Touch-Prüfungen; null fehlgeschlagene Prüfungen.
+
+Die zwei Pakete haben 1.013 Ressourcen gemeinsam; nur Renderereinstellung und
+zugehöriger Ressourcenindex unterscheiden sich. Das sind Desktop-Prüfungen
+mit Godot 4.6.3 und Software-GPU, keine Installation auf Android-Hardware.
+[Paketergebnisse](packaged-checks.json) · [Ressourcenvergleich](renderer-parity.json).
