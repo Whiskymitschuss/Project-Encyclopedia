@@ -1,8 +1,9 @@
 # Version 1.0 vorbereiten
 
-Stand: 28.10.2026, ausgehend von 0.28.28-alpha.2. **Noch keine Store-Freigabe.**
-Die neue Hilfe und Berichtserweiterung sind Quelländerungen; die bisherigen
-veröffentlichten APKs enthalten sie nicht. Es wurde hier keine neue APK/AAB gebaut.
+Stand: 28.10.2026, fortgesetzt mit 0.28.29-alpha.1. **Noch keine Store-Freigabe.**
+Die Hilfe und Berichtserweiterung sind integriert. Die vollständige Simulation
+vom ersten Spielstart bis Rathaus 10 ist inzwischen mit zwei Spielerregeln
+belegt: [Verläufe und gefundene Blockaden](../journey-1-10/README.md).
 
 ## Festgelegter Umfang
 
@@ -39,10 +40,12 @@ Studiointro und weitere Gebäude sind gegenüber den Hängern nachrangig.
    keine wiederkehrenden Sekundenhänger, Weltaufbau möglichst unter 5–10 s.
    Ein 180-Frame-Mittel allein beweist keine stabile Sitzung. Die zuletzt
    gemeldeten 4,7 FPS/395 ms und 5–10-s-Hänger gelten weiterhin als offen.
-2. **Neustart bis Rathaus 10 durchspielen und balancieren.** `Tests/Journey.gd`
+2. **Rathaus 1–10 menschlich prüfen und balancieren.** `Tests/Journey.gd`
    belegt reale frühe Fortschritte bis Rathaus 2; spätere Kapitelprüfungen setzen
    Münzen, Gebäude und Materialien voraus. Sie prüfen Regeln, nicht die gesamte
-   Erreichbarkeit. Für jedes Kapitel Zeit, Pflichtaktionen, Wartephasen und
+   Erreichbarkeit. `Tests/JourneyPlaythrough.gd` ergänzt jetzt zwei vollständige
+   Durchläufe mit verdienten Ressourcen, Einführung, Save/Reload und Offline-
+   Vergleich. Für menschliche Testläufe Zeit, Pflichtaktionen, Wartephasen und
    Warenengpässe protokollieren. Keine Gratisressourcen für den Abnahmedurchlauf.
 3. **Spielstand und Langzeitketten sichern.** Produktions-/Lagerbestände und Ware
    in laufenden LKW vor/nach Speichern, Neustart, Background und Offline-Zeit
@@ -74,7 +77,7 @@ Gerätemessungen, Grafiktests mit Software-GPU und Wirtschaftstests mit
 simulierter Zeit sind getrennte Nachweise. Die vorliegende Änderung löst die
 gemeldeten Handy-Hänger nicht nachweislich und verändert keine Produktionsregeln.
 
-## Ergebnis des Schnelldurchlaufs
+## Ergebnis des früheren Schnelldurchlaufs vor dem Rathaus-Update
 
 Der vollständige `scripts/test.sh`-Lauf endet erfolgreich: **21.690 Prüfungen in
 53 Ergebnisgruppen**, plus sechs Python-Audit-Tests. Er deckt unter anderem Wald,

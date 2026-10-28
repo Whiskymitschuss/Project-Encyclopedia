@@ -1,0 +1,3400 @@
+{
+ "action_interval": 5,
+ "actions": [
+  {
+   "action": "chop",
+   "at": 0,
+   "coins": 350.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 5,
+   "coins": 350.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 10,
+   "coins": 350.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 15,
+   "coins": 350.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 20,
+   "coins": 350.0,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 25,
+   "coins": 350.0,
+   "detail": ""
+  },
+  {
+   "action": "tutorial_sale",
+   "at": 30,
+   "coins": 360.01,
+   "detail": ""
+  },
+  {
+   "action": "build",
+   "at": 35,
+   "coins": 80.01,
+   "detail": "cabin"
+  },
+  {
+   "action": "tutorial_complete",
+   "at": 60,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 65,
+   "coins": 120.01,
+   "detail": "roots:0"
+  },
+  {
+   "action": "claim",
+   "at": 70,
+   "coins": 180.01,
+   "detail": "roots:1"
+  },
+  {
+   "action": "claim",
+   "at": 75,
+   "coins": 280.01,
+   "detail": "roots:2"
+  },
+  {
+   "action": "hall_order",
+   "at": 80,
+   "coins": 80.01,
+   "detail": 1
+  },
+  {
+   "action": "chop",
+   "at": 85,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 90,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 95,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 100,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 105,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 110,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 115,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 120,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 125,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 130,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 135,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 140,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 145,
+   "coins": 80.01,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 150,
+   "coins": 204.4,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 155,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 160,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 165,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 170,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 175,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 180,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 185,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 190,
+   "coins": 204.4,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 195,
+   "coins": 312.40000000000003,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 200,
+   "coins": 437.5,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 205,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 210,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 215,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 220,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 225,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 230,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 235,
+   "coins": 437.5,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 240,
+   "coins": 544.3,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 245,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 250,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 255,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 260,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 265,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 270,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 275,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 280,
+   "coins": 544.3,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 285,
+   "coins": 658.0,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 290,
+   "coins": 658.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 295,
+   "coins": 658.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 300,
+   "coins": 658.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 305,
+   "coins": 658.0,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 310,
+   "coins": 658.0,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 315,
+   "coins": 658.0,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 320,
+   "coins": 764.8000000000001,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 325,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 330,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 335,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 340,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 345,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 350,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 355,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 360,
+   "coins": 764.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 365,
+   "coins": 866.8000000000001,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 370,
+   "coins": 989.65,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 375,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 380,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 385,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 390,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 395,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 400,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 405,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 410,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 415,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 420,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 425,
+   "coins": 989.65,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 430,
+   "coins": 1099.15,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 435,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 440,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 445,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 450,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 455,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 460,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 465,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 470,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 475,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 480,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 485,
+   "coins": 1099.15,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 490,
+   "coins": 1205.8,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 495,
+   "coins": 1205.8,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 500,
+   "coins": 1205.8,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 505,
+   "coins": 1205.8,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 510,
+   "coins": 1205.8,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 515,
+   "coins": 1205.8,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 520,
+   "coins": 1205.8,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 525,
+   "coins": 1305.8,
+   "detail": "roots:hall"
+  },
+  {
+   "action": "claim",
+   "at": 530,
+   "coins": 1405.8,
+   "detail": "sawmill:0"
+  },
+  {
+   "action": "upgrade",
+   "at": 535,
+   "coins": 971.8000000000001,
+   "detail": "sawmill:2.0"
+  },
+  {
+   "action": "hardware",
+   "at": 540,
+   "coins": 951.8000000000001,
+   "detail": 3.0
+  },
+  {
+   "action": "city_income",
+   "at": 545,
+   "coins": 1053.8,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 550,
+   "coins": 1166.15,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 555,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 560,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 565,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 570,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 575,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 580,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 585,
+   "coins": 1166.15,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 590,
+   "coins": 1268.31,
+   "detail": "sawdust"
+  },
+  {
+   "action": "chop",
+   "at": 595,
+   "coins": 1268.31,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 600,
+   "coins": 1268.31,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 605,
+   "coins": 1268.31,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 610,
+   "coins": 1268.31,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 615,
+   "coins": 1268.31,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 620,
+   "coins": 1268.31,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 625,
+   "coins": 1378.8600000000001,
+   "detail": "boards"
+  },
+  {
+   "action": "chop",
+   "at": 630,
+   "coins": 1378.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 635,
+   "coins": 1378.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 640,
+   "coins": 1378.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 645,
+   "coins": 1378.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 650,
+   "coins": 1370.8600000000001,
+   "detail": 3.0
+  },
+  {
+   "action": "deposit",
+   "at": 655,
+   "coins": 1370.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 660,
+   "coins": 1370.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 665,
+   "coins": 1370.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 670,
+   "coins": 1370.8600000000001,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 675,
+   "coins": 1490.1100000000001,
+   "detail": "boards"
+  },
+  {
+   "action": "hardware",
+   "at": 680,
+   "coins": 1484.1100000000001,
+   "detail": 3.0
+  },
+  {
+   "action": "chop",
+   "at": 685,
+   "coins": 1484.1100000000001,
+   "detail": ""
+  },
+  {
+   "action": "chop",
+   "at": 690,
+   "coins": 1484.1100000000001,
+   "detail": ""
+  },
+  {
+   "action": "deposit",
+   "at": 695,
+   "coins": 1484.1100000000001,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 710,
+   "coins": 1588.1100000000001,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 750,
+   "coins": 1738.1100000000001,
+   "detail": "sawmill:1"
+  },
+  {
+   "action": "hire",
+   "at": 755,
+   "coins": 1618.1100000000001,
+   "detail": ""
+  },
+  {
+   "action": "hire",
+   "at": 760,
+   "coins": 1458.1100000000001,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 765,
+   "coins": 1638.1100000000001,
+   "detail": "sawmill:2"
+  },
+  {
+   "action": "hall_order",
+   "at": 770,
+   "coins": 1188.1100000000001,
+   "detail": 2
+  },
+  {
+   "action": "sale",
+   "at": 775,
+   "coins": 1298.96,
+   "detail": "boards"
+  },
+  {
+   "action": "sale",
+   "at": 820,
+   "coins": 1405.01,
+   "detail": "boards"
+  },
+  {
+   "action": "sale",
+   "at": 850,
+   "coins": 1510.31,
+   "detail": "boards"
+  },
+  {
+   "action": "city_income",
+   "at": 895,
+   "coins": 1618.31,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 1095,
+   "coins": 1730.31,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 1205,
+   "coins": 1930.31,
+   "detail": "sawmill:hall"
+  },
+  {
+   "action": "build",
+   "at": 1210,
+   "coins": 1430.31,
+   "detail": "kiln"
+  },
+  {
+   "action": "sale",
+   "at": 1215,
+   "coins": 2681.61,
+   "detail": "boards"
+  },
+  {
+   "action": "upgrade",
+   "at": 1220,
+   "coins": 2420.61,
+   "detail": "station:2.0"
+  },
+  {
+   "action": "hardware",
+   "at": 1225,
+   "coins": 2414.61,
+   "detail": 6.0
+  },
+  {
+   "action": "claim",
+   "at": 1300,
+   "coins": 2614.61,
+   "detail": "workshop:0"
+  },
+  {
+   "action": "build",
+   "at": 1305,
+   "coins": 1714.6100000000001,
+   "detail": "furniture"
+  },
+  {
+   "action": "city_income",
+   "at": 1310,
+   "coins": 1818.6100000000001,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 1315,
+   "coins": 1955.98,
+   "detail": "boards"
+  },
+  {
+   "action": "sale",
+   "at": 1320,
+   "coins": 2136.26,
+   "detail": "sawdust"
+  },
+  {
+   "action": "sale",
+   "at": 1335,
+   "coins": 2249.36,
+   "detail": "dry"
+  },
+  {
+   "action": "sale",
+   "at": 1355,
+   "coins": 2375.36,
+   "detail": "dry"
+  },
+  {
+   "action": "sale",
+   "at": 1375,
+   "coins": 2488.05,
+   "detail": "dry"
+  },
+  {
+   "action": "hardware",
+   "at": 1400,
+   "coins": 2480.05,
+   "detail": 6.0
+  },
+  {
+   "action": "hardware",
+   "at": 1440,
+   "coins": 2474.05,
+   "detail": 6.0
+  },
+  {
+   "action": "city_income",
+   "at": 1480,
+   "coins": 2580.05,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 1525,
+   "coins": 2574.05,
+   "detail": 7.0
+  },
+  {
+   "action": "hire",
+   "at": 1540,
+   "coins": 2362.05,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 1545,
+   "coins": 3158.1,
+   "detail": "dry"
+  },
+  {
+   "action": "hire",
+   "at": 1550,
+   "coins": 2876.1,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 1595,
+   "coins": 2868.1,
+   "detail": 7.0
+  },
+  {
+   "action": "hardware",
+   "at": 1625,
+   "coins": 2862.1,
+   "detail": 7.0
+  },
+  {
+   "action": "city_income",
+   "at": 1655,
+   "coins": 2968.1,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 1675,
+   "coins": 3218.1,
+   "detail": "workshop:1"
+  },
+  {
+   "action": "sale",
+   "at": 1680,
+   "coins": 4038.6,
+   "detail": "dry"
+  },
+  {
+   "action": "sale",
+   "at": 1685,
+   "coins": 4180.3,
+   "detail": "sawdust"
+  },
+  {
+   "action": "sale",
+   "at": 1690,
+   "coins": 4245.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1695,
+   "coins": 4310.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1700,
+   "coins": 4375.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1705,
+   "coins": 4440.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1710,
+   "coins": 4505.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1715,
+   "coins": 4570.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1720,
+   "coins": 4635.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1725,
+   "coins": 4700.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1730,
+   "coins": 4765.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1735,
+   "coins": 4830.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1740,
+   "coins": 4895.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 1745,
+   "coins": 4960.3,
+   "detail": "furniture"
+  },
+  {
+   "action": "claim",
+   "at": 1750,
+   "coins": 5310.3,
+   "detail": "workshop:2"
+  },
+  {
+   "action": "hall_order",
+   "at": 1755,
+   "coins": 4410.3,
+   "detail": 3
+  },
+  {
+   "action": "city_income",
+   "at": 1835,
+   "coins": 4516.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 2015,
+   "coins": 4620.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 2185,
+   "coins": 4722.3,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 2265,
+   "coins": 5022.3,
+   "detail": "workshop:hall"
+  },
+  {
+   "action": "delivery_start",
+   "at": 2270,
+   "coins": 5022.3,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 2275,
+   "coins": 5272.3,
+   "detail": "routes:0"
+  },
+  {
+   "action": "claim",
+   "at": 2280,
+   "coins": 5622.3,
+   "detail": "routes:1"
+  },
+  {
+   "action": "claim",
+   "at": 2285,
+   "coins": 6452.3,
+   "detail": "routes:2"
+  },
+  {
+   "action": "hall_order",
+   "at": 2290,
+   "coins": 4652.3,
+   "detail": 4
+  },
+  {
+   "action": "build",
+   "at": 2295,
+   "coins": 3452.3,
+   "detail": "central_depot"
+  },
+  {
+   "action": "city_income",
+   "at": 2355,
+   "coins": 3556.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 2530,
+   "coins": 3660.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 2740,
+   "coins": 3776.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 2950,
+   "coins": 4109.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 3160,
+   "coins": 4607.3,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 3335,
+   "coins": 5103.3,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 3370,
+   "coins": 5503.3,
+   "detail": "routes:hall"
+  },
+  {
+   "action": "build",
+   "at": 3375,
+   "coins": 2003.3,
+   "detail": "prefab"
+  },
+  {
+   "action": "hardware",
+   "at": 3380,
+   "coins": 1997.3,
+   "detail": 11.0
+  },
+  {
+   "action": "sale",
+   "at": 3385,
+   "coins": 6212.7300000000005,
+   "detail": "furniture"
+  },
+  {
+   "action": "city_income",
+   "at": 3515,
+   "coins": 6708.7300000000005,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 3695,
+   "coins": 7202.7300000000005,
+   "detail": ""
+  },
+  {
+   "action": "build",
+   "at": 3700,
+   "coins": 6852.7300000000005,
+   "detail": "sawmill"
+  },
+  {
+   "action": "city_income",
+   "at": 3865,
+   "coins": 6954.7300000000005,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 3885,
+   "coins": 6946.7300000000005,
+   "detail": 11.0
+  },
+  {
+   "action": "hardware",
+   "at": 4020,
+   "coins": 6940.7300000000005,
+   "detail": 11.0
+  },
+  {
+   "action": "city_income",
+   "at": 4035,
+   "coins": 7044.7300000000005,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 4210,
+   "coins": 7148.7300000000005,
+   "detail": ""
+  },
+  {
+   "action": "build",
+   "at": 4340,
+   "coins": 2948.73,
+   "detail": "joinery"
+  },
+  {
+   "action": "hardware",
+   "at": 4345,
+   "coins": 2942.73,
+   "detail": 13.0
+  },
+  {
+   "action": "sale",
+   "at": 4350,
+   "coins": 3049.82,
+   "detail": "dry"
+  },
+  {
+   "action": "sale",
+   "at": 4355,
+   "coins": 4933.79,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 4360,
+   "coins": 5353.9800000000005,
+   "detail": "sawdust"
+  },
+  {
+   "action": "city_income",
+   "at": 4395,
+   "coins": 5463.9800000000005,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 4425,
+   "coins": 5963.9800000000005,
+   "detail": "builders:0"
+  },
+  {
+   "action": "home",
+   "at": 4430,
+   "coins": 4763.9800000000005,
+   "detail": "house"
+  },
+  {
+   "action": "rent_manager",
+   "at": 4435,
+   "coins": 2263.98,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 4440,
+   "coins": 2477.92,
+   "detail": "dry"
+  },
+  {
+   "action": "sale",
+   "at": 4465,
+   "coins": 3322.92,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 4500,
+   "coins": 3482.92,
+   "detail": "wood"
+  },
+  {
+   "action": "hardware",
+   "at": 4560,
+   "coins": 3474.92,
+   "detail": 13.0
+  },
+  {
+   "action": "city_income",
+   "at": 4600,
+   "coins": 3586.92,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 4685,
+   "coins": 3778.92,
+   "detail": "wood"
+  },
+  {
+   "action": "hardware",
+   "at": 4690,
+   "coins": 3772.92,
+   "detail": 13.0
+  },
+  {
+   "action": "city_income",
+   "at": 4770,
+   "coins": 4628.92,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 4780,
+   "coins": 4764.92,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 4800,
+   "coins": 5219.92,
+   "detail": "furniture"
+  },
+  {
+   "action": "sale",
+   "at": 4810,
+   "coins": 5363.92,
+   "detail": "wood"
+  },
+  {
+   "action": "city_income",
+   "at": 4955,
+   "coins": 5464.92,
+   "detail": ""
+  },
+  {
+   "action": "hire",
+   "at": 4975,
+   "coins": 5089.92,
+   "detail": ""
+  },
+  {
+   "action": "hire",
+   "at": 4980,
+   "coins": 4590.92,
+   "detail": ""
+  },
+  {
+   "action": "hire",
+   "at": 4985,
+   "coins": 3927.92,
+   "detail": ""
+  },
+  {
+   "action": "truck",
+   "at": 4990,
+   "coins": 3423.92,
+   "detail": ""
+  },
+  {
+   "action": "vehicle",
+   "at": 4995,
+   "coins": 3593.92,
+   "detail": ""
+  },
+  {
+   "action": "vehicle",
+   "at": 5000,
+   "coins": 2293.92,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 5070,
+   "coins": 2549.92,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 5100,
+   "coins": 2661.92,
+   "detail": "wood"
+  },
+  {
+   "action": "city_income",
+   "at": 5120,
+   "coins": 2771.92,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 5135,
+   "coins": 2873.98,
+   "detail": "sawdust"
+  },
+  {
+   "action": "sale",
+   "at": 5170,
+   "coins": 3260.98,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 5200,
+   "coins": 3372.98,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 5240,
+   "coins": 3624.98,
+   "detail": "boards"
+  },
+  {
+   "action": "sale",
+   "at": 5245,
+   "coins": 3736.98,
+   "detail": "wood"
+  },
+  {
+   "action": "build",
+   "at": 5250,
+   "coins": 2336.98,
+   "detail": "garage"
+  },
+  {
+   "action": "hardware",
+   "at": 5255,
+   "coins": 2330.98,
+   "detail": 15.0
+  },
+  {
+   "action": "city_income",
+   "at": 5300,
+   "coins": 2432.98,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 5360,
+   "coins": 3041.62,
+   "detail": "builders:1"
+  },
+  {
+   "action": "claim",
+   "at": 5405,
+   "coins": 3838.82,
+   "detail": "builders:2"
+  },
+  {
+   "action": "upgrade",
+   "at": 5410,
+   "coins": 2981.62,
+   "detail": "kiln:2.0"
+  },
+  {
+   "action": "hardware",
+   "at": 5420,
+   "coins": 2995.2200000000003,
+   "detail": 15.0
+  },
+  {
+   "action": "city_income",
+   "at": 5475,
+   "coins": 3220.02,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 5535,
+   "coins": 3601.62,
+   "detail": "wood"
+  },
+  {
+   "action": "hardware",
+   "at": 5565,
+   "coins": 3660.42,
+   "detail": 15.0
+  },
+  {
+   "action": "sale",
+   "at": 5570,
+   "coins": 3927.62,
+   "detail": "boards"
+  },
+  {
+   "action": "hall_order",
+   "at": 5605,
+   "coins": 3.22,
+   "detail": 5
+  },
+  {
+   "action": "city_income",
+   "at": 5615,
+   "coins": 137.82,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 5660,
+   "coins": 227.02,
+   "detail": 16.0
+  },
+  {
+   "action": "sale",
+   "at": 5695,
+   "coins": 504.62,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 5720,
+   "coins": 750.62,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 5725,
+   "coins": 864.52,
+   "detail": "sawdust"
+  },
+  {
+   "action": "city_income",
+   "at": 5755,
+   "coins": 1030.32,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 5800,
+   "coins": 1121.52,
+   "detail": 16.0
+  },
+  {
+   "action": "hardware",
+   "at": 5850,
+   "coins": 1223.52,
+   "detail": 16.0
+  },
+  {
+   "action": "city_income",
+   "at": 5895,
+   "coins": 1421.72,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 6035,
+   "coins": 2617.62,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 6155,
+   "coins": 3124.82,
+   "detail": "wood"
+  },
+  {
+   "action": "city_income",
+   "at": 6175,
+   "coins": 3269.02,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 6255,
+   "coins": 3611.82,
+   "detail": "wood"
+  },
+  {
+   "action": "upgrade",
+   "at": 6260,
+   "coins": 2545.62,
+   "detail": "kiln:3.0"
+  },
+  {
+   "action": "hardware",
+   "at": 6265,
+   "coins": 2550.42,
+   "detail": 18.0
+  },
+  {
+   "action": "sale",
+   "at": 6310,
+   "coins": 2788.62,
+   "detail": "boards"
+  },
+  {
+   "action": "city_income",
+   "at": 6315,
+   "coins": 2900.42,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 6455,
+   "coins": 3315.82,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 6490,
+   "coins": 3651.42,
+   "detail": "wood"
+  },
+  {
+   "action": "hardware",
+   "at": 6495,
+   "coins": 3654.2200000000003,
+   "detail": 18.0
+  },
+  {
+   "action": "sale",
+   "at": 6500,
+   "coins": 3770.27,
+   "detail": "sawdust"
+  },
+  {
+   "action": "sale",
+   "at": 6530,
+   "coins": 5375.07,
+   "detail": "parts"
+  },
+  {
+   "action": "city_income",
+   "at": 6595,
+   "coins": 5616.47,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 6735,
+   "coins": 6019.87,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 6765,
+   "coins": 6078.67,
+   "detail": 18.0
+  },
+  {
+   "action": "city_income",
+   "at": 6875,
+   "coins": 6429.27,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 7015,
+   "coins": 6923.67,
+   "detail": ""
+  },
+  {
+   "action": "upgrade",
+   "at": 7045,
+   "coins": 6296.47,
+   "detail": "sawmill:3.0"
+  },
+  {
+   "action": "hardware",
+   "at": 7050,
+   "coins": 6301.27,
+   "detail": 19.0
+  },
+  {
+   "action": "city_income",
+   "at": 7155,
+   "coins": 6629.07,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 7195,
+   "coins": 7215.59,
+   "detail": "builders:hall"
+  },
+  {
+   "action": "build",
+   "at": 7200,
+   "coins": 5426.59,
+   "detail": "quarry"
+  },
+  {
+   "action": "hardware",
+   "at": 7220,
+   "coins": 5462.59,
+   "detail": 19.0
+  },
+  {
+   "action": "city_income",
+   "at": 7295,
+   "coins": 6771.59,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 7335,
+   "coins": 6853.59,
+   "detail": 19.0
+  },
+  {
+   "action": "city_income",
+   "at": 7435,
+   "coins": 7174.59,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 7575,
+   "coins": 7583.59,
+   "detail": ""
+  },
+  {
+   "action": "upgrade",
+   "at": 7650,
+   "coins": 6890.59,
+   "detail": "sawmill:4.0"
+  },
+  {
+   "action": "hardware",
+   "at": 7655,
+   "coins": 6895.59,
+   "detail": 21.0
+  },
+  {
+   "action": "city_income",
+   "at": 7715,
+   "coins": 10186.59,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 7835,
+   "coins": 11050.59,
+   "detail": "stone:0"
+  },
+  {
+   "action": "build",
+   "at": 7840,
+   "coins": 8561.59,
+   "detail": "stoneworks"
+  },
+  {
+   "action": "city_income",
+   "at": 7855,
+   "coins": 8695.59,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 7870,
+   "coins": 8720.59,
+   "detail": 21.0
+  },
+  {
+   "action": "hardware",
+   "at": 7980,
+   "coins": 8956.59,
+   "detail": 21.0
+  },
+  {
+   "action": "city_income",
+   "at": 7995,
+   "coins": 9090.59,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 8135,
+   "coins": 9511.59,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 8275,
+   "coins": 10603.09,
+   "detail": ""
+  },
+  {
+   "action": "upgrade",
+   "at": 8340,
+   "coins": 9183.09,
+   "detail": "furniture:2.0"
+  },
+  {
+   "action": "hardware",
+   "at": 8345,
+   "coins": 9188.09,
+   "detail": 23.0
+  },
+  {
+   "action": "city_income",
+   "at": 8415,
+   "coins": 9443.09,
+   "detail": ""
+  },
+  {
+   "action": "claim",
+   "at": 8505,
+   "coins": 10391.09,
+   "detail": "stone:1"
+  },
+  {
+   "action": "central_truck",
+   "at": 8510,
+   "coins": 9602.09,
+   "detail": ""
+  },
+  {
+   "action": "central_truck",
+   "at": 8515,
+   "coins": 8333.09,
+   "detail": ""
+  },
+  {
+   "action": "central_truck",
+   "at": 8520,
+   "coins": 6295.09,
+   "detail": ""
+  },
+  {
+   "action": "central_truck",
+   "at": 8525,
+   "coins": 3029.09,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 8530,
+   "coins": 5680.09,
+   "detail": "roofs"
+  },
+  {
+   "action": "dock",
+   "at": 8535,
+   "coins": 5191.09,
+   "detail": 0
+  },
+  {
+   "action": "dock",
+   "at": 8540,
+   "coins": 4302.09,
+   "detail": 0
+  },
+  {
+   "action": "sale",
+   "at": 8545,
+   "coins": 6022.49,
+   "detail": "roofs"
+  },
+  {
+   "action": "hardware",
+   "at": 8550,
+   "coins": 6025.49,
+   "detail": 23.0
+  },
+  {
+   "action": "city_income",
+   "at": 8555,
+   "coins": 6149.49,
+   "detail": ""
+  },
+  {
+   "action": "dock",
+   "at": 8560,
+   "coins": 5660.49,
+   "detail": 1
+  },
+  {
+   "action": "dock",
+   "at": 8565,
+   "coins": 4771.49,
+   "detail": 1
+  },
+  {
+   "action": "sale",
+   "at": 8570,
+   "coins": 5662.49,
+   "detail": "parts"
+  },
+  {
+   "action": "dock",
+   "at": 8575,
+   "coins": 5173.49,
+   "detail": 6
+  },
+  {
+   "action": "dock",
+   "at": 8580,
+   "coins": 4284.49,
+   "detail": 6
+  },
+  {
+   "action": "sale",
+   "at": 8585,
+   "coins": 5991.49,
+   "detail": "wood"
+  },
+  {
+   "action": "dock",
+   "at": 8590,
+   "coins": 5502.49,
+   "detail": 7
+  },
+  {
+   "action": "dock",
+   "at": 8595,
+   "coins": 4613.49,
+   "detail": 7
+  },
+  {
+   "action": "sale",
+   "at": 8600,
+   "coins": 4912.49,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 8605,
+   "coins": 5274.49,
+   "detail": "sawdust"
+  },
+  {
+   "action": "dock",
+   "at": 8610,
+   "coins": 4785.49,
+   "detail": 9
+  },
+  {
+   "action": "dock",
+   "at": 8615,
+   "coins": 3896.4900000000002,
+   "detail": 9
+  },
+  {
+   "action": "dock",
+   "at": 8620,
+   "coins": 3407.4900000000002,
+   "detail": 10
+  },
+  {
+   "action": "sale",
+   "at": 8625,
+   "coins": 3706.4900000000002,
+   "detail": "wood"
+  },
+  {
+   "action": "dock",
+   "at": 8630,
+   "coins": 2817.4900000000002,
+   "detail": 10
+  },
+  {
+   "action": "dock",
+   "at": 8660,
+   "coins": 4823.99,
+   "detail": 11
+  },
+  {
+   "action": "dock",
+   "at": 8665,
+   "coins": 3934.9900000000002,
+   "detail": 11
+  },
+  {
+   "action": "dock",
+   "at": 8670,
+   "coins": 3445.9900000000002,
+   "detail": 13
+  },
+  {
+   "action": "city_income",
+   "at": 8695,
+   "coins": 3601.9900000000002,
+   "detail": ""
+  },
+  {
+   "action": "dock",
+   "at": 8700,
+   "coins": 2712.9900000000002,
+   "detail": 13
+  },
+  {
+   "action": "hardware",
+   "at": 8755,
+   "coins": 2827.9900000000002,
+   "detail": 23.0
+  },
+  {
+   "action": "sale",
+   "at": 8760,
+   "coins": 3846.59,
+   "detail": "roofs"
+  },
+  {
+   "action": "sale",
+   "at": 8765,
+   "coins": 3968.19,
+   "detail": "wood"
+  },
+  {
+   "action": "dock",
+   "at": 8770,
+   "coins": 3479.19,
+   "detail": 14
+  },
+  {
+   "action": "sale",
+   "at": 8775,
+   "coins": 3595.19,
+   "detail": "dry"
+  },
+  {
+   "action": "dock",
+   "at": 8780,
+   "coins": 2706.19,
+   "detail": 14
+  },
+  {
+   "action": "sale",
+   "at": 8785,
+   "coins": 2915.19,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 8815,
+   "coins": 3541.19,
+   "detail": "walls"
+  },
+  {
+   "action": "city_income",
+   "at": 8835,
+   "coins": 3686.19,
+   "detail": ""
+  },
+  {
+   "action": "sale",
+   "at": 8900,
+   "coins": 4017.19,
+   "detail": "wood"
+  },
+  {
+   "action": "sale",
+   "at": 8930,
+   "coins": 4258.1900000000005,
+   "detail": "stone"
+  },
+  {
+   "action": "sale",
+   "at": 8970,
+   "coins": 5314.1900000000005,
+   "detail": "roofs"
+  },
+  {
+   "action": "city_income",
+   "at": 8975,
+   "coins": 5438.1900000000005,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 9115,
+   "coins": 5847.1900000000005,
+   "detail": ""
+  },
+  {
+   "action": "upgrade",
+   "at": 9155,
+   "coins": 3997.19,
+   "detail": "furniture:3.0"
+  },
+  {
+   "action": "hardware",
+   "at": 9160,
+   "coins": 4002.19,
+   "detail": 24.0
+  },
+  {
+   "action": "sale",
+   "at": 9165,
+   "coins": 4693.1900000000005,
+   "detail": "walls"
+  },
+  {
+   "action": "sale",
+   "at": 9170,
+   "coins": 5166.1900000000005,
+   "detail": "wood"
+  },
+  {
+   "action": "city_income",
+   "at": 9255,
+   "coins": 6345.6900000000005,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 9390,
+   "coins": 6634.6900000000005,
+   "detail": 24.0
+  },
+  {
+   "action": "city_income",
+   "at": 9395,
+   "coins": 6758.6900000000005,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 9535,
+   "coins": 8566.19,
+   "detail": ""
+  },
+  {
+   "action": "hardware",
+   "at": 9550,
+   "coins": 8593.19,
+   "detail": 24.0
+  },
+  {
+   "action": "city_income",
+   "at": 9675,
+   "coins": 8969.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 9815,
+   "coins": 9546.19,
+   "detail": ""
+  },
+  {
+   "action": "quarry_vein",
+   "at": 9935,
+   "coins": 9610.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 9955,
+   "coins": 9755.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10095,
+   "coins": 10164.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10235,
+   "coins": 10585.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10375,
+   "coins": 10994.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10515,
+   "coins": 11403.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10655,
+   "coins": 14212.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10795,
+   "coins": 14621.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 10935,
+   "coins": 17594.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11075,
+   "coins": 18015.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11215,
+   "coins": 22564.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11355,
+   "coins": 22973.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11495,
+   "coins": 23394.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11635,
+   "coins": 23803.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11775,
+   "coins": 27635.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 11915,
+   "coins": 28056.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "quarry_vein",
+   "at": 12035,
+   "coins": 28281.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12055,
+   "coins": 28426.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12195,
+   "coins": 31660.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12335,
+   "coins": 32081.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12475,
+   "coins": 32490.690000000002,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12615,
+   "coins": 36642.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12755,
+   "coins": 40083.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 12895,
+   "coins": 42497.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13035,
+   "coins": 42906.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13175,
+   "coins": 43964.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13315,
+   "coins": 45108.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13455,
+   "coins": 47977.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13595,
+   "coins": 51783.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13735,
+   "coins": 52192.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 13875,
+   "coins": 52601.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14015,
+   "coins": 56869.19,
+   "detail": ""
+  },
+  {
+   "action": "quarry_vein",
+   "at": 14135,
+   "coins": 56878.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14155,
+   "coins": 57023.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14295,
+   "coins": 57432.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14435,
+   "coins": 57853.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14575,
+   "coins": 61418.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14715,
+   "coins": 62334.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14855,
+   "coins": 62755.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 14995,
+   "coins": 65729.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15135,
+   "coins": 67713.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15275,
+   "coins": 69781.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15415,
+   "coins": 70190.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15555,
+   "coins": 72317.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15695,
+   "coins": 76253.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15835,
+   "coins": 76662.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 15975,
+   "coins": 77409.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16115,
+   "coins": 77830.19,
+   "detail": ""
+  },
+  {
+   "action": "quarry_vein",
+   "at": 16235,
+   "coins": 77714.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16255,
+   "coins": 81197.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16395,
+   "coins": 81606.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16535,
+   "coins": 82522.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16675,
+   "coins": 86446.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16815,
+   "coins": 86855.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 16955,
+   "coins": 87276.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17095,
+   "coins": 89468.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17235,
+   "coins": 94342.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17375,
+   "coins": 94763.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17515,
+   "coins": 95172.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17655,
+   "coins": 98022.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17795,
+   "coins": 98443.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 17935,
+   "coins": 98852.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18075,
+   "coins": 101467.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18215,
+   "coins": 101888.69,
+   "detail": ""
+  },
+  {
+   "action": "quarry_vein",
+   "at": 18335,
+   "coins": 103416.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18355,
+   "coins": 103561.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18495,
+   "coins": 108110.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18635,
+   "coins": 110601.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18775,
+   "coins": 111010.69,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 18915,
+   "coins": 113756.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19055,
+   "coins": 114307.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19195,
+   "coins": 114716.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19335,
+   "coins": 116687.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19475,
+   "coins": 120258.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19615,
+   "coins": 121357.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19755,
+   "coins": 121766.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 19895,
+   "coins": 122187.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20035,
+   "coins": 122596.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20175,
+   "coins": 124046.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20315,
+   "coins": 124467.19,
+   "detail": ""
+  },
+  {
+   "action": "quarry_vein",
+   "at": 20435,
+   "coins": 125103.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20455,
+   "coins": 127318.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20595,
+   "coins": 128677.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20735,
+   "coins": 129098.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 20875,
+   "coins": 129507.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 21015,
+   "coins": 132428.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 21155,
+   "coins": 132849.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 21295,
+   "coins": 134638.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 21435,
+   "coins": 139187.19,
+   "detail": ""
+  },
+  {
+   "action": "city_income",
+   "at": 21575,
+   "coins": 139608.19,
+   "detail": ""
+  }
+ ],
+ "baseline": "73cd20bc9e490634fe7c75123bbd45bf44c72967",
+ "candidate_version": "0.28.28-alpha.2",
+ "chapters": [
+  {
+   "buildings": 6,
+   "coins": 1305.7999999999986,
+   "elapsed": 525,
+   "exported": 0.0,
+   "hall": 1,
+   "manual_cuts": 70,
+   "workers": 1
+  },
+  {
+   "buildings": 6,
+   "coins": 1930.3124999999982,
+   "elapsed": 1205,
+   "exported": 0.0,
+   "hall": 2,
+   "manual_cuts": 90,
+   "workers": 3.0
+  },
+  {
+   "buildings": 8,
+   "coins": 5022.295000000008,
+   "elapsed": 2265,
+   "exported": 12.000000000000007,
+   "hall": 3,
+   "manual_cuts": 90,
+   "workers": 5.0
+  },
+  {
+   "buildings": 8,
+   "coins": 5503.295000000008,
+   "elapsed": 3370,
+   "exported": 28.000000000000007,
+   "hall": 4,
+   "manual_cuts": 90,
+   "workers": 5.0
+  },
+  {
+   "buildings": 13,
+   "coins": 7215.592660256291,
+   "elapsed": 7195,
+   "exported": 155.85288461538565,
+   "hall": 5,
+   "manual_cuts": 90,
+   "workers": 8.0
+  }
+ ],
+ "earned": 204003.19266030716,
+ "failures": [],
+ "grants": false,
+ "host_ms": 17928,
+ "invariant_samples": 360,
+ "offline_replay_equal": false,
+ "passed": false,
+ "reload_checks": 6,
+ "samples": [
+  {
+   "at": 1800,
+   "coins": 4410.295000000008,
+   "exported": 12.000000000000007,
+   "goal": {
+    "action": "townhall",
+    "chapter": 2,
+    "chapter_name": "Mehr als nur Holz",
+    "coins": 300,
+    "id": "workshop:hall",
+    "index": -1,
+    "name": "Rathaus auf Stufe 3 fertigstellen",
+    "ready": false,
+    "target": 3.0,
+    "value": 2.0
+   },
+   "hall": 2,
+   "jobs": [
+    {
+     "delivered": {
+      "wood": 1.9500000000000002
+     },
+     "kind": "townhall",
+     "materials": {
+      "boards": 16.0,
+      "furniture": 6.0,
+      "wood": 20.0
+     },
+     "status": "Vorbereitung · 0 % · wartet auf Holz"
+    }
+   ],
+   "stocks": {
+    "boards": 18.735000000000202,
+    "design": 0.0,
+    "dry": 10.399999999999949,
+    "furniture": 12.999999999999988,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 0.0,
+    "pellets": 0.0,
+    "rock": 0.0,
+    "roofs": 0.0,
+    "sawdust": 113.17499999999983,
+    "screws": 1.0,
+    "stone": 0.0,
+    "walls": 0.0,
+    "wood": 16.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 3600,
+   "coins": 7098.732500000075,
+   "exported": 100.85288461538565,
+   "goal": {
+    "action": "prefab",
+    "chapter": 4,
+    "chapter_name": "Aus Plänen wird Heimat",
+    "coins": 500,
+    "id": "builders:0",
+    "index": 0,
+    "name": "Eröffne dein Fertighauswerk",
+    "ready": false,
+    "target": 1.0,
+    "value": 0.0
+   },
+   "hall": 4,
+   "jobs": [
+    {
+     "delivered": {
+      "boards": 2.9250000000000007,
+      "wood": 6.0
+     },
+     "kind": "central_depot",
+     "materials": {
+      "boards": 4.0,
+      "wood": 10.0
+     },
+     "status": "Wände · 42 % · wartet auf Bretter"
+    },
+    {
+     "delivered": {
+      "wood": 2.0
+     },
+     "kind": "prefab",
+     "materials": {
+      "boards": 4.0,
+      "nuts": 1.0,
+      "screws": 2.0,
+      "wood": 10.0
+     },
+     "status": "Fundament · 14 % · wartet auf Bretter"
+    }
+   ],
+   "stocks": {
+    "boards": 0.0,
+    "design": 0.0,
+    "dry": 20.27278846153879,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 0.0,
+    "pellets": 0.0,
+    "rock": 0.0,
+    "roofs": 0.0,
+    "sawdust": 622.3750000000036,
+    "screws": 2.0,
+    "stone": 0.0,
+    "walls": 0.0,
+    "wood": 1000.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 5400,
+   "coins": 3128.022660256479,
+   "exported": 143.85288461538565,
+   "goal": {
+    "action": "city",
+    "chapter": 4,
+    "chapter_name": "Aus Plänen wird Heimat",
+    "coins": 700,
+    "id": "builders:2",
+    "index": 2,
+    "name": "Erhalte 100 Münzen Miete",
+    "ready": false,
+    "target": 100.0,
+    "value": 95.0399999999999
+   },
+   "hall": 4,
+   "jobs": [
+    {
+     "delivered": {
+      "wood": 2.0
+     },
+     "kind": "garage",
+     "materials": {
+      "boards": 4.0,
+      "nuts": 1.0,
+      "screws": 2.0,
+      "wood": 10.0
+     },
+     "status": "Fundament · 14 % · wartet auf Bretter"
+    }
+   ],
+   "stocks": {
+    "boards": 45.00000000000001,
+    "design": 0.0,
+    "dry": 15.500000000000002,
+    "furniture": 2.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 0.0,
+    "pellets": 0.0,
+    "rock": 0.0,
+    "roofs": 13.874999999999986,
+    "sawdust": 86.20000000000009,
+    "screws": 2.0,
+    "stone": 0.0,
+    "walls": 12.874999999999988,
+    "wood": 0.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 7200,
+   "coins": 7226.59266025629,
+   "exported": 155.85288461538565,
+   "goal": {
+    "action": "quarry",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 600,
+    "id": "stone:0",
+    "index": 0,
+    "name": "Erschließe deinen ersten Steinbruch",
+    "ready": false,
+    "target": 1.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [
+    {
+     "delivered": {
+      "wood": 3.0
+     },
+     "kind": "sawmill",
+     "materials": {
+      "boards": 6.0,
+      "nuts": 1.0,
+      "screws": 2.0,
+      "wood": 14.0
+     },
+     "status": "Fundament · 14 % · wartet auf Bretter"
+    }
+   ],
+   "stocks": {
+    "boards": 8.0,
+    "design": 0.0,
+    "dry": 8.0,
+    "furniture": 18.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 31.244444444444433,
+    "pellets": 0.0,
+    "rock": 0.0,
+    "roofs": 23.499999999999982,
+    "sawdust": 174.00000000000048,
+    "screws": 2.0,
+    "stone": 0.0,
+    "walls": 17.499999999999993,
+    "wood": 280.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 9000,
+   "coins": 5493.192660256784,
+   "exported": 248.85288461538565,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [
+    {
+     "delivered": {
+      "boards": 3.0,
+      "nuts": 1.0,
+      "screws": 1.0,
+      "wood": 7.0
+     },
+     "kind": "furniture",
+     "materials": {
+      "boards": 5.0,
+      "nuts": 1.0,
+      "screws": 2.0,
+      "wood": 12.0
+     },
+     "status": "Dach · 57 % · wartet auf Holz"
+    }
+   ],
+   "stocks": {
+    "boards": 8.0,
+    "design": 0.0,
+    "dry": 28.0,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 24.0,
+    "pellets": 0.0,
+    "rock": 28.0,
+    "roofs": 25.0,
+    "sawdust": 118.00000000000007,
+    "screws": 2.0,
+    "stone": 60.0,
+    "walls": 40.0,
+    "wood": 0.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 10800,
+   "coins": 14632.69266025764,
+   "exported": 315.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 106.0,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 38.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 184.91111111111144,
+    "pellets": 0.0,
+    "rock": 56.0,
+    "roofs": 52.929166666666646,
+    "sawdust": 1451.200000000007,
+    "screws": 1.0,
+    "stone": 924.0,
+    "walls": 69.60916666666664,
+    "wood": 1029.2
+   },
+   "wood": ""
+  },
+  {
+   "at": 12600,
+   "coins": 36508.19266025865,
+   "exported": 524.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 10.0,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 40.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 384.57777777777943,
+    "pellets": 0.0,
+    "rock": 0.0,
+    "roofs": 128.75000000000017,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 1788.0,
+    "walls": 143.75000000000014,
+    "wood": 2356.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 14400,
+   "coins": 57663.192660253415,
+   "exported": 720.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 10.0,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 521.4444444444462,
+    "pellets": 0.0,
+    "rock": 50.0,
+    "roofs": 201.6500000000001,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 2500.0,
+    "walls": 217.85000000000002,
+    "wood": 2500.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 16200,
+   "coins": 78017.19266024818,
+   "exported": 908.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 91.33333333333299,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 798.0222222222251,
+    "pellets": 0.0,
+    "rock": 604.0,
+    "roofs": 283.74166666666713,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 2500.0,
+    "walls": 304.62166666666707,
+    "wood": 2356.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 18000,
+   "coins": 98995.19266024294,
+   "exported": 1104.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 10.0,
+    "design": 0.0,
+    "dry": 22.549999999999986,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 1002.8222222222256,
+    "pellets": 0.0,
+    "rock": 1086.0,
+    "roofs": 362.6233333333339,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 2500.0,
+    "walls": 377.6233333333336,
+    "wood": 2358.2000000000003
+   },
+   "wood": ""
+  },
+  {
+   "at": 19800,
+   "coins": 121865.1926602377,
+   "exported": 1321.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 10.0,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 1222.8222222222269,
+    "pellets": 0.0,
+    "rock": 1600.0,
+    "roofs": 420.44999999999976,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 2500.0,
+    "walls": 438.80999999999966,
+    "wood": 2500.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 21600,
+   "coins": 141915.19266024162,
+   "exported": 1507.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 10.0,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 1430.8888888888941,
+    "pellets": 0.0,
+    "rock": 2126.0,
+    "roofs": 500.5183333333336,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 2500.0,
+    "walls": 519.2608333333336,
+    "wood": 2500.0
+   },
+   "wood": ""
+  },
+  {
+   "at": 21600,
+   "coins": 141915.19266024162,
+   "exported": 1507.8528846153856,
+   "goal": {
+    "action": "stone",
+    "chapter": 5,
+    "chapter_name": "Ein festes Fundament",
+    "coins": 900,
+    "id": "stone:2",
+    "index": 2,
+    "name": "Liefere 50 eigene Baustoffe ins Lager",
+    "ready": false,
+    "target": 50.0,
+    "value": 0.0
+   },
+   "hall": 5,
+   "jobs": [],
+   "stocks": {
+    "boards": 10.0,
+    "design": 0.0,
+    "dry": 5.0,
+    "furniture": 4.0,
+    "gravel": 0.0,
+    "nuts": 1.0,
+    "paper": 0.0,
+    "parts": 1430.8888888888941,
+    "pellets": 0.0,
+    "rock": 2126.0,
+    "roofs": 500.5183333333336,
+    "sawdust": 2500.0,
+    "screws": 1.0,
+    "stone": 2500.0,
+    "walls": 519.2608333333336,
+    "wood": 2500.0
+   },
+   "wood": ""
+  }
+ ],
+ "seed": 41,
+ "simulated_seconds": 21600.0,
+ "spent": 62438.00000006554,
+ "tutorial_completed": true
+}

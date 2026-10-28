@@ -25,6 +25,7 @@ func valid_shape(data: Variant) -> bool:
   for record in data.get(group,[]):
    if not record is Dictionary or not record.get("kind") is String: return false
    if not definitions.has(record.kind): return false
+   if record.has("auto_recipe") and not record.auto_recipe is bool:return false
    if not record.get("level",1) is float and not record.get("level",1) is int: return false
    if not is_finite(float(record.get("level",1))) or float(record.get("level",1))<1: return false
    if record.has("position"):

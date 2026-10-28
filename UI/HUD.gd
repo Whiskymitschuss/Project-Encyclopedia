@@ -1529,6 +1529,8 @@ func stone_site_controls(parent: Node, index: int) -> void:
    vein_button.disabled=float(data.reserve)>0 or float(data.bucket)>0
    return "Vorkommen: %s/%s · Schaufel: %s\nEine neue Felsader kann nach Erschöpfung mit Spielmünzen erschlossen werden." % [int(data.reserve),int(data.vein_size),int(data.bucket)])
  else:
+  button(parent,"Bedarfsautomatik: AN" if StoneIndustry.auto_recipe(Game.state,index) else "Bedarfsautomatik: AUS",func(): action(func(): Game.set_stone_auto(index,not StoneIndustry.auto_recipe(Game.state,index))))
+  text(parent,"Automatisch: offene Baustellen und ein Grundvorrat von 20 Bausteinen und 20 Kies. Ein Rezept antippen schaltet auf manuell; laufende Arbeitsgänge werden fertiggestellt.",14,MUTED)
   dynamic_text(parent,func(): return "Nächster Auftrag: "+StoneIndustry.definitions.recipes[data.recipe].name+". Ein laufender Arbeitsgang wird zuerst abgeschlossen.")
   var choices=row(parent)
   for key in StoneIndustry.definitions.recipes:
@@ -1547,6 +1549,7 @@ func stone_menu() -> void:
   var key=str(kind)
   button(choices,Catalog.BUILDINGS[key].name+" BAUEN",func(): request_placement({"kind":key,"city":false,"index":-1}),unlocked)
  dynamic_text(contents,func(): return "%s LKW für Holz, Stein und Baustellen · %s Steinfahrten aktiv\nBaustoffe im Lager: %s Bausteine · %s Kies" % [Game.state.trucks,Game.state.stone.shipments.size(),int(Game.state.resources.stone),int(Game.state.resources.gravel)])
+ dynamic_text(contents,func(): return "Eigene Baustoffe ins Lager geliefert: %s · zählt nach dem Entladen, Umlagerungen zählen nicht doppelt." % Catalog.number(Game.state.stone.delivered))
  button(contents,"GARAGE & FAHRZEUGE",func(): open_menu("garage"))
  for i in Game.state.buildings.size():
   if Game.state.buildings[i].kind not in StoneIndustry.KINDS: continue

@@ -59,7 +59,7 @@ def audit(root):
         ("release_artifact", "Build and verify a release AAB: package, versionCode, non-debuggable manifest, intended upload certificate; never reuse the debug key as a production decision"),
         ("android_compatibility", "Inspect actual native ELF LOAD alignment and APK split ZIP alignment; test a 16-KiB Android environment and supported ABIs/SDKs. zipalign alone is insufficient"),
         ("device_performance", "Same candidate on physical Android hardware: sustained play, camera, long stalls, loading, background/resume. Software-GPU results do not establish 30 FPS"),
-        ("fresh_progression", "Fresh save through Rathaus 10 with actual earned resources; later Journey.gd fixtures currently inject resources"),
+        ("fresh_progression", "Human balance acceptance remains open; Tests/JourneyPlaythrough.gd now simulates fresh saves through Rathaus 10 using earned resources. See docs/journey-1-10; this is not device or human QA"),
         ("save_upgrade", "Install over the current signed test app without uninstalling; verify inventory, deliveries and one-time offline rewards. Plan production migration if signing/package changes"),
         ("public_privacy", "Publish policy with real operator/contact and reviewed Data Safety answers; in-game local-data help is not the public policy"),
         ("content_rights", "Document redistribution/commercial rights for graphics, fonts and supplied music; receipt of a file is not a licence"),

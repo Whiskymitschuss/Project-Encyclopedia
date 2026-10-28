@@ -38,6 +38,11 @@ static func uses_building(state: Dictionary, index: int) -> bool:
   if int(shipment.origin)==index or int(shipment.dock)==index: return true
  return false
 
+static func record_delivery(state: Dictionary,origin: int,key: String,amount: float) -> void:
+ if origin<0 or origin>=state.buildings.size():return
+ if state.buildings[origin].kind=="stoneworks" and key in ["stone","gravel"] and amount>0:
+  state.stone.delivered+=amount
+
 static func transport_tick(state: Dictionary, delta: float) -> void:
  var done=[]
  for shipment in state.stone.shipments:
@@ -50,7 +55,7 @@ static func transport_tick(state: Dictionary, delta: float) -> void:
     continue
    stock[shipment.key]=float(stock.get(shipment.key,0))+float(shipment.amount)
    shipment.arrived=true
-   if int(shipment.destination)<0: state.stone.delivered+=float(shipment.amount)
+   if int(shipment.destination)<0:record_delivery(state,int(shipment.origin),str(shipment.key),float(shipment.amount))
   if shipment.arrived and float(shipment.age)>=float(shipment.total): done.append(shipment)
  for shipment in done: state.stone.shipments.erase(shipment)
 
@@ -85,12 +90,36 @@ static func quarry_tick(state: Dictionary, index: int, delta: float, bonus: floa
   data.phase=(int(data.phase)+1)%4
  return active
 
+static func auto_recipe(state: Dictionary,index: int) -> bool:
+ # Older works retain their manual selection. Newly built works opt in.
+ return bool(state.buildings[index].get("auto_recipe",false))
+
+static func recipe_choice(state: Dictionary,index: int) -> String:
+ var current=str(site(state,index).recipe)
+ if not auto_recipe(state,index):return current
+ var chosen=current
+ var highest=0.0
+ for id in definitions.recipes:
+  var key=str(definitions.recipes[id].out.keys()[0])
+  var wanted=20.0
+  for job in state.jobs:
+   if not job.get("paused",false):wanted+=ConstructionRules.remaining(job,key)
+  var stock=UXRules.material_stock(state,key)
+  var available=float(stock.stored)+float(stock.transit)
+  # A running batch owns its future output already; other works must see it.
+  for data in state.stone.sites.values():available+=float(data.get("batch",{}).get("output",{}).get(key,0))
+  var score=maxf(0,wanted-available)/float(definitions.recipes[id].out[key])
+  if score>highest+0.00001:
+   chosen=str(id);highest=score
+ return chosen
+
 static func factory_tick(state: Dictionary, index: int, delta: float, bonus: float) -> bool:
  var data=site(state,index)
  var left=delta*bonus*(1+(int(state.buildings[index].level)-1)*0.15)
  var active=false
  while left>0.000001:
   if data.batch.is_empty():
+   data.recipe=recipe_choice(state,index)
    var recipe=definitions.recipes[data.recipe]
    var ready=true
    for key in recipe["in"]:

@@ -2,12 +2,24 @@
 
 Spielbarer Godot-4.6-Wiederaufbau mit eigener Low-Poly-Grafik, prozeduralen Texturen und erzeugten Soundeffekten. Die Holzindustrie wächst zu einer Stadt mit Immobilien und Großprojekten. Entwicklungsfassung, keine nachgewiesen marktreife App.
 
-## Aktuell: 0.28.28-alpha.2 · Hintergrundmusik
+## Aktuell: 0.28.29-alpha.1 · Rathaus 1–10 durchsimuliert
+
+Zwei frische Spielstände einschließlich Einführung erreichen alle zehn Kapitel
+mit verdienten Ressourcen in rund neun simulierten Stunden. Baustoffabholungen
+zählen nach realer Entladung für die Kapitel; neue Steinwerke wechseln nach
+Baubedarf zwischen Bausteinen und Kies. Bestehende Werke behalten ihre manuelle
+Wahl und können auf Automatik umgestellt werden. Gezielte Hinweise begleiten
+Baustoff-, Möbel- und Rathausziele. Kosten und Belohnungen bleiben erhalten.
+[Verläufe, tatsächliche Fehler und Prüfgrenzen](docs/journey-1-10/README.md).
+Android-Code **3025**. Alpha-Teststand, keine Store-Freigabe und kein Handy-FPS-Nachweis.
+
+## Vorher: 0.28.28-alpha.2 · Hintergrundmusik
 
 In Arbeit: Vorbereitung auf Version 1.0 mit integrierter Hilfe für Warenfluss,
 lokalen Speicher-/Datenschutzhinweisen und erweiterten Hängerberichten.
 [Tatsächlicher Stand und offene Freigaben](docs/play-store/README.md).
-Quelländerung nach alpha.2; noch keine neue APK und keine Store-Freigabe.
+Die Vorbereitungen sind in den aktuellen Quellstand integriert; eine
+Store-Freigabe ist damit nicht nachgewiesen.
 
 „Whimsical Forest Adventure“ als wiederholte Hintergrundmusik über Start und
 Spiel hinweg. Eigener Musik-Schalter und Lautstärkeregler, gespeicherte Vorgaben

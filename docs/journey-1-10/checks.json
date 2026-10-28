@@ -1,0 +1,380 @@
+{
+  "version": "0.28.29-alpha.1",
+  "baseline_commit": "73cd20bc9e490634fe7c75123bbd45bf44c72967",
+  "android_device_tested": false,
+  "windows_device_tested": false,
+  "graphical_backend": "Linux Mesa software rendering",
+  "checks": {
+    "full_headless": {
+      "results": [
+        {
+          "name": "JOURNEY LOGISTICS",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "MUSIC 2828",
+          "checks": 11,
+          "failures": 0
+        },
+        {
+          "name": "HITCHES 2827",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2826",
+          "checks": 65,
+          "failures": 0
+        },
+        {
+          "name": "RENDERER 2825",
+          "checks": 9,
+          "failures": 0
+        },
+        {
+          "name": "DAYLIGHT 2824",
+          "checks": 10,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2823",
+          "checks": 17,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2822",
+          "checks": 20,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2821",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "STORAGE 2820",
+          "checks": 79,
+          "failures": 0
+        },
+        {
+          "name": "ACTIVE FOREST 2819",
+          "checks": 132,
+          "failures": 0
+        },
+        {
+          "name": "STARTER 2818",
+          "checks": 27,
+          "failures": 0
+        },
+        {
+          "name": "REGROWTH 2817",
+          "checks": 21,
+          "failures": 0
+        },
+        {
+          "name": "DESIGN 2816",
+          "checks": 187,
+          "failures": 0
+        },
+        {
+          "name": "THROUGHPUT 2815",
+          "checks": 31,
+          "failures": 0
+        },
+        {
+          "name": "FOREST ACCESS 2813",
+          "checks": 19,
+          "failures": 0
+        },
+        {
+          "name": "TIMBER 2812",
+          "checks": 37,
+          "failures": 0
+        },
+        {
+          "name": "PERFORMANCE 2811",
+          "checks": 19,
+          "failures": 0
+        },
+        {
+          "name": "LOGISTICS 2810",
+          "checks": 65,
+          "failures": 0
+        },
+        {
+          "name": "FORESTRY 289",
+          "checks": 26,
+          "failures": 0
+        },
+        {
+          "name": "FORESTRY 288",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "FORESTRY 287",
+          "checks": 23,
+          "failures": 0
+        },
+        {
+          "name": "FACTORY SUPPLY 286",
+          "checks": 34,
+          "failures": 0
+        },
+        {
+          "name": "SUPPLY 286",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "INFRASTRUCTURE 286",
+          "checks": 161,
+          "failures": 0
+        },
+        {
+          "name": "WORLD REWORK 285",
+          "checks": 907,
+          "failures": 0
+        },
+        {
+          "name": "CENTRAL LOGISTICS 284",
+          "checks": 34,
+          "failures": 0
+        },
+        {
+          "name": "FOREST 282",
+          "checks": 22,
+          "failures": 0
+        },
+        {
+          "name": "ROLLBACK 028",
+          "checks": 51,
+          "failures": 0
+        },
+        {
+          "name": "ALPHA 1",
+          "checks": 40,
+          "failures": 0
+        },
+        {
+          "name": "RULES",
+          "checks": 234,
+          "failures": 0
+        },
+        {
+          "name": "SCENE",
+          "checks": 4080,
+          "failures": 0
+        },
+        {
+          "name": "WORLD & HIGHWAY TRADE 27",
+          "checks": 61,
+          "failures": 0
+        },
+        {
+          "name": "PLACEMENT & ONBOARDING",
+          "checks": 52,
+          "failures": 0
+        },
+        {
+          "name": "WORKSHOP",
+          "checks": 42,
+          "failures": 0
+        },
+        {
+          "name": "COMPANION",
+          "checks": 23,
+          "failures": 0
+        },
+        {
+          "name": "WORLD LIFE",
+          "checks": 30,
+          "failures": 0
+        },
+        {
+          "name": "TOWN",
+          "checks": 206,
+          "failures": 0
+        },
+        {
+          "name": "VALLEY",
+          "checks": 177,
+          "failures": 0
+        },
+        {
+          "name": "CRAFTED WORLD",
+          "checks": 128,
+          "failures": 0
+        },
+        {
+          "name": "DELIVERY",
+          "checks": 6057,
+          "failures": 0
+        },
+        {
+          "name": "CONSTRUCTION",
+          "checks": 56,
+          "failures": 0
+        },
+        {
+          "name": "LOGISTICS FIX",
+          "checks": 431,
+          "failures": 0
+        },
+        {
+          "name": "CITY UX",
+          "checks": 797,
+          "failures": 0
+        },
+        {
+          "name": "BUILDING CARD",
+          "checks": 437,
+          "failures": 0
+        },
+        {
+          "name": "JOURNEY",
+          "checks": 215,
+          "failures": 0
+        },
+        {
+          "name": "TRAFFIC & TOUCH",
+          "checks": 1494,
+          "failures": 0
+        },
+        {
+          "name": "FIRE SAFETY",
+          "checks": 24,
+          "failures": 0
+        },
+        {
+          "name": "FIRE PROTECTION",
+          "checks": 38,
+          "failures": 0
+        },
+        {
+          "name": "STONE INDUSTRY",
+          "checks": 4870,
+          "failures": 0
+        },
+        {
+          "name": "QUALITY FEEDBACK",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "PRESENTATION 26",
+          "checks": 46,
+          "failures": 0
+        },
+        {
+          "name": "STARTUP",
+          "checks": 11,
+          "failures": 0
+        },
+        {
+          "name": "STARTUP SMOKE 2826",
+          "checks": 4,
+          "failures": 0
+        }
+      ],
+      "assertions": 21722,
+      "log_sha256": "ad20da64b91f3eeac8e760b74b75ee555db11f9c103cb07b082db5a947e2c9e9"
+    },
+    "selected_after_version": {
+      "results": [
+        {
+          "name": "JOURNEY LOGISTICS",
+          "checks": 32,
+          "failures": 0
+        },
+        {
+          "name": "JOURNEY",
+          "checks": 215,
+          "failures": 0
+        },
+        {
+          "name": "MUSIC 2828",
+          "checks": 11,
+          "failures": 0
+        }
+      ],
+      "assertions": 258,
+      "log_sha256": "11eba64e1cdf55216ff4da912a79f5c4647d0ec4887e04abb02e93b8bc98f7c6"
+    },
+    "opengl": {
+      "results": [
+        {
+          "name": "VISUAL JOURNEY PROGRESS",
+          "checks": 14,
+          "failures": 0
+        },
+        {
+          "name": "VISUAL JOURNEY",
+          "checks": 40,
+          "failures": 0
+        }
+      ],
+      "assertions": 54,
+      "log_sha256": "775cc3e56208a590e03782d2b8161d28ccb211c1d51d15e7f94bea62a7f1e8ee"
+    },
+    "vulkan": {
+      "results": [
+        {
+          "name": "VISUAL JOURNEY PROGRESS",
+          "checks": 13,
+          "failures": 0
+        }
+      ],
+      "assertions": 13,
+      "log_sha256": "87bf92a527bddbd1bf81ae7b15439eda81f94d69fa46f6031db98faf21da929a"
+    }
+  },
+  "active": {
+    "candidate_version": "0.28.29-alpha.1",
+    "seed": 41,
+    "action_interval": 5,
+    "grants": false,
+    "tutorial_completed": true,
+    "passed": true,
+    "simulated_seconds": 32126.0,
+    "offline_replay_equal": true,
+    "reload_checks": 13,
+    "invariant_samples": 536,
+    "failures": []
+  },
+  "calm": {
+    "candidate_version": "0.28.29-alpha.1",
+    "seed": 93,
+    "action_interval": 20,
+    "grants": false,
+    "tutorial_completed": true,
+    "passed": true,
+    "simulated_seconds": 32941.0,
+    "offline_replay_equal": true,
+    "reload_checks": 13,
+    "invariant_samples": 550,
+    "failures": []
+  },
+  "before": {
+    "candidate_version": "0.28.28-alpha.2",
+    "seed": 41,
+    "action_interval": 5,
+    "grants": false,
+    "tutorial_completed": true,
+    "passed": false,
+    "simulated_seconds": 21600.0,
+    "offline_replay_equal": false,
+    "reload_checks": 6,
+    "invariant_samples": 360,
+    "failures": []
+  },
+  "core_sha256": {
+    "Managers/Game.gd": "2e408f49fe2426383f149c2fdaf0664ad44c95eabfd5a9979698269f15ee16d9",
+    "Economy/StoneIndustry.gd": "01c6e9a5fc7e2cc01e5c7af949217fba81a6921bc31761a99026ac6f14a83da5",
+    "Economy/CentralLogistics.gd": "65b270aac8bacacee575355ebb1b83910eed5670c9926617c9ff23b53be13700",
+    "SaveSystem/SaveFiles.gd": "e5a1d5c1b0de58a143a9469ca74dd0a11703dc58ed041e5a3e180b490457fe6f",
+    "Tests/JourneyPlaythrough.gd": "a53361cfd9c3e9128e5862aae26d87abb42ef9a033e28d40d20f9bb5d9956260",
+    "Tests/Support/JourneyPlayer.gd": "2c696390b2f5773ddd7736fa49ffcd4187ce78b28b890ca0ff9a1d91bbafb94f"
+  }
+}

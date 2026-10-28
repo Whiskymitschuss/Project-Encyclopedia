@@ -102,7 +102,11 @@ func run() -> void:
  var choose=find_button(hud,"DIESEN AUFTRAG WÄHLEN")
  await tap(choose)
  check(not game.state.journey.active.is_empty(),"Touch selects a genuine optional commission")
- game.simulate(130)
+ # Replanting uses the actual starter helper too; completion is an economy
+ # condition, not a promise of 80 wood in precisely 130 seconds.
+ for second in 300:
+  if Journey.order_progress(game.state)>=float(game.state.journey.active.target):break
+  game.step(1)
  hud._process(1.1)
  var finish=find_button(hud,"AUFTRAG ABSCHLIESSEN")
  check(not finish.disabled,"A completed commission enables its existing control without reopening the menu")

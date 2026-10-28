@@ -147,6 +147,10 @@ static func tick(state: Dictionary,delta: float) -> void:
      trip.age=float(trip.travel)
      continue
     destination[trip.key]=float(destination.get(trip.key,0))+float(trip.amount)
+   # Both depot types complete real factory pickups. Regional forwarding and
+   # factory supplies must not count the same produced material again.
+   if trip.target in ["central","express"]:
+    StoneIndustry.record_delivery(state,int(trip.get("origin",-1)),str(trip.key),float(trip.amount))
    trip.arrived=true
   if trip.arrived and float(trip.age)>=float(trip.total): completed.append(trip)
  for trip in completed: state.hub.shipments.erase(trip)

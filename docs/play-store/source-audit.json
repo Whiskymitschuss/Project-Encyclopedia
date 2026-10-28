@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.28.28-alpha.2",
+  "version": "0.28.29-alpha.1",
   "store_ready": false,
   "scope": "Source configuration only; no device, AAB or current Google policy verification",
   "checks": [
@@ -12,7 +12,7 @@
     {
       "id": "android_0_version",
       "status": "pass",
-      "detail": "Android Test: app 0.28.28-alpha.2, export 0.28.28-alpha.2"
+      "detail": "Android Test: app 0.28.29-alpha.1, export 0.28.29-alpha.1"
     },
     {
       "id": "android_0_arm64",
@@ -52,7 +52,7 @@
     {
       "id": "fresh_progression",
       "status": "manual",
-      "detail": "Fresh save through Rathaus 10 with actual earned resources; later Journey.gd fixtures currently inject resources"
+      "detail": "Human balance acceptance remains open; Tests/JourneyPlaythrough.gd now simulates fresh saves through Rathaus 10 using earned resources. See docs/journey-1-10; this is not device or human QA"
     },
     {
       "id": "save_upgrade",

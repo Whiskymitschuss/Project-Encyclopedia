@@ -84,6 +84,14 @@ func journey_menu() -> void:
    reward.disabled=not Game.state.journey.reached.has(next.id)
    return "BELOHNUNG ABHOLEN"})
   hud.button(box,"ZEIG MIR DEN NÄCHSTEN SCHRITT",func(): go(next.action))
+  if str(next.id) in ["workshop:2","skyline:2","empire:2"]:
+   hud.text(box,"Es zählen verkaufte Möbel: im Ladenauftrag, im Fernhandel oder über den lokalen Verkauf. Lagerbestand allein zählt nicht. Prüfe bei Stillstand Bretter-Nachschub, Abholungen und den Fuhrpark.",14,hud.MUTED)
+   hud.button(box,"MÖBELKETTE & LKW PRÜFEN",func(): hud.open_menu("logistics"))
+  elif str(next.id)=="stone:2":
+   hud.text(box,"Es zählen eigene Bausteine und Kies nach dem Entladen aus dem Steinwerk: im Zentrallager oder Abhol-Express. Gestein, Käufe und Umlagerungen zählen nicht. Neue Steinwerke wählen Bausteine und Kies nach Bedarf; ältere Werke kannst du auf Automatik stellen.",14,hud.MUTED)
+  elif int(next.index)<0 and not next.ready:
+   hud.text(box,"Ein bezahlter Ausbau zählt erst nach Materiallieferung und Fertigstellung. Öffne bei Wartezeiten die Baustellenübersicht; Lagerbestand und laufende LKW sind getrennte Vorräte.",14,hud.MUTED)
+   hud.button(box,"BAUSTELLE & MATERIAL PRÜFEN",func(): hud.logistics_tab="sites";hud.open_menu("logistics"))
   hud.text(box,"Kapitelabschluss: 3 Diamanten, 1 Loot-Ticket und die bleibende Auszeichnung „%s“." % Journey.CHAPTERS[c].title,14,hud.MUTED)
  hud.button(hud.contents,"DEIN RATHAUS · STUFE %s/10" % Journey.townhall_level(Game.state),func(): hud.open_menu("townhall"))
  for c in Journey.CHAPTERS.size():

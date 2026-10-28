@@ -979,6 +979,7 @@ func finish_job(job: Dictionary) -> void:
   var record = state.buildings.back() if job.type=="building" else state.homes.back()
   if job.has("position"): record.position = job.position.duplicate()
   record.rotation = int(job.get("rotation",0))
+  if job.type=="building" and job.kind=="stoneworks":record.auto_recipe=true
  allocate_group_crews()
  StoneIndustry.synchronize(state)
  rebuild_world.emit()
@@ -1824,7 +1825,15 @@ func set_stone_recipe(index: int, recipe: String) -> bool:
  if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="stoneworks" or not StoneIndustry.definitions.recipes.has(recipe): return false
  StoneIndustry.synchronize(state)
  StoneIndustry.site(state,index).recipe=recipe
+ state.buildings[index].auto_recipe=false
  changed.emit()
+ return true
+
+func set_stone_auto(index: int,enabled: bool) -> bool:
+ if index<0 or index>=state.buildings.size() or state.buildings[index].kind!="stoneworks":return false
+ state.buildings[index].auto_recipe=enabled
+ changed.emit()
+ queue_save()
  return true
 
 func vein_cost(index: int) -> float:
